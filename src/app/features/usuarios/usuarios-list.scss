@@ -1,0 +1,42 @@
+.usuarios {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+h1 {
+  color: #1d4ed8;
+  margin-bottom: 1rem;
+}
+
+.status {
+  color: #475569;
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+  background: #f4f6f9;
+  color: #334155;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
