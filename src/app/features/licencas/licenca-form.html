@@ -1,0 +1,81 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar licença' : 'Nova licença' }}</h1>
+    <a routerLink="/licencas">Voltar</a>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Nome *
+        <input type="text" formControlName="nome" />
+        @if (form.controls.nome.invalid && form.controls.nome.touched) {
+          <span class="campo-erro">Nome é obrigatório.</span>
+        }
+      </label>
+
+      <label>
+        Descrição
+        <textarea formControlName="descricao" rows="2"></textarea>
+      </label>
+
+      <label>
+        Quantidade total *
+        <input type="number" min="1" formControlName="quantidadeTotal" />
+        @if (form.controls.quantidadeTotal.invalid && form.controls.quantidadeTotal.touched) {
+          <span class="campo-erro">Informe uma quantidade total maior que zero.</span>
+        }
+      </label>
+
+      <label>
+        Data de início *
+        <input type="date" formControlName="dataInicio" />
+        @if (form.controls.dataInicio.invalid && form.controls.dataInicio.touched) {
+          <span class="campo-erro">Data de início é obrigatória.</span>
+        }
+      </label>
+
+      <label>
+        Data de término previsto *
+        <input type="date" formControlName="dataTerminoPrevisto" />
+        @if (form.controls.dataTerminoPrevisto.invalid && form.controls.dataTerminoPrevisto.touched) {
+          <span class="campo-erro">Data de término previsto é obrigatória.</span>
+        }
+      </label>
+
+      <label>
+        Dias de antecedência para aviso *
+        <input type="number" min="0" formControlName="diasAntecedenciaAviso" />
+        @if (form.controls.diasAntecedenciaAviso.invalid && form.controls.diasAntecedenciaAviso.touched) {
+          <span class="campo-erro">Informe os dias de antecedência.</span>
+        }
+      </label>
+
+      <label>
+        Observação
+        <textarea formControlName="observacao" rows="3"></textarea>
+      </label>
+
+      <label>
+        Status
+        <select formControlName="ativa">
+          <option [ngValue]="true">Ativa</option>
+          <option [ngValue]="false">Inativa</option>
+        </select>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/licencas" class="botao botao--texto">Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

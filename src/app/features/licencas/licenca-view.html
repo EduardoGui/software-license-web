@@ -1,0 +1,48 @@
+<section class="view-page">
+  <header class="topo">
+    <h1>Licença</h1>
+    <a routerLink="/licencas">Voltar</a>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !licenca()) {
+    <p class="status status--erro">Licença não encontrada.</p>
+  } @else {
+    <dl class="detalhes">
+      <dt>Nome</dt>
+      <dd>{{ licenca()!.nome }}</dd>
+
+      <dt>Descrição</dt>
+      <dd>{{ licenca()!.descricao || '-' }}</dd>
+
+      <dt>Quantidade total</dt>
+      <dd>{{ licenca()!.quantidadeTotal }}</dd>
+
+      <dt>Em uso</dt>
+      <dd>{{ licenca()!.quantidadeEmUso }}</dd>
+
+      <dt>Disponível</dt>
+      <dd>{{ licenca()!.quantidadeDisponivel }}</dd>
+
+      <dt>Data de início</dt>
+      <dd>{{ licenca()!.dataInicio }}</dd>
+
+      <dt>Data de término previsto</dt>
+      <dd>{{ licenca()!.dataTerminoPrevisto }}</dd>
+
+      <dt>Dias de antecedência para aviso</dt>
+      <dd>{{ licenca()!.diasAntecedenciaAviso }}</dd>
+
+      <dt>Status</dt>
+      <dd><span class="badge" [class]="'badge--' + licenca()!.status.toLowerCase()">{{ licenca()!.status }}</span></dd>
+
+      <dt>Observação</dt>
+      <dd>{{ licenca()!.observacao || '-' }}</dd>
+    </dl>
+
+    <div class="acoes">
+      <a [routerLink]="['/licencas', licenca()!.id, 'editar']" class="botao botao--primario">Editar</a>
+    </div>
+  }
+</section>

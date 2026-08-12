@@ -1,0 +1,79 @@
+<section class="licencas">
+  <header class="topo">
+    <h1>Licenças</h1>
+    <a class="botao botao--primario" routerLink="/licencas/novo">+ Nova licença</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Nome
+      <input type="text" name="nome" [(ngModel)]="filtro.nome" placeholder="Buscar por nome" />
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option value="">Todos</option>
+        <option value="Ativa">Ativa</option>
+        <option value="Inativa">Inativa</option>
+      </select>
+    </label>
+    <label>
+      Vencimento até
+      <input type="date" name="vencimentoAte" [(ngModel)]="filtro.vencimentoAte" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as licenças. Verifique se a API está em execução.</p>
+  } @else if (licencas().length === 0) {
+    <p class="status">Nenhuma licença encontrada.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Quantidade total</th>
+          <th>Em uso</th>
+          <th>Disponíveis</th>
+          <th>Início</th>
+          <th>Término previsto</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (licenca of licencas(); track licenca.id) {
+          <tr>
+            <td>{{ licenca.nome }}</td>
+            <td>{{ licenca.quantidadeTotal }}</td>
+            <td>{{ licenca.quantidadeEmUso }}</td>
+            <td>{{ licenca.quantidadeDisponivel }}</td>
+            <td>{{ licenca.dataInicio }}</td>
+            <td>{{ licenca.dataTerminoPrevisto }}</td>
+            <td><span class="badge" [class]="'badge--' + licenca.status.toLowerCase()">{{ licenca.status }}</span></td>
+            <td class="acoes">
+              <a [routerLink]="['/licencas', licenca.id]">Visualizar</a>
+              <a [routerLink]="['/licencas', licenca.id, 'editar']">Editar</a>
+              @if (licenca.status !== 'Inativa') {
+                <button
+                  type="button"
+                  class="botao--link"
+                  [disabled]="desativandoId() === licenca.id"
+                  (click)="desativar(licenca)"
+                >
+                  Desativar
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
