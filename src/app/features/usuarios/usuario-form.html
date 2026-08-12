@@ -1,0 +1,57 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar usuário' : 'Novo usuário' }}</h1>
+    <a routerLink="/usuarios">Voltar</a>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Nome *
+        <input type="text" formControlName="nome" />
+        @if (form.controls.nome.invalid && form.controls.nome.touched) {
+          <span class="campo-erro">Nome é obrigatório.</span>
+        }
+      </label>
+
+      <label>
+        Email *
+        <input type="email" formControlName="email" />
+        @if (form.controls.email.invalid && form.controls.email.touched) {
+          <span class="campo-erro">Informe um email válido.</span>
+        }
+      </label>
+
+      <label>
+        Data de início *
+        <input type="date" formControlName="dataInicio" />
+        @if (form.controls.dataInicio.invalid && form.controls.dataInicio.touched) {
+          <span class="campo-erro">Data de início é obrigatória.</span>
+        }
+      </label>
+
+      <label>
+        Data de fim
+        <input type="date" formControlName="dataFim" />
+      </label>
+
+      <label>
+        Observação
+        <textarea formControlName="observacao" rows="3"></textarea>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/usuarios" class="botao botao--texto">Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

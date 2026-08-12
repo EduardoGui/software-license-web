@@ -1,0 +1,36 @@
+<section class="view-page">
+  <header class="topo">
+    <h1>Usuário</h1>
+    <a routerLink="/usuarios">Voltar</a>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !usuario()) {
+    <p class="status status--erro">Usuário não encontrado.</p>
+  } @else {
+    <dl class="detalhes">
+      <dt>Nome</dt>
+      <dd>{{ usuario()!.nome }}</dd>
+
+      <dt>Email</dt>
+      <dd>{{ usuario()!.email }}</dd>
+
+      <dt>Data de início</dt>
+      <dd>{{ usuario()!.dataInicio }}</dd>
+
+      <dt>Data de fim</dt>
+      <dd>{{ usuario()!.dataFim ?? '-' }}</dd>
+
+      <dt>Status</dt>
+      <dd><span class="badge" [class]="'badge--' + usuario()!.status.toLowerCase()">{{ usuario()!.status }}</span></dd>
+
+      <dt>Observação</dt>
+      <dd>{{ usuario()!.observacao || '-' }}</dd>
+    </dl>
+
+    <div class="acoes">
+      <a [routerLink]="['/usuarios', usuario()!.id, 'editar']" class="botao botao--primario">Editar</a>
+    </div>
+  }
+</section>

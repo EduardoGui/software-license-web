@@ -1,13 +1,75 @@
 .usuarios {
-  max-width: 720px;
+  max-width: 960px;
   margin: 2rem auto;
   padding: 0 1rem;
   font-family: system-ui, sans-serif;
 }
 
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
 h1 {
   color: #1d4ed8;
+  margin: 0;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
   margin-bottom: 1rem;
+}
+
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.filtros input,
+.filtros select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.filtros__acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.botao {
+  border: 1px solid #1d4ed8;
+  background: #fff;
+  color: #1d4ed8;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.botao--primario {
+  background: #1d4ed8;
+  color: #fff;
+}
+
+.botao--texto {
+  border-color: transparent;
+  color: #64748b;
 }
 
 .status {
@@ -39,4 +101,57 @@ th {
   color: #334155;
   font-size: 0.85rem;
   text-transform: uppercase;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge--ativo {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge--agendado {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.badge--inativo {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.acoes {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.acoes a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+
+.acoes a:hover {
+  text-decoration: underline;
+}
+
+.botao--link {
+  border: none;
+  background: none;
+  color: #b91c1c;
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.botao--link:disabled {
+  opacity: 0.5;
+  cursor: default;
 }

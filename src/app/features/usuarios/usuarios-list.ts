@@ -1,23 +1,35 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
-import { Usuario } from './usuario';
+import { Usuario, UsuarioFiltro } from './usuario';
 import { UsuarioService } from './usuario.service';
 
 @Component({
   selector: 'app-usuarios-list',
-  imports: [],
+  imports: [FormsModule, RouterLink],
   templateUrl: './usuarios-list.html',
   styleUrl: './usuarios-list.scss',
 })
-export class UsuariosList implements OnInit {
+export class UsuariosList {
   private readonly usuarioService = inject(UsuarioService);
 
   protected readonly usuarios = signal<Usuario[]>([]);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
+  protected readonly desativandoId = signal<number | null>(null);
 
-  ngOnInit(): void {
-    this.usuarioService.listar().subscribe({
+  protected filtro: UsuarioFiltro = {};
+
+  constructor() {
+    this.buscar();
+  }
+
+  protected buscar(): void {
+    this.carregando.set(true);
+    this.erro.set(false);
+
+    this.usuarioService.listar(this.filtro).subscribe({
       next: (usuarios) => {
         this.usuarios.set(usuarios);
         this.carregando.set(false);
@@ -25,6 +37,30 @@ export class UsuariosList implements OnInit {
       error: () => {
         this.erro.set(true);
         this.carregando.set(false);
+      },
+    });
+  }
+
+  protected limparFiltro(): void {
+    this.filtro = {};
+    this.buscar();
+  }
+
+  protected desativar(usuario: Usuario): void {
+    const confirmado = confirm(`Desativar o usuário "${usuario.nome}"? A data de fim será preenchida com hoje.`);
+    if (!confirmado) {
+      return;
+    }
+
+    this.desativandoId.set(usuario.id);
+    this.usuarioService.desativar(usuario.id, null).subscribe({
+      next: () => {
+        this.desativandoId.set(null);
+        this.buscar();
+      },
+      error: () => {
+        this.desativandoId.set(null);
+        alert('Não foi possível desativar o usuário.');
       },
     });
   }

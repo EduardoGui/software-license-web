@@ -1,0 +1,100 @@
+.view-page {
+  max-width: 520px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.topo a {
+  color: #1d4ed8;
+  text-decoration: none;
+  font-size: 0.9rem;
+}
+
+h1 {
+  color: #1d4ed8;
+  margin: 0;
+}
+
+.status {
+  color: #475569;
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+.detalhes {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 0;
+}
+
+dt {
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-top: 0.9rem;
+}
+
+dt:first-child {
+  margin-top: 0;
+}
+
+dd {
+  margin: 0.15rem 0 0;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge--ativo {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge--agendado {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.badge--inativo {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.acoes {
+  margin-top: 1rem;
+}
+
+.botao {
+  border: 1px solid #1d4ed8;
+  background: #fff;
+  color: #1d4ed8;
+  padding: 0.5rem 1.1rem;
+  border-radius: 6px;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.9rem;
+}
+
+.botao--primario {
+  background: #1d4ed8;
+  color: #fff;
+}
