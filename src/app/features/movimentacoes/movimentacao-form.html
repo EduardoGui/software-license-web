@@ -1,0 +1,61 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Nova movimentação</h1>
+    <a routerLink="/movimentacoes">Voltar</a>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()">
+    @if (erro()) {
+      <p class="status status--erro">{{ erro() }}</p>
+    }
+
+    <label>
+      Usuário *
+      <select formControlName="usuarioId">
+        <option [ngValue]="0">Selecione...</option>
+        @for (usuario of usuarios(); track usuario.id) {
+          <option [ngValue]="usuario.id">{{ usuario.nome }}</option>
+        }
+      </select>
+      @if (form.controls.usuarioId.invalid && form.controls.usuarioId.touched) {
+        <span class="campo-erro">Selecione um usuário ativo.</span>
+      }
+    </label>
+
+    <label>
+      Licença *
+      <select formControlName="licencaId">
+        <option [ngValue]="0">Selecione...</option>
+        @for (licenca of licencas(); track licenca.id) {
+          <option [ngValue]="licenca.id">{{ licenca.nome }}</option>
+        }
+      </select>
+      @if (form.controls.licencaId.invalid && form.controls.licencaId.touched) {
+        <span class="campo-erro">Selecione uma licença ativa.</span>
+      }
+      @if (licencaSelecionada) {
+        <span class="disponibilidade">Disponível: {{ licencaSelecionada.quantidadeDisponivel }} licença(s)</span>
+      }
+    </label>
+
+    <label>
+      Data de início *
+      <input type="date" formControlName="dataInicio" />
+      @if (form.controls.dataInicio.invalid && form.controls.dataInicio.touched) {
+        <span class="campo-erro">Data de início é obrigatória.</span>
+      }
+    </label>
+
+    <label>
+      Observação
+      <textarea formControlName="observacao" rows="3"></textarea>
+    </label>
+
+    <div class="acoes">
+      <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        {{ salvando() ? 'Salvando...' : 'Alocar' }}
+      </button>
+      <a routerLink="/movimentacoes" class="botao botao--texto">Cancelar</a>
+    </div>
+  </form>
+</section>

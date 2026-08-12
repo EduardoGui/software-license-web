@@ -7,6 +7,8 @@ import { UsuarioView } from './features/usuarios/usuario-view';
 import { LicencasList } from './features/licencas/licencas-list';
 import { LicencaForm } from './features/licencas/licenca-form';
 import { LicencaView } from './features/licencas/licenca-view';
+import { MovimentacoesList } from './features/movimentacoes/movimentacoes-list';
+import { MovimentacaoForm } from './features/movimentacoes/movimentacao-form';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -18,4 +20,6 @@ export const routes: Routes = [
   { path: 'licencas/novo', component: LicencaForm },
   { path: 'licencas/:id/editar', component: LicencaForm },
   { path: 'licencas/:id', component: LicencaView },
+  { path: 'movimentacoes', component: MovimentacoesList },
+  { path: 'movimentacoes/nova', component: MovimentacaoForm },
 ];

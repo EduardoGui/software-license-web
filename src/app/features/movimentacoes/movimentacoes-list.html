@@ -1,0 +1,123 @@
+<section class="movimentacoes">
+  <header class="topo">
+    <h1>Movimentações</h1>
+    <a class="botao botao--primario" routerLink="/movimentacoes/nova">+ Nova movimentação</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="filtrar()">
+    <label>
+      Usuário
+      <select name="usuarioId" [(ngModel)]="filtro.usuarioId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (usuario of usuarios(); track usuario.id) {
+          <option [ngValue]="usuario.id">{{ usuario.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Licença
+      <select name="licencaId" [(ngModel)]="filtro.licencaId">
+        <option [ngValue]="undefined">Todas</option>
+        @for (licenca of licencas(); track licenca.id) {
+          <option [ngValue]="licenca.id">{{ licenca.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option value="">Todos</option>
+        <option value="Em uso">Em uso</option>
+        <option value="Encerrado">Encerrado</option>
+      </select>
+    </label>
+    <label>
+      Período inicial
+      <input type="date" name="dataInicial" [(ngModel)]="filtro.dataInicial" />
+    </label>
+    <label>
+      Período final
+      <input type="date" name="dataFinal" [(ngModel)]="filtro.dataFinal" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as movimentações. Verifique se a API está em execução.</p>
+  } @else if (movimentacoes().length === 0) {
+    <p class="status">Nenhuma movimentação encontrada.</p>
+  } @else {
+    <table>
+      <thead>
+        <tr>
+          <th>Usuário</th>
+          <th>Licença</th>
+          <th>Início</th>
+          <th>Fim</th>
+          <th>Status</th>
+          <th>Observação</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (movimentacao of movimentacoes(); track movimentacao.id) {
+          <tr>
+            <td>{{ movimentacao.usuarioNome }}</td>
+            <td>{{ movimentacao.licencaNome }}</td>
+            <td>{{ movimentacao.dataInicio }}</td>
+            <td>{{ movimentacao.dataFim ?? '-' }}</td>
+            <td>
+              <span class="badge" [class]="'badge--' + (movimentacao.status === 'Em uso' ? 'em-uso' : 'encerrado')">
+                {{ movimentacao.status }}
+              </span>
+            </td>
+            <td>{{ movimentacao.observacao || '-' }}</td>
+            <td class="acoes">
+              @if (movimentacao.status === 'Em uso') {
+                <button
+                  type="button"
+                  class="botao--link"
+                  [disabled]="encerrandoId() === movimentacao.id"
+                  (click)="encerrar(movimentacao)"
+                >
+                  Encerrar
+                </button>
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="paginacao">
+      <label>
+        Por página
+        <select name="tamanhoPagina" [(ngModel)]="filtro.tamanhoPagina" (ngModelChange)="filtrar()">
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="25">25</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </label>
+      <span>{{ totalRegistros() }} registro(s)</span>
+      <div class="paginacao__botoes">
+        <button type="button" class="botao" [disabled]="(filtro.pagina ?? 1) <= 1" (click)="irParaPagina((filtro.pagina ?? 1) - 1)">
+          Anterior
+        </button>
+        <span>Página {{ filtro.pagina ?? 1 }} de {{ totalPaginas }}</span>
+        <button
+          type="button"
+          class="botao"
+          [disabled]="(filtro.pagina ?? 1) >= totalPaginas"
+          (click)="irParaPagina((filtro.pagina ?? 1) + 1)"
+        >
+          Próxima
+        </button>
+      </div>
+    </div>
+  }
+</section>
