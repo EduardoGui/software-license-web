@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -20,6 +21,7 @@ export class MovimentacaoForm {
   private readonly usuarioService = inject(UsuarioService);
   private readonly licencaService = inject(LicencaService);
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
 
   protected readonly usuarios = signal<Usuario[]>([]);
   protected readonly licencas = signal<Licenca[]>([]);
@@ -35,6 +37,10 @@ export class MovimentacaoForm {
 
   protected get licencaSelecionada(): Licenca | undefined {
     return this.licencas().find((l) => l.id === this.form.controls.licencaId.value);
+  }
+
+  protected voltar(): void {
+    this.location.back();
   }
 
   constructor() {

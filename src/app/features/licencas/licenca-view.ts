@@ -1,3 +1,4 @@
+import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -13,10 +14,15 @@ import { LicencaService } from './licenca.service';
 export class LicencaView {
   private readonly licencaService = inject(LicencaService);
   private readonly route = inject(ActivatedRoute);
+  private readonly location = inject(Location);
 
   protected readonly licenca = signal<Licenca | null>(null);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
+
+  protected voltar(): void {
+    this.location.back();
+  }
 
   constructor() {
     const id = Number(this.route.snapshot.paramMap.get('id'));

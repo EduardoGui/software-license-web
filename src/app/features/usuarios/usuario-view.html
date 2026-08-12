@@ -1,7 +1,7 @@
 <section class="view-page">
   <header class="topo">
     <h1>Usuário</h1>
-    <a routerLink="/usuarios">Voltar</a>
+    <button type="button" class="botao-voltar" (click)="voltar()">Voltar</button>
   </header>
 
   @if (carregando()) {

@@ -1,7 +1,7 @@
 <section class="form-page">
   <header class="topo">
     <h1>Nova movimentação</h1>
-    <a routerLink="/movimentacoes">Voltar</a>
+    <button type="button" class="botao-voltar" (click)="voltar()">Voltar</button>
   </header>
 
   <form [formGroup]="form" (ngSubmit)="salvar()">

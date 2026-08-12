@@ -1,1 +1,18 @@
-<router-outlet></router-outlet>
+<div class="shell">
+  <aside class="sidebar">
+    <div class="marca">
+      <span class="marca__titulo">Controle de Licenças</span>
+    </div>
+    <nav class="menu">
+      <a routerLink="/" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item">
+        Dashboard
+      </a>
+      <a routerLink="/usuarios" routerLinkActive="menu__item--ativo" class="menu__item">Usuários</a>
+      <a routerLink="/licencas" routerLinkActive="menu__item--ativo" class="menu__item">Licenças</a>
+      <a routerLink="/movimentacoes" routerLinkActive="menu__item--ativo" class="menu__item">Movimentações</a>
+    </nav>
+  </aside>
+  <main class="conteudo">
+    <router-outlet></router-outlet>
+  </main>
+</div>

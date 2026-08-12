@@ -1,7 +1,7 @@
 <section class="form-page">
   <header class="topo">
     <h1>{{ editando ? 'Editar licença' : 'Nova licença' }}</h1>
-    <a routerLink="/licencas">Voltar</a>
+    <button type="button" class="botao-voltar" (click)="voltar()">Voltar</button>
   </header>
 
   @if (carregando()) {
