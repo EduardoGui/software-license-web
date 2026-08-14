@@ -8,7 +8,8 @@ export type IconName =
   | 'arrow-left'
   | 'plus'
   | 'check'
-  | 'x';
+  | 'x'
+  | 'log-out';
 
 @Component({
   selector: 'app-icon',
@@ -57,6 +58,11 @@ export type IconName =
         @case ('x') {
           <path d="M18 6 6 18" />
           <path d="M6 6l12 12" />
+        }
+        @case ('log-out') {
+          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+          <path d="M16 17l5-5-5-5" />
+          <path d="M21 12H9" />
         }
       }
     </svg>

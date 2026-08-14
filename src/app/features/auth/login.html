@@ -1,0 +1,30 @@
+<section class="login-page">
+  <form class="login-card" [formGroup]="form" (ngSubmit)="entrar()">
+    <h1>Controle de Licenças</h1>
+    <p class="subtitulo">Entrar</p>
+
+    @if (erro()) {
+      <p class="status status--erro">{{ erro() }}</p>
+    }
+
+    <label>
+      Email
+      <input type="email" formControlName="email" autocomplete="username" />
+      @if (form.controls.email.invalid && form.controls.email.touched) {
+        <span class="campo-erro">Informe um email válido.</span>
+      }
+    </label>
+
+    <label>
+      Senha
+      <input type="password" formControlName="senha" autocomplete="current-password" />
+      @if (form.controls.senha.invalid && form.controls.senha.touched) {
+        <span class="campo-erro">Senha é obrigatória.</span>
+      }
+    </label>
+
+    <button type="submit" class="botao botao--primario" [disabled]="entrando()">
+      {{ entrando() ? 'Entrando...' : 'Entrar' }}
+    </button>
+  </form>
+</section>
