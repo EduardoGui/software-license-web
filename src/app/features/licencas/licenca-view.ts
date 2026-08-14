@@ -3,12 +3,13 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
+import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { Licenca } from './licenca';
 import { LicencaService } from './licenca.service';
 
 @Component({
   selector: 'app-licenca-view',
-  imports: [RouterLink, Icon],
+  imports: [RouterLink, Icon, DataBrPipe],
   templateUrl: './licenca-view.html',
   styleUrl: './licenca-view.scss',
 })

@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
+import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { Licenca } from '../licencas/licenca';
 import { LicencaService } from '../licencas/licenca.service';
 import { Usuario } from '../usuarios/usuario';
@@ -12,7 +13,7 @@ import { MovimentacaoService } from './movimentacao.service';
 
 @Component({
   selector: 'app-movimentacoes-list',
-  imports: [FormsModule, RouterLink, Icon],
+  imports: [FormsModule, RouterLink, Icon, DataBrPipe],
   templateUrl: './movimentacoes-list.html',
   styleUrl: './movimentacoes-list.scss',
 })

@@ -69,8 +69,8 @@
           <tr>
             <td>{{ movimentacao.usuarioNome }}</td>
             <td>{{ movimentacao.licencaNome }}</td>
-            <td>{{ movimentacao.dataInicio }}</td>
-            <td>{{ movimentacao.dataFim ?? '-' }}</td>
+            <td>{{ movimentacao.dataInicio | dataBr }}</td>
+            <td>{{ movimentacao.dataFim | dataBr }}</td>
             <td>
               <span class="badge" [class]="'badge--' + (movimentacao.status === 'Em uso' ? 'em-uso' : 'encerrado')">
                 {{ movimentacao.status }}

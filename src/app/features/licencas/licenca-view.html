@@ -26,10 +26,10 @@
       <dd>{{ licenca()!.quantidadeDisponivel }}</dd>
 
       <dt>Data de início</dt>
-      <dd>{{ licenca()!.dataInicio }}</dd>
+      <dd>{{ licenca()!.dataInicio | dataBr }}</dd>
 
       <dt>Data de término previsto</dt>
-      <dd>{{ licenca()!.dataTerminoPrevisto }}</dd>
+      <dd>{{ licenca()!.dataTerminoPrevisto | dataBr }}</dd>
 
       <dt>Dias de antecedência para aviso</dt>
       <dd>{{ licenca()!.diasAntecedenciaAviso }}</dd>

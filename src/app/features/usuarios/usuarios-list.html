@@ -51,8 +51,8 @@
           <tr>
             <td>{{ usuario.nome }}</td>
             <td>{{ usuario.email }}</td>
-            <td>{{ usuario.dataInicio }}</td>
-            <td>{{ usuario.dataFim ?? '-' }}</td>
+            <td>{{ usuario.dataInicio | dataBr }}</td>
+            <td>{{ usuario.dataFim | dataBr }}</td>
             <td><span class="badge" [class]="'badge--' + usuario.status.toLowerCase()">{{ usuario.status }}</span></td>
             <td class="acoes">
               <a [routerLink]="['/usuarios', usuario.id]" title="Visualizar" aria-label="Visualizar"><app-icon name="eye" [size]="18" /></a>

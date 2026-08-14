@@ -17,10 +17,10 @@
       <dd>{{ usuario()!.email }}</dd>
 
       <dt>Data de início</dt>
-      <dd>{{ usuario()!.dataInicio }}</dd>
+      <dd>{{ usuario()!.dataInicio | dataBr }}</dd>
 
       <dt>Data de fim</dt>
-      <dd>{{ usuario()!.dataFim ?? '-' }}</dd>
+      <dd>{{ usuario()!.dataFim | dataBr }}</dd>
 
       <dt>Status</dt>
       <dd><span class="badge" [class]="'badge--' + usuario()!.status.toLowerCase()">{{ usuario()!.status }}</span></dd>

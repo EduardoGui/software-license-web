@@ -54,8 +54,8 @@
             <td>{{ licenca.quantidadeTotal }}</td>
             <td>{{ licenca.quantidadeEmUso }}</td>
             <td>{{ licenca.quantidadeDisponivel }}</td>
-            <td>{{ licenca.dataInicio }}</td>
-            <td>{{ licenca.dataTerminoPrevisto }}</td>
+            <td>{{ licenca.dataInicio | dataBr }}</td>
+            <td>{{ licenca.dataTerminoPrevisto | dataBr }}</td>
             <td><span class="badge" [class]="'badge--' + licenca.status.toLowerCase()">{{ licenca.status }}</span></td>
             <td class="acoes">
               <a [routerLink]="['/licencas', licenca.id]" title="Visualizar" aria-label="Visualizar"><app-icon name="eye" [size]="18" /></a>

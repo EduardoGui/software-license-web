@@ -3,12 +3,13 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
+import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { Usuario } from './usuario';
 import { UsuarioService } from './usuario.service';
 
 @Component({
   selector: 'app-usuario-view',
-  imports: [RouterLink, Icon],
+  imports: [RouterLink, Icon, DataBrPipe],
   templateUrl: './usuario-view.html',
   styleUrl: './usuario-view.scss',
 })

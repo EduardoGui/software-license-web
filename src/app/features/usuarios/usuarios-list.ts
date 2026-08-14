@@ -3,12 +3,13 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
+import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { Usuario, UsuarioFiltro } from './usuario';
 import { UsuarioService } from './usuario.service';
 
 @Component({
   selector: 'app-usuarios-list',
-  imports: [FormsModule, RouterLink, Icon],
+  imports: [FormsModule, RouterLink, Icon, DataBrPipe],
   templateUrl: './usuarios-list.html',
   styleUrl: './usuarios-list.scss',
 })
