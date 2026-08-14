@@ -1,7 +1,7 @@
 <section class="usuarios">
   <header class="topo">
     <h1>Usuários</h1>
-    <a class="botao botao--primario" routerLink="/usuarios/novo">+ Novo usuário</a>
+    <a class="botao botao--primario" routerLink="/usuarios/novo"><app-icon name="plus" [size]="16" /> Novo usuário</a>
   </header>
 
   <form class="filtros" (ngSubmit)="buscar()">
@@ -55,16 +55,17 @@
             <td>{{ usuario.dataFim ?? '-' }}</td>
             <td><span class="badge" [class]="'badge--' + usuario.status.toLowerCase()">{{ usuario.status }}</span></td>
             <td class="acoes">
-              <a [routerLink]="['/usuarios', usuario.id]">Visualizar</a>
-              <a [routerLink]="['/usuarios', usuario.id, 'editar']">Editar</a>
+              <a [routerLink]="['/usuarios', usuario.id]" title="Visualizar"><app-icon name="eye" [size]="16" /> Visualizar</a>
+              <a [routerLink]="['/usuarios', usuario.id, 'editar']" title="Editar"><app-icon name="pencil" [size]="16" /> Editar</a>
               @if (usuario.status !== 'Inativo') {
                 <button
                   type="button"
                   class="botao--link"
+                  title="Desativar"
                   [disabled]="desativandoId() === usuario.id"
                   (click)="desativar(usuario)"
                 >
-                  Desativar
+                  <app-icon name="ban" [size]="16" /> Desativar
                 </button>
               }
             </td>

@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
+import { Icon } from '../../shared/icons/icon';
 import { Licenca } from '../licencas/licenca';
 import { LicencaService } from '../licencas/licenca.service';
 import { Usuario } from '../usuarios/usuario';
@@ -11,7 +12,7 @@ import { MovimentacaoService } from './movimentacao.service';
 
 @Component({
   selector: 'app-movimentacao-form',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Icon],
   templateUrl: './movimentacao-form.html',
   styleUrl: './movimentacao-form.scss',
 })

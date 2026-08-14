@@ -1,7 +1,7 @@
 <section class="form-page">
   <header class="topo">
     <h1>{{ editando ? 'Editar licença' : 'Nova licença' }}</h1>
-    <button type="button" class="botao-voltar" (click)="voltar()">Voltar</button>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
   </header>
 
   @if (carregando()) {
@@ -72,9 +72,9 @@
 
       <div class="acoes">
         <button type="submit" class="botao botao--primario" [disabled]="salvando()">
-          {{ salvando() ? 'Salvando...' : 'Salvar' }}
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
         </button>
-        <a routerLink="/licencas" class="botao botao--texto">Cancelar</a>
+        <a routerLink="/licencas" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
       </div>
     </form>
   }

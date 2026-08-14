@@ -1,7 +1,7 @@
 <section class="view-page">
   <header class="topo">
     <h1>Usuário</h1>
-    <button type="button" class="botao-voltar" (click)="voltar()">Voltar</button>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
   </header>
 
   @if (carregando()) {
@@ -30,7 +30,7 @@
     </dl>
 
     <div class="acoes">
-      <a [routerLink]="['/usuarios', usuario()!.id, 'editar']" class="botao botao--primario">Editar</a>
+      <a [routerLink]="['/usuarios', usuario()!.id, 'editar']" class="botao botao--primario"><app-icon name="pencil" [size]="16" /> Editar</a>
     </div>
   }
 </section>

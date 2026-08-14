@@ -2,12 +2,13 @@ import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { Icon } from '../../shared/icons/icon';
 import { Licenca } from './licenca';
 import { LicencaService } from './licenca.service';
 
 @Component({
   selector: 'app-licenca-view',
-  imports: [RouterLink],
+  imports: [RouterLink, Icon],
   templateUrl: './licenca-view.html',
   styleUrl: './licenca-view.scss',
 })

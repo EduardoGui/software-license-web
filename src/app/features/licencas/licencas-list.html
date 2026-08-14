@@ -1,7 +1,7 @@
 <section class="licencas">
   <header class="topo">
     <h1>Licenças</h1>
-    <a class="botao botao--primario" routerLink="/licencas/novo">+ Nova licença</a>
+    <a class="botao botao--primario" routerLink="/licencas/novo"><app-icon name="plus" [size]="16" /> Nova licença</a>
   </header>
 
   <form class="filtros" (ngSubmit)="buscar()">
@@ -58,16 +58,17 @@
             <td>{{ licenca.dataTerminoPrevisto }}</td>
             <td><span class="badge" [class]="'badge--' + licenca.status.toLowerCase()">{{ licenca.status }}</span></td>
             <td class="acoes">
-              <a [routerLink]="['/licencas', licenca.id]">Visualizar</a>
-              <a [routerLink]="['/licencas', licenca.id, 'editar']">Editar</a>
+              <a [routerLink]="['/licencas', licenca.id]" title="Visualizar"><app-icon name="eye" [size]="16" /> Visualizar</a>
+              <a [routerLink]="['/licencas', licenca.id, 'editar']" title="Editar"><app-icon name="pencil" [size]="16" /> Editar</a>
               @if (licenca.status !== 'Inativa') {
                 <button
                   type="button"
                   class="botao--link"
+                  title="Desativar"
                   [disabled]="desativandoId() === licenca.id"
                   (click)="desativar(licenca)"
                 >
-                  Desativar
+                  <app-icon name="ban" [size]="16" /> Desativar
                 </button>
               }
             </td>

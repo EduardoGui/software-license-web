@@ -1,7 +1,7 @@
 <section class="movimentacoes">
   <header class="topo">
     <h1>Movimentações</h1>
-    <a class="botao botao--primario" routerLink="/movimentacoes/nova">+ Nova movimentação</a>
+    <a class="botao botao--primario" routerLink="/movimentacoes/nova"><app-icon name="plus" [size]="16" /> Nova movimentação</a>
   </header>
 
   <form class="filtros" (ngSubmit)="filtrar()">
@@ -81,11 +81,12 @@
               @if (movimentacao.status === 'Em uso') {
                 <button
                   type="button"
-                  class="botao--link"
+                  class="botao--link botao--link-sucesso"
+                  title="Encerrar"
                   [disabled]="encerrandoId() === movimentacao.id"
                   (click)="encerrar(movimentacao)"
                 >
-                  Encerrar
+                  <app-icon name="check-circle" [size]="16" /> Encerrar
                 </button>
               }
             </td>

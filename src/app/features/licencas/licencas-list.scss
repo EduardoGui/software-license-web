@@ -65,6 +65,9 @@ h1 {
 .botao--primario {
   background: #1d4ed8;
   color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
 }
 
 .botao--texto {
@@ -128,6 +131,9 @@ th {
 }
 
 .acoes a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   color: #1d4ed8;
   text-decoration: none;
   font-size: 0.85rem;
@@ -138,6 +144,9 @@ th {
 }
 
 .botao--link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   border: none;
   background: none;
   color: #b91c1c;

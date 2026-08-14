@@ -13,6 +13,9 @@
 }
 
 .botao-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   border: none;
   background: none;
   color: #1d4ed8;
@@ -83,13 +86,15 @@ dd {
 }
 
 .botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   border: 1px solid #1d4ed8;
   background: #fff;
   color: #1d4ed8;
   padding: 0.5rem 1.1rem;
   border-radius: 6px;
   text-decoration: none;
-  display: inline-block;
   font-size: 0.9rem;
 }
 

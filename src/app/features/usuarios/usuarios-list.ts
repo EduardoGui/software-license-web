@@ -2,12 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+import { Icon } from '../../shared/icons/icon';
 import { Usuario, UsuarioFiltro } from './usuario';
 import { UsuarioService } from './usuario.service';
 
 @Component({
   selector: 'app-usuarios-list',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Icon],
   templateUrl: './usuarios-list.html',
   styleUrl: './usuarios-list.scss',
 })

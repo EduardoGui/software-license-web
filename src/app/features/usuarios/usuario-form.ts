@@ -3,11 +3,12 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { Icon } from '../../shared/icons/icon';
 import { UsuarioService } from './usuario.service';
 
 @Component({
   selector: 'app-usuario-form',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Icon],
   templateUrl: './usuario-form.html',
   styleUrl: './usuario-form.scss',
 })

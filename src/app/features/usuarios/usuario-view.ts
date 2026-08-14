@@ -2,12 +2,13 @@ import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { Icon } from '../../shared/icons/icon';
 import { Usuario } from './usuario';
 import { UsuarioService } from './usuario.service';
 
 @Component({
   selector: 'app-usuario-view',
-  imports: [RouterLink],
+  imports: [RouterLink, Icon],
   templateUrl: './usuario-view.html',
   styleUrl: './usuario-view.scss',
 })

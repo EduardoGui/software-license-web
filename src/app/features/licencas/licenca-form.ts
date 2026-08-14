@@ -3,11 +3,12 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { Icon } from '../../shared/icons/icon';
 import { LicencaService } from './licenca.service';
 
 @Component({
   selector: 'app-licenca-form',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, Icon],
   templateUrl: './licenca-form.html',
   styleUrl: './licenca-form.scss',
 })

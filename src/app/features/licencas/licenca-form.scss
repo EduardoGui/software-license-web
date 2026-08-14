@@ -13,6 +13,9 @@
 }
 
 .botao-voltar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
   border: none;
   background: none;
   color: #1d4ed8;
@@ -75,6 +78,9 @@ select {
 }
 
 .botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   border: 1px solid #1d4ed8;
   background: #fff;
   color: #1d4ed8;
@@ -83,7 +89,6 @@ select {
   cursor: pointer;
   font-size: 0.9rem;
   text-decoration: none;
-  display: inline-block;
 }
 
 .botao--primario {

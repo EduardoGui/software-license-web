@@ -2,12 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
+import { Icon } from '../../shared/icons/icon';
 import { Licenca, LicencaFiltro } from './licenca';
 import { LicencaService } from './licenca.service';
 
 @Component({
   selector: 'app-licencas-list',
-  imports: [FormsModule, RouterLink],
+  imports: [FormsModule, RouterLink, Icon],
   templateUrl: './licencas-list.html',
   styleUrl: './licencas-list.scss',
 })
