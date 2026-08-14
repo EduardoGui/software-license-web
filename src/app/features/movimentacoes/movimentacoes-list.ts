@@ -29,7 +29,7 @@ export class MovimentacoesList {
   protected readonly erro = signal(false);
   protected readonly encerrandoId = signal<number | null>(null);
 
-  protected filtro: MovimentacaoFiltro = { pagina: 1, tamanhoPagina: 10 };
+  protected filtro: MovimentacaoFiltro = { pagina: 1, tamanhoPagina: 10, status: 'Em uso' };
 
   protected get totalPaginas(): number {
     const tamanho = this.filtro.tamanhoPagina ?? 10;
@@ -65,7 +65,7 @@ export class MovimentacoesList {
   }
 
   protected limparFiltro(): void {
-    this.filtro = { pagina: 1, tamanhoPagina: 10 };
+    this.filtro = { pagina: 1, tamanhoPagina: 10, status: 'Em uso' };
     this.buscar();
   }
 
