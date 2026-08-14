@@ -20,7 +20,7 @@ export class UsuariosList {
   protected readonly erro = signal(false);
   protected readonly desativandoId = signal<number | null>(null);
 
-  protected filtro: UsuarioFiltro = {};
+  protected filtro: UsuarioFiltro = { status: 'Ativo' };
 
   constructor() {
     this.buscar();
@@ -43,7 +43,7 @@ export class UsuariosList {
   }
 
   protected limparFiltro(): void {
-    this.filtro = {};
+    this.filtro = { status: 'Ativo' };
     this.buscar();
   }
 

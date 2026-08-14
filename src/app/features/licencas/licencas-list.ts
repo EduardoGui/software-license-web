@@ -20,7 +20,7 @@ export class LicencasList {
   protected readonly erro = signal(false);
   protected readonly desativandoId = signal<number | null>(null);
 
-  protected filtro: LicencaFiltro = {};
+  protected filtro: LicencaFiltro = { status: 'Ativa' };
 
   constructor() {
     this.buscar();
@@ -43,7 +43,7 @@ export class LicencasList {
   }
 
   protected limparFiltro(): void {
-    this.filtro = {};
+    this.filtro = { status: 'Ativa' };
     this.buscar();
   }
 
