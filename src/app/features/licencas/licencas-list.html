@@ -58,17 +58,18 @@
             <td>{{ licenca.dataTerminoPrevisto }}</td>
             <td><span class="badge" [class]="'badge--' + licenca.status.toLowerCase()">{{ licenca.status }}</span></td>
             <td class="acoes">
-              <a [routerLink]="['/licencas', licenca.id]" title="Visualizar"><app-icon name="eye" [size]="16" /> Visualizar</a>
-              <a [routerLink]="['/licencas', licenca.id, 'editar']" title="Editar"><app-icon name="pencil" [size]="16" /> Editar</a>
+              <a [routerLink]="['/licencas', licenca.id]" title="Visualizar" aria-label="Visualizar"><app-icon name="eye" [size]="18" /></a>
+              <a [routerLink]="['/licencas', licenca.id, 'editar']" title="Editar" aria-label="Editar"><app-icon name="pencil" [size]="18" /></a>
               @if (licenca.status !== 'Inativa') {
                 <button
                   type="button"
                   class="botao--link"
                   title="Desativar"
+                  aria-label="Desativar"
                   [disabled]="desativandoId() === licenca.id"
                   (click)="desativar(licenca)"
                 >
-                  <app-icon name="ban" [size]="16" /> Desativar
+                  <app-icon name="ban" [size]="18" />
                 </button>
               }
             </td>

@@ -55,17 +55,18 @@
             <td>{{ usuario.dataFim ?? '-' }}</td>
             <td><span class="badge" [class]="'badge--' + usuario.status.toLowerCase()">{{ usuario.status }}</span></td>
             <td class="acoes">
-              <a [routerLink]="['/usuarios', usuario.id]" title="Visualizar"><app-icon name="eye" [size]="16" /> Visualizar</a>
-              <a [routerLink]="['/usuarios', usuario.id, 'editar']" title="Editar"><app-icon name="pencil" [size]="16" /> Editar</a>
+              <a [routerLink]="['/usuarios', usuario.id]" title="Visualizar" aria-label="Visualizar"><app-icon name="eye" [size]="18" /></a>
+              <a [routerLink]="['/usuarios', usuario.id, 'editar']" title="Editar" aria-label="Editar"><app-icon name="pencil" [size]="18" /></a>
               @if (usuario.status !== 'Inativo') {
                 <button
                   type="button"
                   class="botao--link"
                   title="Desativar"
+                  aria-label="Desativar"
                   [disabled]="desativandoId() === usuario.id"
                   (click)="desativar(usuario)"
                 >
-                  <app-icon name="ban" [size]="16" /> Desativar
+                  <app-icon name="ban" [size]="18" />
                 </button>
               }
             </td>
