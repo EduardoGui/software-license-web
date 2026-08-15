@@ -1,0 +1,182 @@
+<section class="timeline-page">
+  <header class="topo">
+    <h1>Linha do Tempo</h1>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Usuário
+      <select name="usuarioId" [(ngModel)]="filtro.usuarioId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (usuario of usuariosFiltro(); track usuario.id) {
+          <option [ngValue]="usuario.id">{{ usuario.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Licença
+      <select name="licencaId" [(ngModel)]="filtro.licencaId">
+        <option [ngValue]="undefined">Todas</option>
+        @for (licenca of licencasFiltro(); track licenca.id) {
+          <option [ngValue]="licenca.id">{{ licenca.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option value="">Todos</option>
+        <option value="Em uso">Em uso</option>
+        <option value="Encerrado">Encerrado</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  <div class="periodo">
+    <span class="periodo__rotulo">Período</span>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--ativo]="periodoAtivo() === 'ultimos3meses'"
+      (click)="definirPeriodo('ultimos3meses')"
+    >
+      Últimos 3 meses
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--ativo]="periodoAtivo() === 'ultimos6meses'"
+      (click)="definirPeriodo('ultimos6meses')"
+    >
+      Últimos 6 meses
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--ativo]="periodoAtivo() === 'ultimos12meses'"
+      (click)="definirPeriodo('ultimos12meses')"
+    >
+      Últimos 12 meses
+    </button>
+    <button type="button" class="chip" [class.chip--ativo]="periodoAtivo() === 'anoatual'" (click)="definirPeriodo('anoatual')">
+      Ano atual
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--ativo]="periodoAtivo() === 'personalizado'"
+      (click)="definirPeriodo('personalizado')"
+    >
+      Personalizado
+    </button>
+    <button type="button" class="chip chip--hoje" (click)="irParaHoje()">Hoje</button>
+  </div>
+
+  @if (periodoAtivo() === 'personalizado') {
+    <div class="periodo-custom">
+      <label>
+        De
+        <input type="date" name="dataInicialCustom" [(ngModel)]="filtro.dataInicial" />
+      </label>
+      <label>
+        Até
+        <input type="date" name="dataFinalCustom" [(ngModel)]="filtro.dataFinal" />
+      </label>
+      <button type="button" class="botao" (click)="buscar()">Aplicar</button>
+    </div>
+  }
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar a linha do tempo. Verifique se a API está em execução.</p>
+  } @else if (usuarios().length === 0) {
+    <p class="status">Nenhum registro encontrado para os filtros selecionados.</p>
+  } @else {
+    <div class="timeline-scroll" #scrollContainer>
+      <div class="timeline-corpo">
+        <div class="linha linha--cabecalho">
+          <div class="rotulo"></div>
+          <div class="trilha trilha--eixo" [style.width.px]="larguraTotalPx()">
+            @for (marca of marcasDeMes(); track marca.posicaoPx) {
+              <span class="marca-mes" [style.left.px]="marca.posicaoPx">{{ marca.label }}</span>
+            }
+            @if (posicaoHojePx() !== null) {
+              <div class="marca-hoje" [style.left.px]="posicaoHojePx()"></div>
+            }
+          </div>
+        </div>
+
+        @for (usuario of usuarios(); track usuario.usuarioId) {
+          <div class="linha linha--usuario">
+            <button type="button" class="rotulo rotulo--usuario" (click)="alternarExpandido(usuario.usuarioId)">
+              <span class="seta">{{ expandido(usuario.usuarioId) ? '▾' : '▸' }}</span>
+              {{ usuario.usuarioNome }}
+            </button>
+            <div class="trilha" [style.width.px]="larguraTotalPx()">
+              @if (posicaoHojePx() !== null) {
+                <div class="marca-hoje" [style.left.px]="posicaoHojePx()"></div>
+              }
+              <div
+                class="barra barra--usuario"
+                [class.barra--aberta]="!usuario.dataFim"
+                [style.left.px]="posicaoPx(usuario.dataInicio)"
+                [style.width.px]="larguraPx(usuario.dataInicio, usuario.dataFim)"
+                [title]="tituloUsuario(usuario)"
+              ></div>
+            </div>
+          </div>
+
+          @if (expandido(usuario.usuarioId)) {
+            @for (licenca of usuario.licencas; track licenca.movimentacaoId) {
+              <div class="linha linha--licenca">
+                <div class="rotulo rotulo--licenca">{{ licenca.licencaNome }}</div>
+                <div class="trilha" [style.width.px]="larguraTotalPx()">
+                  @if (posicaoHojePx() !== null) {
+                    <div class="marca-hoje" [style.left.px]="posicaoHojePx()"></div>
+                  }
+                  <div
+                    class="barra barra--licenca"
+                    [class.barra--aberta]="!licenca.dataFim"
+                    [style.left.px]="posicaoPx(licenca.dataInicio)"
+                    [style.width.px]="larguraPx(licenca.dataInicio, licenca.dataFim)"
+                    [style.background]="corLicenca(licenca.licencaId)"
+                    [title]="tituloLicenca(licenca)"
+                    (click)="selecionar(usuario, licenca)"
+                  ></div>
+                </div>
+              </div>
+            }
+          }
+        }
+      </div>
+    </div>
+  }
+
+  @if (selecionado()) {
+    <div class="detalhes">
+      <div class="detalhes__cabecalho">
+        <h2>Detalhes</h2>
+        <button type="button" class="botao-fechar" (click)="selecionado.set(null)">×</button>
+      </div>
+      <dl>
+        <dt>Usuário</dt>
+        <dd>{{ selecionado()!.usuarioNome }}</dd>
+        <dt>Licença</dt>
+        <dd>{{ selecionado()!.licencaNome }}</dd>
+        <dt>Início</dt>
+        <dd>{{ selecionado()!.dataInicio | dataBr }}</dd>
+        <dt>Fim</dt>
+        <dd>{{ selecionado()!.dataFim | dataBr }}</dd>
+        <dt>Status</dt>
+        <dd>{{ selecionado()!.status }}</dd>
+        <dt>Observação</dt>
+        <dd>{{ selecionado()!.observacao || '-' }}</dd>
+      </dl>
+    </div>
+  }
+</section>

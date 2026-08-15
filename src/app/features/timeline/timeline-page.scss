@@ -1,0 +1,306 @@
+.timeline-page {
+  max-width: 1400px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.topo {
+  margin-bottom: 1rem;
+}
+
+h1 {
+  color: #1d4ed8;
+  margin: 0;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.filtros select,
+.periodo-custom input {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.filtros__acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.periodo {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.periodo__rotulo {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin-right: 0.25rem;
+}
+
+.chip {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #334155;
+  padding: 0.35rem 0.8rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.82rem;
+}
+
+.chip--ativo {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+  color: #fff;
+}
+
+.chip--hoje {
+  border-color: #15803d;
+  color: #15803d;
+}
+
+.periodo-custom {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.periodo-custom label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.botao {
+  border: 1px solid #1d4ed8;
+  background: #fff;
+  color: #1d4ed8;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.botao--texto {
+  border-color: transparent;
+  color: #64748b;
+}
+
+.status {
+  color: #475569;
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+.timeline-scroll {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.timeline-corpo {
+  display: inline-flex;
+  flex-direction: column;
+  min-width: 100%;
+}
+
+.linha {
+  display: flex;
+  align-items: center;
+  min-height: 2.4rem;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.linha--cabecalho {
+  min-height: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+}
+
+.rotulo {
+  position: sticky;
+  left: 0;
+  z-index: 2;
+  flex-shrink: 0;
+  width: 180px;
+  padding: 0.4rem 0.75rem;
+  background: #fff;
+  border-right: 1px solid #e2e8f0;
+  font-size: 0.85rem;
+  color: #334155;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.linha--cabecalho .rotulo {
+  background: #f8fafc;
+}
+
+.rotulo--usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: none;
+  border-right: 1px solid #e2e8f0;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+}
+
+.rotulo--usuario:hover {
+  background: #f8fafc;
+}
+
+.seta {
+  font-size: 0.7rem;
+  color: #94a3b8;
+}
+
+.rotulo--licenca {
+  padding-left: 1.75rem;
+  color: #64748b;
+  font-size: 0.8rem;
+}
+
+.trilha {
+  position: relative;
+  height: 2rem;
+  flex-shrink: 0;
+}
+
+.trilha--eixo {
+  height: 1.6rem;
+}
+
+.marca-mes {
+  position: absolute;
+  top: 0;
+  transform: translateX(2px);
+  font-size: 0.72rem;
+  color: #94a3b8;
+  white-space: nowrap;
+}
+
+.marca-hoje {
+  position: absolute;
+  top: 0;
+  bottom: -100vh;
+  width: 1px;
+  background: #ef4444;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.barra {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 0.6rem;
+  min-width: 4px;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.barra--usuario {
+  height: 0.9rem;
+  background: #1d4ed8;
+  cursor: default;
+}
+
+.barra--aberta {
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+.barra--licenca:hover {
+  opacity: 0.85;
+}
+
+.detalhes {
+  margin-top: 1rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.25rem;
+  max-width: 420px;
+}
+
+.detalhes__cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+.detalhes__cabecalho h2 {
+  margin: 0;
+  font-size: 1rem;
+  color: #1e293b;
+}
+
+.botao-fechar {
+  border: none;
+  background: none;
+  color: #64748b;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  padding: 0.15rem 0.4rem;
+}
+
+.detalhes dl {
+  margin: 0;
+}
+
+.detalhes dt {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-top: 0.6rem;
+}
+
+.detalhes dt:first-child {
+  margin-top: 0;
+}
+
+.detalhes dd {
+  margin: 0.1rem 0 0;
+  color: #1e293b;
+  font-size: 0.95rem;
+}
