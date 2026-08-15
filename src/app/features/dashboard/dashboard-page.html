@@ -1,0 +1,62 @@
+<section class="dashboard">
+  <h1>Dashboard</h1>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar o dashboard. Verifique se a API está em execução.</p>
+  } @else if (dados()) {
+    <div class="cards">
+      <div class="card">
+        <span class="card__valor">{{ dados()!.usuariosAtivos }}</span>
+        <span class="card__rotulo">Usuários ativos</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.licencasAdquiridas }}</span>
+        <span class="card__rotulo">Licenças adquiridas</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.licencasEmUso }}</span>
+        <span class="card__rotulo">Licenças em uso</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.licencasDisponiveis }}</span>
+        <span class="card__rotulo">Licenças disponíveis</span>
+      </div>
+    </div>
+
+    <div class="vencimentos">
+      <h2>Próximos vencimentos</h2>
+      @if (dados()!.proximosVencimentos.length === 0) {
+        <p class="status">Nenhuma licença perto do vencimento.</p>
+      } @else {
+        <table>
+          <thead>
+            <tr>
+              <th>Licença</th>
+              <th>Término previsto</th>
+              <th>Situação</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (vencimento of dados()!.proximosVencimentos; track vencimento.licencaId) {
+              <tr>
+                <td><a [routerLink]="['/licencas', vencimento.licencaId]">{{ vencimento.nome }}</a></td>
+                <td>{{ vencimento.dataTerminoPrevisto | dataBr }}</td>
+                <td>
+                  @if (vencimento.diasParaVencer < 0) {
+                    <span class="badge badge--vencida">Vencida há {{ -vencimento.diasParaVencer }} dia(s)</span>
+                  } @else if (vencimento.diasParaVencer === 0) {
+                    <span class="badge badge--vencendo">Vence hoje</span>
+                  } @else {
+                    <span class="badge badge--vencendo">Vence em {{ vencimento.diasParaVencer }} dia(s)</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      }
+    </div>
+  }
+</section>

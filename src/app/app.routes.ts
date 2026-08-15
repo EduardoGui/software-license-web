@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 
 import { authGuard } from './core/auth-guard';
 import { Login } from './features/auth/login';
-import { Home } from './home/home';
+import { DashboardPage } from './features/dashboard/dashboard-page';
 import { UsuariosList } from './features/usuarios/usuarios-list';
 import { UsuarioForm } from './features/usuarios/usuario-form';
 import { UsuarioView } from './features/usuarios/usuario-view';
@@ -18,7 +18,7 @@ export const routes: Routes = [
     path: '',
     canActivateChild: [authGuard],
     children: [
-      { path: '', component: Home },
+      { path: '', component: DashboardPage },
       { path: 'usuarios', component: UsuariosList },
       { path: 'usuarios/novo', component: UsuarioForm },
       { path: 'usuarios/:id/editar', component: UsuarioForm },
