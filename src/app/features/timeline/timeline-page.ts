@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, ElementRef, inject, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Licenca } from '../licencas/licenca';
@@ -146,6 +146,11 @@ export class TimelinePage {
       novo.add(usuarioId);
     }
     this.colapsados.set(novo);
+  }
+
+  @HostListener('document:keydown.escape')
+  protected fecharModal(): void {
+    this.selecionado.set(null);
   }
 
   protected selecionar(usuario: TimelineUsuario, licenca: TimelineLicencaItem): void {

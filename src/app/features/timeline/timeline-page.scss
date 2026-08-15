@@ -252,23 +252,34 @@ h1 {
   opacity: 0.85;
 }
 
-.detalhes {
-  margin-top: 1rem;
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
-  padding: 1.25rem;
-  max-width: 420px;
+.modal-fundo {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 100;
 }
 
-.detalhes__cabecalho {
+.modal {
+  background: #fff;
+  border-radius: 10px;
+  padding: 1.25rem;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.2);
+}
+
+.modal__cabecalho {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 0.5rem;
 }
 
-.detalhes__cabecalho h2 {
+.modal__cabecalho h2 {
   margin: 0;
   font-size: 1rem;
   color: #1e293b;
@@ -284,22 +295,22 @@ h1 {
   padding: 0.15rem 0.4rem;
 }
 
-.detalhes dl {
+.modal dl {
   margin: 0;
 }
 
-.detalhes dt {
+.modal dt {
   font-size: 0.75rem;
   text-transform: uppercase;
   color: #64748b;
   margin-top: 0.6rem;
 }
 
-.detalhes dt:first-child {
+.modal dt:first-child {
   margin-top: 0;
 }
 
-.detalhes dd {
+.modal dd {
   margin: 0.1rem 0 0;
   color: #1e293b;
   font-size: 0.95rem;

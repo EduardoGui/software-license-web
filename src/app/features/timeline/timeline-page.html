@@ -158,25 +158,27 @@
   }
 
   @if (selecionado()) {
-    <div class="detalhes">
-      <div class="detalhes__cabecalho">
-        <h2>Detalhes</h2>
-        <button type="button" class="botao-fechar" aria-label="Fechar detalhes" (click)="selecionado.set(null)">×</button>
+    <div class="modal-fundo" (click)="selecionado.set(null)">
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Detalhes da movimentação" (click)="$event.stopPropagation()">
+        <div class="modal__cabecalho">
+          <h2>Detalhes</h2>
+          <button type="button" class="botao-fechar" aria-label="Fechar detalhes" (click)="selecionado.set(null)">×</button>
+        </div>
+        <dl>
+          <dt>Usuário</dt>
+          <dd>{{ selecionado()!.usuarioNome }}</dd>
+          <dt>Licença</dt>
+          <dd>{{ selecionado()!.licencaNome }}</dd>
+          <dt>Início</dt>
+          <dd>{{ selecionado()!.dataInicio | dataBr }}</dd>
+          <dt>Fim</dt>
+          <dd>{{ selecionado()!.dataFim | dataBr }}</dd>
+          <dt>Status</dt>
+          <dd>{{ selecionado()!.status }}</dd>
+          <dt>Observação</dt>
+          <dd>{{ selecionado()!.observacao || '-' }}</dd>
+        </dl>
       </div>
-      <dl>
-        <dt>Usuário</dt>
-        <dd>{{ selecionado()!.usuarioNome }}</dd>
-        <dt>Licença</dt>
-        <dd>{{ selecionado()!.licencaNome }}</dd>
-        <dt>Início</dt>
-        <dd>{{ selecionado()!.dataInicio | dataBr }}</dd>
-        <dt>Fim</dt>
-        <dd>{{ selecionado()!.dataFim | dataBr }}</dd>
-        <dt>Status</dt>
-        <dd>{{ selecionado()!.status }}</dd>
-        <dt>Observação</dt>
-        <dd>{{ selecionado()!.observacao || '-' }}</dd>
-      </dl>
     </div>
   }
 </section>
