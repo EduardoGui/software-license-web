@@ -1,59 +1,60 @@
-# SoftwareLicenseWeb
+# Controle de Licenças de Software — Web
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 22.1.3.
+Frontend em Angular do sistema de Controle de Licenças de Software. Documentação completa do projeto (modelo de domínio, regras de negócio, roteiro de fases) fica em [`../CLAUDE.md`](../CLAUDE.md).
 
-## Development server
+## Stack
 
-To start a local development server, run:
+- Angular 22 (standalone components, signals, novo control flow `@if`/`@for`)
+- TypeScript
+- Reactive Forms (formulários) + Template-driven Forms (filtros simples)
+- CSS/SCSS puro (sem biblioteca de componentes)
 
-```bash
-ng serve
+## Estrutura
+
+```text
+src/app/
+  core/               interceptor e guard de autenticação
+  shared/
+    icons/             componente de ícone (SVG inline, sem dependência externa)
+    pipes/             pipe de data em formato brasileiro (dataBr)
+  features/
+    auth/              login
+    dashboard/         cards + próximos vencimentos
+    usuarios/          CRUD de colaboradores
+    licencas/          CRUD de licenças
+    movimentacoes/      alocar/encerrar licenças
+    timeline/          linha do tempo (CSS/HTML puro, sem lib de gráficos)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Cada feature segue o mesmo padrão: `entidade.ts` (modelo), `entidade.service.ts` (chamadas HTTP), telas de listagem/formulário/visualização separadas.
 
-## Code scaffolding
+## Pré-requisitos
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Node.js 20+
+- [`software-license-api`](../software-license-api) rodando em `http://localhost:5289`
 
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## Rodando localmente
 
 ```bash
-ng generate --help
+npm install
+npm start
 ```
 
-## Building
+Abre em `http://localhost:4200`. A URL da API é configurada em `src/environments/environment.development.ts`.
 
-To build the project run:
+Login necessário para acessar qualquer tela — veja o README da API para criar o usuário administrador local.
+
+## Build
 
 ```bash
-ng build
+npm run build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+Gera os artefatos de produção em `dist/`.
 
-## Running unit tests
+## Padrões do projeto
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- **Sem biblioteca de UI** (Angular Material, etc.) — componentes leves em CSS/SCSS puro, por decisão do projeto (ver seção 3 do `CLAUDE.md`).
+- **Sem NgRx/gerenciador de estado** — cada tela carrega seus próprios dados via `signal()`.
+- Nomes de domínio, rotas e mensagens em português; nomes técnicos (classes, tipos) em inglês.
+- Autenticação: token JWT em `localStorage`, anexado automaticamente pelo `authInterceptor` (`core/auth-interceptor.ts`); rotas protegidas por `authGuard` (`core/auth-guard.ts`).

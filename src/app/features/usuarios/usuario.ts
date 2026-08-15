@@ -6,6 +6,7 @@ export interface Usuario {
   dataFim: string | null;
   observacao: string | null;
   status: 'Agendado' | 'Ativo' | 'Inativo';
+  licencasEmUso: number;
   dataCriacao: string;
   dataAtualizacao: string;
 }

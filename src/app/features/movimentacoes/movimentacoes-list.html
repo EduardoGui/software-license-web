@@ -52,49 +52,50 @@
   } @else if (movimentacoes().length === 0) {
     <p class="status">Nenhuma movimentação encontrada.</p>
   } @else {
-    <table>
-      <thead>
-        <tr>
-          <th>Usuário</th>
-          <th>Licença</th>
-          <th>Início</th>
-          <th>Fim</th>
-          <th>Status</th>
-          <th>Observação</th>
-          <th>Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (movimentacao of movimentacoes(); track movimentacao.id) {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
           <tr>
-            <td>{{ movimentacao.usuarioNome }}</td>
-            <td>{{ movimentacao.licencaNome }}</td>
-            <td>{{ movimentacao.dataInicio | dataBr }}</td>
-            <td>{{ movimentacao.dataFim | dataBr }}</td>
-            <td>
-              <span class="badge" [class]="'badge--' + (movimentacao.status === 'Em uso' ? 'em-uso' : 'encerrado')">
-                {{ movimentacao.status }}
-              </span>
-            </td>
-            <td>{{ movimentacao.observacao || '-' }}</td>
-            <td class="acoes">
-              @if (movimentacao.status === 'Em uso') {
-                <button
-                  type="button"
-                  class="botao--link botao--link-sucesso"
-                  title="Encerrar"
-                  aria-label="Encerrar"
-                  [disabled]="encerrandoId() === movimentacao.id"
-                  (click)="encerrar(movimentacao)"
-                >
-                  <app-icon name="check-circle" [size]="18" />
-                </button>
-              }
-            </td>
+            <th>Usuário</th>
+            <th>Licença</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Status</th>
+            <th>Observação</th>
+            <th>Ações</th>
           </tr>
-        }
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          @for (movimentacao of movimentacoes(); track movimentacao.id) {
+            <tr>
+              <td>{{ movimentacao.usuarioNome }}</td>
+              <td>{{ movimentacao.licencaNome }}</td>
+              <td>{{ movimentacao.dataInicio | dataBr }}</td>
+              <td>{{ movimentacao.dataFim | dataBr }}</td>
+              <td>
+                <span class="badge" [class]="'badge--' + (movimentacao.status === 'Em uso' ? 'em-uso' : 'encerrado')">
+                  {{ movimentacao.status }}
+                </span>
+              </td>
+              <td>{{ movimentacao.observacao || '-' }}</td>
+              <td class="acoes">
+                @if (movimentacao.status === 'Em uso') {
+                  <a
+                    [routerLink]="['/movimentacoes', movimentacao.id, 'encerrar']"
+                    [state]="{ usuarioNome: movimentacao.usuarioNome, licencaNome: movimentacao.licencaNome }"
+                    class="botao--link botao--link-sucesso"
+                    title="Encerrar"
+                    aria-label="Encerrar"
+                  >
+                    <app-icon name="check-circle" [size]="18" />
+                  </a>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
 
     <div class="paginacao">
       <label>

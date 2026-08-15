@@ -28,7 +28,6 @@ export class MovimentacoesList {
   protected readonly licencas = signal<Licenca[]>([]);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
-  protected readonly encerrandoId = signal<number | null>(null);
 
   protected filtro: MovimentacaoFiltro = { pagina: 1, tamanhoPagina: 10, status: 'Em uso' };
 
@@ -76,30 +75,5 @@ export class MovimentacoesList {
     }
     this.filtro.pagina = pagina;
     this.buscar();
-  }
-
-  protected encerrar(movimentacao: Movimentacao): void {
-    const hoje = new Date().toISOString().slice(0, 10);
-    const dataFim = prompt(
-      `Data de fim para encerrar "${movimentacao.licencaNome}" de ${movimentacao.usuarioNome}:`,
-      hoje,
-    );
-    if (!dataFim) {
-      return;
-    }
-
-    const observacao = prompt('Observação (opcional):', '');
-
-    this.encerrandoId.set(movimentacao.id);
-    this.movimentacaoService.encerrar(movimentacao.id, { dataFim, observacao: observacao || null }).subscribe({
-      next: () => {
-        this.encerrandoId.set(null);
-        this.buscar();
-      },
-      error: (err) => {
-        this.encerrandoId.set(null);
-        alert(err?.error?.message ?? 'Não foi possível encerrar a movimentação.');
-      },
-    });
   }
 }

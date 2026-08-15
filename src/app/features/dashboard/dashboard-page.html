@@ -23,6 +23,10 @@
         <span class="card__valor">{{ dados()!.licencasDisponiveis }}</span>
         <span class="card__rotulo">Licenças disponíveis</span>
       </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.proximosVencimentos.length }}</span>
+        <span class="card__rotulo">Próximos vencimentos</span>
+      </div>
     </div>
 
     <div class="vencimentos">
@@ -30,32 +34,34 @@
       @if (dados()!.proximosVencimentos.length === 0) {
         <p class="status">Nenhuma licença perto do vencimento.</p>
       } @else {
-        <table>
-          <thead>
-            <tr>
-              <th>Licença</th>
-              <th>Término previsto</th>
-              <th>Situação</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (vencimento of dados()!.proximosVencimentos; track vencimento.licencaId) {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
               <tr>
-                <td><a [routerLink]="['/licencas', vencimento.licencaId]">{{ vencimento.nome }}</a></td>
-                <td>{{ vencimento.dataTerminoPrevisto | dataBr }}</td>
-                <td>
-                  @if (vencimento.diasParaVencer < 0) {
-                    <span class="badge badge--vencida">Vencida há {{ -vencimento.diasParaVencer }} dia(s)</span>
-                  } @else if (vencimento.diasParaVencer === 0) {
-                    <span class="badge badge--vencendo">Vence hoje</span>
-                  } @else {
-                    <span class="badge badge--vencendo">Vence em {{ vencimento.diasParaVencer }} dia(s)</span>
-                  }
-                </td>
+                <th>Licença</th>
+                <th>Término previsto</th>
+                <th>Situação</th>
               </tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (vencimento of dados()!.proximosVencimentos; track vencimento.licencaId) {
+                <tr>
+                  <td><a [routerLink]="['/licencas', vencimento.licencaId]">{{ vencimento.nome }}</a></td>
+                  <td>{{ vencimento.dataTerminoPrevisto | dataBr }}</td>
+                  <td>
+                    @if (vencimento.diasParaVencer < 0) {
+                      <span class="badge badge--vencida">Vencida há {{ -vencimento.diasParaVencer }} dia(s)</span>
+                    } @else if (vencimento.diasParaVencer === 0) {
+                      <span class="badge badge--vencendo">Vence hoje</span>
+                    } @else {
+                      <span class="badge badge--vencendo">Vence em {{ vencimento.diasParaVencer }} dia(s)</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
     </div>
   }
