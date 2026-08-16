@@ -38,6 +38,32 @@
   padding: 0 0.75rem;
 }
 
+.menu__grupo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  font-family: system-ui, sans-serif;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.menu__grupo:hover {
+  color: #fff;
+}
+
+.menu__grupo-seta {
+  font-size: 0.7rem;
+}
+
 .menu__item {
   font-family: system-ui, sans-serif;
   color: #cbd5e1;
@@ -45,6 +71,10 @@
   padding: 0.6rem 0.75rem;
   border-radius: 6px;
   font-size: 0.9rem;
+}
+
+.menu__item--sub {
+  padding-left: 1.75rem;
 }
 
 .menu__item:hover {

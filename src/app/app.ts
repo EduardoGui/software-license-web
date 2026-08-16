@@ -17,11 +17,16 @@ export class App {
 
   protected readonly urlAtual = signal(this.router.url);
   protected readonly mostrarShell = computed(() => !this.urlAtual().startsWith('/login'));
+  protected readonly grupoLicencasAberto = signal(true);
 
   constructor() {
     this.router.events.pipe(filter((evento) => evento instanceof NavigationEnd)).subscribe(() => {
       this.urlAtual.set(this.router.url);
     });
+  }
+
+  protected alternarGrupoLicencas(): void {
+    this.grupoLicencasAberto.update((aberto) => !aberto);
   }
 
   protected sair(): void {
