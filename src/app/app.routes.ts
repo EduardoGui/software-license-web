@@ -13,6 +13,8 @@ import { MovimentacoesList } from './features/movimentacoes/movimentacoes-list';
 import { MovimentacaoForm } from './features/movimentacoes/movimentacao-form';
 import { MovimentacaoEncerrar } from './features/movimentacoes/movimentacao-encerrar';
 import { TimelinePage } from './features/timeline/timeline-page';
+import { TiposEquipamentoList } from './features/tipos-equipamento/tipos-equipamento-list';
+import { TipoEquipamentoForm } from './features/tipos-equipamento/tipo-equipamento-form';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -33,6 +35,9 @@ export const routes: Routes = [
       { path: 'movimentacoes/nova', component: MovimentacaoForm },
       { path: 'movimentacoes/:id/encerrar', component: MovimentacaoEncerrar },
       { path: 'timeline', component: TimelinePage },
+      { path: 'equipamentos/tipos', component: TiposEquipamentoList },
+      { path: 'equipamentos/tipos/novo', component: TipoEquipamentoForm },
+      { path: 'equipamentos/tipos/:id/editar', component: TipoEquipamentoForm },
     ],
   },
 ];

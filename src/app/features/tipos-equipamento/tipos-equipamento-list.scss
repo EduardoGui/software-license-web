@@ -1,0 +1,150 @@
+.tipos-equipamento {
+  max-width: 1080px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  color: #1d4ed8;
+  margin: 0;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: #334155;
+}
+
+.filtros input,
+.filtros select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.filtros__acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.botao {
+  border: 1px solid #1d4ed8;
+  background: #fff;
+  color: #1d4ed8;
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.botao--primario {
+  background: #1d4ed8;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.botao--texto {
+  border-color: transparent;
+  color: #64748b;
+}
+
+.status {
+  color: #475569;
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+.tabela-scroll {
+  overflow-x: auto;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+th {
+  background: #f4f6f9;
+  color: #334155;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.badge--ativa {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.badge--inativa {
+  background: #f1f5f9;
+  color: #64748b;
+}
+
+.acoes {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+}
+
+.acoes a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.acoes a:hover {
+  background: #eff6ff;
+}
