@@ -48,7 +48,7 @@ export class TimelinePage {
   protected readonly licencasFiltro = signal<Licenca[]>([]);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
-  protected readonly colapsados = signal<Set<number>>(new Set());
+  protected readonly expandidos = signal<Set<number>>(new Set());
   protected readonly selecionado = signal<Selecionado | null>(null);
   protected readonly periodoAtivo = signal<PeriodoPreset>('ultimos6meses');
 
@@ -135,17 +135,17 @@ export class TimelinePage {
   }
 
   protected expandido(usuarioId: number): boolean {
-    return !this.colapsados().has(usuarioId);
+    return this.expandidos().has(usuarioId);
   }
 
   protected alternarExpandido(usuarioId: number): void {
-    const novo = new Set(this.colapsados());
+    const novo = new Set(this.expandidos());
     if (novo.has(usuarioId)) {
       novo.delete(usuarioId);
     } else {
       novo.add(usuarioId);
     }
-    this.colapsados.set(novo);
+    this.expandidos.set(novo);
   }
 
   @HostListener('document:keydown.escape')
