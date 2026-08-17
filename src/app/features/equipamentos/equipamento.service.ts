@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import { Equipamento, EquipamentoFiltro, EquipamentoPayload } from './equipamento';
+import { Inventario } from './inventario';
 
 @Injectable({ providedIn: 'root' })
 export class EquipamentoService {
@@ -31,5 +32,9 @@ export class EquipamentoService {
 
   baixar(id: number): Observable<Equipamento> {
     return this.http.patch<Equipamento>(`${this.baseUrl}/${id}/baixar`, {});
+  }
+
+  inventario(): Observable<Inventario> {
+    return this.http.get<Inventario>(`${this.baseUrl}/inventario`);
   }
 }

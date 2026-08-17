@@ -1,0 +1,56 @@
+<section class="inventario">
+  <header class="topo">
+    <h1>Inventário</h1>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !inventario()) {
+    <p class="status status--erro">Não foi possível carregar o inventário. Verifique se a API está em execução.</p>
+  } @else if (inventario()!.grupos.length === 0) {
+    <p class="status">Nenhum equipamento cadastrado.</p>
+  } @else {
+    <p class="resumo">{{ inventario()!.totalGeral }} equipamento(s) no total</p>
+
+    @for (grupo of inventario()!.grupos; track grupo.tipoEquipamentoId) {
+      <div class="grupo">
+        <div class="grupo__cabecalho">
+          <h2>{{ grupo.tipoEquipamentoNome }}</h2>
+          <div class="grupo__totais">
+            <span class="badge badge--disponivel">{{ grupo.totalDisponivel }} disponível</span>
+            <span class="badge badge--emuso">{{ grupo.totalEmUso }} em uso</span>
+            <span class="badge badge--manutencao">{{ grupo.totalManutencao }} manutenção</span>
+            <span class="badge badge--baixado">{{ grupo.totalBaixado }} baixado</span>
+          </div>
+        </div>
+
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Marca/Modelo</th>
+                <th>Nº Série</th>
+                <th>Patrimônio</th>
+                <th>Origem</th>
+                <th>Status</th>
+                <th>Usuário atual</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of grupo.itens; track item.id) {
+                <tr>
+                  <td>{{ item.marca || item.modelo ? (item.marca || '') + ' ' + (item.modelo || '') : '-' }}</td>
+                  <td>{{ item.numeroSerie || '-' }}</td>
+                  <td>{{ item.patrimonio || '-' }}</td>
+                  <td>{{ item.origem }}</td>
+                  <td><span class="badge" [class]="'badge--' + item.status.toLowerCase()">{{ item.status }}</span></td>
+                  <td>{{ item.usuarioAtualNome || '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+</section>
