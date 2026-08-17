@@ -15,6 +15,9 @@ import { MovimentacaoEncerrar } from './features/movimentacoes/movimentacao-ence
 import { TimelinePage } from './features/timeline/timeline-page';
 import { TiposEquipamentoList } from './features/tipos-equipamento/tipos-equipamento-list';
 import { TipoEquipamentoForm } from './features/tipos-equipamento/tipo-equipamento-form';
+import { NotasFiscaisEntradaList } from './features/notas-fiscais-entrada/notas-fiscais-entrada-list';
+import { NotaFiscalEntradaForm } from './features/notas-fiscais-entrada/nota-fiscal-entrada-form';
+import { NotaFiscalEntradaView } from './features/notas-fiscais-entrada/nota-fiscal-entrada-view';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -38,6 +41,9 @@ export const routes: Routes = [
       { path: 'equipamentos/tipos', component: TiposEquipamentoList },
       { path: 'equipamentos/tipos/novo', component: TipoEquipamentoForm },
       { path: 'equipamentos/tipos/:id/editar', component: TipoEquipamentoForm },
+      { path: 'equipamentos/notas-fiscais', component: NotasFiscaisEntradaList },
+      { path: 'equipamentos/notas-fiscais/novo', component: NotaFiscalEntradaForm },
+      { path: 'equipamentos/notas-fiscais/:id', component: NotaFiscalEntradaView },
     ],
   },
 ];

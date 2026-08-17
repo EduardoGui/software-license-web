@@ -1,0 +1,45 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Nova nota fiscal de entrada</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()">
+    @if (erro()) {
+      <p class="status status--erro">{{ erro() }}</p>
+    }
+
+    <label>
+      Número *
+      <input type="text" formControlName="numero" />
+      @if (form.controls.numero.invalid && form.controls.numero.touched) {
+        <span class="campo-erro">Número é obrigatório.</span>
+      }
+    </label>
+
+    <label>
+      Data de entrada *
+      <input type="date" formControlName="dataEntrada" />
+      @if (form.controls.dataEntrada.invalid && form.controls.dataEntrada.touched) {
+        <span class="campo-erro">Data de entrada é obrigatória.</span>
+      }
+    </label>
+
+    <label>
+      Fornecedor
+      <input type="text" formControlName="fornecedorNome" />
+    </label>
+
+    <label>
+      Observação
+      <textarea formControlName="observacao" rows="3"></textarea>
+    </label>
+
+    <div class="acoes">
+      <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+      </button>
+      <a routerLink="/equipamentos/notas-fiscais" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+    </div>
+  </form>
+</section>

@@ -1,0 +1,104 @@
+<section class="nota-fiscal-view">
+  <header class="topo">
+    <h1>Nota fiscal de entrada</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !nota()) {
+    <p class="status status--erro">Não foi possível carregar a nota fiscal.</p>
+  } @else {
+    <div class="cabecalho-nota">
+      <dl>
+        <dt>Número</dt>
+        <dd>{{ nota()!.numero }}</dd>
+        <dt>Data de entrada</dt>
+        <dd>{{ nota()!.dataEntrada | dataBr }}</dd>
+        <dt>Fornecedor</dt>
+        <dd>{{ nota()!.fornecedorNome || '-' }}</dd>
+        <dt>Observação</dt>
+        <dd>{{ nota()!.observacao || '-' }}</dd>
+      </dl>
+    </div>
+
+    <h2>Itens do romaneio</h2>
+
+    @if (nota()!.itens.length === 0) {
+      <p class="status">Nenhum item adicionado ainda.</p>
+    } @else {
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Quantidade</th>
+              <th>Valor unitário</th>
+              <th>Origem</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of nota()!.itens; track item.id) {
+              <tr>
+                <td>{{ item.tipoEquipamentoNome }}</td>
+                <td>{{ item.descricao || '-' }}</td>
+                <td>{{ item.quantidade }}</td>
+                <td>{{ item.valorUnitario !== null ? (item.valorUnitario | number: '1.2-2') : '-' }}</td>
+                <td>{{ item.origem }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+
+    <h2>Adicionar item</h2>
+    <p class="ajuda">Ao salvar, o sistema gera automaticamente uma unidade de equipamento para cada item da quantidade informada.</p>
+
+    <form class="form-item" [formGroup]="formItem" (ngSubmit)="adicionarItem()">
+      @if (erroItem()) {
+        <p class="status status--erro">{{ erroItem() }}</p>
+      }
+
+      <div class="form-item__grade">
+        <label>
+          Tipo de equipamento *
+          <select formControlName="tipoEquipamentoId">
+            <option [ngValue]="0">Selecione...</option>
+            @for (tipo of tipos(); track tipo.id) {
+              <option [ngValue]="tipo.id">{{ tipo.nome }}</option>
+            }
+          </select>
+        </label>
+
+        <label>
+          Origem *
+          <select formControlName="origem">
+            <option value="Comprado">Comprado</option>
+            <option value="Locado">Locado</option>
+          </select>
+        </label>
+
+        <label>
+          Quantidade *
+          <input type="number" min="1" formControlName="quantidade" />
+        </label>
+
+        <label>
+          Valor unitário
+          <input type="number" min="0" step="0.01" formControlName="valorUnitario" />
+        </label>
+
+        <label class="form-item__descricao">
+          Descrição
+          <input type="text" formControlName="descricao" />
+        </label>
+      </div>
+
+      <button type="submit" class="botao botao--primario" [disabled]="salvandoItem()">
+        <app-icon name="plus" [size]="16" /> {{ salvandoItem() ? 'Adicionando...' : 'Adicionar item' }}
+      </button>
+    </form>
+  }
+</section>

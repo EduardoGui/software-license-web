@@ -1,0 +1,58 @@
+<section class="notas-fiscais">
+  <header class="topo">
+    <h1>Notas Fiscais de Entrada</h1>
+    <a class="botao botao--primario" routerLink="/equipamentos/notas-fiscais/novo"><app-icon name="plus" [size]="16" /> Nova nota fiscal</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Número
+      <input type="text" name="numero" [(ngModel)]="filtro.numero" placeholder="Buscar por número" />
+    </label>
+    <label>
+      Fornecedor
+      <input type="text" name="fornecedorNome" [(ngModel)]="filtro.fornecedorNome" placeholder="Buscar por fornecedor" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as notas fiscais. Verifique se a API está em execução.</p>
+  } @else if (notas().length === 0) {
+    <p class="status">Nenhuma nota fiscal encontrada.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Data de entrada</th>
+            <th>Fornecedor</th>
+            <th>Itens</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (nota of notas(); track nota.id) {
+            <tr>
+              <td>{{ nota.numero }}</td>
+              <td>{{ nota.dataEntrada | dataBr }}</td>
+              <td>{{ nota.fornecedorNome || '-' }}</td>
+              <td>{{ nota.quantidadeItens }}</td>
+              <td class="acoes">
+                <a [routerLink]="['/equipamentos/notas-fiscais', nota.id]" title="Ver itens" aria-label="Ver itens">
+                  <app-icon name="eye" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
