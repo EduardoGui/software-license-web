@@ -27,6 +27,22 @@
         <span class="card__valor">{{ dados()!.proximosVencimentos.length }}</span>
         <span class="card__rotulo">Próximos vencimentos</span>
       </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.equipamentosEmUso }}</span>
+        <span class="card__rotulo">Equipamentos em uso</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.equipamentosDisponiveis }}</span>
+        <span class="card__rotulo">Equipamentos disponíveis</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.equipamentosLocadosAtivos }}</span>
+        <span class="card__rotulo">Equipamentos locados ativos</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.custoMensalLocacaoAtual | number: '1.2-2' }}</span>
+        <span class="card__rotulo">Custo mensal de locação (mês atual)</span>
+      </div>
     </div>
 
     <div class="vencimentos">
@@ -51,6 +67,42 @@
                   <td>
                     @if (vencimento.diasParaVencer < 0) {
                       <span class="badge badge--vencida">Vencida há {{ -vencimento.diasParaVencer }} dia(s)</span>
+                    } @else if (vencimento.diasParaVencer === 0) {
+                      <span class="badge badge--vencendo">Vence hoje</span>
+                    } @else {
+                      <span class="badge badge--vencendo">Vence em {{ vencimento.diasParaVencer }} dia(s)</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <div class="vencimentos">
+      <h2>Contratos de locação vencendo em breve</h2>
+      @if (dados()!.proximosVencimentosContratos.length === 0) {
+        <p class="status">Nenhum contrato de locação perto do vencimento.</p>
+      } @else {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Equipamento</th>
+                <th>Fim do contrato</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (vencimento of dados()!.proximosVencimentosContratos; track vencimento.equipamentoId) {
+                <tr>
+                  <td><a [routerLink]="['/equipamentos/lista', vencimento.equipamentoId, 'editar']">{{ vencimento.descricao }}</a></td>
+                  <td>{{ vencimento.dataFimContrato | dataBr }}</td>
+                  <td>
+                    @if (vencimento.diasParaVencer < 0) {
+                      <span class="badge badge--vencida">Vencido há {{ -vencimento.diasParaVencer }} dia(s)</span>
                     } @else if (vencimento.diasParaVencer === 0) {
                       <span class="badge badge--vencendo">Vence hoje</span>
                     } @else {

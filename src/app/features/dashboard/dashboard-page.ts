@@ -1,3 +1,4 @@
+import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
@@ -7,7 +8,7 @@ import { DashboardService } from './dashboard.service';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [RouterLink, DataBrPipe],
+  imports: [RouterLink, DataBrPipe, DecimalPipe],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',
 })
