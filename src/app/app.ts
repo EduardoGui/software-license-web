@@ -18,6 +18,7 @@ export class App {
   protected readonly urlAtual = signal(this.router.url);
   protected readonly mostrarShell = computed(() => !this.urlAtual().startsWith('/login'));
   protected readonly grupoLicencasAberto = signal(true);
+  protected readonly grupoEquipamentosAberto = signal(true);
   protected readonly menuMobileAberto = signal(false);
 
   constructor() {
@@ -29,6 +30,10 @@ export class App {
 
   protected alternarGrupoLicencas(): void {
     this.grupoLicencasAberto.update((aberto) => !aberto);
+  }
+
+  protected alternarGrupoEquipamentos(): void {
+    this.grupoEquipamentosAberto.update((aberto) => !aberto);
   }
 
   protected alternarMenuMobile(): void {

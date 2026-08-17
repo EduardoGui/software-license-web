@@ -34,6 +34,22 @@
           <a routerLink="/movimentacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Movimentações</a>
           <a routerLink="/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Linha do Tempo</a>
         }
+        <button type="button" class="menu__grupo" (click)="alternarGrupoEquipamentos()">
+          <span class="menu__grupo-seta">{{ grupoEquipamentosAberto() ? '▾' : '▸' }}</span>
+          Equipamentos
+        </button>
+        @if (grupoEquipamentosAberto()) {
+          <a routerLink="/equipamentos/tipos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Tipos de Equipamento</a>
+          <a routerLink="/equipamentos/notas-fiscais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+            Notas Fiscais
+          </a>
+          <a routerLink="/equipamentos/lista" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Equipamentos</a>
+          <a routerLink="/equipamentos/alocacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Alocações</a>
+          <a routerLink="/equipamentos/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+            Relatório Mensal
+          </a>
+          <a routerLink="/equipamentos/inventario" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Inventário</a>
+        }
         <div class="menu__rodape-mobile">
           <span class="usuario-logado">{{ authService.obterEmail() }}</span>
           <button type="button" class="botao-sair" (click)="sair()">
