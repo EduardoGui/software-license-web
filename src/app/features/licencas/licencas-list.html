@@ -51,7 +51,16 @@
         <tbody>
           @for (licenca of licencas(); track licenca.id) {
             <tr>
-              <td>{{ licenca.nome }}</td>
+              <td>
+                @if (licenca.quantidadeEmUso > 0) {
+                  <button type="button" class="linha-expandir" (click)="alternarExpandir(licenca)">
+                    <span class="seta">{{ expandido(licenca.id) ? '▾' : '▸' }}</span>
+                    {{ licenca.nome }}
+                  </button>
+                } @else {
+                  {{ licenca.nome }}
+                }
+              </td>
               <td>{{ licenca.quantidadeTotal }}</td>
               <td>{{ licenca.quantidadeEmUso }}</td>
               <td>{{ licenca.quantidadeDisponivel }}</td>
@@ -75,6 +84,32 @@
                 }
               </td>
             </tr>
+            @if (expandido(licenca.id)) {
+              <tr class="linha-detalhe">
+                <td colspan="8">
+                  @if (carregandoUsuarios().has(licenca.id)) {
+                    <p class="status status--detalhe">Carregando...</p>
+                  } @else {
+                    <table class="tabela-detalhe">
+                      <thead>
+                        <tr>
+                          <th>Usuário</th>
+                          <th>Em uso desde</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        @for (movimentacao of usuariosPorLicenca().get(licenca.id); track movimentacao.id) {
+                          <tr>
+                            <td>{{ movimentacao.usuarioNome }}</td>
+                            <td>{{ movimentacao.dataInicio | dataBr }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+                </td>
+              </tr>
+            }
           }
         </tbody>
       </table>

@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { Movimentacao } from '../movimentacoes/movimentacao';
+import { MovimentacaoService } from '../movimentacoes/movimentacao.service';
 import { Licenca, LicencaFiltro } from './licenca';
 import { LicencaService } from './licenca.service';
 
@@ -15,11 +17,16 @@ import { LicencaService } from './licenca.service';
 })
 export class LicencasList {
   private readonly licencaService = inject(LicencaService);
+  private readonly movimentacaoService = inject(MovimentacaoService);
 
   protected readonly licencas = signal<Licenca[]>([]);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
   protected readonly desativandoId = signal<number | null>(null);
+
+  protected readonly expandidos = signal<Set<number>>(new Set());
+  protected readonly carregandoUsuarios = signal<Set<number>>(new Set());
+  protected readonly usuariosPorLicenca = signal<Map<number, Movimentacao[]>>(new Map());
 
   protected filtro: LicencaFiltro = { status: 'Ativa' };
 
@@ -46,6 +53,50 @@ export class LicencasList {
   protected limparFiltro(): void {
     this.filtro = { status: 'Ativa' };
     this.buscar();
+  }
+
+  protected expandido(licencaId: number): boolean {
+    return this.expandidos().has(licencaId);
+  }
+
+  protected alternarExpandir(licenca: Licenca): void {
+    const novo = new Set(this.expandidos());
+
+    if (novo.has(licenca.id)) {
+      novo.delete(licenca.id);
+      this.expandidos.set(novo);
+      return;
+    }
+
+    novo.add(licenca.id);
+    this.expandidos.set(novo);
+
+    if (!this.usuariosPorLicenca().has(licenca.id)) {
+      this.carregarUsuarios(licenca.id);
+    }
+  }
+
+  private carregarUsuarios(licencaId: number): void {
+    const carregando = new Set(this.carregandoUsuarios());
+    carregando.add(licencaId);
+    this.carregandoUsuarios.set(carregando);
+
+    this.movimentacaoService.listar({ licencaId, status: 'Em uso', tamanhoPagina: 50 }).subscribe({
+      next: (pagina) => {
+        const mapa = new Map(this.usuariosPorLicenca());
+        mapa.set(licencaId, pagina.itens);
+        this.usuariosPorLicenca.set(mapa);
+
+        const aindaCarregando = new Set(this.carregandoUsuarios());
+        aindaCarregando.delete(licencaId);
+        this.carregandoUsuarios.set(aindaCarregando);
+      },
+      error: () => {
+        const aindaCarregando = new Set(this.carregandoUsuarios());
+        aindaCarregando.delete(licencaId);
+        this.carregandoUsuarios.set(aindaCarregando);
+      },
+    });
   }
 
   protected desativar(licenca: Licenca): void {
