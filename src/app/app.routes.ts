@@ -18,6 +18,8 @@ import { TipoEquipamentoForm } from './features/tipos-equipamento/tipo-equipamen
 import { NotasFiscaisEntradaList } from './features/notas-fiscais-entrada/notas-fiscais-entrada-list';
 import { NotaFiscalEntradaForm } from './features/notas-fiscais-entrada/nota-fiscal-entrada-form';
 import { NotaFiscalEntradaView } from './features/notas-fiscais-entrada/nota-fiscal-entrada-view';
+import { EquipamentosList } from './features/equipamentos/equipamentos-list';
+import { EquipamentoForm } from './features/equipamentos/equipamento-form';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -44,6 +46,8 @@ export const routes: Routes = [
       { path: 'equipamentos/notas-fiscais', component: NotasFiscaisEntradaList },
       { path: 'equipamentos/notas-fiscais/novo', component: NotaFiscalEntradaForm },
       { path: 'equipamentos/notas-fiscais/:id', component: NotaFiscalEntradaView },
+      { path: 'equipamentos/lista', component: EquipamentosList },
+      { path: 'equipamentos/lista/:id/editar', component: EquipamentoForm },
     ],
   },
 ];

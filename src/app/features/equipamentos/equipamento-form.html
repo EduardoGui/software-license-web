@@ -1,0 +1,99 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Editar equipamento</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (!equipamento()) {
+    <p class="status status--erro">{{ erro() }}</p>
+  } @else {
+    <div class="info-fixa">
+      <dl>
+        <dt>Tipo</dt>
+        <dd>{{ equipamento()!.tipoEquipamentoNome }}</dd>
+        <dt>Origem</dt>
+        <dd>{{ equipamento()!.origem }}</dd>
+        @if (equipamento()!.numeroNotaFiscal) {
+          <dt>Nota fiscal de origem</dt>
+          <dd>
+            <a [routerLink]="['/equipamentos/notas-fiscais', equipamento()!.notaFiscalEntradaId]">{{ equipamento()!.numeroNotaFiscal }}</a>
+          </dd>
+        }
+        @if (equipamento()!.status === 'EmUso') {
+          <dt>Usuário atual</dt>
+          <dd>{{ equipamento()!.usuarioAtualNome }}</dd>
+        }
+      </dl>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <div class="grade">
+        <label>
+          Marca
+          <input type="text" formControlName="marca" />
+        </label>
+
+        <label>
+          Modelo
+          <input type="text" formControlName="modelo" />
+        </label>
+
+        <label>
+          Nº Série
+          <input type="text" formControlName="numeroSerie" />
+        </label>
+
+        <label>
+          Patrimônio
+          <input type="text" formControlName="patrimonio" />
+        </label>
+
+        <label>
+          Fornecedor
+          <input type="text" formControlName="fornecedorNome" />
+        </label>
+
+        @if (equipamento()!.origem === 'Locado') {
+          <label>
+            Valor mensal
+            <input type="number" min="0" step="0.01" formControlName="valorMensal" />
+          </label>
+
+          <label>
+            Data fim do contrato
+            <input type="date" formControlName="dataFimContrato" />
+          </label>
+        }
+
+        <label>
+          Status
+          <select formControlName="status">
+            <option value="Disponivel">Disponível</option>
+            <option value="Manutencao">Manutenção</option>
+          </select>
+          @if (equipamento()!.status === 'EmUso') {
+            <span class="ajuda">Este equipamento está alocado — o status exibido na listagem continua "Em uso" até a alocação ser encerrada.</span>
+          }
+        </label>
+      </div>
+
+      <label>
+        Observação
+        <textarea formControlName="observacao" rows="3"></textarea>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/equipamentos/lista" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

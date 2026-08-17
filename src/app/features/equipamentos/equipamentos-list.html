@@ -1,0 +1,112 @@
+<section class="equipamentos">
+  <header class="topo">
+    <h1>Equipamentos</h1>
+  </header>
+
+  @if (filtro.notaFiscalEntradaId) {
+    <p class="filtro-ativo">
+      Filtrando por nota fiscal #{{ filtro.notaFiscalEntradaId }}
+      <button type="button" class="botao--texto" (click)="limparFiltro()">Limpar</button>
+    </p>
+  }
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Tipo
+      <select name="tipoEquipamentoId" [(ngModel)]="filtro.tipoEquipamentoId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (tipo of tipos(); track tipo.id) {
+          <option [ngValue]="tipo.id">{{ tipo.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Origem
+      <select name="origem" [(ngModel)]="filtro.origem">
+        <option [ngValue]="undefined">Todas</option>
+        <option value="Comprado">Comprado</option>
+        <option value="Locado">Locado</option>
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option [ngValue]="undefined">Todos</option>
+        <option value="Disponivel">Disponível</option>
+        <option value="EmUso">Em uso</option>
+        <option value="Manutencao">Manutenção</option>
+        <option value="Baixado">Baixado</option>
+      </select>
+    </label>
+    <label>
+      Usuário
+      <select name="usuarioId" [(ngModel)]="filtro.usuarioId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (usuario of usuarios(); track usuario.id) {
+          <option [ngValue]="usuario.id">{{ usuario.nome }}</option>
+        }
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os equipamentos. Verifique se a API está em execução.</p>
+  } @else if (equipamentos().length === 0) {
+    <p class="status">Nenhum equipamento encontrado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Marca/Modelo</th>
+            <th>Nº Série</th>
+            <th>Patrimônio</th>
+            <th>Origem</th>
+            <th>Valor mensal</th>
+            <th>Status</th>
+            <th>Usuário atual</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (equipamento of equipamentos(); track equipamento.id) {
+            <tr>
+              <td>{{ equipamento.tipoEquipamentoNome }}</td>
+              <td>{{ equipamento.marca || equipamento.modelo ? (equipamento.marca || '') + ' ' + (equipamento.modelo || '') : '-' }}</td>
+              <td>{{ equipamento.numeroSerie || '-' }}</td>
+              <td>{{ equipamento.patrimonio || '-' }}</td>
+              <td>{{ equipamento.origem }}</td>
+              <td>{{ equipamento.valorMensal !== null ? (equipamento.valorMensal | number: '1.2-2') : '-' }}</td>
+              <td><span class="badge" [class]="'badge--' + equipamento.status.toLowerCase()">{{ equipamento.status }}</span></td>
+              <td>{{ equipamento.usuarioAtualNome || '-' }}</td>
+              <td class="acoes">
+                <a [routerLink]="['/equipamentos/lista', equipamento.id, 'editar']" title="Editar" aria-label="Editar">
+                  <app-icon name="pencil" [size]="18" />
+                </a>
+                @if (podeBaixar(equipamento)) {
+                  <button
+                    type="button"
+                    class="botao--link"
+                    title="Dar baixa"
+                    aria-label="Dar baixa"
+                    [disabled]="baixandoId() === equipamento.id"
+                    (click)="baixar(equipamento)"
+                  >
+                    <app-icon name="ban" [size]="18" />
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

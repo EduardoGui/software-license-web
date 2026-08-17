@@ -22,7 +22,12 @@
       </dl>
     </div>
 
-    <h2>Itens do romaneio</h2>
+    <div class="secao-cabecalho">
+      <h2>Itens do romaneio</h2>
+      @if (nota()!.itens.length > 0) {
+        <a class="link" [routerLink]="['/equipamentos/lista']" [queryParams]="{ notaFiscalEntradaId: nota()!.id }">Ver equipamentos gerados</a>
+      }
+    </div>
 
     @if (nota()!.itens.length === 0) {
       <p class="status">Nenhum item adicionado ainda.</p>

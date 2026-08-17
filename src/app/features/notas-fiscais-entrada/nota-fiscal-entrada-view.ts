@@ -1,7 +1,7 @@
 import { DecimalPipe, Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
@@ -12,7 +12,7 @@ import { NotaFiscalEntradaService } from './nota-fiscal-entrada.service';
 
 @Component({
   selector: 'app-nota-fiscal-entrada-view',
-  imports: [ReactiveFormsModule, Icon, DataBrPipe, DecimalPipe],
+  imports: [ReactiveFormsModule, Icon, DataBrPipe, DecimalPipe, RouterLink],
   templateUrl: './nota-fiscal-entrada-view.html',
   styleUrl: './nota-fiscal-entrada-view.scss',
 })
