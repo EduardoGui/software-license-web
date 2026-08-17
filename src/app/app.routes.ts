@@ -23,6 +23,7 @@ import { EquipamentoForm } from './features/equipamentos/equipamento-form';
 import { EquipamentoAlocacoesList } from './features/equipamento-alocacoes/equipamento-alocacoes-list';
 import { EquipamentoAlocacaoForm } from './features/equipamento-alocacoes/equipamento-alocacao-form';
 import { EquipamentoAlocacaoEncerrar } from './features/equipamento-alocacoes/equipamento-alocacao-encerrar';
+import { RelatorioMensalLocacaoPage } from './features/relatorio-mensal-locacao/relatorio-mensal-locacao-page';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -54,6 +55,7 @@ export const routes: Routes = [
       { path: 'equipamentos/alocacoes', component: EquipamentoAlocacoesList },
       { path: 'equipamentos/alocacoes/nova', component: EquipamentoAlocacaoForm },
       { path: 'equipamentos/alocacoes/:id/encerrar', component: EquipamentoAlocacaoEncerrar },
+      { path: 'equipamentos/relatorio-mensal', component: RelatorioMensalLocacaoPage },
     ],
   },
 ];
