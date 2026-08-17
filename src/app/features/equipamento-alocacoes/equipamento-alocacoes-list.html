@@ -1,0 +1,126 @@
+<section class="alocacoes">
+  <header class="topo">
+    <h1>Alocações de Equipamento</h1>
+    <a class="botao botao--primario" routerLink="/equipamentos/alocacoes/nova"><app-icon name="plus" [size]="16" /> Nova alocação</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="filtrar()">
+    <label>
+      Usuário
+      <select name="usuarioId" [(ngModel)]="filtro.usuarioId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (usuario of usuarios(); track usuario.id) {
+          <option [ngValue]="usuario.id">{{ usuario.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Equipamento
+      <select name="equipamentoId" [(ngModel)]="filtro.equipamentoId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (equipamento of equipamentos(); track equipamento.id) {
+          <option [ngValue]="equipamento.id">{{ descreverEquipamento(equipamento) }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option value="">Todos</option>
+        <option value="Em uso">Em uso</option>
+        <option value="Encerrado">Encerrado</option>
+      </select>
+    </label>
+    <label>
+      Período inicial
+      <input type="date" name="dataInicial" [(ngModel)]="filtro.dataInicial" />
+    </label>
+    <label>
+      Período final
+      <input type="date" name="dataFinal" [(ngModel)]="filtro.dataFinal" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as alocações. Verifique se a API está em execução.</p>
+  } @else if (alocacoes().length === 0) {
+    <p class="status">Nenhuma alocação encontrada.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Usuário</th>
+            <th>Equipamento</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Status</th>
+            <th>Observação</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (alocacao of alocacoes(); track alocacao.id) {
+            <tr>
+              <td>{{ alocacao.usuarioNome }}</td>
+              <td>{{ alocacao.equipamentoDescricao }}</td>
+              <td>{{ alocacao.dataInicio | dataBr }}</td>
+              <td>{{ alocacao.dataFim | dataBr }}</td>
+              <td>
+                <span class="badge" [class]="'badge--' + (alocacao.status === 'Em uso' ? 'em-uso' : 'encerrado')">
+                  {{ alocacao.status }}
+                </span>
+              </td>
+              <td>{{ alocacao.observacao || '-' }}</td>
+              <td class="acoes">
+                @if (alocacao.status === 'Em uso') {
+                  <a
+                    [routerLink]="['/equipamentos/alocacoes', alocacao.id, 'encerrar']"
+                    [state]="{ usuarioNome: alocacao.usuarioNome, equipamentoDescricao: alocacao.equipamentoDescricao }"
+                    class="botao--link botao--link-sucesso"
+                    title="Encerrar"
+                    aria-label="Encerrar"
+                  >
+                    <app-icon name="check-circle" [size]="18" />
+                  </a>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div class="paginacao">
+      <label>
+        Por página
+        <select name="tamanhoPagina" [(ngModel)]="filtro.tamanhoPagina" (ngModelChange)="filtrar()">
+          <option [ngValue]="10">10</option>
+          <option [ngValue]="25">25</option>
+          <option [ngValue]="50">50</option>
+        </select>
+      </label>
+      <span>{{ totalRegistros() }} registro(s)</span>
+      <div class="paginacao__botoes">
+        <button type="button" class="botao" [disabled]="(filtro.pagina ?? 1) <= 1" (click)="irParaPagina((filtro.pagina ?? 1) - 1)">
+          Anterior
+        </button>
+        <span>Página {{ filtro.pagina ?? 1 }} de {{ totalPaginas }}</span>
+        <button
+          type="button"
+          class="botao"
+          [disabled]="(filtro.pagina ?? 1) >= totalPaginas"
+          (click)="irParaPagina((filtro.pagina ?? 1) + 1)"
+        >
+          Próxima
+        </button>
+      </div>
+    </div>
+  }
+</section>

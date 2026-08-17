@@ -1,0 +1,61 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Nova alocação</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()">
+    @if (erro()) {
+      <p class="status status--erro">{{ erro() }}</p>
+    }
+
+    <label>
+      Usuário *
+      <select formControlName="usuarioId">
+        <option [ngValue]="0">Selecione...</option>
+        @for (usuario of usuarios(); track usuario.id) {
+          <option [ngValue]="usuario.id">{{ usuario.nome }}</option>
+        }
+      </select>
+      @if (form.controls.usuarioId.invalid && form.controls.usuarioId.touched) {
+        <span class="campo-erro">Selecione um usuário ativo.</span>
+      }
+    </label>
+
+    <label>
+      Equipamento *
+      <select formControlName="equipamentoId">
+        <option [ngValue]="0">Selecione...</option>
+        @for (equipamento of equipamentosDisponiveis(); track equipamento.id) {
+          <option [ngValue]="equipamento.id">{{ descreverEquipamento(equipamento) }}</option>
+        }
+      </select>
+      @if (form.controls.equipamentoId.invalid && form.controls.equipamentoId.touched) {
+        <span class="campo-erro">Selecione um equipamento disponível.</span>
+      }
+      @if (equipamentosDisponiveis().length === 0) {
+        <span class="ajuda">Nenhum equipamento disponível no momento.</span>
+      }
+    </label>
+
+    <label>
+      Data de início *
+      <input type="date" formControlName="dataInicio" />
+      @if (form.controls.dataInicio.invalid && form.controls.dataInicio.touched) {
+        <span class="campo-erro">Data de início é obrigatória.</span>
+      }
+    </label>
+
+    <label>
+      Observação
+      <textarea formControlName="observacao" rows="3"></textarea>
+    </label>
+
+    <div class="acoes">
+      <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Alocar' }}
+      </button>
+      <a routerLink="/equipamentos/alocacoes" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+    </div>
+  </form>
+</section>

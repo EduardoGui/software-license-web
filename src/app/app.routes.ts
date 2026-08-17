@@ -20,6 +20,9 @@ import { NotaFiscalEntradaForm } from './features/notas-fiscais-entrada/nota-fis
 import { NotaFiscalEntradaView } from './features/notas-fiscais-entrada/nota-fiscal-entrada-view';
 import { EquipamentosList } from './features/equipamentos/equipamentos-list';
 import { EquipamentoForm } from './features/equipamentos/equipamento-form';
+import { EquipamentoAlocacoesList } from './features/equipamento-alocacoes/equipamento-alocacoes-list';
+import { EquipamentoAlocacaoForm } from './features/equipamento-alocacoes/equipamento-alocacao-form';
+import { EquipamentoAlocacaoEncerrar } from './features/equipamento-alocacoes/equipamento-alocacao-encerrar';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -48,6 +51,9 @@ export const routes: Routes = [
       { path: 'equipamentos/notas-fiscais/:id', component: NotaFiscalEntradaView },
       { path: 'equipamentos/lista', component: EquipamentosList },
       { path: 'equipamentos/lista/:id/editar', component: EquipamentoForm },
+      { path: 'equipamentos/alocacoes', component: EquipamentoAlocacoesList },
+      { path: 'equipamentos/alocacoes/nova', component: EquipamentoAlocacaoForm },
+      { path: 'equipamentos/alocacoes/:id/encerrar', component: EquipamentoAlocacaoEncerrar },
     ],
   },
 ];
