@@ -91,16 +91,9 @@
                   <app-icon name="pencil" [size]="18" />
                 </a>
                 @if (podeBaixar(equipamento)) {
-                  <button
-                    type="button"
-                    class="botao--link"
-                    title="Dar baixa"
-                    aria-label="Dar baixa"
-                    [disabled]="baixandoId() === equipamento.id"
-                    (click)="baixar(equipamento)"
-                  >
+                  <a [routerLink]="['/equipamentos/lista', equipamento.id, 'baixar']" title="Dar baixa" aria-label="Dar baixa">
                     <app-icon name="ban" [size]="18" />
-                  </button>
+                  </a>
                 }
               </td>
             </tr>

@@ -168,26 +168,3 @@ th {
 .acoes a:hover {
   background: var(--color-primary-tint);
 }
-
-.botao--link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 6px;
-  border: none;
-  background: none;
-  color: #b91c1c;
-  cursor: pointer;
-  padding: 0;
-}
-
-.botao--link:hover:not(:disabled) {
-  background: #fef2f2;
-}
-
-.botao--link:disabled {
-  opacity: 0.5;
-  cursor: default;
-}

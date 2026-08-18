@@ -1,0 +1,59 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Dar baixa no equipamento</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (!equipamento()) {
+    <p class="status status--erro">{{ erro() }}</p>
+  } @else {
+    <div class="cartao">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <dl class="info-equipamento">
+        <dt>Tipo</dt>
+        <dd>{{ equipamento()!.tipoEquipamentoNome }}</dd>
+        @if (equipamento()!.marca || equipamento()!.modelo) {
+          <dt>Marca/Modelo</dt>
+          <dd>{{ equipamento()!.marca }} {{ equipamento()!.modelo }}</dd>
+        }
+        @if (equipamento()!.patrimonio) {
+          <dt>Patrimônio</dt>
+          <dd>{{ equipamento()!.patrimonio }}</dd>
+        }
+        @if (equipamento()!.numeroSerie) {
+          <dt>Nº de série</dt>
+          <dd>{{ equipamento()!.numeroSerie }}</dd>
+        }
+        @if (equipamento()!.fornecedorNome) {
+          <dt>Fornecedor</dt>
+          <dd>{{ equipamento()!.fornecedorNome }}</dd>
+        }
+      </dl>
+
+      <p class="aviso">
+        Esta ação marca o equipamento como baixado. Ele deixa de aparecer como disponível e não poderá mais ser alocado a um colaborador.
+      </p>
+
+      @if (identificador()) {
+        <label>
+          Para confirmar, digite {{ rotuloIdentificador() }} deste equipamento ("{{ identificador() }}")
+          <input type="text" [value]="textoDigitado()" (input)="textoDigitado.set($any($event.target).value)" autocomplete="off" />
+        </label>
+      } @else {
+        <p class="ajuda">Este equipamento não tem patrimônio nem número de série cadastrados — confirme pelo tipo/marca/modelo acima.</p>
+      }
+
+      <div class="acoes">
+        <button type="button" class="botao botao--perigo" [disabled]="salvando() || !confirmacaoValida()" (click)="confirmar()">
+          <app-icon name="ban" [size]="16" /> {{ salvando() ? 'Confirmando...' : 'Confirmar baixa' }}
+        </button>
+        <a routerLink="/equipamentos/lista" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </div>
+  }
+</section>

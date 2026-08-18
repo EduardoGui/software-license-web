@@ -28,7 +28,6 @@ export class EquipamentosList {
   protected readonly usuarios = signal<Usuario[]>([]);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
-  protected readonly baixandoId = signal<number | null>(null);
 
   protected filtro: EquipamentoFiltro = {};
 
@@ -67,24 +66,5 @@ export class EquipamentosList {
 
   protected podeBaixar(equipamento: Equipamento): boolean {
     return equipamento.status !== 'EmUso' && equipamento.status !== 'Baixado';
-  }
-
-  protected baixar(equipamento: Equipamento): void {
-    const confirmado = confirm(`Dar baixa no equipamento "${equipamento.tipoEquipamentoNome}" (patrimônio ${equipamento.patrimonio || '-'})?`);
-    if (!confirmado) {
-      return;
-    }
-
-    this.baixandoId.set(equipamento.id);
-    this.equipamentoService.baixar(equipamento.id).subscribe({
-      next: () => {
-        this.baixandoId.set(null);
-        this.buscar();
-      },
-      error: () => {
-        this.baixandoId.set(null);
-        alert('Não foi possível dar baixa no equipamento.');
-      },
-    });
   }
 }
