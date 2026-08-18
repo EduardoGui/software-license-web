@@ -4,6 +4,10 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { EquipamentoAlocacao } from '../equipamento-alocacoes/equipamento-alocacao';
+import { EquipamentoAlocacaoService } from '../equipamento-alocacoes/equipamento-alocacao.service';
+import { Movimentacao } from '../movimentacoes/movimentacao';
+import { MovimentacaoService } from '../movimentacoes/movimentacao.service';
 import { Usuario } from './usuario';
 import { UsuarioService } from './usuario.service';
 
@@ -15,12 +19,19 @@ import { UsuarioService } from './usuario.service';
 })
 export class UsuarioView {
   private readonly usuarioService = inject(UsuarioService);
+  private readonly movimentacaoService = inject(MovimentacaoService);
+  private readonly equipamentoAlocacaoService = inject(EquipamentoAlocacaoService);
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
 
   protected readonly usuario = signal<Usuario | null>(null);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
+
+  protected readonly licencas = signal<Movimentacao[]>([]);
+  protected readonly carregandoLicencas = signal(true);
+  protected readonly equipamentos = signal<EquipamentoAlocacao[]>([]);
+  protected readonly carregandoEquipamentos = signal(true);
 
   protected voltar(): void {
     this.location.back();
@@ -37,6 +48,22 @@ export class UsuarioView {
         this.erro.set(true);
         this.carregando.set(false);
       },
+    });
+
+    this.movimentacaoService.listar({ usuarioId: id, status: 'Em uso', tamanhoPagina: 50 }).subscribe({
+      next: (pagina) => {
+        this.licencas.set(pagina.itens);
+        this.carregandoLicencas.set(false);
+      },
+      error: () => this.carregandoLicencas.set(false),
+    });
+
+    this.equipamentoAlocacaoService.listar({ usuarioId: id, status: 'Em uso', tamanhoPagina: 50 }).subscribe({
+      next: (pagina) => {
+        this.equipamentos.set(pagina.itens);
+        this.carregandoEquipamentos.set(false);
+      },
+      error: () => this.carregandoEquipamentos.set(false),
     });
   }
 }

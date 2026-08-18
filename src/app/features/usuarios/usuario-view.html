@@ -32,5 +32,41 @@
     <div class="acoes">
       <a [routerLink]="['/usuarios', usuario()!.id, 'editar']" class="botao botao--primario"><app-icon name="pencil" [size]="16" /> Editar</a>
     </div>
+
+    <section class="relacionados">
+      <h2>Licenças em uso</h2>
+      @if (carregandoLicencas()) {
+        <p class="status">Carregando...</p>
+      } @else if (licencas().length === 0) {
+        <p class="status">Nenhuma licença em uso.</p>
+      } @else {
+        <ul class="lista-relacionados">
+          @for (movimentacao of licencas(); track movimentacao.id) {
+            <li>
+              <a [routerLink]="['/licencas', movimentacao.licencaId]">{{ movimentacao.licencaNome }}</a>
+              <span class="lista-relacionados__data">desde {{ movimentacao.dataInicio | dataBr }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section class="relacionados">
+      <h2>Equipamentos em uso</h2>
+      @if (carregandoEquipamentos()) {
+        <p class="status">Carregando...</p>
+      } @else if (equipamentos().length === 0) {
+        <p class="status">Nenhum equipamento em uso.</p>
+      } @else {
+        <ul class="lista-relacionados">
+          @for (alocacao of equipamentos(); track alocacao.id) {
+            <li>
+              <span>{{ alocacao.equipamentoDescricao }}</span>
+              <span class="lista-relacionados__data">desde {{ alocacao.dataInicio | dataBr }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
   }
 </section>

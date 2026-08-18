@@ -17,8 +17,8 @@ export class App {
 
   protected readonly urlAtual = signal(this.router.url);
   protected readonly mostrarShell = computed(() => !this.urlAtual().startsWith('/login'));
-  protected readonly grupoLicencasAberto = signal(true);
-  protected readonly grupoEquipamentosAberto = signal(true);
+  protected readonly grupoLicencasAberto = signal(false);
+  protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
 
   constructor() {
@@ -29,11 +29,19 @@ export class App {
   }
 
   protected alternarGrupoLicencas(): void {
-    this.grupoLicencasAberto.update((aberto) => !aberto);
+    const abrindo = !this.grupoLicencasAberto();
+    this.grupoLicencasAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoEquipamentosAberto.set(false);
+    }
   }
 
   protected alternarGrupoEquipamentos(): void {
-    this.grupoEquipamentosAberto.update((aberto) => !aberto);
+    const abrindo = !this.grupoEquipamentosAberto();
+    this.grupoEquipamentosAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoLicencasAberto.set(false);
+    }
   }
 
   protected alternarMenuMobile(): void {

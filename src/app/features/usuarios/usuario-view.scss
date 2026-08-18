@@ -107,3 +107,52 @@ dd {
   background: #1d4ed8;
   color: #fff;
 }
+
+.relacionados {
+  margin-top: 1.5rem;
+}
+
+.relacionados h2 {
+  font-size: 0.95rem;
+  color: #1e293b;
+  margin: 0 0 0.5rem;
+}
+
+.lista-relacionados {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lista-relacionados li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.9rem;
+}
+
+.lista-relacionados li:last-child {
+  border-bottom: none;
+}
+
+.lista-relacionados a {
+  color: #1d4ed8;
+  text-decoration: none;
+}
+
+.lista-relacionados a:hover {
+  text-decoration: underline;
+}
+
+.lista-relacionados__data {
+  color: #64748b;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
