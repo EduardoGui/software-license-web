@@ -89,6 +89,21 @@
                   >
                     <app-icon name="check-circle" [size]="18" />
                   </a>
+                } @else {
+                  <a
+                    [routerLink]="['/movimentacoes', movimentacao.id, 'editar']"
+                    [state]="{
+                      usuarioNome: movimentacao.usuarioNome,
+                      licencaNome: movimentacao.licencaNome,
+                      dataFim: movimentacao.dataFim,
+                      observacao: movimentacao.observacao,
+                    }"
+                    class="botao--link botao--link-neutro"
+                    title="Editar"
+                    aria-label="Editar"
+                  >
+                    <app-icon name="pencil" [size]="18" />
+                  </a>
                 }
               </td>
             </tr>

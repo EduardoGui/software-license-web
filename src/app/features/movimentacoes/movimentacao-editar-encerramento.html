@@ -1,0 +1,47 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Editar encerramento</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()">
+    @if (erro()) {
+      <p class="status status--erro">{{ erro() }}</p>
+    }
+
+    @if (contexto.usuarioNome || contexto.licencaNome) {
+      <p class="contexto">
+        @if (contexto.usuarioNome) {
+          <strong>{{ contexto.usuarioNome }}</strong>
+        }
+        @if (contexto.licencaNome) {
+          — {{ contexto.licencaNome }}
+        }
+      </p>
+    }
+
+    <label class="campo-checkbox">
+      <input type="checkbox" formControlName="reativar" />
+      Reativar (voltar para "Em uso", removendo a data de fim)
+    </label>
+
+    @if (!form.controls.reativar.value) {
+      <label>
+        Data de fim *
+        <input type="date" formControlName="dataFim" />
+      </label>
+    }
+
+    <label>
+      Observação
+      <textarea formControlName="observacao" rows="3"></textarea>
+    </label>
+
+    <div class="acoes">
+      <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+      </button>
+      <a routerLink="/movimentacoes" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+    </div>
+  </form>
+</section>

@@ -24,6 +24,11 @@ export interface EncerrarMovimentacaoPayload {
   observacao: string | null;
 }
 
+export interface EditarMovimentacaoEncerradaPayload {
+  dataFim: string | null;
+  observacao: string | null;
+}
+
 export interface MovimentacaoFiltro {
   usuarioId?: number;
   licencaId?: number;

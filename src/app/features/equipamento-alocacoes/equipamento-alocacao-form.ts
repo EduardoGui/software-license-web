@@ -46,9 +46,8 @@ export class EquipamentoAlocacaoForm {
   }
 
   protected descreverEquipamento(equipamento: Equipamento): string {
-    return equipamento.patrimonio
-      ? `${equipamento.tipoEquipamentoNome} (${equipamento.patrimonio})`
-      : `${equipamento.tipoEquipamentoNome} — sem patrimônio`;
+    const descricao = [equipamento.tipoEquipamentoNome, equipamento.marca, equipamento.modelo].filter(Boolean).join(' ');
+    return equipamento.patrimonio ? `${descricao} (${equipamento.patrimonio})` : `${descricao} — sem patrimônio`;
   }
 
   protected salvar(): void {

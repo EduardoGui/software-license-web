@@ -3,7 +3,14 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { EncerrarMovimentacaoPayload, Movimentacao, MovimentacaoFiltro, MovimentacaoPayload, PaginaMovimentacoes } from './movimentacao';
+import {
+  EditarMovimentacaoEncerradaPayload,
+  EncerrarMovimentacaoPayload,
+  Movimentacao,
+  MovimentacaoFiltro,
+  MovimentacaoPayload,
+  PaginaMovimentacoes,
+} from './movimentacao';
 
 @Injectable({ providedIn: 'root' })
 export class MovimentacaoService {
@@ -29,5 +36,9 @@ export class MovimentacaoService {
 
   encerrar(id: number, payload: EncerrarMovimentacaoPayload): Observable<Movimentacao> {
     return this.http.patch<Movimentacao>(`${this.baseUrl}/${id}/encerrar`, payload);
+  }
+
+  editarEncerramento(id: number, payload: EditarMovimentacaoEncerradaPayload): Observable<Movimentacao> {
+    return this.http.patch<Movimentacao>(`${this.baseUrl}/${id}/editar-encerramento`, payload);
   }
 }

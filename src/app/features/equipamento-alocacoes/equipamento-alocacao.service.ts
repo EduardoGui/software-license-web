@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {
+  EditarEquipamentoAlocacaoEncerradaPayload,
   EncerrarEquipamentoAlocacaoPayload,
   EquipamentoAlocacao,
   EquipamentoAlocacaoFiltro,
@@ -35,5 +36,9 @@ export class EquipamentoAlocacaoService {
 
   encerrar(id: number, payload: EncerrarEquipamentoAlocacaoPayload): Observable<EquipamentoAlocacao> {
     return this.http.patch<EquipamentoAlocacao>(`${this.baseUrl}/${id}/encerrar`, payload);
+  }
+
+  editarEncerramento(id: number, payload: EditarEquipamentoAlocacaoEncerradaPayload): Observable<EquipamentoAlocacao> {
+    return this.http.patch<EquipamentoAlocacao>(`${this.baseUrl}/${id}/editar-encerramento`, payload);
   }
 }

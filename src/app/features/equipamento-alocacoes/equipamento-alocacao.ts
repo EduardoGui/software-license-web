@@ -24,6 +24,11 @@ export interface EncerrarEquipamentoAlocacaoPayload {
   observacao: string | null;
 }
 
+export interface EditarEquipamentoAlocacaoEncerradaPayload {
+  dataFim: string | null;
+  observacao: string | null;
+}
+
 export interface EquipamentoAlocacaoFiltro {
   usuarioId?: number;
   equipamentoId?: number;

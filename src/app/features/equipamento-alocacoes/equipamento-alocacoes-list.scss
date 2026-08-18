@@ -165,6 +165,14 @@ th {
   background: #f0fdf4;
 }
 
+.botao--link-neutro {
+  color: #1d4ed8;
+}
+
+.botao--link-neutro:hover:not(:disabled) {
+  background: #eff6ff;
+}
+
 .botao--link:disabled {
   opacity: 0.5;
   cursor: default;

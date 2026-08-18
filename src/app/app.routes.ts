@@ -12,6 +12,7 @@ import { LicencaView } from './features/licencas/licenca-view';
 import { MovimentacoesList } from './features/movimentacoes/movimentacoes-list';
 import { MovimentacaoForm } from './features/movimentacoes/movimentacao-form';
 import { MovimentacaoEncerrar } from './features/movimentacoes/movimentacao-encerrar';
+import { MovimentacaoEditarEncerramento } from './features/movimentacoes/movimentacao-editar-encerramento';
 import { TimelinePage } from './features/timeline/timeline-page';
 import { TiposEquipamentoList } from './features/tipos-equipamento/tipos-equipamento-list';
 import { TipoEquipamentoForm } from './features/tipos-equipamento/tipo-equipamento-form';
@@ -23,6 +24,7 @@ import { EquipamentoForm } from './features/equipamentos/equipamento-form';
 import { EquipamentoAlocacoesList } from './features/equipamento-alocacoes/equipamento-alocacoes-list';
 import { EquipamentoAlocacaoForm } from './features/equipamento-alocacoes/equipamento-alocacao-form';
 import { EquipamentoAlocacaoEncerrar } from './features/equipamento-alocacoes/equipamento-alocacao-encerrar';
+import { EquipamentoAlocacaoEditarEncerramento } from './features/equipamento-alocacoes/equipamento-alocacao-editar-encerramento';
 import { RelatorioMensalLocacaoPage } from './features/relatorio-mensal-locacao/relatorio-mensal-locacao-page';
 import { InventarioPage } from './features/inventario/inventario-page';
 
@@ -44,6 +46,7 @@ export const routes: Routes = [
       { path: 'movimentacoes', component: MovimentacoesList },
       { path: 'movimentacoes/nova', component: MovimentacaoForm },
       { path: 'movimentacoes/:id/encerrar', component: MovimentacaoEncerrar },
+      { path: 'movimentacoes/:id/editar', component: MovimentacaoEditarEncerramento },
       { path: 'timeline', component: TimelinePage },
       { path: 'equipamentos/tipos', component: TiposEquipamentoList },
       { path: 'equipamentos/tipos/novo', component: TipoEquipamentoForm },
@@ -56,6 +59,7 @@ export const routes: Routes = [
       { path: 'equipamentos/alocacoes', component: EquipamentoAlocacoesList },
       { path: 'equipamentos/alocacoes/nova', component: EquipamentoAlocacaoForm },
       { path: 'equipamentos/alocacoes/:id/encerrar', component: EquipamentoAlocacaoEncerrar },
+      { path: 'equipamentos/alocacoes/:id/editar', component: EquipamentoAlocacaoEditarEncerramento },
       { path: 'equipamentos/relatorio-mensal', component: RelatorioMensalLocacaoPage },
       { path: 'equipamentos/inventario', component: InventarioPage },
     ],

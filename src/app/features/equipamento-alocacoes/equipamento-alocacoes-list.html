@@ -89,6 +89,21 @@
                   >
                     <app-icon name="check-circle" [size]="18" />
                   </a>
+                } @else {
+                  <a
+                    [routerLink]="['/equipamentos/alocacoes', alocacao.id, 'editar']"
+                    [state]="{
+                      usuarioNome: alocacao.usuarioNome,
+                      equipamentoDescricao: alocacao.equipamentoDescricao,
+                      dataFim: alocacao.dataFim,
+                      observacao: alocacao.observacao,
+                    }"
+                    class="botao--link botao--link-neutro"
+                    title="Editar"
+                    aria-label="Editar"
+                  >
+                    <app-icon name="pencil" [size]="18" />
+                  </a>
                 }
               </td>
             </tr>
