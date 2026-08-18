@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { LoginPayload, LoginResponse } from './auth';
+import { DefinirSenhaPayload, LoginPayload, LoginResponse } from './auth';
 
 const CHAVE_TOKEN = 'licencas.token';
 const CHAVE_EMAIL = 'licencas.email';
@@ -22,6 +22,10 @@ export class AuthService {
     );
   }
 
+  definirSenha(payload: DefinirSenhaPayload): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/definir-senha`, payload);
+  }
+
   logout(): void {
     localStorage.removeItem(CHAVE_TOKEN);
     localStorage.removeItem(CHAVE_EMAIL);
@@ -37,5 +41,33 @@ export class AuthService {
 
   estaAutenticado(): boolean {
     return !!this.obterToken();
+  }
+
+  ehAdministrador(): boolean {
+    return this.obterClaims()?.['role'] === 'Administrador';
+  }
+
+  ehColaborador(): boolean {
+    return this.obterClaims()?.['role'] === 'Colaborador';
+  }
+
+  obterUsuarioId(): number | null {
+    const valor = this.obterClaims()?.['usuarioId'];
+    return typeof valor === 'string' ? Number(valor) : null;
+  }
+
+  private obterClaims(): Record<string, unknown> | null {
+    const token = this.obterToken();
+    const payload = token?.split('.')[1];
+    if (!payload) {
+      return null;
+    }
+
+    try {
+      const normalizado = payload.replace(/-/g, '+').replace(/_/g, '/');
+      return JSON.parse(atob(normalizado));
+    } catch {
+      return null;
+    }
   }
 }

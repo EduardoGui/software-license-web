@@ -2,6 +2,7 @@ import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { AuthService } from '../auth/auth.service';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { EquipamentoAlocacao } from '../equipamento-alocacoes/equipamento-alocacao';
@@ -23,6 +24,7 @@ export class UsuarioView {
   private readonly equipamentoAlocacaoService = inject(EquipamentoAlocacaoService);
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
+  protected readonly authService = inject(AuthService);
 
   protected readonly usuario = signal<Usuario | null>(null);
   protected readonly carregando = signal(true);

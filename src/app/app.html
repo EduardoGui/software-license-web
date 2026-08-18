@@ -16,39 +16,45 @@
         </button>
       </div>
       <nav class="menu" [class.menu--aberto]="menuMobileAberto()">
-        <a
-          routerLink="/"
-          routerLinkActive="menu__item--ativo"
-          [routerLinkActiveOptions]="{ exact: true }"
-          class="menu__item"
-        >
-          Dashboard
-        </a>
-        <a routerLink="/usuarios" routerLinkActive="menu__item--ativo" class="menu__item">Usuários</a>
-        <button type="button" class="menu__grupo" (click)="alternarGrupoLicencas()">
-          <span class="menu__grupo-seta">{{ grupoLicencasAberto() ? '▾' : '▸' }}</span>
-          Licenças
-        </button>
-        @if (grupoLicencasAberto()) {
-          <a routerLink="/licencas" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Licenças</a>
-          <a routerLink="/movimentacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Movimentações</a>
-          <a routerLink="/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Linha do Tempo</a>
-        }
-        <button type="button" class="menu__grupo" (click)="alternarGrupoEquipamentos()">
-          <span class="menu__grupo-seta">{{ grupoEquipamentosAberto() ? '▾' : '▸' }}</span>
-          Equipamentos
-        </button>
-        @if (grupoEquipamentosAberto()) {
-          <a routerLink="/equipamentos/tipos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Tipos de Equipamento</a>
-          <a routerLink="/equipamentos/notas-fiscais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-            Notas Fiscais
+        @if (authService.ehAdministrador()) {
+          <a
+            routerLink="/"
+            routerLinkActive="menu__item--ativo"
+            [routerLinkActiveOptions]="{ exact: true }"
+            class="menu__item"
+          >
+            Dashboard
           </a>
-          <a routerLink="/equipamentos/lista" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Equipamentos</a>
-          <a routerLink="/equipamentos/alocacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Alocações</a>
-          <a routerLink="/equipamentos/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-            Relatório Mensal
+          <a routerLink="/usuarios" routerLinkActive="menu__item--ativo" class="menu__item">Usuários</a>
+          <button type="button" class="menu__grupo" (click)="alternarGrupoLicencas()">
+            <span class="menu__grupo-seta">{{ grupoLicencasAberto() ? '▾' : '▸' }}</span>
+            Licenças
+          </button>
+          @if (grupoLicencasAberto()) {
+            <a routerLink="/licencas" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Licenças</a>
+            <a routerLink="/movimentacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Movimentações</a>
+            <a routerLink="/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Linha do Tempo</a>
+          }
+          <button type="button" class="menu__grupo" (click)="alternarGrupoEquipamentos()">
+            <span class="menu__grupo-seta">{{ grupoEquipamentosAberto() ? '▾' : '▸' }}</span>
+            Equipamentos
+          </button>
+          @if (grupoEquipamentosAberto()) {
+            <a routerLink="/equipamentos/tipos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Tipos de Equipamento</a>
+            <a routerLink="/equipamentos/notas-fiscais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Notas Fiscais
+            </a>
+            <a routerLink="/equipamentos/lista" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Equipamentos</a>
+            <a routerLink="/equipamentos/alocacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Alocações</a>
+            <a routerLink="/equipamentos/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Relatório Mensal
+            </a>
+            <a routerLink="/equipamentos/inventario" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Inventário</a>
+          }
+        } @else {
+          <a [routerLink]="['/usuarios', authService.obterUsuarioId()]" routerLinkActive="menu__item--ativo" class="menu__item">
+            Meus dados
           </a>
-          <a routerLink="/equipamentos/inventario" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Inventário</a>
         }
         <div class="menu__rodape-mobile">
           <span class="usuario-logado">{{ authService.obterEmail() }}</span>

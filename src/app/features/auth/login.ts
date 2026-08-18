@@ -33,7 +33,15 @@ export class Login {
     this.erro.set(null);
 
     this.authService.login(this.form.getRawValue()).subscribe({
-      next: () => this.router.navigate(['/']),
+      next: () => {
+        if (this.authService.ehAdministrador()) {
+          this.router.navigate(['/']);
+          return;
+        }
+
+        const usuarioId = this.authService.obterUsuarioId();
+        this.router.navigate(usuarioId ? ['/usuarios', usuarioId] : ['/login']);
+      },
       error: (err) => {
         this.entrando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível entrar.');

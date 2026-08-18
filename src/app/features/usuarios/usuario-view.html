@@ -29,9 +29,11 @@
       <dd>{{ usuario()!.observacao || '-' }}</dd>
     </dl>
 
-    <div class="acoes">
-      <a [routerLink]="['/usuarios', usuario()!.id, 'editar']" class="botao botao--primario"><app-icon name="pencil" [size]="16" /> Editar</a>
-    </div>
+    @if (authService.ehAdministrador()) {
+      <div class="acoes">
+        <a [routerLink]="['/usuarios', usuario()!.id, 'editar']" class="botao botao--primario"><app-icon name="pencil" [size]="16" /> Editar</a>
+      </div>
+    }
 
     <section class="relacionados">
       <h2>Licenças em uso</h2>
@@ -43,7 +45,11 @@
         <ul class="lista-relacionados">
           @for (movimentacao of licencas(); track movimentacao.id) {
             <li>
-              <a [routerLink]="['/licencas', movimentacao.licencaId]">{{ movimentacao.licencaNome }}</a>
+              @if (authService.ehAdministrador()) {
+                <a [routerLink]="['/licencas', movimentacao.licencaId]">{{ movimentacao.licencaNome }}</a>
+              } @else {
+                <span>{{ movimentacao.licencaNome }}</span>
+              }
               <span class="lista-relacionados__data">desde {{ movimentacao.dataInicio | dataBr }}</span>
             </li>
           }

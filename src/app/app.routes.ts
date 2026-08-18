@@ -1,7 +1,10 @@
 import { Routes } from '@angular/router';
 
 import { authGuard } from './core/auth-guard';
+import { adminGuard } from './core/admin-guard';
+import { usuarioViewGuard } from './core/usuario-view-guard';
 import { Login } from './features/auth/login';
+import { DefinirSenha } from './features/auth/definir-senha';
 import { DashboardPage } from './features/dashboard/dashboard-page';
 import { UsuariosList } from './features/usuarios/usuarios-list';
 import { UsuarioForm } from './features/usuarios/usuario-form';
@@ -30,38 +33,43 @@ import { InventarioPage } from './features/inventario/inventario-page';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
+  { path: 'definir-senha', component: DefinirSenha },
   {
     path: '',
     canActivateChild: [authGuard],
     children: [
-      { path: '', component: DashboardPage },
-      { path: 'usuarios', component: UsuariosList },
-      { path: 'usuarios/novo', component: UsuarioForm },
-      { path: 'usuarios/:id/editar', component: UsuarioForm },
-      { path: 'usuarios/:id', component: UsuarioView },
-      { path: 'licencas', component: LicencasList },
-      { path: 'licencas/novo', component: LicencaForm },
-      { path: 'licencas/:id/editar', component: LicencaForm },
-      { path: 'licencas/:id', component: LicencaView },
-      { path: 'movimentacoes', component: MovimentacoesList },
-      { path: 'movimentacoes/nova', component: MovimentacaoForm },
-      { path: 'movimentacoes/:id/encerrar', component: MovimentacaoEncerrar },
-      { path: 'movimentacoes/:id/editar', component: MovimentacaoEditarEncerramento },
-      { path: 'timeline', component: TimelinePage },
-      { path: 'equipamentos/tipos', component: TiposEquipamentoList },
-      { path: 'equipamentos/tipos/novo', component: TipoEquipamentoForm },
-      { path: 'equipamentos/tipos/:id/editar', component: TipoEquipamentoForm },
-      { path: 'equipamentos/notas-fiscais', component: NotasFiscaisEntradaList },
-      { path: 'equipamentos/notas-fiscais/novo', component: NotaFiscalEntradaForm },
-      { path: 'equipamentos/notas-fiscais/:id', component: NotaFiscalEntradaView },
-      { path: 'equipamentos/lista', component: EquipamentosList },
-      { path: 'equipamentos/lista/:id/editar', component: EquipamentoForm },
-      { path: 'equipamentos/alocacoes', component: EquipamentoAlocacoesList },
-      { path: 'equipamentos/alocacoes/nova', component: EquipamentoAlocacaoForm },
-      { path: 'equipamentos/alocacoes/:id/encerrar', component: EquipamentoAlocacaoEncerrar },
-      { path: 'equipamentos/alocacoes/:id/editar', component: EquipamentoAlocacaoEditarEncerramento },
-      { path: 'equipamentos/relatorio-mensal', component: RelatorioMensalLocacaoPage },
-      { path: 'equipamentos/inventario', component: InventarioPage },
+      { path: '', component: DashboardPage, canActivate: [adminGuard] },
+      { path: 'usuarios', component: UsuariosList, canActivate: [adminGuard] },
+      { path: 'usuarios/novo', component: UsuarioForm, canActivate: [adminGuard] },
+      { path: 'usuarios/:id/editar', component: UsuarioForm, canActivate: [adminGuard] },
+      { path: 'usuarios/:id', component: UsuarioView, canActivate: [usuarioViewGuard] },
+      { path: 'licencas', component: LicencasList, canActivate: [adminGuard] },
+      { path: 'licencas/novo', component: LicencaForm, canActivate: [adminGuard] },
+      { path: 'licencas/:id/editar', component: LicencaForm, canActivate: [adminGuard] },
+      { path: 'licencas/:id', component: LicencaView, canActivate: [adminGuard] },
+      { path: 'movimentacoes', component: MovimentacoesList, canActivate: [adminGuard] },
+      { path: 'movimentacoes/nova', component: MovimentacaoForm, canActivate: [adminGuard] },
+      { path: 'movimentacoes/:id/encerrar', component: MovimentacaoEncerrar, canActivate: [adminGuard] },
+      { path: 'movimentacoes/:id/editar', component: MovimentacaoEditarEncerramento, canActivate: [adminGuard] },
+      { path: 'timeline', component: TimelinePage, canActivate: [adminGuard] },
+      { path: 'equipamentos/tipos', component: TiposEquipamentoList, canActivate: [adminGuard] },
+      { path: 'equipamentos/tipos/novo', component: TipoEquipamentoForm, canActivate: [adminGuard] },
+      { path: 'equipamentos/tipos/:id/editar', component: TipoEquipamentoForm, canActivate: [adminGuard] },
+      { path: 'equipamentos/notas-fiscais', component: NotasFiscaisEntradaList, canActivate: [adminGuard] },
+      { path: 'equipamentos/notas-fiscais/novo', component: NotaFiscalEntradaForm, canActivate: [adminGuard] },
+      { path: 'equipamentos/notas-fiscais/:id', component: NotaFiscalEntradaView, canActivate: [adminGuard] },
+      { path: 'equipamentos/lista', component: EquipamentosList, canActivate: [adminGuard] },
+      { path: 'equipamentos/lista/:id/editar', component: EquipamentoForm, canActivate: [adminGuard] },
+      { path: 'equipamentos/alocacoes', component: EquipamentoAlocacoesList, canActivate: [adminGuard] },
+      { path: 'equipamentos/alocacoes/nova', component: EquipamentoAlocacaoForm, canActivate: [adminGuard] },
+      { path: 'equipamentos/alocacoes/:id/encerrar', component: EquipamentoAlocacaoEncerrar, canActivate: [adminGuard] },
+      {
+        path: 'equipamentos/alocacoes/:id/editar',
+        component: EquipamentoAlocacaoEditarEncerramento,
+        canActivate: [adminGuard],
+      },
+      { path: 'equipamentos/relatorio-mensal', component: RelatorioMensalLocacaoPage, canActivate: [adminGuard] },
+      { path: 'equipamentos/inventario', component: InventarioPage, canActivate: [adminGuard] },
     ],
   },
 ];

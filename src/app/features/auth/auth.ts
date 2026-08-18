@@ -8,3 +8,9 @@ export interface LoginResponse {
   email: string;
   expiraEm: string;
 }
+
+export interface DefinirSenhaPayload {
+  email: string;
+  token: string;
+  novaSenha: string;
+}

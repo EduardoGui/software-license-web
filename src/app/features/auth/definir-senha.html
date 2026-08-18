@@ -1,0 +1,44 @@
+<section class="login-page">
+  @if (linkInvalido) {
+    <div class="login-card">
+      <h1>Adm Hope</h1>
+      <p class="status status--erro">Link inválido. Peça um novo convite ao administrador.</p>
+      <a routerLink="/login" class="botao botao--primario">Ir para o login</a>
+    </div>
+  } @else if (sucesso()) {
+    <div class="login-card">
+      <h1>Adm Hope</h1>
+      <p class="status">Senha definida com sucesso!</p>
+      <button type="button" class="botao botao--primario" (click)="irParaLogin()">Ir para o login</button>
+    </div>
+  } @else {
+    <form class="login-card" [formGroup]="form" (ngSubmit)="salvar()">
+      <h1>Adm Hope</h1>
+      <p class="subtitulo">Definir senha</p>
+
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Nova senha
+        <input type="password" formControlName="novaSenha" autocomplete="new-password" />
+        @if (form.controls.novaSenha.invalid && form.controls.novaSenha.touched) {
+          <span class="campo-erro">Mínimo de 6 caracteres.</span>
+        }
+      </label>
+
+      <label>
+        Confirmar senha
+        <input type="password" formControlName="confirmarSenha" autocomplete="new-password" />
+        @if (form.controls.confirmarSenha.invalid && form.controls.confirmarSenha.touched) {
+          <span class="campo-erro">Confirmação é obrigatória.</span>
+        }
+      </label>
+
+      <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        {{ salvando() ? 'Salvando...' : 'Definir senha' }}
+      </button>
+    </form>
+  }
+</section>

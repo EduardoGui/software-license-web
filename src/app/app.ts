@@ -16,7 +16,9 @@ export class App {
   protected readonly authService = inject(AuthService);
 
   protected readonly urlAtual = signal(this.router.url);
-  protected readonly mostrarShell = computed(() => !this.urlAtual().startsWith('/login'));
+  protected readonly mostrarShell = computed(
+    () => !this.urlAtual().startsWith('/login') && !this.urlAtual().startsWith('/definir-senha'),
+  );
   protected readonly grupoLicencasAberto = signal(false);
   protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
