@@ -18,7 +18,7 @@
   gap: 0.3rem;
   border: none;
   background: none;
-  color: #1d4ed8;
+  color: var(--color-primary);
   font-size: 0.9rem;
   font-family: inherit;
   cursor: pointer;
@@ -26,7 +26,7 @@
 }
 
 h1 {
-  color: #1d4ed8;
+  color: var(--color-primary);
   margin: 0;
 }
 
@@ -35,7 +35,7 @@ form {
   flex-direction: column;
   gap: 1rem;
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
   padding: 1.5rem;
 }
@@ -45,14 +45,14 @@ label {
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-text);
 }
 
 input,
 textarea,
 select {
   padding: 0.5rem 0.7rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 0.9rem;
   font-family: inherit;
@@ -70,7 +70,7 @@ select {
 }
 
 .status {
-  color: #475569;
+  color: var(--color-secondary);
 }
 
 .status--erro {
@@ -87,9 +87,9 @@ select {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border: 1px solid #1d4ed8;
+  border: 1px solid var(--color-primary);
   background: #fff;
-  color: #1d4ed8;
+  color: var(--color-primary);
   padding: 0.5rem 1.1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -98,7 +98,7 @@ select {
 }
 
 .botao--primario {
-  background: #1d4ed8;
+  background: var(--color-primary);
   color: #fff;
 }
 
@@ -109,5 +109,5 @@ select {
 
 .botao--texto {
   border-color: transparent;
-  color: #64748b;
+  color: var(--color-secondary);
 }

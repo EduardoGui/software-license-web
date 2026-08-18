@@ -13,7 +13,7 @@
 }
 
 h1 {
-  color: #1d4ed8;
+  color: var(--color-primary);
   margin: 0;
 }
 
@@ -21,11 +21,11 @@ h1 {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  background: #eff6ff;
-  border: 1px solid #bfdbfe;
+  background: var(--color-primary-tint);
+  border: 1px solid var(--color-primary-tint-border);
   border-radius: 8px;
   padding: 0.6rem 1rem;
-  color: #1d4ed8;
+  color: var(--color-primary);
   font-size: 0.85rem;
   margin-bottom: 0.75rem;
 }
@@ -36,7 +36,7 @@ h1 {
   align-items: flex-end;
   gap: 0.75rem;
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -47,13 +47,13 @@ h1 {
   flex-direction: column;
   gap: 0.25rem;
   font-size: 0.85rem;
-  color: #334155;
+  color: var(--color-text);
 }
 
 .filtros input,
 .filtros select {
   padding: 0.4rem 0.6rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 0.9rem;
 }
@@ -64,9 +64,9 @@ h1 {
 }
 
 .botao {
-  border: 1px solid #1d4ed8;
+  border: 1px solid var(--color-primary);
   background: #fff;
-  color: #1d4ed8;
+  color: var(--color-primary);
   padding: 0.45rem 0.9rem;
   border-radius: 6px;
   cursor: pointer;
@@ -78,7 +78,7 @@ h1 {
 .botao--texto {
   border: none;
   background: none;
-  color: #1d4ed8;
+  color: var(--color-primary);
   cursor: pointer;
   font-size: 0.85rem;
   padding: 0;
@@ -86,7 +86,7 @@ h1 {
 }
 
 .status {
-  color: #475569;
+  color: var(--color-secondary);
 }
 
 .status--erro {
@@ -95,7 +95,7 @@ h1 {
 
 .tabela-scroll {
   overflow-x: auto;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
 }
 
@@ -110,12 +110,12 @@ th,
 td {
   text-align: left;
   padding: 0.6rem 0.9rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 th {
-  background: #f4f6f9;
-  color: #334155;
+  background: var(--color-bg-page);
+  color: var(--color-text);
   font-size: 0.85rem;
   text-transform: uppercase;
 }
@@ -134,8 +134,8 @@ th {
 }
 
 .badge--emuso {
-  background: #dbeafe;
-  color: #1d4ed8;
+  background: var(--color-tertiary-tint);
+  color: var(--color-tertiary);
 }
 
 .badge--manutencao {
@@ -144,8 +144,8 @@ th {
 }
 
 .badge--baixado {
-  background: #f1f5f9;
-  color: #64748b;
+  background: var(--color-bg-subtle);
+  color: var(--color-secondary);
 }
 
 .acoes {
@@ -161,12 +161,12 @@ th {
   width: 30px;
   height: 30px;
   border-radius: 6px;
-  color: #1d4ed8;
+  color: var(--color-primary);
   text-decoration: none;
 }
 
 .acoes a:hover {
-  background: #eff6ff;
+  background: var(--color-primary-tint);
 }
 
 .botao--link {

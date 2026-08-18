@@ -1,5 +1,34 @@
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+  /* Paleta de marca (Adm Hope) */
+  --color-primary: #27394f; /* navy — títulos, links, botões primários, sidebar */
+  --color-primary-hover: #1f2e40; /* navy escurecido — hover/pressed de elementos primários */
+  --color-secondary: #596676; /* slate — textos/ícones secundários, item ativo do menu */
+  --color-tertiary: #526c68; /* verde-azulado — reforço visual secundário */
+  --color-accent: #e1744f; /* coral — indicador de destaque/identidade (uso limitado: contraste reduzido em texto pequeno) */
+  --color-accent-hover: #bf6343; /* coral escurecido — hover de elementos de destaque */
+
+  --color-primary-tint: #e9ebed; /* navy bem clareado — fundo de hover/destaque leve (ex.: filtro ativo) */
+  --color-primary-tint-border: #c9ced3; /* navy clareado — borda de blocos com --color-primary-tint */
+  --color-tertiary-tint: #d4dad9; /* verde-azulado bem clareado — fundo do badge "Em uso" */
+
+  /* Neutros */
+  --color-text: #606060; /* texto padrão */
+  --color-text-muted: #999999; /* texto secundário — só placeholder/desabilitado (contraste reduzido) */
+  --color-border: #b7b7b9; /* bordas padrão */
+  --color-border-light: #dddfe2; /* divisores e fundos sutis */
+
+  /* Fundos */
+  --color-bg-page: #f3f4f5; /* fundo da aplicação */
+  --color-bg-subtle: #f8f9f9; /* fundo sutil de cards/seções internas */
+  --color-bg-card: #ffffff; /* fundo dos cards */
+
+  /* Texto sobre fundo escuro (sidebar) */
+  --color-on-dark: #ffffff;
+  --color-on-dark-muted: #dddfe2;
+}
+
 html,
 body {
   margin: 0;

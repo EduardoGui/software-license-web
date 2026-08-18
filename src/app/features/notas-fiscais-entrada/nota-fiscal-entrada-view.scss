@@ -18,7 +18,7 @@
   gap: 0.3rem;
   border: none;
   background: none;
-  color: #1d4ed8;
+  color: var(--color-primary);
   font-size: 0.9rem;
   font-family: inherit;
   cursor: pointer;
@@ -26,12 +26,12 @@
 }
 
 h1 {
-  color: #1d4ed8;
+  color: var(--color-primary);
   margin: 0;
 }
 
 h2 {
-  color: #1e293b;
+  color: var(--color-primary);
   font-size: 1rem;
   margin: 1.5rem 0 0.75rem;
 }
@@ -48,13 +48,13 @@ h2 {
 }
 
 .link {
-  color: #1d4ed8;
+  color: var(--color-primary);
   font-size: 0.85rem;
   text-decoration: underline;
 }
 
 .status {
-  color: #475569;
+  color: var(--color-secondary);
 }
 
 .status--erro {
@@ -62,14 +62,14 @@ h2 {
 }
 
 .ajuda {
-  color: #64748b;
+  color: var(--color-secondary);
   font-size: 0.85rem;
   margin: 0 0 0.75rem;
 }
 
 .cabecalho-nota {
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
   padding: 1.25rem;
 }
@@ -84,18 +84,18 @@ h2 {
 .cabecalho-nota dt {
   font-size: 0.75rem;
   text-transform: uppercase;
-  color: #64748b;
+  color: var(--color-secondary);
 }
 
 .cabecalho-nota dd {
   margin: 0.1rem 0 0;
-  color: #1e293b;
+  color: var(--color-primary);
   font-size: 0.95rem;
 }
 
 .tabela-scroll {
   overflow-x: auto;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
 }
 
@@ -110,19 +110,19 @@ th,
 td {
   text-align: left;
   padding: 0.6rem 0.9rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border-light);
 }
 
 th {
-  background: #f4f6f9;
-  color: #334155;
+  background: var(--color-bg-page);
+  color: var(--color-text);
   font-size: 0.85rem;
   text-transform: uppercase;
 }
 
 .form-item {
   background: #fff;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--color-border-light);
   border-radius: 8px;
   padding: 1.25rem;
 }
@@ -143,13 +143,13 @@ label {
   flex-direction: column;
   gap: 0.35rem;
   font-size: 0.9rem;
-  color: #334155;
+  color: var(--color-text);
 }
 
 input,
 select {
   padding: 0.5rem 0.7rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   border-radius: 6px;
   font-size: 0.9rem;
   font-family: inherit;
@@ -159,9 +159,9 @@ select {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border: 1px solid #1d4ed8;
+  border: 1px solid var(--color-primary);
   background: #fff;
-  color: #1d4ed8;
+  color: var(--color-primary);
   padding: 0.5rem 1.1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -169,7 +169,7 @@ select {
 }
 
 .botao--primario {
-  background: #1d4ed8;
+  background: var(--color-primary);
   color: #fff;
 }
 

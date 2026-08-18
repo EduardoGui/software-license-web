@@ -22,13 +22,13 @@ h2 {
 }
 
 .ajuda {
-  color: #64748b;
+  color: var(--color-secondary);
   font-size: 0.78rem;
   margin: 0.3rem 0 0.75rem;
 }
 
 .status {
-  color: #475569;
+  color: var(--color-secondary);
   font-size: 0.9rem;
 }
 
@@ -50,8 +50,8 @@ h2 {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  background: #f8fafc;
-  border: 1px solid #e2e8f0;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-light);
   border-radius: 6px;
   padding: 0.6rem 0.9rem;
 }
@@ -64,7 +64,7 @@ h2 {
 }
 
 .anexo-nome {
-  color: #1e293b;
+  color: var(--color-primary);
   font-size: 0.9rem;
   font-weight: 500;
   overflow: hidden;
@@ -73,7 +73,7 @@ h2 {
 }
 
 .anexo-detalhe {
-  color: #64748b;
+  color: var(--color-secondary);
   font-size: 0.75rem;
 }
 
@@ -89,9 +89,9 @@ h2 {
   justify-content: center;
   width: 2rem;
   height: 2rem;
-  border: 1px solid #cbd5e1;
+  border: 1px solid var(--color-border);
   background: #fff;
-  color: #475569;
+  color: var(--color-secondary);
   border-radius: 6px;
   cursor: pointer;
 }
@@ -110,9 +110,9 @@ h2 {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  border: 1px solid #1d4ed8;
+  border: 1px solid var(--color-primary);
   background: #fff;
-  color: #1d4ed8;
+  color: var(--color-primary);
   padding: 0.5rem 1.1rem;
   border-radius: 6px;
   cursor: pointer;
@@ -120,7 +120,7 @@ h2 {
 }
 
 .botao--primario {
-  background: #1d4ed8;
+  background: var(--color-primary);
   color: #fff;
 }
 

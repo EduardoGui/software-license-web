@@ -6,13 +6,13 @@
 .shell {
   display: flex;
   height: 100vh;
-  background: #f4f6f9;
+  background: var(--color-bg-page);
 }
 
 .sidebar {
   width: 220px;
   flex-shrink: 0;
-  background: #0f172a;
+  background: var(--color-primary);
   display: flex;
   flex-direction: column;
   padding: 1.5rem 0;
@@ -28,14 +28,14 @@
   font-family: system-ui, sans-serif;
   font-weight: 700;
   font-size: 1.05rem;
-  color: #fff;
+  color: var(--color-on-dark);
 }
 
 .botao-hamburguer {
   display: none;
   border: none;
   background: none;
-  color: #fff;
+  color: var(--color-on-dark);
   cursor: pointer;
   padding: 0.25rem;
   align-items: center;
@@ -59,7 +59,7 @@
   gap: 0.4rem;
   width: 100%;
   font-family: system-ui, sans-serif;
-  color: #94a3b8;
+  color: var(--color-on-dark-muted);
   text-transform: uppercase;
   letter-spacing: 0.03em;
   background: none;
@@ -72,7 +72,7 @@
 }
 
 .menu__grupo:hover {
-  color: #fff;
+  color: var(--color-on-dark);
 }
 
 .menu__grupo-seta {
@@ -81,26 +81,28 @@
 
 .menu__item {
   font-family: system-ui, sans-serif;
-  color: #cbd5e1;
+  color: var(--color-on-dark-muted);
   text-decoration: none;
   padding: 0.6rem 0.75rem;
   border-radius: 6px;
   font-size: 0.9rem;
+  border-left: 3px solid transparent;
 }
 
 .menu__item--sub {
-  padding-left: 1.75rem;
+  padding-left: 1.6rem;
 }
 
 .menu__item:hover {
   background: rgba(255, 255, 255, 0.06);
-  color: #fff;
+  color: var(--color-on-dark);
 }
 
 .menu__item--ativo {
-  background: #1d4ed8;
-  color: #fff;
+  background: var(--color-secondary);
+  color: var(--color-on-dark);
   font-weight: 600;
+  border-left-color: var(--color-accent);
 }
 
 .rodape {
@@ -115,7 +117,7 @@
 .usuario-logado {
   font-family: system-ui, sans-serif;
   font-size: 0.78rem;
-  color: #94a3b8;
+  color: var(--color-on-dark-muted);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -127,7 +129,7 @@
   gap: 0.4rem;
   border: none;
   background: none;
-  color: #cbd5e1;
+  color: var(--color-on-dark-muted);
   font-family: system-ui, sans-serif;
   font-size: 0.85rem;
   cursor: pointer;
@@ -135,7 +137,7 @@
 }
 
 .botao-sair:hover {
-  color: #fff;
+  color: var(--color-on-dark);
 }
 
 .conteudo {
