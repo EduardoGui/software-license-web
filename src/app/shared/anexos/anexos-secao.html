@@ -1,0 +1,54 @@
+<section class="anexos-secao">
+  <div class="secao-cabecalho">
+    <h2><app-icon name="paperclip" [size]="16" /> Anexos</h2>
+    <div>
+      <input
+        #inputArquivo
+        type="file"
+        class="input-arquivo-oculto"
+        accept="application/pdf,image/jpeg,image/png"
+        (change)="aoSelecionarArquivo($event)"
+      />
+      <button type="button" class="botao botao--primario" [disabled]="enviando()" (click)="abrirSeletorArquivo()">
+        <app-icon name="plus" [size]="16" /> {{ enviando() ? 'Enviando...' : 'Adicionar anexo' }}
+      </button>
+    </div>
+  </div>
+
+  <p class="ajuda">Formatos aceitos: PDF, JPG ou PNG, até 10 MB.</p>
+
+  @if (erro()) {
+    <p class="status status--erro">{{ erro() }}</p>
+  }
+
+  @if (carregando()) {
+    <p class="status">Carregando anexos...</p>
+  } @else if (anexos().length === 0) {
+    <p class="status">Nenhum anexo adicionado ainda.</p>
+  } @else {
+    <ul class="lista-anexos">
+      @for (anexo of anexos(); track anexo.id) {
+        <li>
+          <div class="anexo-info">
+            <span class="anexo-nome">{{ anexo.nomeArquivo }}</span>
+            <span class="anexo-detalhe">{{ formatarTamanho(anexo.tamanho) }} · {{ anexo.dataUpload | dataBr }}</span>
+          </div>
+          <div class="anexo-acoes">
+            <button type="button" class="botao-icone" title="Baixar" (click)="baixar(anexo)">
+              <app-icon name="download" [size]="16" />
+            </button>
+            <button
+              type="button"
+              class="botao-icone botao-icone--perigo"
+              title="Excluir"
+              [disabled]="excluindoId() === anexo.id"
+              (click)="excluir(anexo)"
+            >
+              <app-icon name="trash" [size]="16" />
+            </button>
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</section>

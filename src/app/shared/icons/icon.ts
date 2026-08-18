@@ -10,7 +10,10 @@ export type IconName =
   | 'check'
   | 'x'
   | 'log-out'
-  | 'menu';
+  | 'menu'
+  | 'paperclip'
+  | 'download'
+  | 'trash';
 
 @Component({
   selector: 'app-icon',
@@ -69,6 +72,21 @@ export type IconName =
           <path d="M4 6h16" />
           <path d="M4 12h16" />
           <path d="M4 18h16" />
+        }
+        @case ('paperclip') {
+          <path d="M21.44 11.05l-9.19 9.19a5 5 0 0 1-7.07-7.07l9.19-9.19a3.5 3.5 0 0 1 4.95 4.95l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48" />
+        }
+        @case ('download') {
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+          <path d="M7 10l5 5 5-5" />
+          <path d="M12 15V3" />
+        }
+        @case ('trash') {
+          <path d="M3 6h18" />
+          <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+          <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+          <path d="M10 11v6" />
+          <path d="M14 11v6" />
         }
       }
     </svg>

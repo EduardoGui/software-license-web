@@ -3,13 +3,14 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { Equipamento } from './equipamento';
 import { EquipamentoService } from './equipamento.service';
 
 @Component({
   selector: 'app-equipamento-form',
-  imports: [ReactiveFormsModule, RouterLink, Icon],
+  imports: [ReactiveFormsModule, RouterLink, Icon, AnexosSecao],
   templateUrl: './equipamento-form.html',
   styleUrl: './equipamento-form.scss',
 })
@@ -20,7 +21,7 @@ export class EquipamentoForm {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
 
-  private readonly equipamentoId = Number(this.route.snapshot.paramMap.get('id'));
+  protected readonly equipamentoId = Number(this.route.snapshot.paramMap.get('id'));
 
   protected readonly equipamento = signal<Equipamento | null>(null);
   protected readonly carregando = signal(true);

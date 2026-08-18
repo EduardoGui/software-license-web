@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { TipoEquipamento } from '../tipos-equipamento/tipo-equipamento';
@@ -12,7 +13,7 @@ import { NotaFiscalEntradaService } from './nota-fiscal-entrada.service';
 
 @Component({
   selector: 'app-nota-fiscal-entrada-view',
-  imports: [ReactiveFormsModule, Icon, DataBrPipe, DecimalPipe, RouterLink],
+  imports: [ReactiveFormsModule, Icon, DataBrPipe, DecimalPipe, RouterLink, AnexosSecao],
   templateUrl: './nota-fiscal-entrada-view.html',
   styleUrl: './nota-fiscal-entrada-view.scss',
 })
@@ -23,7 +24,7 @@ export class NotaFiscalEntradaView {
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
 
-  private readonly notaId = Number(this.route.snapshot.paramMap.get('id'));
+  protected readonly notaId = Number(this.route.snapshot.paramMap.get('id'));
 
   protected readonly nota = signal<NotaFiscalEntradaDetalhe | null>(null);
   protected readonly tipos = signal<TipoEquipamento[]>([]);
