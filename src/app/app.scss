@@ -19,6 +19,8 @@
 }
 
 .marca {
+  display: flex;
+  justify-content: center;
   padding: 0 1.25rem 1.25rem;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 1rem;
@@ -26,7 +28,7 @@
 
 .marca__logo {
   display: block;
-  height: 34px;
+  height: 68px;
   width: auto;
 }
 
