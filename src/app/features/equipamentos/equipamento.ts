@@ -19,6 +19,7 @@ export interface Equipamento {
   dataFimContrato: string | null;
   status: EquipamentoStatus;
   dataBaixa: string | null;
+  numeroNotaSaida: string | null;
   observacao: string | null;
   usuarioAtualId: number | null;
   usuarioAtualNome: string | null;

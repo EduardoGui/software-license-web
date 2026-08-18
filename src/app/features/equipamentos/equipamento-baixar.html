@@ -39,6 +39,17 @@
         Esta ação marca o equipamento como baixado. Ele deixa de aparecer como disponível e não poderá mais ser alocado a um colaborador.
       </p>
 
+      <label>
+        Número da nota/documento de devolução (opcional)
+        <input
+          type="text"
+          [value]="numeroNotaSaida()"
+          (input)="numeroNotaSaida.set($any($event.target).value)"
+          autocomplete="off"
+          placeholder="Ex.: NF-1234"
+        />
+      </label>
+
       @if (identificador()) {
         <label>
           Para confirmar, digite {{ rotuloIdentificador() }} deste equipamento ("{{ identificador() }}")

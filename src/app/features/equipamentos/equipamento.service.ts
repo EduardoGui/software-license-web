@@ -30,8 +30,8 @@ export class EquipamentoService {
     return this.http.put<Equipamento>(`${this.baseUrl}/${id}`, payload);
   }
 
-  baixar(id: number): Observable<Equipamento> {
-    return this.http.patch<Equipamento>(`${this.baseUrl}/${id}/baixar`, {});
+  baixar(id: number, numeroNotaSaida: string | null): Observable<Equipamento> {
+    return this.http.patch<Equipamento>(`${this.baseUrl}/${id}/baixar`, { numeroNotaSaida });
   }
 
   inventario(): Observable<Inventario> {

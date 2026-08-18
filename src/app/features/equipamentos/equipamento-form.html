@@ -25,6 +25,14 @@
           <dt>Usuário atual</dt>
           <dd>{{ equipamento()!.usuarioAtualNome }}</dd>
         }
+        @if (equipamento()!.status === 'Baixado') {
+          <dt>Data da baixa</dt>
+          <dd>{{ equipamento()!.dataBaixa | dataBr }}</dd>
+          @if (equipamento()!.numeroNotaSaida) {
+            <dt>Nota/documento de devolução</dt>
+            <dd>{{ equipamento()!.numeroNotaSaida }}</dd>
+          }
+        }
       </dl>
     </div>
 

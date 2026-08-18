@@ -25,6 +25,7 @@ export class EquipamentoBaixar {
   protected readonly salvando = signal(false);
   protected readonly erro = signal<string | null>(null);
   protected readonly textoDigitado = signal('');
+  protected readonly numeroNotaSaida = signal('');
 
   protected readonly identificador = computed(() => {
     const eq = this.equipamento();
@@ -69,7 +70,8 @@ export class EquipamentoBaixar {
     this.salvando.set(true);
     this.erro.set(null);
 
-    this.equipamentoService.baixar(this.equipamentoId).subscribe({
+    const numero = this.numeroNotaSaida().trim();
+    this.equipamentoService.baixar(this.equipamentoId, numero || null).subscribe({
       next: () => this.router.navigate(['/equipamentos/lista']),
       error: (err) => {
         this.salvando.set(false);

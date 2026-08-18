@@ -5,12 +5,13 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
+import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { Equipamento } from './equipamento';
 import { EquipamentoService } from './equipamento.service';
 
 @Component({
   selector: 'app-equipamento-form',
-  imports: [ReactiveFormsModule, RouterLink, Icon, AnexosSecao],
+  imports: [ReactiveFormsModule, RouterLink, Icon, AnexosSecao, DataBrPipe],
   templateUrl: './equipamento-form.html',
   styleUrl: './equipamento-form.scss',
 })
