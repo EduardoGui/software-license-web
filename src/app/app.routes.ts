@@ -12,6 +12,8 @@ import { UsuarioView } from './features/usuarios/usuario-view';
 import { LicencasList } from './features/licencas/licencas-list';
 import { LicencaForm } from './features/licencas/licenca-form';
 import { LicencaView } from './features/licencas/licenca-view';
+import { LicencaAlterarValor } from './features/licencas/licenca-alterar-valor';
+import { LicencaCustoMensalPage } from './features/licenca-custo-mensal/licenca-custo-mensal-page';
 import { MovimentacoesList } from './features/movimentacoes/movimentacoes-list';
 import { MovimentacaoForm } from './features/movimentacoes/movimentacao-form';
 import { MovimentacaoEncerrar } from './features/movimentacoes/movimentacao-encerrar';
@@ -46,7 +48,9 @@ export const routes: Routes = [
       { path: 'usuarios/:id', component: UsuarioView, canActivate: [usuarioViewGuard] },
       { path: 'licencas', component: LicencasList, canActivate: [adminGuard] },
       { path: 'licencas/novo', component: LicencaForm, canActivate: [adminGuard] },
+      { path: 'licencas/custo-mensal', component: LicencaCustoMensalPage, canActivate: [adminGuard] },
       { path: 'licencas/:id/editar', component: LicencaForm, canActivate: [adminGuard] },
+      { path: 'licencas/:id/alterar-valor', component: LicencaAlterarValor, canActivate: [adminGuard] },
       { path: 'licencas/:id', component: LicencaView, canActivate: [adminGuard] },
       { path: 'movimentacoes', component: MovimentacoesList, canActivate: [adminGuard] },
       { path: 'movimentacoes/nova', component: MovimentacaoForm, canActivate: [adminGuard] },

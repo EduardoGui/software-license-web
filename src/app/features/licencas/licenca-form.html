@@ -33,6 +33,24 @@
         }
       </label>
 
+      @if (!editando) {
+        <label>
+          Valor *
+          <input type="number" min="0.01" step="0.01" formControlName="valor" />
+          @if (form.controls.valor.invalid && form.controls.valor.touched) {
+            <span class="campo-erro">Informe um valor maior que zero.</span>
+          }
+        </label>
+
+        <label>
+          Periodicidade *
+          <select formControlName="periodicidade">
+            <option value="Mensal">Mensal</option>
+            <option value="Anual">Anual</option>
+          </select>
+        </label>
+      }
+
       <label>
         Data de início *
         <input type="date" formControlName="dataInicio" />

@@ -1,15 +1,15 @@
-import { Location } from '@angular/common';
+import { DecimalPipe, Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
-import { Licenca } from './licenca';
+import { Licenca, LicencaValor } from './licenca';
 import { LicencaService } from './licenca.service';
 
 @Component({
   selector: 'app-licenca-view',
-  imports: [RouterLink, Icon, DataBrPipe],
+  imports: [RouterLink, Icon, DataBrPipe, DecimalPipe],
   templateUrl: './licenca-view.html',
   styleUrl: './licenca-view.scss',
 })
@@ -19,6 +19,7 @@ export class LicencaView {
   private readonly location = inject(Location);
 
   protected readonly licenca = signal<Licenca | null>(null);
+  protected readonly valores = signal<LicencaValor[]>([]);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
 
@@ -38,5 +39,6 @@ export class LicencaView {
         this.carregando.set(false);
       },
     });
+    this.licencaService.listarValores(id).subscribe((valores) => this.valores.set(valores));
   }
 }

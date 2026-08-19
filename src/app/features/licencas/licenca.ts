@@ -1,3 +1,5 @@
+export type LicencaPeriodicidade = 'Mensal' | 'Anual';
+
 export interface Licenca {
   id: number;
   nome: string;
@@ -11,6 +13,8 @@ export interface Licenca {
   observacao: string | null;
   ativa: boolean;
   status: 'Ativa' | 'Inativa';
+  valorVigente: number | null;
+  periodicidade: LicencaPeriodicidade | null;
   dataCriacao: string;
   dataAtualizacao: string;
 }
@@ -26,8 +30,27 @@ export interface LicencaPayload {
   ativa: boolean;
 }
 
+export interface CreateLicencaPayload extends LicencaPayload {
+  valor: number;
+  periodicidade: LicencaPeriodicidade;
+}
+
 export interface LicencaFiltro {
   nome?: string;
   status?: string;
   vencimentoAte?: string;
+}
+
+export interface LicencaValor {
+  id: number;
+  valor: number;
+  periodicidade: LicencaPeriodicidade;
+  dataVigenciaInicio: string;
+  dataCriacao: string;
+}
+
+export interface LicencaValorPayload {
+  valor: number;
+  periodicidade: LicencaPeriodicidade;
+  dataVigenciaInicio: string;
 }

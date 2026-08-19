@@ -37,12 +37,51 @@
       <dt>Status</dt>
       <dd><span class="badge" [class]="'badge--' + licenca()!.status.toLowerCase()">{{ licenca()!.status }}</span></dd>
 
+      <dt>Valor vigente</dt>
+      <dd>
+        @if (licenca()!.valorVigente !== null) {
+          {{ licenca()!.valorVigente | number: '1.2-2' }} / {{ licenca()!.periodicidade }}
+        } @else {
+          Sem valor cadastrado
+        }
+      </dd>
+
       <dt>Observação</dt>
       <dd>{{ licenca()!.observacao || '-' }}</dd>
     </dl>
 
     <div class="acoes">
       <a [routerLink]="['/licencas', licenca()!.id, 'editar']" class="botao botao--primario"><app-icon name="pencil" [size]="16" /> Editar</a>
+      <a
+        [routerLink]="['/licencas', licenca()!.id, 'alterar-valor']"
+        [state]="{ licencaNome: licenca()!.nome }"
+        class="botao"
+        ><app-icon name="pencil" [size]="16" /> Alterar valor</a
+      >
     </div>
+
+    @if (valores().length > 0) {
+      <h2 class="subtitulo">Histórico de valores</h2>
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Vigência a partir de</th>
+              <th>Valor</th>
+              <th>Periodicidade</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of valores(); track item.id) {
+              <tr>
+                <td>{{ item.dataVigenciaInicio | dataBr }}</td>
+                <td>{{ item.valor | number: '1.2-2' }}</td>
+                <td>{{ item.periodicidade }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
   }
 </section>

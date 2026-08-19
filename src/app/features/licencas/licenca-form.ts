@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
+import { CreateLicencaPayload, LicencaPeriodicidade } from './licenca';
 import { LicencaService } from './licenca.service';
 
 @Component({
@@ -33,6 +34,8 @@ export class LicencaForm {
     diasAntecedenciaAviso: [30, [Validators.required, Validators.min(0)]],
     observacao: [''],
     ativa: [true, Validators.required],
+    valor: [0, [Validators.required, Validators.min(0.01)]],
+    periodicidade: ['Mensal' as LicencaPeriodicidade, Validators.required],
   });
 
   protected get editando(): boolean {
@@ -98,7 +101,7 @@ export class LicencaForm {
 
     const requisicao = this.editando
       ? this.licencaService.atualizar(this.licencaId()!, payload)
-      : this.licencaService.criar(payload);
+      : this.licencaService.criar({ ...payload, valor: valor.valor, periodicidade: valor.periodicidade } as CreateLicencaPayload);
 
     requisicao.subscribe({
       next: () => this.router.navigate(['/licencas']),

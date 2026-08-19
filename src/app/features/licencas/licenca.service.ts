@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Licenca, LicencaFiltro, LicencaPayload } from './licenca';
+import { CreateLicencaPayload, Licenca, LicencaFiltro, LicencaPayload, LicencaValor, LicencaValorPayload } from './licenca';
 
 @Injectable({ providedIn: 'root' })
 export class LicencaService {
@@ -23,7 +23,7 @@ export class LicencaService {
     return this.http.get<Licenca>(`${this.baseUrl}/${id}`);
   }
 
-  criar(payload: LicencaPayload): Observable<Licenca> {
+  criar(payload: CreateLicencaPayload): Observable<Licenca> {
     return this.http.post<Licenca>(this.baseUrl, payload);
   }
 
@@ -33,5 +33,13 @@ export class LicencaService {
 
   desativar(id: number): Observable<Licenca> {
     return this.http.patch<Licenca>(`${this.baseUrl}/${id}/desativar`, {});
+  }
+
+  listarValores(id: number): Observable<LicencaValor[]> {
+    return this.http.get<LicencaValor[]>(`${this.baseUrl}/${id}/valores`);
+  }
+
+  adicionarValor(id: number, payload: LicencaValorPayload): Observable<Licenca> {
+    return this.http.post<Licenca>(`${this.baseUrl}/${id}/valores`, payload);
   }
 }
