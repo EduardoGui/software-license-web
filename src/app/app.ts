@@ -19,6 +19,9 @@ export class App {
   protected readonly mostrarShell = computed(
     () => !this.urlAtual().startsWith('/login') && !this.urlAtual().startsWith('/definir-senha'),
   );
+  protected readonly grupoTiAberto = signal(false);
+  protected readonly grupoDpAberto = signal(false);
+  protected readonly grupoSuprimentosAberto = signal(false);
   protected readonly grupoLicencasAberto = signal(false);
   protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
@@ -28,6 +31,33 @@ export class App {
       this.urlAtual.set(this.router.url);
       this.menuMobileAberto.set(false);
     });
+  }
+
+  protected alternarGrupoTi(): void {
+    const abrindo = !this.grupoTiAberto();
+    this.grupoTiAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoDpAberto.set(false);
+      this.grupoSuprimentosAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoDp(): void {
+    const abrindo = !this.grupoDpAberto();
+    this.grupoDpAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoTiAberto.set(false);
+      this.grupoSuprimentosAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoSuprimentos(): void {
+    const abrindo = !this.grupoSuprimentosAberto();
+    this.grupoSuprimentosAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoTiAberto.set(false);
+      this.grupoDpAberto.set(false);
+    }
   }
 
   protected alternarGrupoLicencas(): void {

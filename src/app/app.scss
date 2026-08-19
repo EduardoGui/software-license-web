@@ -80,6 +80,10 @@
   font-size: 0.7rem;
 }
 
+.menu__grupo--sub {
+  padding-left: 1.6rem;
+}
+
 .menu__item {
   font-family: system-ui, sans-serif;
   color: var(--color-on-dark-muted);
@@ -92,6 +96,10 @@
 
 .menu__item--sub {
   padding-left: 1.6rem;
+}
+
+.menu__item--sub2 {
+  padding-left: 2.5rem;
 }
 
 .menu__item:hover {

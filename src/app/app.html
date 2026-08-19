@@ -26,32 +26,46 @@
             Dashboard
           </a>
           <a routerLink="/usuarios" routerLinkActive="menu__item--ativo" class="menu__item">Usuários</a>
-          <button type="button" class="menu__grupo" (click)="alternarGrupoLicencas()">
-            <span class="menu__grupo-seta">{{ grupoLicencasAberto() ? '▾' : '▸' }}</span>
-            Licenças
+          <button type="button" class="menu__grupo" (click)="alternarGrupoTi()">
+            <span class="menu__grupo-seta">{{ grupoTiAberto() ? '▾' : '▸' }}</span>
+            TI
           </button>
-          @if (grupoLicencasAberto()) {
-            <a routerLink="/licencas" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Licenças</a>
-            <a routerLink="/movimentacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Movimentações</a>
-            <a routerLink="/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Linha do Tempo</a>
-            <a routerLink="/licencas/custo-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Custo Mensal</a>
+          @if (grupoTiAberto()) {
+            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoLicencas()">
+              <span class="menu__grupo-seta">{{ grupoLicencasAberto() ? '▾' : '▸' }}</span>
+              Licenças
+            </button>
+            @if (grupoLicencasAberto()) {
+              <a routerLink="/licencas" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Licenças</a>
+              <a routerLink="/movimentacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Movimentações</a>
+              <a routerLink="/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Linha do Tempo</a>
+              <a routerLink="/licencas/custo-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Custo Mensal</a>
+            }
+            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoEquipamentos()">
+              <span class="menu__grupo-seta">{{ grupoEquipamentosAberto() ? '▾' : '▸' }}</span>
+              Equipamentos
+            </button>
+            @if (grupoEquipamentosAberto()) {
+              <a routerLink="/equipamentos/tipos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Tipos de Equipamento</a>
+              <a routerLink="/equipamentos/notas-fiscais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Notas Fiscais
+              </a>
+              <a routerLink="/equipamentos/lista" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Equipamentos</a>
+              <a routerLink="/equipamentos/alocacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Alocações</a>
+              <a routerLink="/equipamentos/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Relatório Mensal
+              </a>
+              <a routerLink="/equipamentos/inventario" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Inventário</a>
+            }
           }
-          <button type="button" class="menu__grupo" (click)="alternarGrupoEquipamentos()">
-            <span class="menu__grupo-seta">{{ grupoEquipamentosAberto() ? '▾' : '▸' }}</span>
-            Equipamentos
+          <button type="button" class="menu__grupo" (click)="alternarGrupoDp()">
+            <span class="menu__grupo-seta">{{ grupoDpAberto() ? '▾' : '▸' }}</span>
+            DP
           </button>
-          @if (grupoEquipamentosAberto()) {
-            <a routerLink="/equipamentos/tipos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Tipos de Equipamento</a>
-            <a routerLink="/equipamentos/notas-fiscais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Notas Fiscais
-            </a>
-            <a routerLink="/equipamentos/lista" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Equipamentos</a>
-            <a routerLink="/equipamentos/alocacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Alocações</a>
-            <a routerLink="/equipamentos/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Relatório Mensal
-            </a>
-            <a routerLink="/equipamentos/inventario" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Inventário</a>
-          }
+          <button type="button" class="menu__grupo" (click)="alternarGrupoSuprimentos()">
+            <span class="menu__grupo-seta">{{ grupoSuprimentosAberto() ? '▾' : '▸' }}</span>
+            Suprimentos
+          </button>
         } @else {
           <a [routerLink]="['/usuarios', authService.obterUsuarioId()]" routerLinkActive="menu__item--ativo" class="menu__item">
             Meus dados
