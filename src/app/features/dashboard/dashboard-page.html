@@ -27,17 +27,41 @@
         <span class="card__valor">{{ dados()!.proximosVencimentos.length }}</span>
         <span class="card__rotulo">Próximos vencimentos</span>
       </div>
-      <div class="card">
-        <span class="card__valor">{{ dados()!.equipamentosEmUso }}</span>
-        <span class="card__rotulo">Equipamentos em uso</span>
+      <div class="card card--lista">
+        <span class="card__rotulo">Equipamentos locados em uso</span>
+        @if (dados()!.equipamentosEmUsoPorTipo.length === 0) {
+          <span class="card__vazio">Nenhum</span>
+        } @else {
+          <ul class="card__lista">
+            @for (item of dados()!.equipamentosEmUsoPorTipo; track item.tipoEquipamentoNome) {
+              <li><span>{{ item.tipoEquipamentoNome }}</span><span>{{ item.quantidade }}</span></li>
+            }
+          </ul>
+        }
       </div>
-      <div class="card">
-        <span class="card__valor">{{ dados()!.equipamentosDisponiveis }}</span>
-        <span class="card__rotulo">Equipamentos disponíveis</span>
+      <div class="card card--lista">
+        <span class="card__rotulo">Equipamentos locados disponíveis</span>
+        @if (dados()!.equipamentosDisponiveisPorTipo.length === 0) {
+          <span class="card__vazio">Nenhum</span>
+        } @else {
+          <ul class="card__lista">
+            @for (item of dados()!.equipamentosDisponiveisPorTipo; track item.tipoEquipamentoNome) {
+              <li><span>{{ item.tipoEquipamentoNome }}</span><span>{{ item.quantidade }}</span></li>
+            }
+          </ul>
+        }
       </div>
-      <div class="card">
-        <span class="card__valor">{{ dados()!.equipamentosLocadosAtivos }}</span>
+      <div class="card card--lista">
         <span class="card__rotulo">Equipamentos locados ativos</span>
+        @if (dados()!.equipamentosLocadosAtivosPorTipo.length === 0) {
+          <span class="card__vazio">Nenhum</span>
+        } @else {
+          <ul class="card__lista">
+            @for (item of dados()!.equipamentosLocadosAtivosPorTipo; track item.tipoEquipamentoNome) {
+              <li><span>{{ item.tipoEquipamentoNome }}</span><span>{{ item.quantidade }}</span></li>
+            }
+          </ul>
+        }
       </div>
       <div class="card">
         <span class="card__valor">{{ dados()!.custoMensalLocacaoAtual | number: '1.2-2' }}</span>

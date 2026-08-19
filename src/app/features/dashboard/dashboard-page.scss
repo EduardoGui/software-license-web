@@ -52,6 +52,36 @@ h2 {
   color: var(--color-secondary);
 }
 
+.card--lista {
+  gap: 0.5rem;
+}
+
+.card__vazio {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+.card__lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.card__lista li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.95rem;
+  color: var(--color-primary);
+}
+
+.card__lista li span:last-child {
+  font-weight: 700;
+}
+
 .tabela-scroll {
   overflow-x: auto;
   border: 1px solid var(--color-border-light);

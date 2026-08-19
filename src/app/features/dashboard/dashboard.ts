@@ -12,15 +12,20 @@ export interface VencimentoContrato {
   diasParaVencer: number;
 }
 
+export interface EquipamentoContagemPorTipo {
+  tipoEquipamentoNome: string;
+  quantidade: number;
+}
+
 export interface DashboardData {
   usuariosAtivos: number;
   licencasAdquiridas: number;
   licencasEmUso: number;
   licencasDisponiveis: number;
   proximosVencimentos: Vencimento[];
-  equipamentosEmUso: number;
-  equipamentosDisponiveis: number;
-  equipamentosLocadosAtivos: number;
+  equipamentosEmUsoPorTipo: EquipamentoContagemPorTipo[];
+  equipamentosDisponiveisPorTipo: EquipamentoContagemPorTipo[];
+  equipamentosLocadosAtivosPorTipo: EquipamentoContagemPorTipo[];
   custoMensalLocacaoAtual: number;
   proximosVencimentosContratos: VencimentoContrato[];
 }
