@@ -55,7 +55,19 @@
         <a [routerLink]="['/usuarios', usuario()!.id, 'editar']" class="botao botao--primario"><app-icon name="pencil" [size]="16" /> Editar</a>
       }
       <a [routerLink]="['/usuarios', usuario()!.id, 'perfil']" class="botao"><app-icon name="pencil" [size]="16" /> Editar dados bancários</a>
+      @if (authService.ehAdministrador()) {
+        <button type="button" class="botao" [disabled]="reenviandoConvite()" (click)="reenviarConvite()">
+          {{ reenviandoConvite() ? 'Enviando...' : 'Reenviar convite de acesso' }}
+        </button>
+      }
     </div>
+
+    @if (conviteReenviado()) {
+      <p class="status status--sucesso">Convite reenviado com sucesso.</p>
+    }
+    @if (erroReenvioConvite()) {
+      <p class="status status--erro">{{ erroReenvioConvite() }}</p>
+    }
 
     <section class="relacionados">
       <h2>Licenças em uso</h2>

@@ -38,4 +38,8 @@ export class UsuarioService {
   atualizarPerfil(id: number, payload: PerfilPayload): Observable<Usuario> {
     return this.http.patch<Usuario>(`${this.baseUrl}/${id}/perfil`, payload);
   }
+
+  reenviarConvite(id: number): Observable<void> {
+    return this.http.patch<void>(`${this.baseUrl}/${id}/reenviar-convite`, {});
+  }
 }

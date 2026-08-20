@@ -30,6 +30,10 @@ export class UsuarioView {
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
 
+  protected readonly reenviandoConvite = signal(false);
+  protected readonly conviteReenviado = signal(false);
+  protected readonly erroReenvioConvite = signal<string | null>(null);
+
   protected readonly licencas = signal<Movimentacao[]>([]);
   protected readonly carregandoLicencas = signal(true);
   protected readonly equipamentos = signal<EquipamentoAlocacao[]>([]);
@@ -37,6 +41,28 @@ export class UsuarioView {
 
   protected voltar(): void {
     this.location.back();
+  }
+
+  protected reenviarConvite(): void {
+    const id = this.usuario()?.id;
+    if (!id) {
+      return;
+    }
+
+    this.reenviandoConvite.set(true);
+    this.conviteReenviado.set(false);
+    this.erroReenvioConvite.set(null);
+
+    this.usuarioService.reenviarConvite(id).subscribe({
+      next: () => {
+        this.reenviandoConvite.set(false);
+        this.conviteReenviado.set(true);
+      },
+      error: (err) => {
+        this.reenviandoConvite.set(false);
+        this.erroReenvioConvite.set(err?.error?.message ?? 'Não foi possível reenviar o convite.');
+      },
+    });
   }
 
   constructor() {
