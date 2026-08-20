@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: 'https://software-license-api.example.com/api',
+  apiUrl: 'https://software-license-api.onrender.com/api',
 };
