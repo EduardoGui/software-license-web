@@ -1,0 +1,65 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Meus dados bancários</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <p class="aviso">Esses dados são usados para identificar você e pagar reembolsos de despesas.</p>
+
+      <label>
+        CPF
+        <input type="text" formControlName="cpf" placeholder="000.000.000-00" />
+      </label>
+
+      <label>
+        Cargo
+        <input type="text" formControlName="cargo" />
+      </label>
+
+      <label>
+        Setor
+        <select formControlName="setorId">
+          <option [ngValue]="null">Selecione um setor</option>
+          @for (setor of setores(); track setor.id) {
+            <option [ngValue]="setor.id">{{ setor.nome }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Chave PIX
+        <input type="text" formControlName="chavePix" />
+      </label>
+
+      <label>
+        Banco
+        <input type="text" formControlName="banco" />
+      </label>
+
+      <label>
+        Agência
+        <input type="text" formControlName="agencia" />
+      </label>
+
+      <label>
+        Conta
+        <input type="text" formControlName="contaBancaria" />
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a [routerLink]="['/usuarios', usuarioId]" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

@@ -1,0 +1,62 @@
+<section class="tipos-despesa">
+  <header class="topo">
+    <h1>Tipos de Despesa</h1>
+    <a class="botao botao--primario" routerLink="/dp/tipos-despesa/novo"><app-icon name="plus" [size]="16" /> Novo tipo</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Nome
+      <input type="text" name="nome" [(ngModel)]="filtro.nome" placeholder="Buscar por nome" />
+    </label>
+    <label>
+      Status
+      <select name="ativo" [(ngModel)]="filtro.ativo">
+        <option [ngValue]="undefined">Todos</option>
+        <option [ngValue]="true">Ativo</option>
+        <option [ngValue]="false">Inativo</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os tipos de despesa. Verifique se a API está em execução.</p>
+  } @else if (tipos().length === 0) {
+    <p class="status">Nenhum tipo de despesa encontrado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tipo of tipos(); track tipo.id) {
+            <tr>
+              <td>{{ tipo.nome }}</td>
+              <td>
+                <span class="badge" [class.badge--ativa]="tipo.ativo" [class.badge--inativa]="!tipo.ativo">
+                  {{ tipo.ativo ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
+              <td class="acoes">
+                <a [routerLink]="['/dp/tipos-despesa', tipo.id, 'editar']" title="Editar" aria-label="Editar">
+                  <app-icon name="pencil" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

@@ -1,0 +1,65 @@
+<section class="emails">
+  <header class="topo">
+    <h1>E-mails de Notificação de Reembolso</h1>
+    <a class="botao botao--primario" routerLink="/dp/emails-notificacao-reembolso/novo"><app-icon name="plus" [size]="16" /> Novo e-mail</a>
+  </header>
+
+  <p class="aviso">
+    Quando um reembolso de despesa é aprovado, o PDF é enviado automaticamente para todos os e-mails "Para" ativos, com
+    cópia para os "Cc" ativos.
+  </p>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Status
+      <select name="ativo" [(ngModel)]="filtro.ativo">
+        <option [ngValue]="undefined">Todos</option>
+        <option [ngValue]="true">Ativo</option>
+        <option [ngValue]="false">Inativo</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os e-mails. Verifique se a API está em execução.</p>
+  } @else if (emails().length === 0) {
+    <p class="status">Nenhum e-mail de notificação cadastrado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>E-mail</th>
+            <th>Tipo</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (email of emails(); track email.id) {
+            <tr>
+              <td>{{ email.email }}</td>
+              <td>{{ email.tipoDestinatario === 'Para' ? 'Para' : 'Cc' }}</td>
+              <td>
+                <span class="badge" [class.badge--ativa]="email.ativo" [class.badge--inativa]="!email.ativo">
+                  {{ email.ativo ? 'Ativo' : 'Inativo' }}
+                </span>
+              </td>
+              <td class="acoes">
+                <a [routerLink]="['/dp/emails-notificacao-reembolso', email.id, 'editar']" title="Editar" aria-label="Editar">
+                  <app-icon name="pencil" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

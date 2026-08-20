@@ -1,0 +1,106 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar reembolso' : 'Novo reembolso' }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Finalidade *
+        <input type="text" formControlName="finalidade" placeholder="Ex.: Viagem a cliente, reunião externa" />
+        @if (form.controls.finalidade.invalid && form.controls.finalidade.touched) {
+          <span class="campo-erro">Finalidade é obrigatória.</span>
+        }
+      </label>
+
+      <label>
+        Forma de pagamento
+        <input type="text" formControlName="formaPagamento" />
+      </label>
+
+      <label>
+        Local
+        <select formControlName="localId">
+          <option [ngValue]="null">Não informado</option>
+          @for (local of locais(); track local.id) {
+            <option [ngValue]="local.id">{{ local.nome }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Observação
+        <textarea formControlName="observacao" rows="2"></textarea>
+      </label>
+
+      <div class="itens">
+        <div class="itens__topo">
+          <h2>Despesas</h2>
+          <button type="button" class="botao" (click)="adicionarItem()"><app-icon name="plus" [size]="16" /> Adicionar item</button>
+        </div>
+
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Descrição</th>
+                <th>Nº Documento</th>
+                <th>Valor</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody [formArrayName]="'itens'">
+              @for (item of itens.controls; track item; let i = $index) {
+                <tr [formGroupName]="i">
+                  <td><input type="date" formControlName="data" /></td>
+                  <td>
+                    <select formControlName="tipoDespesaId">
+                      <option [ngValue]="null">Selecione</option>
+                      @for (tipo of tiposDespesa(); track tipo.id) {
+                        <option [ngValue]="tipo.id">{{ tipo.nome }}</option>
+                      }
+                    </select>
+                  </td>
+                  <td><input type="text" formControlName="descricao" /></td>
+                  <td><input type="text" formControlName="numeroDocumento" /></td>
+                  <td><input type="number" min="0.01" step="0.01" formControlName="valor" /></td>
+                  <td>
+                    <button type="button" class="botao-remover" title="Remover" aria-label="Remover" (click)="removerItem(i)">
+                      <app-icon name="trash" [size]="16" />
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="itens__vazio">Nenhuma despesa adicionada.</td>
+                </tr>
+              }
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="4"><strong>Total</strong></td>
+                <td colspan="2"><strong>{{ calcularTotal() | number: '1.2-2' }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/reembolsos-despesa" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

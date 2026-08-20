@@ -1,0 +1,84 @@
+.reembolsos {
+  max-width: 1080px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.topo {
+  margin-bottom: 1rem;
+}
+
+h1 {
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.status {
+  color: var(--color-secondary);
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+.tabela-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+th {
+  background: var(--color-bg-page);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.acoes {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.botao {
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.botao--aprovar {
+  background: #15803d;
+  border-color: #15803d;
+  color: #fff;
+}
+
+.botao--devolver {
+  border-color: #c2410c;
+  color: #c2410c;
+}
+
+.botao--reprovar {
+  border-color: #b91c1c;
+  color: #b91c1c;
+}

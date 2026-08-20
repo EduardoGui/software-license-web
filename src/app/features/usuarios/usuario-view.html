@@ -27,13 +27,35 @@
 
       <dt>Observação</dt>
       <dd>{{ usuario()!.observacao || '-' }}</dd>
+
+      <dt>CPF</dt>
+      <dd>{{ usuario()!.cpf || '-' }}</dd>
+
+      <dt>Cargo</dt>
+      <dd>{{ usuario()!.cargo || '-' }}</dd>
+
+      <dt>Setor</dt>
+      <dd>{{ usuario()!.setorNome || '-' }}</dd>
+
+      <dt>Chave PIX</dt>
+      <dd>{{ usuario()!.chavePix || '-' }}</dd>
+
+      <dt>Banco / Agência / Conta</dt>
+      <dd>
+        @if (usuario()!.banco || usuario()!.agencia || usuario()!.contaBancaria) {
+          {{ usuario()!.banco || '-' }} / {{ usuario()!.agencia || '-' }} / {{ usuario()!.contaBancaria || '-' }}
+        } @else {
+          -
+        }
+      </dd>
     </dl>
 
-    @if (authService.ehAdministrador()) {
-      <div class="acoes">
+    <div class="acoes">
+      @if (authService.ehAdministrador()) {
         <a [routerLink]="['/usuarios', usuario()!.id, 'editar']" class="botao botao--primario"><app-icon name="pencil" [size]="16" /> Editar</a>
-      </div>
-    }
+      }
+      <a [routerLink]="['/usuarios', usuario()!.id, 'perfil']" class="botao"><app-icon name="pencil" [size]="16" /> Editar dados bancários</a>
+    </div>
 
     <section class="relacionados">
       <h2>Licenças em uso</h2>

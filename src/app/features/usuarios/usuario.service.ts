@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Usuario, UsuarioFiltro, UsuarioPayload } from './usuario';
+import { PerfilPayload, Usuario, UsuarioFiltro, UsuarioPayload } from './usuario';
 
 @Injectable({ providedIn: 'root' })
 export class UsuarioService {
@@ -33,5 +33,9 @@ export class UsuarioService {
 
   desativar(id: number, dataFim: string | null): Observable<Usuario> {
     return this.http.patch<Usuario>(`${this.baseUrl}/${id}/desativar`, { dataFim });
+  }
+
+  atualizarPerfil(id: number, payload: PerfilPayload): Observable<Usuario> {
+    return this.http.patch<Usuario>(`${this.baseUrl}/${id}/perfil`, payload);
   }
 }

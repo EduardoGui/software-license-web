@@ -1,0 +1,42 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ titulo }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()">
+    @if (erro()) {
+      <p class="status status--erro">{{ erro() }}</p>
+    }
+
+    @if (contexto.numero || contexto.usuarioNome) {
+      <p class="contexto">
+        @if (contexto.numero) {
+          <strong>{{ contexto.numero }}</strong>
+        }
+        @if (contexto.usuarioNome) {
+          — {{ contexto.usuarioNome }}
+        }
+      </p>
+    }
+
+    <label>
+      Observação {{ acao === 'devolver' ? '*' : '' }}
+      <textarea
+        formControlName="observacaoAprovador"
+        rows="4"
+        [placeholder]="acao === 'devolver' ? 'Explique o que precisa ser corrigido.' : 'Opcional.'"
+      ></textarea>
+      @if (form.controls.observacaoAprovador.invalid && form.controls.observacaoAprovador.touched) {
+        <span class="campo-erro">Descreva o motivo da devolução.</span>
+      }
+    </label>
+
+    <div class="acoes">
+      <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Confirmar' }}
+      </button>
+      <a routerLink="/reembolsos-despesa/pendentes" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+    </div>
+  </form>
+</section>

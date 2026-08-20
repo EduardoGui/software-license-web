@@ -1,0 +1,69 @@
+<section class="reembolsos">
+  <header class="topo">
+    <h1>Meus Reembolsos</h1>
+    @if (!semUsuarioVinculado()) {
+      <a class="botao botao--primario" routerLink="/reembolsos-despesa/novo"><app-icon name="plus" [size]="16" /> Novo reembolso</a>
+    }
+  </header>
+
+  @if (semUsuarioVinculado()) {
+    <p class="status">
+      Esta conta não tem um cadastro de colaborador vinculado, então não é possível solicitar reembolsos.
+    </p>
+  } @else if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar seus reembolsos. Verifique se a API está em execução.</p>
+  } @else if (reembolsos().length === 0) {
+    <p class="status">Você ainda não tem nenhum reembolso solicitado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nº</th>
+            <th>Data</th>
+            <th>Finalidade</th>
+            <th>Valor</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reembolso of reembolsos(); track reembolso.id) {
+            <tr>
+              <td>{{ reembolso.numero }}</td>
+              <td>{{ reembolso.dataSolicitacao | dataBr }}</td>
+              <td>{{ reembolso.finalidade }}</td>
+              <td>{{ reembolso.valorTotal | number: '1.2-2' }}</td>
+              <td>
+                <span class="badge" [class]="'badge--' + reembolso.status.toLowerCase()">{{ rotuloStatus(reembolso.status) }}</span>
+              </td>
+              <td class="acoes">
+                <button type="button" title="Baixar PDF" aria-label="Baixar PDF" (click)="baixarPdf(reembolso)">
+                  <app-icon name="download" [size]="18" />
+                </button>
+                @if (editavel(reembolso)) {
+                  <a [routerLink]="['/reembolsos-despesa', reembolso.id, 'editar']" title="Editar" aria-label="Editar">
+                    <app-icon name="pencil" [size]="18" />
+                  </a>
+                  <button type="button" title="Excluir" aria-label="Excluir" (click)="excluir(reembolso)">
+                    <app-icon name="trash" [size]="18" />
+                  </button>
+                  <button type="button" title="Enviar para aprovação" aria-label="Enviar para aprovação" (click)="enviar(reembolso)">
+                    <app-icon name="check-circle" [size]="18" />
+                  </button>
+                }
+              </td>
+            </tr>
+            @if (reembolso.status === 'DevolvidoParaRevisao' && reembolso.observacaoAprovador) {
+              <tr class="linha-observacao">
+                <td colspan="6">Motivo da devolução: {{ reembolso.observacaoAprovador }}</td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

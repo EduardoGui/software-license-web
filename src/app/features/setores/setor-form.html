@@ -1,0 +1,81 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar setor' : 'Novo setor' }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Nome *
+        <input type="text" formControlName="nome" />
+        @if (form.controls.nome.invalid && form.controls.nome.touched) {
+          <span class="campo-erro">Nome é obrigatório.</span>
+        }
+      </label>
+
+      <label>
+        Status
+        <select formControlName="ativo">
+          <option [ngValue]="true">Ativo</option>
+          <option [ngValue]="false">Inativo</option>
+        </select>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/dp/setores" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+
+    @if (editando && setor()) {
+      <div class="aprovadores">
+        <h2>Aprovadores</h2>
+
+        @if (erroAprovador()) {
+          <p class="status status--erro">{{ erroAprovador() }}</p>
+        }
+
+        <div class="aprovadores__adicionar">
+          <select [(ngModel)]="usuarioSelecionado" [ngModelOptions]="{ standalone: true }">
+            <option [ngValue]="null">Selecione um usuário</option>
+            @for (usuario of usuarios(); track usuario.id) {
+              <option [ngValue]="usuario.id">{{ usuario.nome }}</option>
+            }
+          </select>
+          <button
+            type="button"
+            class="botao"
+            [disabled]="!usuarioSelecionado || salvandoAprovador()"
+            (click)="adicionarAprovador()"
+          >
+            <app-icon name="plus" [size]="16" /> Adicionar
+          </button>
+        </div>
+
+        @if (setor()!.aprovadores.length === 0) {
+          <p class="status">Nenhum aprovador cadastrado ainda.</p>
+        } @else {
+          <ul class="aprovadores__lista">
+            @for (aprovador of setor()!.aprovadores; track aprovador.id) {
+              <li>
+                <span>{{ aprovador.usuarioNome }}</span>
+                <button type="button" class="botao-remover" title="Remover" aria-label="Remover" (click)="removerAprovador(aprovador.id)">
+                  <app-icon name="trash" [size]="16" />
+                </button>
+              </li>
+            }
+          </ul>
+        }
+      </div>
+    }
+  }
+</section>

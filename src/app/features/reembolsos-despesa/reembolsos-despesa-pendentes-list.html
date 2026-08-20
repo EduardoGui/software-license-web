@@ -1,0 +1,54 @@
+<section class="reembolsos">
+  <header class="topo">
+    <h1>Aprovações Pendentes</h1>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as aprovações pendentes. Verifique se a API está em execução.</p>
+  } @else if (reembolsos().length === 0) {
+    <p class="status">Nenhuma solicitação aguardando sua aprovação.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nº</th>
+            <th>Solicitante</th>
+            <th>Data</th>
+            <th>Finalidade</th>
+            <th>Valor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reembolso of reembolsos(); track reembolso.id) {
+            <tr>
+              <td>{{ reembolso.numero }}</td>
+              <td>{{ reembolso.usuarioNome }}</td>
+              <td>{{ reembolso.dataSolicitacao | dataBr }}</td>
+              <td>{{ reembolso.finalidade }}</td>
+              <td>{{ reembolso.valorTotal | number: '1.2-2' }}</td>
+              <td class="acoes">
+                <button type="button" class="botao botao--aprovar" (click)="aprovar(reembolso)">Aprovar</button>
+                <a
+                  [routerLink]="['/reembolsos-despesa', reembolso.id, 'devolver']"
+                  [state]="{ numero: reembolso.numero, usuarioNome: reembolso.usuarioNome }"
+                  class="botao botao--devolver"
+                  >Devolver</a
+                >
+                <a
+                  [routerLink]="['/reembolsos-despesa', reembolso.id, 'reprovar']"
+                  [state]="{ numero: reembolso.numero, usuarioNome: reembolso.usuarioNome }"
+                  class="botao botao--reprovar"
+                  >Reprovar</a
+                >
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
