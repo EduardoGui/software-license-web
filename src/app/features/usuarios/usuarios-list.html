@@ -40,11 +40,10 @@
         <thead>
           <tr>
             <th>Nome</th>
-            <th>Email</th>
             <th>Início</th>
             <th>Fim</th>
             <th>Status</th>
-            <th>Licenças em uso</th>
+            <th>Licenças</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -52,7 +51,6 @@
           @for (usuario of usuarios(); track usuario.id) {
             <tr>
               <td>{{ usuario.nome }}</td>
-              <td>{{ usuario.email }}</td>
               <td>{{ usuario.dataInicio | dataBr }}</td>
               <td>{{ usuario.dataFim | dataBr }}</td>
               <td><span class="badge" [class]="'badge--' + usuario.status.toLowerCase()">{{ usuario.status }}</span></td>
