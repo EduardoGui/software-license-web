@@ -20,6 +20,7 @@ export class UsuariosList {
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
   protected readonly desativandoId = signal<number | null>(null);
+  protected readonly reenviandoConviteId = signal<number | null>(null);
 
   protected filtro: UsuarioFiltro = { status: 'Ativo' };
 
@@ -63,6 +64,25 @@ export class UsuariosList {
       error: () => {
         this.desativandoId.set(null);
         alert('Não foi possível desativar o usuário.');
+      },
+    });
+  }
+
+  protected reenviarConvite(usuario: Usuario): void {
+    const confirmado = confirm(`Reenviar o convite de acesso para "${usuario.nome}" (${usuario.email})?`);
+    if (!confirmado) {
+      return;
+    }
+
+    this.reenviandoConviteId.set(usuario.id);
+    this.usuarioService.reenviarConvite(usuario.id).subscribe({
+      next: () => {
+        this.reenviandoConviteId.set(null);
+        alert('Convite reenviado com sucesso.');
+      },
+      error: (err) => {
+        this.reenviandoConviteId.set(null);
+        alert(err?.error?.message ?? 'Não foi possível reenviar o convite.');
       },
     });
   }
