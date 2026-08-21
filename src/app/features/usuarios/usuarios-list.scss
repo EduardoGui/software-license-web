@@ -91,7 +91,7 @@ h1 {
 
 table {
   width: 100%;
-  min-width: 640px;
+  min-width: 820px;
   border-collapse: collapse;
   background: #fff;
 }
@@ -101,6 +101,7 @@ td {
   text-align: left;
   padding: 0.6rem 0.9rem;
   border-bottom: 1px solid var(--color-border-light);
+  white-space: nowrap;
 }
 
 th {
@@ -173,6 +174,29 @@ th {
 }
 
 .botao--link:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.botao--link-convite {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.botao--link-convite:hover:not(:disabled) {
+  background: var(--color-primary-tint);
+}
+
+.botao--link-convite:disabled {
   opacity: 0.5;
   cursor: default;
 }
