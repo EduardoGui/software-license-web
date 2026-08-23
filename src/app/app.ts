@@ -24,6 +24,7 @@ export class App {
   protected readonly grupoSuprimentosAberto = signal(false);
   protected readonly grupoLicencasAberto = signal(false);
   protected readonly grupoEquipamentosAberto = signal(false);
+  protected readonly grupoPatrimonioAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
 
   constructor() {
@@ -65,6 +66,7 @@ export class App {
     this.grupoLicencasAberto.set(abrindo);
     if (abrindo) {
       this.grupoEquipamentosAberto.set(false);
+      this.grupoPatrimonioAberto.set(false);
     }
   }
 
@@ -73,6 +75,16 @@ export class App {
     this.grupoEquipamentosAberto.set(abrindo);
     if (abrindo) {
       this.grupoLicencasAberto.set(false);
+      this.grupoPatrimonioAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoPatrimonio(): void {
+    const abrindo = !this.grupoPatrimonioAberto();
+    this.grupoPatrimonioAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoLicencasAberto.set(false);
+      this.grupoEquipamentosAberto.set(false);
     }
   }
 

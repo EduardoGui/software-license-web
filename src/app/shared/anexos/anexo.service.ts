@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Anexo } from './anexo';
 
-export type AnexoRecurso = 'equipamentos' | 'notas-fiscais-entrada';
+export type AnexoRecurso = 'equipamentos' | 'notas-fiscais-entrada' | 'patrimonio-itens';
 
 @Injectable({ providedIn: 'root' })
 export class AnexoService {

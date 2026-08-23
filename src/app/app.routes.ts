@@ -46,6 +46,10 @@ import { EmailsNotificacaoReembolsoList } from './features/emails-notificacao-re
 import { EmailNotificacaoReembolsoForm } from './features/emails-notificacao-reembolso/email-notificacao-reembolso-form';
 import { LocaisList } from './features/locais/locais-list';
 import { LocalForm } from './features/locais/local-form';
+import { TiposPatrimonioList } from './features/tipos-patrimonio/tipos-patrimonio-list';
+import { TipoPatrimonioForm } from './features/tipos-patrimonio/tipo-patrimonio-form';
+import { PatrimonioItensList } from './features/patrimonio/patrimonio-itens-list';
+import { PatrimonioItemForm } from './features/patrimonio/patrimonio-item-form';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -90,6 +94,11 @@ export const routes: Routes = [
       },
       { path: 'equipamentos/relatorio-mensal', component: RelatorioMensalLocacaoPage, canActivate: [adminGuard] },
       { path: 'equipamentos/inventario', component: InventarioPage, canActivate: [adminGuard] },
+      { path: 'patrimonio/tipos', component: TiposPatrimonioList, canActivate: [adminGuard] },
+      { path: 'patrimonio/tipos/novo', component: TipoPatrimonioForm, canActivate: [adminGuard] },
+      { path: 'patrimonio/tipos/:id/editar', component: TipoPatrimonioForm, canActivate: [adminGuard] },
+      { path: 'patrimonio', component: PatrimonioItensList, canActivate: [adminGuard] },
+      { path: 'patrimonio/:id/editar', component: PatrimonioItemForm, canActivate: [adminGuard] },
       { path: 'dp/setores', component: SetoresList, canActivate: [adminGuard] },
       { path: 'dp/setores/novo', component: SetorForm, canActivate: [adminGuard] },
       { path: 'dp/setores/:id/editar', component: SetorForm, canActivate: [adminGuard] },

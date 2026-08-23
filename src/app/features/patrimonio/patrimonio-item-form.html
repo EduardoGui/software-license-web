@@ -1,0 +1,69 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Editar item de patrimônio</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (!item()) {
+    <p class="status status--erro">{{ erro() }}</p>
+  } @else {
+    <div class="info-fixa">
+      <dl>
+        <dt>Tipo</dt>
+        <dd>{{ item()!.tipoPatrimonioNome }}</dd>
+        <dt>Status</dt>
+        <dd>{{ item()!.status }}</dd>
+        @if (item()!.numeroNotaFiscal) {
+          <dt>Nota fiscal de origem</dt>
+          <dd>
+            <a [routerLink]="['/equipamentos/notas-fiscais', item()!.notaFiscalEntradaId]">{{ item()!.numeroNotaFiscal }}</a>
+          </dd>
+        }
+      </dl>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <div class="grade">
+        <label>
+          Descrição
+          <input type="text" formControlName="descricao" />
+        </label>
+
+        <label>
+          Nº Patrimônio
+          <input type="text" formControlName="numeroPatrimonio" />
+        </label>
+
+        <label>
+          Local
+          <select formControlName="localId">
+            <option [ngValue]="null">Não informado</option>
+            @for (local of locais(); track local.id) {
+              <option [ngValue]="local.id">{{ local.nome }}</option>
+            }
+          </select>
+        </label>
+      </div>
+
+      <label>
+        Observação
+        <textarea formControlName="observacao" rows="3"></textarea>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/patrimonio" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+
+    <app-anexos-secao recurso="patrimonio-itens" [entidadeId]="itemId" />
+  }
+</section>

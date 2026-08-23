@@ -1,0 +1,39 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar tipo de patrimônio' : 'Novo tipo de patrimônio' }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Nome *
+        <input type="text" formControlName="nome" />
+        @if (form.controls.nome.invalid && form.controls.nome.touched) {
+          <span class="campo-erro">Nome é obrigatório.</span>
+        }
+      </label>
+
+      <label>
+        Status
+        <select formControlName="ativo">
+          <option [ngValue]="true">Ativo</option>
+          <option [ngValue]="false">Inativo</option>
+        </select>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/patrimonio/tipos" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

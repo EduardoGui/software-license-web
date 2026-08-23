@@ -24,9 +24,14 @@
 
     <div class="secao-cabecalho">
       <h2>Itens do romaneio</h2>
-      @if (nota()!.itens.length > 0) {
-        <a class="link" [routerLink]="['/equipamentos/lista']" [queryParams]="{ notaFiscalEntradaId: nota()!.id }">Ver equipamentos gerados</a>
-      }
+      <div class="secao-cabecalho__links">
+        @if (temItemEquipamento()) {
+          <a class="link" [routerLink]="['/equipamentos/lista']" [queryParams]="{ notaFiscalEntradaId: nota()!.id }">Ver equipamentos gerados</a>
+        }
+        @if (temItemPatrimonio()) {
+          <a class="link" [routerLink]="['/patrimonio']" [queryParams]="{ notaFiscalEntradaId: nota()!.id }">Ver itens de patrimônio gerados</a>
+        }
+      </div>
     </div>
 
     @if (nota()!.itens.length === 0) {
@@ -36,21 +41,23 @@
         <table>
           <thead>
             <tr>
+              <th>Destino</th>
               <th>Tipo</th>
               <th>Descrição</th>
               <th>Quantidade</th>
               <th>Valor unitário</th>
-              <th>Origem</th>
+              <th>Origem/Local</th>
             </tr>
           </thead>
           <tbody>
             @for (item of nota()!.itens; track item.id) {
               <tr>
-                <td>{{ item.tipoEquipamentoNome }}</td>
+                <td>{{ item.destino === 'Patrimonio' ? 'Patrimônio' : 'Equipamento' }}</td>
+                <td>{{ item.destino === 'Patrimonio' ? item.tipoPatrimonioNome : item.tipoEquipamentoNome }}</td>
                 <td>{{ item.descricao || '-' }}</td>
                 <td>{{ item.quantidade }}</td>
                 <td>{{ item.valorUnitario !== null ? (item.valorUnitario | number: '1.2-2') : '-' }}</td>
-                <td>{{ item.origem }}</td>
+                <td>{{ item.destino === 'Patrimonio' ? (item.localNome || '-') : item.origem }}</td>
               </tr>
             }
           </tbody>
@@ -68,22 +75,52 @@
 
       <div class="form-item__grade">
         <label>
-          Tipo de equipamento *
-          <select formControlName="tipoEquipamentoId">
-            <option [ngValue]="0">Selecione...</option>
-            @for (tipo of tipos(); track tipo.id) {
-              <option [ngValue]="tipo.id">{{ tipo.nome }}</option>
-            }
+          Destino *
+          <select formControlName="destino">
+            <option value="Equipamento">Equipamento</option>
+            <option value="Patrimonio">Patrimônio</option>
           </select>
         </label>
 
-        <label>
-          Origem *
-          <select formControlName="origem">
-            <option value="Comprado">Comprado</option>
-            <option value="Locado">Locado</option>
-          </select>
-        </label>
+        @if (formItem.value.destino === 'Patrimonio') {
+          <label>
+            Tipo de patrimônio *
+            <select formControlName="tipoPatrimonioId">
+              <option [ngValue]="0">Selecione...</option>
+              @for (tipo of tiposPatrimonio(); track tipo.id) {
+                <option [ngValue]="tipo.id">{{ tipo.nome }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            Local
+            <select formControlName="localId">
+              <option [ngValue]="null">Não informado</option>
+              @for (local of locais(); track local.id) {
+                <option [ngValue]="local.id">{{ local.nome }}</option>
+              }
+            </select>
+          </label>
+        } @else {
+          <label>
+            Tipo de equipamento *
+            <select formControlName="tipoEquipamentoId">
+              <option [ngValue]="0">Selecione...</option>
+              @for (tipo of tipos(); track tipo.id) {
+                <option [ngValue]="tipo.id">{{ tipo.nome }}</option>
+              }
+            </select>
+          </label>
+
+          <label>
+            Origem *
+            <select formControlName="origem">
+              <option value="Comprado">Comprado</option>
+              <option value="Locado">Locado</option>
+            </select>
+          </label>
+        }
 
         <label>
           Quantidade *

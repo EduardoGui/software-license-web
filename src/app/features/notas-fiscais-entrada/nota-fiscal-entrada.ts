@@ -12,12 +12,17 @@ export interface NotaFiscalEntrada {
 export interface NotaFiscalItem {
   id: number;
   notaFiscalEntradaId: number;
-  tipoEquipamentoId: number;
-  tipoEquipamentoNome: string;
+  destino: 'Equipamento' | 'Patrimonio';
+  tipoEquipamentoId: number | null;
+  tipoEquipamentoNome: string | null;
+  tipoPatrimonioId: number | null;
+  tipoPatrimonioNome: string | null;
+  localId: number | null;
+  localNome: string | null;
   descricao: string | null;
   quantidade: number;
   valorUnitario: number | null;
-  origem: 'Locado' | 'Comprado';
+  origem: 'Locado' | 'Comprado' | null;
   dataCriacao: string;
 }
 
@@ -40,11 +45,14 @@ export interface NotaFiscalEntradaPayload {
 }
 
 export interface NotaFiscalItemPayload {
-  tipoEquipamentoId: number;
+  destino: 'Equipamento' | 'Patrimonio';
+  tipoEquipamentoId: number | null;
+  tipoPatrimonioId: number | null;
+  localId: number | null;
   descricao: string | null;
   quantidade: number;
   valorUnitario: number | null;
-  origem: 'Locado' | 'Comprado';
+  origem: 'Locado' | 'Comprado' | null;
 }
 
 export interface NotaFiscalEntradaFiltro {

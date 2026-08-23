@@ -57,6 +57,16 @@
               </a>
               <a routerLink="/equipamentos/inventario" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Inventário</a>
             }
+            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoPatrimonio()">
+              <span class="menu__grupo-seta">{{ grupoPatrimonioAberto() ? '▾' : '▸' }}</span>
+              Patrimônio
+            </button>
+            @if (grupoPatrimonioAberto()) {
+              <a routerLink="/patrimonio/tipos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Tipos de Patrimônio</a>
+              <a routerLink="/patrimonio" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub2">
+                Patrimônio
+              </a>
+            }
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoDp()">
             <span class="menu__grupo-seta">{{ grupoDpAberto() ? '▾' : '▸' }}</span>

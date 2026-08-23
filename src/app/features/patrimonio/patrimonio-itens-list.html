@@ -1,0 +1,95 @@
+<section class="patrimonio">
+  <header class="topo">
+    <h1>Patrimônio</h1>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Tipo
+      <select name="tipoPatrimonioId" [(ngModel)]="filtro.tipoPatrimonioId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (tipo of tipos(); track tipo.id) {
+          <option [ngValue]="tipo.id">{{ tipo.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Local
+      <select name="localId" [(ngModel)]="filtro.localId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (local of locais(); track local.id) {
+          <option [ngValue]="local.id">{{ local.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option [ngValue]="undefined">Todos</option>
+        <option value="Ativo">Ativo</option>
+        <option value="Baixado">Baixado</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os itens de patrimônio. Verifique se a API está em execução.</p>
+  } @else if (itens().length === 0) {
+    <p class="status">Nenhum item de patrimônio encontrado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Descrição</th>
+            <th>Nº Patrimônio</th>
+            <th>Local</th>
+            <th>Nota Fiscal</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of itens(); track item.id) {
+            <tr>
+              <td>{{ item.tipoPatrimonioNome }}</td>
+              <td>{{ item.descricao || '-' }}</td>
+              <td>{{ item.numeroPatrimonio || '-' }}</td>
+              <td>{{ item.localNome || '-' }}</td>
+              <td>{{ item.numeroNotaFiscal || '-' }}</td>
+              <td>
+                <span class="badge" [class.badge--ativa]="item.status === 'Ativo'" [class.badge--inativa]="item.status !== 'Ativo'">
+                  {{ item.status }}
+                </span>
+              </td>
+              <td class="acoes">
+                <a [routerLink]="['/patrimonio', item.id, 'editar']" title="Editar" aria-label="Editar">
+                  <app-icon name="pencil" [size]="18" />
+                </a>
+                @if (item.status === 'Ativo') {
+                  <button
+                    type="button"
+                    class="botao--link"
+                    (click)="baixar(item)"
+                    [disabled]="baixandoId() === item.id"
+                    title="Dar baixa"
+                    aria-label="Dar baixa"
+                  >
+                    <app-icon name="ban" [size]="18" />
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
