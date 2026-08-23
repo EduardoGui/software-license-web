@@ -15,6 +15,8 @@ export interface Licenca {
   status: 'Ativa' | 'Inativa';
   valorVigente: number | null;
   periodicidade: LicencaPeriodicidade | null;
+  notaFiscalEntradaId: number | null;
+  numeroNotaFiscal: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
 }
@@ -28,6 +30,7 @@ export interface LicencaPayload {
   diasAntecedenciaAviso: number;
   observacao: string | null;
   ativa: boolean;
+  notaFiscalEntradaId: number | null;
 }
 
 export interface CreateLicencaPayload extends LicencaPayload {

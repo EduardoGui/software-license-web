@@ -48,6 +48,15 @@
 
       <dt>Observação</dt>
       <dd>{{ licenca()!.observacao || '-' }}</dd>
+
+      <dt>Nota fiscal</dt>
+      <dd>
+        @if (licenca()!.notaFiscalEntradaId) {
+          <a [routerLink]="['/equipamentos/notas-fiscais', licenca()!.notaFiscalEntradaId]">{{ licenca()!.numeroNotaFiscal }}</a>
+        } @else {
+          Não informada
+        }
+      </dd>
     </dl>
 
     <div class="acoes">

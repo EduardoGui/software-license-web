@@ -4,6 +4,8 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
+import { NotaFiscalEntrada } from '../notas-fiscais-entrada/nota-fiscal-entrada';
+import { NotaFiscalEntradaService } from '../notas-fiscais-entrada/nota-fiscal-entrada.service';
 import { CreateLicencaPayload, LicencaPeriodicidade } from './licenca';
 import { LicencaService } from './licenca.service';
 
@@ -16,6 +18,7 @@ import { LicencaService } from './licenca.service';
 export class LicencaForm {
   private readonly fb = inject(FormBuilder);
   private readonly licencaService = inject(LicencaService);
+  private readonly notaFiscalEntradaService = inject(NotaFiscalEntradaService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
@@ -24,6 +27,7 @@ export class LicencaForm {
   protected readonly carregando = signal(false);
   protected readonly salvando = signal(false);
   protected readonly erro = signal<string | null>(null);
+  protected readonly notasFiscais = signal<NotaFiscalEntrada[]>([]);
 
   protected readonly form = this.fb.nonNullable.group({
     nome: ['', Validators.required],
@@ -34,6 +38,7 @@ export class LicencaForm {
     diasAntecedenciaAviso: [30, [Validators.required, Validators.min(0)]],
     observacao: [''],
     ativa: [true, Validators.required],
+    notaFiscalEntradaId: [null as number | null],
     valor: [0, [Validators.required, Validators.min(0.01)]],
     periodicidade: ['Mensal' as LicencaPeriodicidade, Validators.required],
   });
@@ -47,10 +52,16 @@ export class LicencaForm {
   }
 
   constructor() {
+    this.notaFiscalEntradaService.listar().subscribe((notas) => this.notasFiscais.set(notas));
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
       this.licencaId.set(id);
+      this.form.controls.valor.clearValidators();
+      this.form.controls.valor.updateValueAndValidity();
+      this.form.controls.periodicidade.clearValidators();
+      this.form.controls.periodicidade.updateValueAndValidity();
       this.carregar(id);
     }
   }
@@ -68,6 +79,7 @@ export class LicencaForm {
           diasAntecedenciaAviso: licenca.diasAntecedenciaAviso,
           observacao: licenca.observacao ?? '',
           ativa: licenca.ativa,
+          notaFiscalEntradaId: licenca.notaFiscalEntradaId,
         });
         this.carregando.set(false);
       },
@@ -94,6 +106,7 @@ export class LicencaForm {
       diasAntecedenciaAviso: valor.diasAntecedenciaAviso,
       observacao: valor.observacao || null,
       ativa: valor.ativa,
+      notaFiscalEntradaId: valor.notaFiscalEntradaId,
     };
 
     this.salvando.set(true);

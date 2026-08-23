@@ -88,6 +88,16 @@
         </select>
       </label>
 
+      <label>
+        Nota fiscal
+        <select formControlName="notaFiscalEntradaId">
+          <option [ngValue]="null">Não informada</option>
+          @for (nota of notasFiscais(); track nota.id) {
+            <option [ngValue]="nota.id">{{ nota.numero }}</option>
+          }
+        </select>
+      </label>
+
       <div class="acoes">
         <button type="submit" class="botao botao--primario" [disabled]="salvando()">
           <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
