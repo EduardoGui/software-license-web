@@ -66,7 +66,11 @@
     }
 
     <h2>Adicionar item</h2>
-    <p class="ajuda">Ao salvar, o sistema gera automaticamente uma unidade de equipamento para cada item da quantidade informada.</p>
+    <p class="ajuda">
+      Ao salvar, o sistema gera automaticamente
+      {{ formItem.value.destino === 'Patrimonio' ? 'um item de patrimônio' : 'uma unidade de equipamento' }}
+      para cada unidade da quantidade informada.
+    </p>
 
     <form class="form-item" [formGroup]="formItem" (ngSubmit)="adicionarItem()">
       @if (erroItem()) {

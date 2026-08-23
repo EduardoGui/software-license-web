@@ -63,7 +63,13 @@
               <td>{{ item.descricao || '-' }}</td>
               <td>{{ item.numeroPatrimonio || '-' }}</td>
               <td>{{ item.localNome || '-' }}</td>
-              <td>{{ item.numeroNotaFiscal || '-' }}</td>
+              <td>
+                @if (item.notaFiscalEntradaId) {
+                  <a [routerLink]="['/equipamentos/notas-fiscais', item.notaFiscalEntradaId]">{{ item.numeroNotaFiscal }}</a>
+                } @else {
+                  -
+                }
+              </td>
               <td>
                 <span class="badge" [class.badge--ativa]="item.status === 'Ativo'" [class.badge--inativa]="item.status !== 'Ativo'">
                   {{ item.status }}

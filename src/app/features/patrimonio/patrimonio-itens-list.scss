@@ -107,6 +107,10 @@ th {
   text-transform: uppercase;
 }
 
+td a {
+  color: var(--color-primary);
+}
+
 .badge {
   display: inline-block;
   border-radius: 999px;
@@ -116,8 +120,8 @@ th {
 }
 
 .badge--ativa {
-  background: var(--color-tertiary-tint);
-  color: var(--color-tertiary);
+  background: #dcfce7;
+  color: #15803d;
 }
 
 .badge--inativa {
