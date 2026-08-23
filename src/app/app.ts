@@ -22,6 +22,7 @@ export class App {
   protected readonly grupoTiAberto = signal(false);
   protected readonly grupoDpAberto = signal(false);
   protected readonly grupoSuprimentosAberto = signal(false);
+  protected readonly grupoCadastrosGeraisAberto = signal(false);
   protected readonly grupoLicencasAberto = signal(false);
   protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly grupoPatrimonioAberto = signal(false);
@@ -40,6 +41,7 @@ export class App {
     if (abrindo) {
       this.grupoDpAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
+      this.grupoCadastrosGeraisAberto.set(false);
     }
   }
 
@@ -49,6 +51,7 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
+      this.grupoCadastrosGeraisAberto.set(false);
     }
   }
 
@@ -58,6 +61,17 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoDpAberto.set(false);
+      this.grupoCadastrosGeraisAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoCadastrosGerais(): void {
+    const abrindo = !this.grupoCadastrosGeraisAberto();
+    this.grupoCadastrosGeraisAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoTiAberto.set(false);
+      this.grupoDpAberto.set(false);
+      this.grupoSuprimentosAberto.set(false);
     }
   }
 

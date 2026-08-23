@@ -47,9 +47,6 @@
             </button>
             @if (grupoEquipamentosAberto()) {
               <a routerLink="/equipamentos/tipos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Tipos de Equipamento</a>
-              <a routerLink="/equipamentos/notas-fiscais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Notas Fiscais
-              </a>
               <a routerLink="/equipamentos/lista" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Equipamentos</a>
               <a routerLink="/equipamentos/alocacoes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Alocações</a>
               <a routerLink="/equipamentos/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
@@ -73,9 +70,7 @@
             DP
           </button>
           @if (grupoDpAberto()) {
-            <a routerLink="/dp/setores" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Setores</a>
             <a routerLink="/dp/tipos-despesa" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Tipos de Despesa</a>
-            <a routerLink="/dp/locais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Locais</a>
             <a
               routerLink="/dp/emails-notificacao-reembolso"
               routerLinkActive="menu__item--ativo"
@@ -91,6 +86,17 @@
             <span class="menu__grupo-seta">{{ grupoSuprimentosAberto() ? '▾' : '▸' }}</span>
             Suprimentos
           </button>
+          <button type="button" class="menu__grupo" (click)="alternarGrupoCadastrosGerais()">
+            <span class="menu__grupo-seta">{{ grupoCadastrosGeraisAberto() ? '▾' : '▸' }}</span>
+            Cadastros Gerais
+          </button>
+          @if (grupoCadastrosGeraisAberto()) {
+            <a routerLink="/dp/setores" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Setores</a>
+            <a routerLink="/equipamentos/notas-fiscais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Notas Fiscais
+            </a>
+            <a routerLink="/dp/locais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Locais</a>
+          }
         } @else {
           <a [routerLink]="['/usuarios', authService.obterUsuarioId()]" routerLinkActive="menu__item--ativo" class="menu__item">
             Meus dados
