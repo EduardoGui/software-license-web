@@ -46,6 +46,7 @@ import { EmailsNotificacaoReembolsoList } from './features/emails-notificacao-re
 import { EmailNotificacaoReembolsoForm } from './features/emails-notificacao-reembolso/email-notificacao-reembolso-form';
 import { LocaisList } from './features/locais/locais-list';
 import { LocalForm } from './features/locais/local-form';
+import { LogsAuditoriaList } from './features/logs-auditoria/logs-auditoria-list';
 import { TiposPatrimonioList } from './features/tipos-patrimonio/tipos-patrimonio-list';
 import { TipoPatrimonioForm } from './features/tipos-patrimonio/tipo-patrimonio-form';
 import { PatrimonioItensList } from './features/patrimonio/patrimonio-itens-list';
@@ -112,6 +113,7 @@ export const routes: Routes = [
         component: EmailNotificacaoReembolsoForm,
         canActivate: [adminGuard],
       },
+      { path: 'dp/logs-auditoria', component: LogsAuditoriaList, canActivate: [adminGuard] },
       { path: 'dp/locais', component: LocaisList, canActivate: [adminGuard] },
       { path: 'dp/locais/novo', component: LocalForm, canActivate: [adminGuard] },
       { path: 'dp/locais/:id/editar', component: LocalForm, canActivate: [adminGuard] },

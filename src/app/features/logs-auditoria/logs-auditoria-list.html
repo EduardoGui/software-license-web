@@ -1,0 +1,62 @@
+<section class="logs-auditoria">
+  <header class="topo">
+    <h1>Log de Auditoria</h1>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Data inicial
+      <input type="date" name="dataInicial" [(ngModel)]="filtro.dataInicial" />
+    </label>
+    <label>
+      Data final
+      <input type="date" name="dataFinal" [(ngModel)]="filtro.dataFinal" />
+    </label>
+    <label>
+      Entidade
+      <select name="entidade" [(ngModel)]="filtro.entidade">
+        <option [ngValue]="undefined">Todas</option>
+        <option value="ReembolsoDespesa">Reembolso de Despesa</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Hoje</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar o log de auditoria. Verifique se a API está em execução.</p>
+  } @else if (logs().length === 0) {
+    <p class="status">Nenhum registro encontrado para o período selecionado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Data/Hora</th>
+            <th>Usuário</th>
+            <th>Entidade</th>
+            <th>Nº</th>
+            <th>Ação</th>
+            <th>Detalhe</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (log of logs(); track log.id) {
+            <tr>
+              <td>{{ log.dataHora | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>{{ log.usuarioNome }}</td>
+              <td>{{ log.entidade }}</td>
+              <td>{{ log.entidadeId }}</td>
+              <td><span class="badge">{{ log.acao }}</span></td>
+              <td>{{ log.detalhe || '-' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>
