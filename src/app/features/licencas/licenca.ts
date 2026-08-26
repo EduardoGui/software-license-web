@@ -3,6 +3,7 @@ export type LicencaPeriodicidade = 'Mensal' | 'Anual';
 export interface Licenca {
   id: number;
   nome: string;
+  tipo: string | null;
   descricao: string | null;
   quantidadeTotal: number;
   quantidadeEmUso: number;
@@ -23,6 +24,7 @@ export interface Licenca {
 
 export interface LicencaPayload {
   nome: string;
+  tipo: string | null;
   descricao: string | null;
   quantidadeTotal: number;
   dataInicio: string;

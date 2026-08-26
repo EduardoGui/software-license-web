@@ -31,6 +31,7 @@ export class LicencaForm {
 
   protected readonly form = this.fb.nonNullable.group({
     nome: ['', Validators.required],
+    tipo: [''],
     descricao: [''],
     quantidadeTotal: [1, [Validators.required, Validators.min(1)]],
     dataInicio: ['', Validators.required],
@@ -72,6 +73,7 @@ export class LicencaForm {
       next: (licenca) => {
         this.form.patchValue({
           nome: licenca.nome,
+          tipo: licenca.tipo ?? '',
           descricao: licenca.descricao ?? '',
           quantidadeTotal: licenca.quantidadeTotal,
           dataInicio: licenca.dataInicio,
@@ -99,6 +101,7 @@ export class LicencaForm {
     const valor = this.form.getRawValue();
     const payload = {
       nome: valor.nome,
+      tipo: valor.tipo || null,
       descricao: valor.descricao || null,
       quantidadeTotal: valor.quantidadeTotal,
       dataInicio: valor.dataInicio,
