@@ -51,7 +51,7 @@
               <td>{{ log.usuarioNome }}</td>
               <td>{{ log.entidade }}</td>
               <td>{{ log.entidadeId }}</td>
-              <td><span class="badge">{{ log.acao }}</span></td>
+              <td><span class="badge" [class.badge--erro]="log.acao === 'EmailNaoEnviado'">{{ log.acao }}</span></td>
               <td>{{ log.detalhe || '-' }}</td>
             </tr>
           }

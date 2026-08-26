@@ -33,6 +33,9 @@ export interface ReembolsoDespesa {
   valorTotal: number;
   dataCriacao: string;
   dataAtualizacao: string;
+  // Só vem preenchido na resposta de aprovar(), quando o e-mail ao financeiro não é enviado
+  // por exceder o limite de tamanho.
+  avisoEmail: string | null;
 }
 
 export interface ReembolsoDespesaItemPayload {

@@ -62,7 +62,12 @@ export class ReembolsoDespesaAprovacaoDetalhe {
     }
 
     this.reembolsoDespesaService.aprovar(reembolso.id).subscribe({
-      next: () => this.router.navigate(['/reembolsos-despesa/pendentes']),
+      next: (aprovado) => {
+        if (aprovado.avisoEmail) {
+          alert(aprovado.avisoEmail);
+        }
+        this.router.navigate(['/reembolsos-despesa/pendentes']);
+      },
       error: (err) => alert(err?.error?.message ?? 'Não foi possível aprovar o reembolso.'),
     });
   }
