@@ -8,11 +8,12 @@ import { Local } from '../locais/local';
 import { LocalService } from '../locais/local.service';
 import { TipoDespesa } from '../tipos-despesa/tipo-despesa';
 import { TipoDespesaService } from '../tipos-despesa/tipo-despesa.service';
+import { ComprovanteItem } from './comprovante-item';
 import { ReembolsoDespesaService } from './reembolso-despesa.service';
 
 @Component({
   selector: 'app-reembolso-despesa-form',
-  imports: [ReactiveFormsModule, RouterLink, Icon, DecimalPipe],
+  imports: [ReactiveFormsModule, RouterLink, Icon, DecimalPipe, ComprovanteItem],
   templateUrl: './reembolso-despesa-form.html',
   styleUrl: './reembolso-despesa-form.scss',
 })
@@ -66,8 +67,9 @@ export class ReembolsoDespesaForm {
     }
   }
 
-  private criarLinhaItem() {
+  private criarLinhaItem(id: number | null = null) {
     return this.fb.nonNullable.group({
+      id: this.fb.control<number | null>(id),
       data: ['', Validators.required],
       tipoDespesaId: this.fb.control<number | null>(null, Validators.required),
       descricao: [''],
@@ -99,15 +101,15 @@ export class ReembolsoDespesaForm {
           observacao: reembolso.observacao ?? '',
         });
         for (const item of reembolso.itens) {
-          this.itens.push(
-            this.fb.nonNullable.group({
-              data: [item.data, Validators.required],
-              tipoDespesaId: this.fb.control<number | null>(item.tipoDespesaId, Validators.required),
-              descricao: [item.descricao ?? ''],
-              numeroDocumento: [item.numeroDocumento ?? ''],
-              valor: [item.valor, [Validators.required, Validators.min(0.01)]],
-            }),
-          );
+          const linha = this.criarLinhaItem(item.id);
+          linha.patchValue({
+            data: item.data,
+            tipoDespesaId: item.tipoDespesaId,
+            descricao: item.descricao ?? '',
+            numeroDocumento: item.numeroDocumento ?? '',
+            valor: item.valor,
+          });
+          this.itens.push(linha);
         }
         if (reembolso.itens.length === 0) {
           this.adicionarItem();
@@ -134,6 +136,7 @@ export class ReembolsoDespesaForm {
       localId: valor.localId,
       observacao: valor.observacao || null,
       itens: valor.itens.map((item) => ({
+        id: item.id,
         data: item.data,
         tipoDespesaId: item.tipoDespesaId,
         descricao: item.descricao || null,

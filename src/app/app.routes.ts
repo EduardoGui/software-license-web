@@ -42,6 +42,7 @@ import { ReembolsosDespesaList } from './features/reembolsos-despesa/reembolsos-
 import { ReembolsoDespesaForm } from './features/reembolsos-despesa/reembolso-despesa-form';
 import { ReembolsosDespesaPendentesList } from './features/reembolsos-despesa/reembolsos-despesa-pendentes-list';
 import { ReembolsoDespesaDecidir } from './features/reembolsos-despesa/reembolso-despesa-decidir';
+import { ReembolsoDespesaAprovacaoDetalhe } from './features/reembolsos-despesa/reembolso-despesa-aprovacao-detalhe';
 import { EmailsNotificacaoReembolsoList } from './features/emails-notificacao-reembolso/emails-notificacao-reembolso-list';
 import { EmailNotificacaoReembolsoForm } from './features/emails-notificacao-reembolso/email-notificacao-reembolso-form';
 import { LocaisList } from './features/locais/locais-list';
@@ -120,6 +121,7 @@ export const routes: Routes = [
       { path: 'reembolsos-despesa', component: ReembolsosDespesaList },
       { path: 'reembolsos-despesa/novo', component: ReembolsoDespesaForm },
       { path: 'reembolsos-despesa/pendentes', component: ReembolsosDespesaPendentesList },
+      { path: 'reembolsos-despesa/:id/detalhe', component: ReembolsoDespesaAprovacaoDetalhe },
       { path: 'reembolsos-despesa/:id/editar', component: ReembolsoDespesaForm },
       { path: 'reembolsos-despesa/:id/devolver', component: ReembolsoDespesaDecidir, data: { acao: 'devolver' } },
       { path: 'reembolsos-despesa/:id/reprovar', component: ReembolsoDespesaDecidir, data: { acao: 'reprovar' } },

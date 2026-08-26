@@ -1,3 +1,5 @@
+import { Anexo } from '../../shared/anexos/anexo';
+
 export interface ReembolsoDespesaItem {
   id: number;
   data: string;
@@ -6,6 +8,7 @@ export interface ReembolsoDespesaItem {
   descricao: string | null;
   numeroDocumento: string | null;
   valor: number;
+  anexos: Anexo[];
 }
 
 export interface ReembolsoDespesa {
@@ -33,6 +36,9 @@ export interface ReembolsoDespesa {
 }
 
 export interface ReembolsoDespesaItemPayload {
+  // Id do item já existente (preenchido ao editar), para o backend atualizar em vigor e preservar
+  // o comprovante anexado a ele. Null para um item novo.
+  id: number | null;
   data: string;
   tipoDespesaId: number | null;
   descricao: string | null;

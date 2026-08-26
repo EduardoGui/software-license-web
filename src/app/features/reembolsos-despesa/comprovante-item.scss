@@ -1,0 +1,51 @@
+.comprovante {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.comprovante__nome {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.8rem;
+  color: var(--color-text);
+}
+
+.comprovante__status {
+  font-size: 0.78rem;
+  color: var(--color-secondary);
+}
+
+.comprovante__erro {
+  display: block;
+  font-size: 0.72rem;
+  color: #b91c1c;
+}
+
+.input-arquivo-oculto {
+  display: none;
+}
+
+.botao-icone {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  border: none;
+  background: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+  padding: 0.2rem;
+  font-size: 0.8rem;
+  font-family: inherit;
+}
+
+.botao-icone--perigo {
+  color: #b91c1c;
+}
+
+.botao-icone:disabled {
+  opacity: 0.5;
+  cursor: default;
+}

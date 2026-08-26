@@ -1,0 +1,94 @@
+<section class="detalhe">
+  <header class="topo">
+    <h1>Detalhe do reembolso</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">{{ erro() }}</p>
+  } @else if (reembolso(); as r) {
+    <div class="cartao">
+      <div class="cabecalho-info">
+        <div>
+          <span class="rotulo">Nº</span>
+          <strong>{{ r.numero }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Solicitante</span>
+          <strong>{{ r.usuarioNome }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Data</span>
+          <strong>{{ r.dataSolicitacao | dataBr }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Status</span>
+          <span class="badge" [class]="'badge--' + r.status.toLowerCase()">{{ rotuloStatus(r.status) }}</span>
+        </div>
+      </div>
+
+      <div class="cabecalho-info">
+        <div class="campo-largo">
+          <span class="rotulo">Finalidade</span>
+          <strong>{{ r.finalidade }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Forma de pagamento</span>
+          <strong>{{ r.formaPagamento || '-' }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Local</span>
+          <strong>{{ r.localNome || '-' }}</strong>
+        </div>
+      </div>
+
+      @if (r.observacao) {
+        <p class="observacao"><span class="rotulo">Observação:</span> {{ r.observacao }}</p>
+      }
+
+      <h2>Despesas</h2>
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Tipo</th>
+              <th>Descrição</th>
+              <th>Nº Documento</th>
+              <th>Valor</th>
+              <th>Comprovante</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of r.itens; track item.id) {
+              <tr>
+                <td>{{ item.data | dataBr }}</td>
+                <td>{{ item.tipoDespesaNome }}</td>
+                <td>{{ item.descricao || '-' }}</td>
+                <td>{{ item.numeroDocumento || '-' }}</td>
+                <td>{{ item.valor | number: '1.2-2' }}</td>
+                <td><app-comprovante-item [reembolsoId]="r.id" [itemId]="item.id" [somenteLeitura]="true" /></td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="4"><strong>Total</strong></td>
+              <td colspan="2"><strong>{{ r.valorTotal | number: '1.2-2' }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+
+      @if (r.status === 'EnviadoParaAprovacao') {
+        <div class="acoes">
+          <button type="button" class="botao botao--aprovar" (click)="aprovar()"><app-icon name="check" [size]="16" /> Aprovar</button>
+          <button type="button" class="botao botao--devolver" (click)="devolver()">Devolver</button>
+          <button type="button" class="botao botao--reprovar" (click)="reprovar()">Reprovar</button>
+        </div>
+      }
+    </div>
+  }
+</section>

@@ -5,7 +5,9 @@ import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Anexo } from './anexo';
 
-export type AnexoRecurso = 'equipamentos' | 'notas-fiscais-entrada' | 'patrimonio-itens';
+// String livre (não só união literal) porque alguns recursos aninhados montam o caminho com um id
+// dinâmico no meio, ex.: `reembolsos-despesa/${reembolsoId}/itens`.
+export type AnexoRecurso = string;
 
 @Injectable({ providedIn: 'root' })
 export class AnexoService {

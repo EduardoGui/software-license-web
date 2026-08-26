@@ -1,0 +1,40 @@
+<div class="comprovante">
+  @if (!somenteLeitura()) {
+    <input
+      #inputArquivo
+      type="file"
+      class="input-arquivo-oculto"
+      accept="application/pdf,image/jpeg,image/png"
+      (change)="aoSelecionarArquivo($event)"
+    />
+  }
+
+  @if (carregando()) {
+    <span class="comprovante__status">Carregando...</span>
+  } @else if (anexo(); as a) {
+    <span class="comprovante__nome" [title]="a.nomeArquivo">{{ a.nomeArquivo }}</span>
+    <button type="button" class="botao-icone" title="Baixar comprovante" (click)="baixar(a)">
+      <app-icon name="download" [size]="15" />
+    </button>
+    @if (!somenteLeitura()) {
+      <button
+        type="button"
+        class="botao-icone botao-icone--perigo"
+        title="Excluir comprovante"
+        [disabled]="excluindo()"
+        (click)="excluir(a)"
+      >
+        <app-icon name="trash" [size]="15" />
+      </button>
+    }
+  } @else if (somenteLeitura()) {
+    <span class="comprovante__status">Nenhum comprovante</span>
+  } @else {
+    <button type="button" class="botao-icone" title="Anexar comprovante" [disabled]="enviando()" (click)="abrirSeletorArquivo()">
+      <app-icon name="paperclip" [size]="15" /> {{ enviando() ? 'Enviando...' : 'Anexar' }}
+    </button>
+  }
+</div>
+@if (erro()) {
+  <span class="comprovante__erro">{{ erro() }}</span>
+}
