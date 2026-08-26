@@ -26,6 +26,7 @@ export class App {
   protected readonly grupoLicencasAberto = signal(false);
   protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly grupoPatrimonioAberto = signal(false);
+  protected readonly grupoReembolsoAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
 
   constructor() {
@@ -100,6 +101,10 @@ export class App {
       this.grupoLicencasAberto.set(false);
       this.grupoEquipamentosAberto.set(false);
     }
+  }
+
+  protected alternarGrupoReembolso(): void {
+    this.grupoReembolsoAberto.update((aberto) => !aberto);
   }
 
   protected alternarMenuMobile(): void {

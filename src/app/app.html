@@ -107,9 +107,19 @@
           <a [routerLink]="['/usuarios', authService.obterUsuarioId()]" routerLinkActive="menu__item--ativo" class="menu__item">
             Meus dados
           </a>
-          <a routerLink="/reembolsos-despesa" routerLinkActive="menu__item--ativo" class="menu__item">Meus Reembolsos</a>
-          <a routerLink="/reembolsos-despesa/pendentes" routerLinkActive="menu__item--ativo" class="menu__item">Aprovações Pendentes</a>
-          <a routerLink="/reembolsos-despesa/aprovados-por-mim" routerLinkActive="menu__item--ativo" class="menu__item">Reembolsos Aprovados</a>
+          <button type="button" class="menu__grupo" (click)="alternarGrupoReembolso()">
+            <span class="menu__grupo-seta">{{ grupoReembolsoAberto() ? '▾' : '▸' }}</span>
+            Reembolso
+          </button>
+          @if (grupoReembolsoAberto()) {
+            <a routerLink="/reembolsos-despesa" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Meus Reembolsos</a>
+            <a routerLink="/reembolsos-despesa/pendentes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Aprovações Pendentes
+            </a>
+            <a routerLink="/reembolsos-despesa/aprovados-por-mim" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Reembolsos Aprovados
+            </a>
+          }
         }
         <div class="menu__rodape-mobile">
           <span class="usuario-logado">{{ authService.obterEmail() }}</span>
