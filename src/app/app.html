@@ -81,6 +81,9 @@
             <a routerLink="/reembolsos-despesa/pendentes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Aprovações Pendentes
             </a>
+            <a routerLink="/reembolsos-despesa/aprovados-por-mim" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Reembolsos Aprovados
+            </a>
             <a routerLink="/dp/logs-auditoria" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Log de Auditoria
             </a>
@@ -106,6 +109,7 @@
           </a>
           <a routerLink="/reembolsos-despesa" routerLinkActive="menu__item--ativo" class="menu__item">Meus Reembolsos</a>
           <a routerLink="/reembolsos-despesa/pendentes" routerLinkActive="menu__item--ativo" class="menu__item">Aprovações Pendentes</a>
+          <a routerLink="/reembolsos-despesa/aprovados-por-mim" routerLinkActive="menu__item--ativo" class="menu__item">Reembolsos Aprovados</a>
         }
         <div class="menu__rodape-mobile">
           <span class="usuario-logado">{{ authService.obterEmail() }}</span>

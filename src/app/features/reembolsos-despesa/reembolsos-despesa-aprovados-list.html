@@ -1,0 +1,42 @@
+<section class="reembolsos">
+  <header class="topo">
+    <h1>Reembolsos Aprovados</h1>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os reembolsos aprovados. Verifique se a API está em execução.</p>
+  } @else if (reembolsos().length === 0) {
+    <p class="status">Você ainda não aprovou nenhum reembolso.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nº</th>
+            <th>Solicitante</th>
+            <th>Data da decisão</th>
+            <th>Finalidade</th>
+            <th>Valor</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (reembolso of reembolsos(); track reembolso.id) {
+            <tr>
+              <td>{{ reembolso.numero }}</td>
+              <td>{{ reembolso.usuarioNome }}</td>
+              <td>{{ reembolso.dataDecisao | dataBr }}</td>
+              <td>{{ reembolso.finalidade }}</td>
+              <td>{{ reembolso.valorTotal | number: '1.2-2' }}</td>
+              <td class="acoes">
+                <a [routerLink]="['/reembolsos-despesa', reembolso.id, 'detalhe']" class="botao">Ver detalhes</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

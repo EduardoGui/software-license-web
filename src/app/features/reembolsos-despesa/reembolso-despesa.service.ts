@@ -42,6 +42,10 @@ export class ReembolsoDespesaService {
     return this.http.get<ReembolsoDespesa[]>(`${this.baseUrl}/pendentes-aprovacao`);
   }
 
+  listarAprovadosPorMim(): Observable<ReembolsoDespesa[]> {
+    return this.http.get<ReembolsoDespesa[]>(`${this.baseUrl}/aprovados-por-mim`);
+  }
+
   aprovar(id: number): Observable<ReembolsoDespesa> {
     return this.http.patch<ReembolsoDespesa>(`${this.baseUrl}/${id}/aprovar`, {});
   }
