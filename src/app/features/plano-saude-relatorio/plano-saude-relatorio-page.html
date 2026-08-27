@@ -1,0 +1,76 @@
+<section class="relatorio">
+  <header class="topo">
+    <h1>Plano de Saúde — Relatório Mensal</h1>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Ano
+      <select name="ano" [(ngModel)]="filtro.ano">
+        @for (ano of anosDisponiveis; track ano) {
+          <option [ngValue]="ano">{{ ano }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Mês
+      <select name="mes" [(ngModel)]="filtro.mes">
+        @for (nome of nomesMeses; track nome; let i = $index) {
+          <option [ngValue]="i + 1">{{ nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Nome
+      <input type="text" name="nome" [(ngModel)]="filtro.nome" placeholder="Buscar por nome" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !relatorio()) {
+    <p class="status status--erro">Não foi possível carregar o relatório. Verifique se a API está em execução.</p>
+  } @else if (relatorio()!.itens.length === 0) {
+    <p class="status">Nenhum lançamento de plano de saúde no período selecionado.</p>
+  } @else {
+    <div class="resumo">
+      <span>{{ relatorio()!.itens.length }} pessoa(s)</span>
+      <button type="button" class="botao botao--primario" [disabled]="exportando()" (click)="exportar()">
+        <app-icon name="check" [size]="16" /> {{ exportando() ? 'Exportando...' : 'Exportar Excel' }}
+      </button>
+    </div>
+
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Setor</th>
+            <th>Empresa PJ</th>
+            <th>Valor Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of relatorio()!.itens; track item.usuarioId) {
+            <tr>
+              <td>{{ item.nome }}</td>
+              <td>{{ item.setorNome ?? '' }}</td>
+              <td>{{ item.empresaPjNome ?? '' }}</td>
+              <td>{{ item.valorTotal | number: '1.2-2' }}</td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3"><strong>Total Geral</strong></td>
+            <td><strong>{{ relatorio()!.valorTotal | number: '1.2-2' }}</strong></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  }
+</section>
