@@ -1,0 +1,109 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar Nota de Débito' : 'Nova Nota de Débito' }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      @if (!editando) {
+        <label>
+          Usuário PJ *
+          <select formControlName="usuarioId">
+            <option [ngValue]="null">Selecione</option>
+            @for (usuario of usuariosPj(); track usuario.id) {
+              <option [ngValue]="usuario.id">{{ usuario.nome }}</option>
+            }
+          </select>
+        </label>
+
+        <div class="linha">
+          <label>
+            Ano *
+            <input type="number" formControlName="ano" />
+          </label>
+          <label>
+            Mês *
+            <input type="number" min="1" max="12" formControlName="mes" />
+          </label>
+        </div>
+      } @else {
+        <p class="campo-fixo">
+          <strong>{{ nota()?.usuarioNome }}</strong> — referência {{ nota()?.mes?.toString()?.padStart(2, '0') }}/{{ nota()?.ano }}
+        </p>
+      }
+
+      <label>
+        Operadora de Saúde *
+        <input type="text" formControlName="operadoraSaude" placeholder="Ex.: AMIL" />
+      </label>
+
+      <label>
+        Nº do Documento
+        <input type="text" formControlName="numeroDocumento" placeholder="Nº da nota/recibo/comprovante" />
+      </label>
+
+      <label>
+        Descrição
+        <textarea formControlName="descricao" rows="2"></textarea>
+      </label>
+
+      <div class="linha">
+        <label>
+          Desconto (R$)
+          <input type="number" step="0.01" formControlName="desconto" />
+        </label>
+        <label>
+          Retenção Tributária (R$)
+          <input type="number" step="0.01" formControlName="retencaoTributaria" />
+        </label>
+      </div>
+
+      <div class="linha">
+        <label>
+          Vencimento
+          <input type="date" formControlName="dataVencimento" />
+        </label>
+        <label>
+          Forma de Pagamento
+          <input type="text" formControlName="formaPagamento" />
+        </label>
+      </div>
+
+      <h2>Classificação Contábil</h2>
+      <div class="linha">
+        <label>
+          Centro de Custo
+          <input type="text" formControlName="centroCusto" />
+        </label>
+        <label>
+          Área
+          <input type="text" formControlName="area" />
+        </label>
+      </div>
+      <div class="linha">
+        <label>
+          Conta Contábil
+          <input type="text" formControlName="contaContabil" />
+        </label>
+        <label>
+          Projeto / Contrato
+          <input type="text" formControlName="projetoContrato" />
+        </label>
+      </div>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/dp/plano-saude/notas-debito" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

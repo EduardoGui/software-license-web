@@ -1,0 +1,101 @@
+<section class="detalhe">
+  <header class="topo">
+    <h1>Nota de Débito</h1>
+    <a class="botao-voltar" routerLink="/dp/plano-saude/notas-debito"><app-icon name="arrow-left" [size]="16" /> Voltar</a>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !nota()) {
+    <p class="status status--erro">{{ erro() }}</p>
+  } @else {
+    <div class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>Nº {{ nota()!.id.toString().padStart(4, '0') }} — {{ nota()!.usuarioNome }}</h2>
+          <p class="referencia">Referência {{ nota()!.mes.toString().padStart(2, '0') }}/{{ nota()!.ano }}</p>
+        </div>
+        <span class="badge" [class]="'badge--' + nota()!.status.toLowerCase()">{{ nota()!.status }}</span>
+      </div>
+
+      <div class="secao">
+        <h3>Motivo da Cobrança</h3>
+        <dl>
+          <div><dt>Tipo de Despesa</dt><dd>Coparticipação {{ nota()!.operadoraSaude }}</dd></div>
+          <div><dt>Nº do Documento</dt><dd>{{ nota()!.numeroDocumento || '-' }}</dd></div>
+          <div class="dl-full"><dt>Descrição</dt><dd>{{ nota()!.descricao || '-' }}</dd></div>
+        </dl>
+      </div>
+
+      <div class="secao">
+        <h3>Valores</h3>
+        <dl>
+          <div><dt>Valor Bruto</dt><dd>R$ {{ nota()!.valorBruto | number: '1.2-2' }}</dd></div>
+          <div><dt>Desconto</dt><dd>R$ {{ nota()!.desconto | number: '1.2-2' }}</dd></div>
+          <div><dt>Retenção Tributária</dt><dd>R$ {{ nota()!.retencaoTributaria | number: '1.2-2' }}</dd></div>
+          <div><dt>Valor Líquido</dt><dd><strong>R$ {{ nota()!.valorLiquido | number: '1.2-2' }}</strong></dd></div>
+        </dl>
+      </div>
+
+      <div class="secao">
+        <h3>Pagamento</h3>
+        <dl>
+          <div><dt>Vencimento</dt><dd>{{ nota()!.dataVencimento ? (nota()!.dataVencimento | dataBr) : '-' }}</dd></div>
+          <div><dt>Forma de Pagamento</dt><dd>{{ nota()!.formaPagamento || '-' }}</dd></div>
+          <div><dt>Data de Envio</dt><dd>{{ nota()!.dataEnvio ? (nota()!.dataEnvio | dataBr) : '-' }}</dd></div>
+          <div><dt>Data de Pagamento</dt><dd>{{ nota()!.dataPagamento ? (nota()!.dataPagamento | dataBr) : '-' }}</dd></div>
+        </dl>
+      </div>
+
+      <div class="secao">
+        <h3>Classificação Contábil</h3>
+        <dl>
+          <div><dt>Centro de Custo</dt><dd>{{ nota()!.centroCusto || '-' }}</dd></div>
+          <div><dt>Área</dt><dd>{{ nota()!.area || '-' }}</dd></div>
+          <div><dt>Conta Contábil</dt><dd>{{ nota()!.contaContabil || '-' }}</dd></div>
+          <div><dt>Projeto / Contrato</dt><dd>{{ nota()!.projetoContrato || '-' }}</dd></div>
+        </dl>
+      </div>
+
+      <div class="acoes">
+        <button type="button" class="botao" (click)="baixarPdf()"><app-icon name="download" [size]="16" /> Baixar PDF</button>
+
+        @if (nota()!.status === 'Rascunho') {
+          <a class="botao" [routerLink]="['/dp/plano-saude/notas-debito', nota()!.id, 'editar']">
+            <app-icon name="pencil" [size]="16" /> Editar
+          </a>
+          <button type="button" class="botao" [disabled]="processando()" (click)="enviar()">
+            <app-icon name="mail" [size]="16" /> Marcar como Enviada
+          </button>
+          <button type="button" class="botao botao--perigo" (click)="excluir()">
+            <app-icon name="trash" [size]="16" /> Excluir
+          </button>
+        }
+
+        @if (nota()!.status === 'Enviada' && !mostrarFormPagamento()) {
+          <button type="button" class="botao botao--primario" (click)="mostrarFormPagamento.set(true)">
+            <app-icon name="check-circle" [size]="16" /> Marcar como Paga
+          </button>
+        }
+      </div>
+
+      @if (mostrarFormPagamento()) {
+        <div class="form-pagamento">
+          <label>
+            Data de pagamento
+            <input type="date" [(ngModel)]="dataPagamento" />
+          </label>
+          <button type="button" class="botao botao--primario" [disabled]="processando()" (click)="confirmarPagamento()">
+            <app-icon name="check" [size]="16" /> Confirmar
+          </button>
+          <button type="button" class="botao botao--texto" (click)="mostrarFormPagamento.set(false)">Cancelar</button>
+        </div>
+      }
+    </div>
+
+    <section class="anexos">
+      <h3>Recibo / Anexos</h3>
+      <app-anexos-secao recurso="notas-debito-pj" [entidadeId]="nota()!.id" />
+    </section>
+  }
+</section>
