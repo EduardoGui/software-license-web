@@ -53,6 +53,8 @@ import { TiposPatrimonioList } from './features/tipos-patrimonio/tipos-patrimoni
 import { TipoPatrimonioForm } from './features/tipos-patrimonio/tipo-patrimonio-form';
 import { PatrimonioItensList } from './features/patrimonio/patrimonio-itens-list';
 import { PatrimonioItemForm } from './features/patrimonio/patrimonio-item-form';
+import { EmpresasPjList } from './features/empresas-pj/empresas-pj-list';
+import { EmpresaPjForm } from './features/empresas-pj/empresa-pj-form';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -119,6 +121,9 @@ export const routes: Routes = [
       { path: 'dp/locais', component: LocaisList, canActivate: [adminGuard] },
       { path: 'dp/locais/novo', component: LocalForm, canActivate: [adminGuard] },
       { path: 'dp/locais/:id/editar', component: LocalForm, canActivate: [adminGuard] },
+      { path: 'dp/empresas-pj', component: EmpresasPjList, canActivate: [adminGuard] },
+      { path: 'dp/empresas-pj/novo', component: EmpresaPjForm, canActivate: [adminGuard] },
+      { path: 'dp/empresas-pj/:id/editar', component: EmpresaPjForm, canActivate: [adminGuard] },
       { path: 'reembolsos-despesa', component: ReembolsosDespesaList },
       { path: 'reembolsos-despesa/novo', component: ReembolsoDespesaForm },
       { path: 'reembolsos-despesa/pendentes', component: ReembolsosDespesaPendentesList },

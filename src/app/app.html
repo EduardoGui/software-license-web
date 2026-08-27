@@ -88,6 +88,15 @@
               Log de Auditoria
             </a>
           }
+          <button type="button" class="menu__grupo" (click)="alternarGrupoPlanoSaude()">
+            <span class="menu__grupo-seta">{{ grupoPlanoSaudeAberto() ? '▾' : '▸' }}</span>
+            Plano de Saúde
+          </button>
+          @if (grupoPlanoSaudeAberto()) {
+            <a routerLink="/dp/empresas-pj" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Empresas PJ
+            </a>
+          }
           <button type="button" class="menu__grupo" (click)="alternarGrupoSuprimentos()">
             <span class="menu__grupo-seta">{{ grupoSuprimentosAberto() ? '▾' : '▸' }}</span>
             Suprimentos

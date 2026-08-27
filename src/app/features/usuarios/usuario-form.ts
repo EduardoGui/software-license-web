@@ -1,28 +1,34 @@
 import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
+import { EmpresaPj } from '../empresas-pj/empresa-pj';
+import { EmpresaPjService } from '../empresas-pj/empresa-pj.service';
 import { Icon } from '../../shared/icons/icon';
+import { Usuario, UsuarioTipo } from './usuario';
 import { UsuarioService } from './usuario.service';
 
 @Component({
   selector: 'app-usuario-form',
-  imports: [ReactiveFormsModule, RouterLink, Icon],
+  imports: [ReactiveFormsModule, FormsModule, RouterLink, Icon],
   templateUrl: './usuario-form.html',
   styleUrl: './usuario-form.scss',
 })
 export class UsuarioForm {
   private readonly fb = inject(FormBuilder);
   private readonly usuarioService = inject(UsuarioService);
+  private readonly empresaPjService = inject(EmpresaPjService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
 
   protected readonly usuarioId = signal<number | null>(null);
+  protected readonly usuario = signal<Usuario | null>(null);
   protected readonly carregando = signal(false);
   protected readonly salvando = signal(false);
   protected readonly erro = signal<string | null>(null);
+  protected readonly empresasPj = signal<EmpresaPj[]>([]);
 
   protected readonly form = this.fb.nonNullable.group({
     nome: ['', Validators.required],
@@ -30,7 +36,17 @@ export class UsuarioForm {
     dataInicio: ['', Validators.required],
     dataFim: [''],
     observacao: [''],
+    tipo: [null as UsuarioTipo | null],
+    empresaPjId: [null as number | null],
   });
+
+  // Dependentes: gerenciados fora do form reativo principal (só existem depois do usuário salvo).
+  protected novoDependenteNome = '';
+  protected readonly salvandoDependente = signal(false);
+  protected readonly erroDependente = signal<string | null>(null);
+  protected readonly editandoDependenteId = signal<number | null>(null);
+  protected dependenteEmEdicaoNome = '';
+  protected dependenteEmEdicaoAtivo = true;
 
   protected get editando(): boolean {
     return this.usuarioId() !== null;
@@ -41,6 +57,8 @@ export class UsuarioForm {
   }
 
   constructor() {
+    this.empresaPjService.listar({ ativa: true }).subscribe((empresas) => this.empresasPj.set(empresas));
+
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
@@ -53,12 +71,15 @@ export class UsuarioForm {
     this.carregando.set(true);
     this.usuarioService.obter(id).subscribe({
       next: (usuario) => {
+        this.usuario.set(usuario);
         this.form.patchValue({
           nome: usuario.nome,
           email: usuario.email,
           dataInicio: usuario.dataInicio,
           dataFim: usuario.dataFim ?? '',
           observacao: usuario.observacao ?? '',
+          tipo: usuario.tipo,
+          empresaPjId: usuario.empresaPjId,
         });
         this.carregando.set(false);
       },
@@ -82,6 +103,8 @@ export class UsuarioForm {
       dataInicio: valor.dataInicio,
       dataFim: valor.dataFim || null,
       observacao: valor.observacao || null,
+      tipo: valor.tipo,
+      empresaPjId: valor.tipo === 'Pj' ? valor.empresaPjId : null,
     };
 
     this.salvando.set(true);
@@ -97,6 +120,72 @@ export class UsuarioForm {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar o usuário.');
       },
+    });
+  }
+
+  protected adicionarDependente(): void {
+    const nome = this.novoDependenteNome.trim();
+    if (!nome) {
+      return;
+    }
+
+    this.salvandoDependente.set(true);
+    this.erroDependente.set(null);
+
+    this.usuarioService.adicionarDependente(this.usuarioId()!, nome).subscribe({
+      next: (usuario) => {
+        this.usuario.set(usuario);
+        this.novoDependenteNome = '';
+        this.salvandoDependente.set(false);
+      },
+      error: (err) => {
+        this.salvandoDependente.set(false);
+        this.erroDependente.set(err?.error?.message ?? 'Não foi possível adicionar o dependente.');
+      },
+    });
+  }
+
+  protected editarDependente(dependenteId: number, nomeAtual: string, ativoAtual: boolean): void {
+    this.editandoDependenteId.set(dependenteId);
+    this.dependenteEmEdicaoNome = nomeAtual;
+    this.dependenteEmEdicaoAtivo = ativoAtual;
+  }
+
+  protected cancelarEdicaoDependente(): void {
+    this.editandoDependenteId.set(null);
+  }
+
+  protected salvarEdicaoDependente(): void {
+    const nome = this.dependenteEmEdicaoNome.trim();
+    const dependenteId = this.editandoDependenteId();
+    if (!nome || dependenteId === null) {
+      return;
+    }
+
+    this.salvandoDependente.set(true);
+    this.erroDependente.set(null);
+
+    this.usuarioService.atualizarDependente(this.usuarioId()!, dependenteId, nome, this.dependenteEmEdicaoAtivo).subscribe({
+      next: (usuario) => {
+        this.usuario.set(usuario);
+        this.editandoDependenteId.set(null);
+        this.salvandoDependente.set(false);
+      },
+      error: (err) => {
+        this.salvandoDependente.set(false);
+        this.erroDependente.set(err?.error?.message ?? 'Não foi possível atualizar o dependente.');
+      },
+    });
+  }
+
+  protected removerDependente(dependenteId: number): void {
+    if (!confirm('Remover este dependente?')) {
+      return;
+    }
+
+    this.usuarioService.removerDependente(this.usuarioId()!, dependenteId).subscribe({
+      next: (usuario) => this.usuario.set(usuario),
+      error: () => this.erroDependente.set('Não foi possível remover o dependente.'),
     });
   }
 }

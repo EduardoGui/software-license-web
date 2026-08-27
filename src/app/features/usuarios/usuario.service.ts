@@ -42,4 +42,16 @@ export class UsuarioService {
   reenviarConvite(id: number): Observable<void> {
     return this.http.patch<void>(`${this.baseUrl}/${id}/reenviar-convite`, {});
   }
+
+  adicionarDependente(usuarioId: number, nome: string): Observable<Usuario> {
+    return this.http.post<Usuario>(`${this.baseUrl}/${usuarioId}/dependentes`, { nome });
+  }
+
+  atualizarDependente(usuarioId: number, dependenteId: number, nome: string, ativo: boolean): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.baseUrl}/${usuarioId}/dependentes/${dependenteId}`, { nome, ativo });
+  }
+
+  removerDependente(usuarioId: number, dependenteId: number): Observable<Usuario> {
+    return this.http.delete<Usuario>(`${this.baseUrl}/${usuarioId}/dependentes/${dependenteId}`);
+  }
 }

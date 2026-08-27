@@ -1,3 +1,11 @@
+export type UsuarioTipo = 'Pj' | 'Clt' | 'Estagio';
+
+export interface Dependente {
+  id: number;
+  nome: string;
+  ativo: boolean;
+}
+
 export interface Usuario {
   id: number;
   nome: string;
@@ -15,6 +23,10 @@ export interface Usuario {
   banco: string | null;
   agencia: string | null;
   contaBancaria: string | null;
+  tipo: UsuarioTipo | null;
+  empresaPjId: number | null;
+  empresaPjNome: string | null;
+  dependentes: Dependente[];
   dataCriacao: string;
   dataAtualizacao: string;
 }
@@ -25,6 +37,8 @@ export interface UsuarioPayload {
   dataInicio: string;
   dataFim: string | null;
   observacao: string | null;
+  tipo: UsuarioTipo | null;
+  empresaPjId: number | null;
 }
 
 export interface UsuarioFiltro {

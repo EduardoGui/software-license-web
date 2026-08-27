@@ -46,6 +46,28 @@
         <textarea formControlName="observacao" rows="3"></textarea>
       </label>
 
+      <label>
+        Tipo
+        <select formControlName="tipo">
+          <option [ngValue]="null">Não informado</option>
+          <option value="Clt">CLT</option>
+          <option value="Pj">PJ</option>
+          <option value="Estagio">Estágio</option>
+        </select>
+      </label>
+
+      @if (form.controls.tipo.value === 'Pj') {
+        <label>
+          Empresa PJ *
+          <select formControlName="empresaPjId">
+            <option [ngValue]="null">Selecione</option>
+            @for (empresa of empresasPj(); track empresa.id) {
+              <option [ngValue]="empresa.id">{{ empresa.razaoSocial }}</option>
+            }
+          </select>
+        </label>
+      }
+
       <div class="acoes">
         <button type="submit" class="botao botao--primario" [disabled]="salvando()">
           <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
@@ -53,5 +75,67 @@
         <a routerLink="/usuarios" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
       </div>
     </form>
+
+    @if (editando && usuario()) {
+      <section class="dependentes">
+        <h2>Dependentes</h2>
+
+        @if (erroDependente()) {
+          <p class="status status--erro">{{ erroDependente() }}</p>
+        }
+
+        <div class="dependentes__novo">
+          <input
+            type="text"
+            [(ngModel)]="novoDependenteNome"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="Nome do dependente"
+          />
+          <button type="button" class="botao" [disabled]="!novoDependenteNome.trim() || salvandoDependente()" (click)="adicionarDependente()">
+            Adicionar
+          </button>
+        </div>
+
+        @if (usuario()!.dependentes.length === 0) {
+          <p class="status">Nenhum dependente cadastrado.</p>
+        } @else {
+          <ul class="dependentes__lista">
+            @for (dependente of usuario()!.dependentes; track dependente.id) {
+              <li>
+                @if (editandoDependenteId() === dependente.id) {
+                  <input type="text" [(ngModel)]="dependenteEmEdicaoNome" [ngModelOptions]="{ standalone: true }" />
+                  <label class="dependentes__ativo">
+                    <input type="checkbox" [(ngModel)]="dependenteEmEdicaoAtivo" [ngModelOptions]="{ standalone: true }" />
+                    Ativo
+                  </label>
+                  <button type="button" class="botao-icone" title="Salvar" (click)="salvarEdicaoDependente()">
+                    <app-icon name="check" [size]="16" />
+                  </button>
+                  <button type="button" class="botao-icone" title="Cancelar" (click)="cancelarEdicaoDependente()">
+                    <app-icon name="x" [size]="16" />
+                  </button>
+                } @else {
+                  <span>{{ dependente.nome }}</span>
+                  @if (!dependente.ativo) {
+                    <span class="badge badge--inativa">Inativo</span>
+                  }
+                  <button
+                    type="button"
+                    class="botao-icone"
+                    title="Editar"
+                    (click)="editarDependente(dependente.id, dependente.nome, dependente.ativo)"
+                  >
+                    <app-icon name="pencil" [size]="16" />
+                  </button>
+                  <button type="button" class="botao-icone" title="Remover" (click)="removerDependente(dependente.id)">
+                    <app-icon name="trash" [size]="16" />
+                  </button>
+                }
+              </li>
+            }
+          </ul>
+        }
+      </section>
+    }
   }
 </section>

@@ -21,6 +21,7 @@ export class App {
   );
   protected readonly grupoTiAberto = signal(false);
   protected readonly grupoDpAberto = signal(false);
+  protected readonly grupoPlanoSaudeAberto = signal(false);
   protected readonly grupoSuprimentosAberto = signal(false);
   protected readonly grupoCadastrosGeraisAberto = signal(false);
   protected readonly grupoLicencasAberto = signal(false);
@@ -41,6 +42,7 @@ export class App {
     this.grupoTiAberto.set(abrindo);
     if (abrindo) {
       this.grupoDpAberto.set(false);
+      this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
     }
@@ -51,6 +53,18 @@ export class App {
     this.grupoDpAberto.set(abrindo);
     if (abrindo) {
       this.grupoTiAberto.set(false);
+      this.grupoPlanoSaudeAberto.set(false);
+      this.grupoSuprimentosAberto.set(false);
+      this.grupoCadastrosGeraisAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoPlanoSaude(): void {
+    const abrindo = !this.grupoPlanoSaudeAberto();
+    this.grupoPlanoSaudeAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoTiAberto.set(false);
+      this.grupoDpAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
     }
@@ -62,6 +76,7 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoDpAberto.set(false);
+      this.grupoPlanoSaudeAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
     }
   }
@@ -72,6 +87,7 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoDpAberto.set(false);
+      this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
     }
   }
