@@ -1,0 +1,127 @@
+<section class="custos">
+  <header class="topo">
+    <h1>Plano de Saúde — Lançamento Mensal</h1>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Ano
+      <select name="ano" [(ngModel)]="filtro.ano">
+        @for (ano of anosDisponiveis; track ano) {
+          <option [ngValue]="ano">{{ ano }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Mês
+      <select name="mes" [(ngModel)]="filtro.mes">
+        @for (nome of nomesMeses; track nome; let i = $index) {
+          <option [ngValue]="i + 1">{{ nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Nome
+      <input type="text" name="nome" [(ngModel)]="filtro.nome" placeholder="Buscar por nome" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !mes()) {
+    <p class="status status--erro">Não foi possível carregar os dados. Verifique se a API está em execução.</p>
+  } @else if (mes()!.usuarios.length === 0) {
+    <p class="status">Nenhum usuário ativo no período selecionado.</p>
+  } @else {
+    <div class="resumo">
+      @if (salvo()) {
+        <span class="status status--sucesso">Lançamentos salvos.</span>
+      } @else {
+        <span></span>
+      }
+      <button type="button" class="botao botao--primario" [disabled]="salvando()" (click)="salvar()">
+        <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar mês' }}
+      </button>
+    </div>
+
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Tipo / Empresa</th>
+            <th>Valor mensal</th>
+            <th>Coparticipação</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (usuario of mes()!.usuarios; track usuario.usuarioId) {
+            <tr class="linha-titular">
+              <td>{{ usuario.nome }}</td>
+              <td>{{ nomeTipo(usuario.tipo) }}{{ usuario.empresaPjNome ? ' — ' + usuario.empresaPjNome : '' }}</td>
+              <td>
+                <input type="number" min="0" step="0.01" [(ngModel)]="usuario.valorMensal" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td>
+                <input type="number" min="0" step="0.01" [(ngModel)]="usuario.valorCoparticipacao" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td>
+                @if (usuario.lancamentoId !== null) {
+                  <button
+                    type="button"
+                    class="botao-icone"
+                    title="Remover lançamento"
+                    (click)="removerLancamentoTitular(usuario.usuarioId, usuario.lancamentoId)"
+                  >
+                    <app-icon name="trash" [size]="16" />
+                  </button>
+                }
+              </td>
+            </tr>
+            @for (dependente of usuario.dependentes; track dependente.dependenteId) {
+              <tr class="linha-dependente">
+                <td class="linha-dependente__nome">{{ dependente.nome }}</td>
+                <td>Dependente</td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    [(ngModel)]="dependente.valorMensal"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                </td>
+                <td>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    [(ngModel)]="dependente.valorCoparticipacao"
+                    [ngModelOptions]="{ standalone: true }"
+                  />
+                </td>
+                <td>
+                  @if (dependente.lancamentoId !== null) {
+                    <button
+                      type="button"
+                      class="botao-icone"
+                      title="Remover lançamento"
+                      (click)="removerLancamentoDependente(dependente.dependenteId, dependente.lancamentoId)"
+                    >
+                      <app-icon name="trash" [size]="16" />
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

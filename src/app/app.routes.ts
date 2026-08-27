@@ -55,6 +55,7 @@ import { PatrimonioItensList } from './features/patrimonio/patrimonio-itens-list
 import { PatrimonioItemForm } from './features/patrimonio/patrimonio-item-form';
 import { EmpresasPjList } from './features/empresas-pj/empresas-pj-list';
 import { EmpresaPjForm } from './features/empresas-pj/empresa-pj-form';
+import { PlanoSaudeCustosPage } from './features/plano-saude-custos/plano-saude-custos-page';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -124,6 +125,7 @@ export const routes: Routes = [
       { path: 'dp/empresas-pj', component: EmpresasPjList, canActivate: [adminGuard] },
       { path: 'dp/empresas-pj/novo', component: EmpresaPjForm, canActivate: [adminGuard] },
       { path: 'dp/empresas-pj/:id/editar', component: EmpresaPjForm, canActivate: [adminGuard] },
+      { path: 'dp/plano-saude/custos', component: PlanoSaudeCustosPage, canActivate: [adminGuard] },
       { path: 'reembolsos-despesa', component: ReembolsosDespesaList },
       { path: 'reembolsos-despesa/novo', component: ReembolsoDespesaForm },
       { path: 'reembolsos-despesa/pendentes', component: ReembolsosDespesaPendentesList },

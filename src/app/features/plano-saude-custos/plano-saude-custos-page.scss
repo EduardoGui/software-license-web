@@ -1,0 +1,162 @@
+.custos {
+  max-width: 1100px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.topo {
+  margin-bottom: 1rem;
+}
+
+h1 {
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  background: #fff;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.filtros label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.filtros input,
+.filtros select {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.filtros__acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.botao {
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.botao:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.botao--primario {
+  background: var(--color-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.botao--texto {
+  border-color: transparent;
+  color: var(--color-secondary);
+}
+
+.status {
+  color: var(--color-secondary);
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+.status--sucesso {
+  color: #15803d;
+}
+
+.resumo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+}
+
+.tabela-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.5rem 0.9rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+th {
+  background: var(--color-bg-page);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+td input[type='number'] {
+  width: 110px;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.linha-titular td {
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.linha-dependente td {
+  color: var(--color-secondary);
+  font-size: 0.9rem;
+}
+
+.linha-dependente__nome {
+  padding-left: 1.75rem;
+}
+
+.botao-icone {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  color: var(--color-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.botao-icone:hover {
+  color: var(--color-primary);
+}
