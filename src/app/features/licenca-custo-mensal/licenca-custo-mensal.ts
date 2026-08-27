@@ -1,18 +1,29 @@
+export interface RelatorioMensalCustoLicencasUsuario {
+  usuarioId: number | null;
+  usuarioNome: string;
+  diasAtivos: number;
+  valorProporcional: number;
+}
+
 export interface RelatorioMensalCustoLicencasItem {
   licencaId: number;
   nome: string;
-  periodicidade: string | null;
-  valorVigente: number | null;
-  diasAtivos: number;
   diasNoMes: number;
-  valorNoMes: number;
+  usuarios: RelatorioMensalCustoLicencasUsuario[];
+  subtotal: number;
+}
+
+export interface RelatorioMensalCustoLicencasGrupo {
+  tipo: string;
+  licencas: RelatorioMensalCustoLicencasItem[];
+  subtotal: number;
 }
 
 export interface RelatorioMensalCustoLicencas {
   ano: number;
   mes: number;
-  itens: RelatorioMensalCustoLicencasItem[];
-  totalGeral: number;
+  grupos: RelatorioMensalCustoLicencasGrupo[];
+  valorTotal: number;
 }
 
 export interface RelatorioMensalCustoLicencasFiltro {

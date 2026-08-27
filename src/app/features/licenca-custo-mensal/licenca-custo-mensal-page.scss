@@ -126,3 +126,24 @@ tfoot td {
   border-bottom: none;
   border-top: 2px solid var(--color-border-light);
 }
+
+.linha-grupo td {
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  font-weight: 600;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.linha-subtotal-licenca td {
+  background: var(--color-bg-subtle);
+  font-style: italic;
+  color: var(--color-secondary);
+}
+
+.linha-subtotal-grupo td {
+  background: var(--color-primary-tint);
+  font-weight: 600;
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--color-primary-tint-border);
+}
