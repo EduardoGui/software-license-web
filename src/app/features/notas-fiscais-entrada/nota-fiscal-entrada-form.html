@@ -53,6 +53,9 @@
           <app-icon name="plus" [size]="16" />
         </a>
       </div>
+      @if (fornecedores().length === 0) {
+        <span class="campo-aviso">Nenhum fornecedor cadastrado ainda — use o botão acima para criar um.</span>
+      }
     </label>
 
     <label>
