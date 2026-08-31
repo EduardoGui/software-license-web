@@ -41,6 +41,19 @@ export class App {
     const abrindo = !this.grupoTiAberto();
     this.grupoTiAberto.set(abrindo);
     if (abrindo) {
+      this.grupoPatrimonioAberto.set(false);
+      this.grupoDpAberto.set(false);
+      this.grupoPlanoSaudeAberto.set(false);
+      this.grupoSuprimentosAberto.set(false);
+      this.grupoCadastrosGeraisAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoPatrimonio(): void {
+    const abrindo = !this.grupoPatrimonioAberto();
+    this.grupoPatrimonioAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoTiAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
@@ -53,6 +66,7 @@ export class App {
     this.grupoDpAberto.set(abrindo);
     if (abrindo) {
       this.grupoTiAberto.set(false);
+      this.grupoPatrimonioAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
@@ -64,6 +78,7 @@ export class App {
     this.grupoPlanoSaudeAberto.set(abrindo);
     if (abrindo) {
       this.grupoTiAberto.set(false);
+      this.grupoPatrimonioAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
@@ -75,6 +90,7 @@ export class App {
     this.grupoSuprimentosAberto.set(abrindo);
     if (abrindo) {
       this.grupoTiAberto.set(false);
+      this.grupoPatrimonioAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
@@ -86,6 +102,7 @@ export class App {
     this.grupoCadastrosGeraisAberto.set(abrindo);
     if (abrindo) {
       this.grupoTiAberto.set(false);
+      this.grupoPatrimonioAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
@@ -97,7 +114,6 @@ export class App {
     this.grupoLicencasAberto.set(abrindo);
     if (abrindo) {
       this.grupoEquipamentosAberto.set(false);
-      this.grupoPatrimonioAberto.set(false);
     }
   }
 
@@ -106,16 +122,6 @@ export class App {
     this.grupoEquipamentosAberto.set(abrindo);
     if (abrindo) {
       this.grupoLicencasAberto.set(false);
-      this.grupoPatrimonioAberto.set(false);
-    }
-  }
-
-  protected alternarGrupoPatrimonio(): void {
-    const abrindo = !this.grupoPatrimonioAberto();
-    this.grupoPatrimonioAberto.set(abrindo);
-    if (abrindo) {
-      this.grupoLicencasAberto.set(false);
-      this.grupoEquipamentosAberto.set(false);
     }
   }
 
