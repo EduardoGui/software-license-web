@@ -75,7 +75,13 @@
                 <app-icon name="pencil" [size]="16" />
               </a>
             }
+            <a routerLink="/dp/empresas-pj/novo" class="botao-icone" title="Cadastrar nova empresa PJ">
+              <app-icon name="plus" [size]="16" />
+            </a>
           </div>
+          @if (empresasPj().length === 0) {
+            <span class="campo-aviso">Nenhuma empresa PJ cadastrada ainda — use o botão acima para criar uma.</span>
+          }
         </label>
       }
 

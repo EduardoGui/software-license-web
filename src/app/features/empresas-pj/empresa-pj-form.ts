@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
 import { EmpresaPjService } from './empresa-pj.service';
@@ -16,7 +16,6 @@ export class EmpresaPjForm {
   private readonly fb = inject(FormBuilder);
   private readonly empresaPjService = inject(EmpresaPjService);
   private readonly route = inject(ActivatedRoute);
-  private readonly router = inject(Router);
   private readonly location = inject(Location);
 
   protected readonly empresaId = signal<number | null>(null);
@@ -78,7 +77,7 @@ export class EmpresaPjForm {
       : this.empresaPjService.criar(payload);
 
     requisicao.subscribe({
-      next: () => this.router.navigate(['/dp/empresas-pj']),
+      next: () => this.location.back(),
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar a empresa PJ.');
