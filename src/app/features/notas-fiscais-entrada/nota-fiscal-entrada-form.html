@@ -27,7 +27,32 @@
 
     <label>
       Fornecedor
-      <input type="text" formControlName="fornecedorNome" />
+      <div class="campo-com-acao">
+        <select formControlName="fornecedorId">
+          <option [ngValue]="null">Selecione</option>
+          @for (fornecedor of fornecedores(); track fornecedor.id) {
+            <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+          }
+        </select>
+        @if (form.controls.fornecedorId.value) {
+          <a
+            [routerLink]="['/dp/fornecedores', form.controls.fornecedorId.value, 'editar']"
+            (click)="prepararNavegacaoParaFornecedor()"
+            class="botao-icone"
+            title="Abrir cadastro do fornecedor"
+          >
+            <app-icon name="pencil" [size]="16" />
+          </a>
+        }
+        <a
+          routerLink="/dp/fornecedores/novo"
+          (click)="prepararNavegacaoParaFornecedor()"
+          class="botao-icone"
+          title="Cadastrar novo fornecedor"
+        >
+          <app-icon name="plus" [size]="16" />
+        </a>
+      </div>
     </label>
 
     <label>

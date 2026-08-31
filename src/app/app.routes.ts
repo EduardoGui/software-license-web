@@ -55,6 +55,8 @@ import { PatrimonioItensList } from './features/patrimonio/patrimonio-itens-list
 import { PatrimonioItemForm } from './features/patrimonio/patrimonio-item-form';
 import { EmpresasPjList } from './features/empresas-pj/empresas-pj-list';
 import { EmpresaPjForm } from './features/empresas-pj/empresa-pj-form';
+import { FornecedoresList } from './features/fornecedores/fornecedores-list';
+import { FornecedorForm } from './features/fornecedores/fornecedor-form';
 import { PlanoSaudeCustosPage } from './features/plano-saude-custos/plano-saude-custos-page';
 import { PlanoSaudeRelatorioPage } from './features/plano-saude-relatorio/plano-saude-relatorio-page';
 import { NotasDebitoPjList } from './features/notas-debito-pj/notas-debito-pj-list';
@@ -129,6 +131,9 @@ export const routes: Routes = [
       { path: 'dp/empresas-pj', component: EmpresasPjList, canActivate: [adminGuard] },
       { path: 'dp/empresas-pj/novo', component: EmpresaPjForm, canActivate: [adminGuard] },
       { path: 'dp/empresas-pj/:id/editar', component: EmpresaPjForm, canActivate: [adminGuard] },
+      { path: 'dp/fornecedores', component: FornecedoresList, canActivate: [adminGuard] },
+      { path: 'dp/fornecedores/novo', component: FornecedorForm, canActivate: [adminGuard] },
+      { path: 'dp/fornecedores/:id/editar', component: FornecedorForm, canActivate: [adminGuard] },
       { path: 'dp/plano-saude/custos', component: PlanoSaudeCustosPage, canActivate: [adminGuard] },
       { path: 'dp/plano-saude/relatorio-mensal', component: PlanoSaudeRelatorioPage, canActivate: [adminGuard] },
       { path: 'dp/plano-saude/notas-debito', component: NotasDebitoPjList, canActivate: [adminGuard] },

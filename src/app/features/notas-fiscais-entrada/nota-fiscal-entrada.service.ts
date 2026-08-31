@@ -20,7 +20,7 @@ export class NotaFiscalEntradaService {
   listar(filtro: NotaFiscalEntradaFiltro = {}): Observable<NotaFiscalEntrada[]> {
     let params = new HttpParams();
     if (filtro.numero) params = params.set('numero', filtro.numero);
-    if (filtro.fornecedorNome) params = params.set('fornecedorNome', filtro.fornecedorNome);
+    if (filtro.fornecedorId) params = params.set('fornecedorId', filtro.fornecedorId);
 
     return this.http.get<NotaFiscalEntrada[]>(this.baseUrl, { params });
   }

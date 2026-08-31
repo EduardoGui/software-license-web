@@ -40,7 +40,7 @@ export interface NotaFiscalEntradaDetalhe {
 export interface NotaFiscalEntradaPayload {
   numero: string;
   dataEntrada: string;
-  fornecedorNome: string | null;
+  fornecedorId: number | null;
   observacao: string | null;
 }
 
@@ -57,5 +57,5 @@ export interface NotaFiscalItemPayload {
 
 export interface NotaFiscalEntradaFiltro {
   numero?: string;
-  fornecedorNome?: string;
+  fornecedorId?: number;
 }

@@ -11,7 +11,12 @@
     </label>
     <label>
       Fornecedor
-      <input type="text" name="fornecedorNome" [(ngModel)]="filtro.fornecedorNome" placeholder="Buscar por fornecedor" />
+      <select name="fornecedorId" [(ngModel)]="filtro.fornecedorId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (fornecedor of fornecedores(); track fornecedor.id) {
+          <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+        }
+      </select>
     </label>
     <div class="filtros__acoes">
       <button type="submit" class="botao">Filtrar</button>

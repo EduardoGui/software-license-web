@@ -120,6 +120,9 @@
             <a routerLink="/dp/empresas-pj" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Empresas PJ
             </a>
+            <a routerLink="/dp/fornecedores" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Fornecedores
+            </a>
           }
         } @else {
           <a [routerLink]="['/usuarios', authService.obterUsuarioId()]" routerLinkActive="menu__item--ativo" class="menu__item">
