@@ -34,6 +34,9 @@
             <span class="anexo-detalhe">{{ formatarTamanho(anexo.tamanho) }} · {{ anexo.dataUpload | dataBr }}</span>
           </div>
           <div class="anexo-acoes">
+            <button type="button" class="botao-icone" title="Abrir" (click)="abrir(anexo)">
+              <app-icon name="eye" [size]="16" />
+            </button>
             <button type="button" class="botao-icone" title="Baixar" (click)="baixar(anexo)">
               <app-icon name="download" [size]="16" />
             </button>

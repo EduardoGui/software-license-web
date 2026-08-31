@@ -88,6 +88,27 @@ export class AnexosSecao {
     });
   }
 
+  protected abrir(anexo: Anexo): void {
+    // A aba precisa abrir aqui, de forma síncrona com o clique — se abrir só depois
+    // da resposta da API (assíncrona), o navegador bloqueia como pop-up.
+    const aba = window.open('', '_blank');
+
+    this.anexoService.baixar(this.recurso(), this.entidadeId(), anexo.id).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        if (aba) {
+          aba.location.href = url;
+        }
+        // Revoga só depois de dar tempo da aba carregar o conteúdo.
+        setTimeout(() => window.URL.revokeObjectURL(url), 60_000);
+      },
+      error: () => {
+        aba?.close();
+        this.erro.set('Não foi possível abrir o arquivo.');
+      },
+    });
+  }
+
   protected excluir(anexo: Anexo): void {
     if (!confirm(`Excluir o anexo "${anexo.nomeArquivo}"?`)) {
       return;
