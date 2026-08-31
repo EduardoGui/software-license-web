@@ -64,7 +64,28 @@ export class UsuarioForm {
       const id = Number(idParam);
       this.usuarioId.set(id);
       this.carregar(id);
+    } else {
+      this.restaurarRascunho();
     }
+  }
+
+  // Sair pra cadastrar/editar uma Empresa PJ destrói este componente; guarda o formulário
+  // em sessionStorage pra não perder seleções ainda não salvas ao voltar.
+  private chaveRascunho(): string {
+    return `usuario-form-rascunho:${this.usuarioId() ?? 'novo'}`;
+  }
+
+  protected prepararNavegacaoParaEmpresa(): void {
+    sessionStorage.setItem(this.chaveRascunho(), JSON.stringify(this.form.getRawValue()));
+  }
+
+  private restaurarRascunho(): void {
+    const bruto = sessionStorage.getItem(this.chaveRascunho());
+    if (!bruto) {
+      return;
+    }
+    sessionStorage.removeItem(this.chaveRascunho());
+    this.form.patchValue(JSON.parse(bruto));
   }
 
   private carregar(id: number): void {
@@ -81,6 +102,7 @@ export class UsuarioForm {
           tipo: usuario.tipo,
           empresaPjId: usuario.empresaPjId,
         });
+        this.restaurarRascunho();
         this.carregando.set(false);
       },
       error: () => {

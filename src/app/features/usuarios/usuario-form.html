@@ -69,13 +69,19 @@
             @if (form.controls.empresaPjId.value) {
               <a
                 [routerLink]="['/dp/empresas-pj', form.controls.empresaPjId.value, 'editar']"
+                (click)="prepararNavegacaoParaEmpresa()"
                 class="botao-icone"
                 title="Abrir cadastro da empresa"
               >
                 <app-icon name="pencil" [size]="16" />
               </a>
             }
-            <a routerLink="/dp/empresas-pj/novo" class="botao-icone" title="Cadastrar nova empresa PJ">
+            <a
+              routerLink="/dp/empresas-pj/novo"
+              (click)="prepararNavegacaoParaEmpresa()"
+              class="botao-icone"
+              title="Cadastrar nova empresa PJ"
+            >
               <app-icon name="plus" [size]="16" />
             </a>
           </div>
