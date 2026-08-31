@@ -93,9 +93,6 @@
             Plano de Saúde
           </button>
           @if (grupoPlanoSaudeAberto()) {
-            <a routerLink="/dp/empresas-pj" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Empresas PJ
-            </a>
             <a routerLink="/dp/plano-saude/custos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Lançamento Mensal
             </a>
@@ -120,6 +117,9 @@
               Notas Fiscais
             </a>
             <a routerLink="/dp/locais" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Locais</a>
+            <a routerLink="/dp/empresas-pj" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Empresas PJ
+            </a>
           }
         } @else {
           <a [routerLink]="['/usuarios', authService.obterUsuarioId()]" routerLinkActive="menu__item--ativo" class="menu__item">

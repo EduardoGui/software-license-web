@@ -59,12 +59,23 @@
       @if (form.controls.tipo.value === 'Pj') {
         <label>
           Empresa PJ *
-          <select formControlName="empresaPjId">
-            <option [ngValue]="null">Selecione</option>
-            @for (empresa of empresasPj(); track empresa.id) {
-              <option [ngValue]="empresa.id">{{ empresa.razaoSocial }}</option>
+          <div class="campo-com-acao">
+            <select formControlName="empresaPjId">
+              <option [ngValue]="null">Selecione</option>
+              @for (empresa of empresasPj(); track empresa.id) {
+                <option [ngValue]="empresa.id">{{ empresa.razaoSocial }}</option>
+              }
+            </select>
+            @if (form.controls.empresaPjId.value) {
+              <a
+                [routerLink]="['/dp/empresas-pj', form.controls.empresaPjId.value, 'editar']"
+                class="botao-icone"
+                title="Abrir cadastro da empresa"
+              >
+                <app-icon name="pencil" [size]="16" />
+              </a>
             }
-          </select>
+          </div>
         </label>
       }
 

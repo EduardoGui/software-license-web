@@ -177,6 +177,16 @@ textarea {
   color: var(--color-secondary);
 }
 
+.campo-com-acao {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.campo-com-acao select {
+  flex: 1;
+}
+
 .botao-icone {
   display: inline-flex;
   align-items: center;
