@@ -28,6 +28,7 @@ export class PatrimonioItensList {
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
   protected readonly baixandoId = signal<number | null>(null);
+  protected readonly exportando = signal(false);
 
   protected filtro: PatrimonioItemFiltro = { status: 'Ativo' };
 
@@ -55,6 +56,25 @@ export class PatrimonioItensList {
       error: () => {
         this.erro.set(true);
         this.carregando.set(false);
+      },
+    });
+  }
+
+  protected exportar(): void {
+    this.exportando.set(true);
+    this.patrimonioItemService.exportarExcel(this.filtro).subscribe({
+      next: (blob) => {
+        this.exportando.set(false);
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `patrimonio-${new Date().toISOString().slice(0, 10)}.xlsx`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+      },
+      error: () => {
+        this.exportando.set(false);
+        alert('Não foi possível exportar o relatório.');
       },
     });
   }

@@ -1,6 +1,9 @@
 <section class="patrimonio">
   <header class="topo">
     <h1>Patrimônio</h1>
+    <button type="button" class="botao botao--primario" [disabled]="exportando()" (click)="exportar()">
+      <app-icon name="check" [size]="16" /> {{ exportando() ? 'Exportando...' : 'Exportar Excel' }}
+    </button>
   </header>
 
   <form class="filtros" (ngSubmit)="buscar()">
