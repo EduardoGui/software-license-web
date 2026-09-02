@@ -108,5 +108,25 @@
         </ul>
       }
     </section>
+
+    <section class="relacionados relacionados--historico">
+      <h2>Histórico de equipamentos</h2>
+      @if (carregandoHistoricoEquipamentos()) {
+        <p class="status">Carregando...</p>
+      } @else if (historicoEquipamentos().length === 0) {
+        <p class="status">Nenhum equipamento devolvido ainda.</p>
+      } @else {
+        <ul class="lista-relacionados lista-relacionados--historico">
+          @for (alocacao of historicoEquipamentos(); track alocacao.id) {
+            <li>
+              <span>{{ alocacao.equipamentoDescricao }}</span>
+              <span class="lista-relacionados__data">
+                {{ alocacao.dataInicio | dataBr }} até {{ alocacao.dataFim | dataBr }}
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
   }
 </section>

@@ -163,3 +163,15 @@ dd {
   font-size: 0.8rem;
   white-space: nowrap;
 }
+
+.lista-relacionados--historico {
+  background: var(--color-bg-subtle);
+}
+
+.lista-relacionados--historico li {
+  color: var(--color-text-muted);
+}
+
+.lista-relacionados--historico .lista-relacionados__data {
+  color: var(--color-text-muted);
+}

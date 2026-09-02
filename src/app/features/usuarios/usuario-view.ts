@@ -38,6 +38,8 @@ export class UsuarioView {
   protected readonly carregandoLicencas = signal(true);
   protected readonly equipamentos = signal<EquipamentoAlocacao[]>([]);
   protected readonly carregandoEquipamentos = signal(true);
+  protected readonly historicoEquipamentos = signal<EquipamentoAlocacao[]>([]);
+  protected readonly carregandoHistoricoEquipamentos = signal(true);
 
   protected voltar(): void {
     this.location.back();
@@ -92,6 +94,14 @@ export class UsuarioView {
         this.carregandoEquipamentos.set(false);
       },
       error: () => this.carregandoEquipamentos.set(false),
+    });
+
+    this.equipamentoAlocacaoService.listar({ usuarioId: id, status: 'Encerrado', tamanhoPagina: 50 }).subscribe({
+      next: (pagina) => {
+        this.historicoEquipamentos.set(pagina.itens);
+        this.carregandoHistoricoEquipamentos.set(false);
+      },
+      error: () => this.carregandoHistoricoEquipamentos.set(false),
     });
   }
 }

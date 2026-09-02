@@ -6,6 +6,8 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { EquipamentoAlocacao } from '../equipamento-alocacoes/equipamento-alocacao';
+import { EquipamentoAlocacaoService } from '../equipamento-alocacoes/equipamento-alocacao.service';
 import { Equipamento } from './equipamento';
 import { EquipamentoService } from './equipamento.service';
 
@@ -18,6 +20,7 @@ import { EquipamentoService } from './equipamento.service';
 export class EquipamentoForm {
   private readonly fb = inject(FormBuilder);
   private readonly equipamentoService = inject(EquipamentoService);
+  private readonly equipamentoAlocacaoService = inject(EquipamentoAlocacaoService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
@@ -28,6 +31,8 @@ export class EquipamentoForm {
   protected readonly carregando = signal(true);
   protected readonly salvando = signal(false);
   protected readonly erro = signal<string | null>(null);
+  protected readonly historicoAlocacoes = signal<EquipamentoAlocacao[]>([]);
+  protected readonly carregandoHistorico = signal(true);
 
   protected readonly form = this.fb.nonNullable.group({
     marca: [''],
@@ -66,6 +71,14 @@ export class EquipamentoForm {
         this.erro.set('Não foi possível carregar o equipamento.');
         this.carregando.set(false);
       },
+    });
+
+    this.equipamentoAlocacaoService.listar({ equipamentoId: this.equipamentoId, status: 'Encerrado', tamanhoPagina: 50 }).subscribe({
+      next: (pagina) => {
+        this.historicoAlocacoes.set(pagina.itens);
+        this.carregandoHistorico.set(false);
+      },
+      error: () => this.carregandoHistorico.set(false),
     });
   }
 

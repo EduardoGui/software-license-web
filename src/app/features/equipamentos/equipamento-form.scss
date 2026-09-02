@@ -143,3 +143,43 @@ select {
   border-color: transparent;
   color: var(--color-secondary);
 }
+
+.historico {
+  margin-top: 1.5rem;
+}
+
+.historico h2 {
+  font-size: 0.95rem;
+  color: var(--color-primary);
+  margin: 0 0 0.5rem;
+}
+
+.lista-historico {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.lista-historico li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--color-border-light);
+  font-size: 0.9rem;
+  color: var(--color-text-muted);
+}
+
+.lista-historico li:last-child {
+  border-bottom: none;
+}
+
+.lista-historico__data {
+  font-size: 0.8rem;
+  white-space: nowrap;
+}

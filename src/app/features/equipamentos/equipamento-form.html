@@ -104,6 +104,26 @@
       </div>
     </form>
 
+    <section class="historico">
+      <h2>Histórico de alocações</h2>
+      @if (carregandoHistorico()) {
+        <p class="status">Carregando...</p>
+      } @else if (historicoAlocacoes().length === 0) {
+        <p class="status">Nenhuma alocação encerrada ainda.</p>
+      } @else {
+        <ul class="lista-historico">
+          @for (alocacao of historicoAlocacoes(); track alocacao.id) {
+            <li>
+              <span>{{ alocacao.usuarioNome }}</span>
+              <span class="lista-historico__data">
+                {{ alocacao.dataInicio | dataBr }} até {{ alocacao.dataFim | dataBr }}
+              </span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
     <app-anexos-secao recurso="equipamentos" [entidadeId]="equipamentoId" />
   }
 </section>
