@@ -134,6 +134,15 @@ th {
   color: var(--color-secondary);
 }
 
+.linha--inativa {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+}
+
+.linha--inativa .acoes a {
+  color: var(--color-text-muted);
+}
+
 .acoes {
   display: flex;
   gap: 0.35rem;

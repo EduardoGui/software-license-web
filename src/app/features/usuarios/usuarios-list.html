@@ -49,7 +49,7 @@
         </thead>
         <tbody>
           @for (usuario of usuarios(); track usuario.id) {
-            <tr>
+            <tr [class.linha--inativa]="usuario.status === 'Inativo'">
               <td>{{ usuario.nome }}</td>
               <td>{{ usuario.dataInicio | dataBr }}</td>
               <td>{{ usuario.dataFim | dataBr }}</td>
@@ -57,18 +57,18 @@
               <td>{{ usuario.licencasEmUso }}</td>
               <td class="acoes">
                 <a [routerLink]="['/usuarios', usuario.id]" title="Visualizar" aria-label="Visualizar"><app-icon name="eye" [size]="18" /></a>
-                <a [routerLink]="['/usuarios', usuario.id, 'editar']" title="Editar" aria-label="Editar"><app-icon name="pencil" [size]="18" /></a>
-                <button
-                  type="button"
-                  class="botao--link-convite"
-                  title="Reenviar convite de acesso"
-                  aria-label="Reenviar convite de acesso"
-                  [disabled]="reenviandoConviteId() === usuario.id"
-                  (click)="reenviarConvite(usuario)"
-                >
-                  <app-icon name="mail" [size]="18" />
-                </button>
                 @if (usuario.status !== 'Inativo') {
+                  <a [routerLink]="['/usuarios', usuario.id, 'editar']" title="Editar" aria-label="Editar"><app-icon name="pencil" [size]="18" /></a>
+                  <button
+                    type="button"
+                    class="botao--link-convite"
+                    title="Reenviar convite de acesso"
+                    aria-label="Reenviar convite de acesso"
+                    [disabled]="reenviandoConviteId() === usuario.id"
+                    (click)="reenviarConvite(usuario)"
+                  >
+                    <app-icon name="mail" [size]="18" />
+                  </button>
                   <button
                     type="button"
                     class="botao--link"
