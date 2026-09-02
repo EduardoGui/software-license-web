@@ -1,0 +1,422 @@
+<section class="contrato-view">
+  <header class="topo">
+    <h1>Contrato</h1>
+    <button type="button" class="botao botao--texto" (click)="voltar()">Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar o contrato.</p>
+  } @else if (contrato(); as c) {
+    <section class="painel">
+      <h2>Dados fixos</h2>
+      <div class="grid-info">
+        <div><span>Número</span><strong>{{ c.numero }}</strong></div>
+        <div><span>Fornecedor</span><strong>{{ c.fornecedorNome }}</strong></div>
+        <div><span>Data de assinatura</span><strong>{{ c.dataAssinatura | dataBr }}</strong></div>
+        <div><span>Início da vigência</span><strong>{{ c.dataInicioVigencia | dataBr }}</strong></div>
+        <div><span>Fim da vigência (original)</span><strong>{{ c.dataFimVigenciaOriginal | dataBr }}</strong></div>
+        <div><span>Fim da vigência (atual)</span><strong>{{ c.dataFimVigenciaAtual | dataBr }}</strong></div>
+        <div><span>Valor original</span><strong>R$ {{ c.valorOriginal | number: '1.2-2' }}</strong></div>
+        <div><span>Valor atual</span><strong>R$ {{ c.valorAtual | number: '1.2-2' }}</strong></div>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Dados administráveis</h2>
+      <form [formGroup]="formDados" (ngSubmit)="salvarDados()">
+        <div class="grid">
+          <label class="grid__full">
+            Objeto
+            <input type="text" formControlName="objeto" />
+          </label>
+          <label class="grid__full">
+            Natureza
+            <input type="text" formControlName="natureza" />
+          </label>
+          <label>
+            Status
+            <select formControlName="status">
+              <option value="Ativo">Ativo</option>
+              <option value="Suspenso">Suspenso</option>
+              <option value="Encerrado">Encerrado</option>
+            </select>
+          </label>
+          <label class="grid__full">
+            Observações
+            <textarea rows="2" formControlName="observacoes"></textarea>
+          </label>
+        </div>
+        @if (erroDados()) {
+          <p class="status status--erro">{{ erroDados() }}</p>
+        }
+        <div class="acoes-form">
+          <button type="submit" class="botao botao--primario" [disabled]="salvandoDados()">
+            {{ salvandoDados() ? 'Salvando...' : 'Salvar dados' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="painel">
+      <h2>Itens do contrato</h2>
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Unidade</th>
+              <th>Quantidade</th>
+              <th>Valor unitário</th>
+              <th>Valor total</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of c.itens; track item.id) {
+              <tr>
+                <td>{{ item.codigo || '—' }}</td>
+                <td>{{ item.descricao }}</td>
+                <td>{{ item.unidade }}</td>
+                <td>{{ item.quantidadeContratada }}</td>
+                <td>R$ {{ item.valorUnitario | number: '1.2-2' }}</td>
+                <td>R$ {{ item.valorTotal | number: '1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Aditivos</h2>
+
+      @if (aditivos().length > 0) {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Nº</th>
+                <th>Descrição</th>
+                <th>Data de efeito</th>
+                <th>Δ Valor</th>
+                <th>Nova vigência</th>
+                <th>% Reajuste</th>
+                <th>Status</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (aditivo of aditivos(); track aditivo.id) {
+                <tr>
+                  <td>{{ aditivo.numero }}</td>
+                  <td>{{ aditivo.descricao }}</td>
+                  <td>{{ aditivo.dataEfeito | dataBr }}</td>
+                  <td>{{ aditivo.deltaValor === null ? '—' : 'R$ ' + (aditivo.deltaValor | number: '1.2-2') }}</td>
+                  <td>{{ aditivo.novaDataFimVigencia ? (aditivo.novaDataFimVigencia | dataBr) : '—' }}</td>
+                  <td>{{ aditivo.percentualReajuste === null ? '—' : (aditivo.percentualReajuste | number: '1.2-2') + '%' }}</td>
+                  <td>
+                    <span class="badge" [class]="'badge--' + aditivo.status.toLowerCase()">{{ aditivo.status }}</span>
+                  </td>
+                  <td>
+                    @if (aditivo.status === 'Previsto') {
+                      <button
+                        type="button"
+                        class="botao"
+                        (click)="formalizar(aditivo.id)"
+                        [disabled]="formalizandoId() === aditivo.id"
+                      >
+                        {{ formalizandoId() === aditivo.id ? 'Formalizando...' : 'Formalizar' }}
+                      </button>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="status">Nenhum aditivo registrado ainda.</p>
+      }
+
+      <h3>Novo aditivo</h3>
+      <form [formGroup]="formAditivo" (ngSubmit)="salvarAditivo()">
+        <div class="grid">
+          <label class="grid__full">
+            Descrição
+            <input type="text" formControlName="descricao" />
+          </label>
+          <label>
+            Data de assinatura
+            <input type="date" formControlName="dataAssinatura" />
+          </label>
+          <label>
+            Data de efeito
+            <input type="date" formControlName="dataEfeito" />
+          </label>
+          <label>
+            Δ Valor (R$)
+            <input type="number" step="0.01" formControlName="deltaValor" />
+          </label>
+          <label>
+            Nova data de fim de vigência
+            <input type="date" formControlName="novaDataFimVigencia" />
+          </label>
+          <label>
+            % Reajuste (sobre o valor original)
+            <input type="number" step="0.0001" min="0" max="100" formControlName="percentualReajuste" />
+          </label>
+          <label class="grid__full">
+            Observação
+            <textarea rows="2" formControlName="observacao"></textarea>
+          </label>
+        </div>
+
+        <div class="tabela-scroll" formArrayName="itens">
+          <table>
+            <thead>
+              <tr>
+                <th>Tipo</th>
+                <th>Item</th>
+                <th>Δ Quantidade</th>
+                <th>Novo valor unitário</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of itensAditivo.controls; track item; let i = $index) {
+                <tr [formGroupName]="i">
+                  <td>
+                    <select formControlName="tipo">
+                      <option value="existente">Item existente</option>
+                      <option value="novo">Novo item</option>
+                    </select>
+                  </td>
+                  <td>
+                    @if (item.value.tipo === 'existente') {
+                      <select formControlName="contratoItemId">
+                        <option [ngValue]="null">Selecione</option>
+                        @for (contratoItem of c.itens; track contratoItem.id) {
+                          <option [ngValue]="contratoItem.id">{{ contratoItem.descricao }}</option>
+                        }
+                      </select>
+                    } @else {
+                      <label class="rotulo-inline">
+                        Código
+                        <input type="text" formControlName="codigoNovoItem" />
+                      </label>
+                      <label class="rotulo-inline">
+                        Descrição
+                        <input type="text" formControlName="descricaoNovoItem" />
+                      </label>
+                      <label class="rotulo-inline">
+                        Unidade
+                        <input type="text" formControlName="unidadeNovoItem" />
+                      </label>
+                    }
+                  </td>
+                  <td><input type="number" step="0.000001" formControlName="deltaQuantidade" /></td>
+                  <td><input type="number" step="0.01" min="0" formControlName="novoValorUnitario" /></td>
+                  <td>
+                    <button type="button" class="botao botao--texto" (click)="removerItemAditivo(i)" title="Remover item">
+                      <app-icon name="trash" [size]="16" />
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5">Nenhuma alteração de item adicionada.</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+        <button type="button" class="botao" (click)="adicionarItemAditivo()">+ Adicionar alteração de item</button>
+
+        @if (erroAditivo()) {
+          <p class="status status--erro">{{ erroAditivo() }}</p>
+        }
+
+        <div class="acoes-form">
+          <button type="submit" class="botao botao--primario" [disabled]="salvandoAditivo()">
+            {{ salvandoAditivo() ? 'Salvando...' : 'Registrar aditivo' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="painel">
+      <h2>Linha do tempo do contrato</h2>
+      <div class="tl-scroll">
+        <div class="tl-corpo">
+          <div class="tl-linha tl-linha--eixo">
+            <div class="tl-rotulo"></div>
+            <div class="tl-trilha tl-trilha--eixo" [style.width.px]="larguraTotalTimelinePx(c)">
+              @for (marca of marcasDeMesTimeline(c); track marca.posicaoPx) {
+                <span class="tl-marca-mes" [style.left.px]="marca.posicaoPx">{{ marca.label }}</span>
+              }
+              @if (posicaoHojeTimelinePx(c) !== null) {
+                <div class="tl-marca-hoje" [style.left.px]="posicaoHojeTimelinePx(c)"></div>
+              }
+            </div>
+          </div>
+
+          <div class="tl-linha">
+            <div class="tl-rotulo">Vigência</div>
+            <div class="tl-trilha" [style.width.px]="larguraTotalTimelinePx(c)">
+              @if (posicaoHojeTimelinePx(c) !== null) {
+                <div class="tl-marca-hoje" [style.left.px]="posicaoHojeTimelinePx(c)"></div>
+              }
+              <div
+                class="tl-barra tl-barra--original"
+                [style.left.px]="0"
+                [style.width.px]="larguraBarraTimelinePx(c.dataInicioVigencia, c.dataFimVigenciaOriginal)"
+                [title]="'Vigência original: ' + (c.dataInicioVigencia | dataBr) + ' – ' + (c.dataFimVigenciaOriginal | dataBr)"
+              ></div>
+              @if (c.dataFimVigenciaAtual > c.dataFimVigenciaOriginal) {
+                <div
+                  class="tl-barra tl-barra--prorrogado"
+                  [style.left.px]="posicaoTimelinePx(c, c.dataFimVigenciaOriginal)"
+                  [style.width.px]="larguraBarraTimelinePx(c.dataFimVigenciaOriginal, c.dataFimVigenciaAtual)"
+                  [title]="'Prorrogado até: ' + (c.dataFimVigenciaAtual | dataBr)"
+                ></div>
+              }
+            </div>
+          </div>
+
+          <div class="tl-linha">
+            <div class="tl-rotulo">Aditivos</div>
+            <div class="tl-trilha" [style.width.px]="larguraTotalTimelinePx(c)">
+              @if (posicaoHojeTimelinePx(c) !== null) {
+                <div class="tl-marca-hoje" [style.left.px]="posicaoHojeTimelinePx(c)"></div>
+              }
+              @for (aditivo of aditivos(); track aditivo.id) {
+                <div
+                  class="tl-marco"
+                  [class.tl-marco--formalizado]="aditivo.status === 'Formalizado'"
+                  [style.left.px]="posicaoTimelinePx(c, aditivo.dataEfeito)"
+                  [title]="'Nº ' + aditivo.numero + ' — ' + aditivo.descricao + ' (' + aditivo.status + ')'"
+                ></div>
+              }
+            </div>
+          </div>
+
+          <div class="tl-linha tl-linha--reservada">
+            <div class="tl-rotulo">Medições</div>
+            <div class="tl-trilha tl-trilha--vazia" [style.width.px]="larguraTotalTimelinePx(c)">
+              <span class="tl-aviso">Aguardando módulo de Medição</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Configuração de medição</h2>
+      <form [formGroup]="formMedicao" (ngSubmit)="salvarMedicao()">
+        <div class="grid">
+          <label>
+            Tipo de medição
+            <select formControlName="tipoMedicao">
+              <option value="MensalFixo">Mensal fixo</option>
+              <option value="MensalVariavel">Mensal variável</option>
+              <option value="QuantidadeXPrecoUnitario">Quantidade × preço unitário</option>
+              <option value="EtapasPercentuais">Etapas / percentuais</option>
+              <option value="ParcelaUnica">Parcela única</option>
+              <option value="Outro">Outro</option>
+            </select>
+          </label>
+          <label>
+            Dia início do período
+            <input type="number" min="1" max="31" formControlName="diaInicioPeriodo" />
+          </label>
+          <label>
+            Dia fim do período
+            <input type="number" min="1" max="31" formControlName="diaFimPeriodo" />
+          </label>
+          <label>
+            Dias de antecedência do alerta
+            <input type="number" min="0" formControlName="diasAntecedenciaAlerta" />
+          </label>
+          <label class="grid__check">
+            <input type="checkbox" formControlName="exigeBm" />
+            Exige Boletim de Medição
+          </label>
+          <label class="grid__check">
+            <input type="checkbox" formControlName="exigeAprovacao" />
+            Exige aprovação
+          </label>
+          <label class="grid__check">
+            <input type="checkbox" formControlName="exigeAssinatura" />
+            Exige assinatura
+          </label>
+          <label class="grid__check">
+            <input type="checkbox" formControlName="permiteProRata" />
+            Permite pro-rata
+          </label>
+          <label>
+            Método de pro-rata
+            <select formControlName="metodoProRata">
+              <option [ngValue]="null">Nenhum</option>
+              <option value="DiasCorridos">Dias corridos</option>
+              <option value="MesComercial30">Mês comercial (30 dias)</option>
+              <option value="DiasUteis">Dias úteis</option>
+              <option value="FracaoManual">Fração manual</option>
+              <option value="ValorManual">Valor manual</option>
+            </select>
+          </label>
+        </div>
+        @if (erroMedicao()) {
+          <p class="status status--erro">{{ erroMedicao() }}</p>
+        }
+        <div class="acoes-form">
+          <button type="submit" class="botao botao--primario" [disabled]="salvandoMedicao()">
+            {{ salvandoMedicao() ? 'Salvando...' : 'Salvar medição' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="painel">
+      <h2>Configuração de faturamento</h2>
+      <form [formGroup]="formFaturamento" (ngSubmit)="salvarFaturamento()">
+        <div class="grid">
+          <label>
+            Janela de NF — dia inicial
+            <input type="number" min="1" max="31" formControlName="diaInicialJanelaNf" />
+          </label>
+          <label>
+            Janela de NF — dia final
+            <input type="number" min="1" max="31" formControlName="diaFinalJanelaNf" />
+          </label>
+          <label>
+            Prazo de pagamento (dias)
+            <input type="number" min="0" formControlName="prazoPagamentoDias" />
+          </label>
+          <label class="grid__check">
+            <input type="checkbox" formControlName="exigeBmAprovado" />
+            Exige BM aprovado
+          </label>
+          <label class="grid__check">
+            <input type="checkbox" formControlName="exigeBmAssinado" />
+            Exige BM assinado
+          </label>
+        </div>
+        @if (erroFaturamento()) {
+          <p class="status status--erro">{{ erroFaturamento() }}</p>
+        }
+        <div class="acoes-form">
+          <button type="submit" class="botao botao--primario" [disabled]="salvandoFaturamento()">
+            {{ salvandoFaturamento() ? 'Salvando...' : 'Salvar faturamento' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="painel">
+      <h2>Anexos</h2>
+      <app-anexos-secao recurso="contratos" [entidadeId]="contratoId" />
+    </section>
+  }
+</section>

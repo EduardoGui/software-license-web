@@ -27,6 +27,7 @@ export class App {
   protected readonly grupoLicencasAberto = signal(false);
   protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly grupoPatrimonioAberto = signal(false);
+  protected readonly grupoContratosAberto = signal(false);
   protected readonly grupoReembolsoAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
 
@@ -42,6 +43,7 @@ export class App {
     this.grupoTiAberto.set(abrindo);
     if (abrindo) {
       this.grupoPatrimonioAberto.set(false);
+      this.grupoContratosAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
@@ -54,6 +56,20 @@ export class App {
     this.grupoPatrimonioAberto.set(abrindo);
     if (abrindo) {
       this.grupoTiAberto.set(false);
+      this.grupoContratosAberto.set(false);
+      this.grupoDpAberto.set(false);
+      this.grupoPlanoSaudeAberto.set(false);
+      this.grupoSuprimentosAberto.set(false);
+      this.grupoCadastrosGeraisAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoContratos(): void {
+    const abrindo = !this.grupoContratosAberto();
+    this.grupoContratosAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoTiAberto.set(false);
+      this.grupoPatrimonioAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
@@ -67,6 +83,7 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoPatrimonioAberto.set(false);
+      this.grupoContratosAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
@@ -79,6 +96,7 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoPatrimonioAberto.set(false);
+      this.grupoContratosAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
@@ -91,6 +109,7 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoPatrimonioAberto.set(false);
+      this.grupoContratosAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
@@ -103,6 +122,7 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoPatrimonioAberto.set(false);
+      this.grupoContratosAberto.set(false);
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);

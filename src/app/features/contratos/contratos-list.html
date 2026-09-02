@@ -1,0 +1,82 @@
+<section class="contratos">
+  <header class="topo">
+    <h1>Contratos</h1>
+    <a class="botao botao--primario" routerLink="/contratos/novo"><app-icon name="plus" [size]="16" /> Novo contrato</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Número
+      <input type="text" name="numero" [(ngModel)]="filtro.numero" placeholder="Buscar por número" />
+    </label>
+    <label>
+      Fornecedor
+      <select name="fornecedorId" [(ngModel)]="filtro.fornecedorId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (fornecedor of fornecedores(); track fornecedor.id) {
+          <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option [ngValue]="undefined">Todos</option>
+        <option value="Ativo">Ativo</option>
+        <option value="Suspenso">Suspenso</option>
+        <option value="Encerrado">Encerrado</option>
+      </select>
+    </label>
+    <label>
+      Vigência até
+      <input type="date" name="vigenciaFimAte" [(ngModel)]="filtro.vigenciaFimAte" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os contratos. Verifique se a API está em execução.</p>
+  } @else if (contratos().length === 0) {
+    <p class="status">Nenhum contrato encontrado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Fornecedor</th>
+            <th>Objeto</th>
+            <th>Vigência atual</th>
+            <th>Valor atual</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (contrato of contratos(); track contrato.id) {
+            <tr>
+              <td>{{ contrato.numero }}</td>
+              <td>{{ contrato.fornecedorNome }}</td>
+              <td>{{ contrato.objeto }}</td>
+              <td>{{ contrato.dataInicioVigencia | dataBr }} – {{ contrato.dataFimVigenciaAtual | dataBr }}</td>
+              <td>{{ contrato.valorAtual | number: '1.2-2' }}</td>
+              <td>
+                <span class="badge" [class]="'badge--' + contrato.status.toLowerCase()">{{ contrato.status }}</span>
+              </td>
+              <td class="acoes">
+                <a [routerLink]="['/contratos', contrato.id]" title="Visualizar" aria-label="Visualizar">
+                  <app-icon name="eye" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

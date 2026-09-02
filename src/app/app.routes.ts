@@ -57,6 +57,9 @@ import { EmpresasPjList } from './features/empresas-pj/empresas-pj-list';
 import { EmpresaPjForm } from './features/empresas-pj/empresa-pj-form';
 import { FornecedoresList } from './features/fornecedores/fornecedores-list';
 import { FornecedorForm } from './features/fornecedores/fornecedor-form';
+import { ContratosList } from './features/contratos/contratos-list';
+import { ContratoForm } from './features/contratos/contrato-form';
+import { ContratoView } from './features/contratos/contrato-view';
 import { PlanoSaudeCustosPage } from './features/plano-saude-custos/plano-saude-custos-page';
 import { PlanoSaudeRelatorioPage } from './features/plano-saude-relatorio/plano-saude-relatorio-page';
 import { NotasDebitoPjList } from './features/notas-debito-pj/notas-debito-pj-list';
@@ -148,6 +151,9 @@ export const routes: Routes = [
       { path: 'reembolsos-despesa/:id/editar', component: ReembolsoDespesaForm },
       { path: 'reembolsos-despesa/:id/devolver', component: ReembolsoDespesaDecidir, data: { acao: 'devolver' } },
       { path: 'reembolsos-despesa/:id/reprovar', component: ReembolsoDespesaDecidir, data: { acao: 'reprovar' } },
+      { path: 'contratos', component: ContratosList, canActivate: [adminGuard] },
+      { path: 'contratos/novo', component: ContratoForm, canActivate: [adminGuard] },
+      { path: 'contratos/:id', component: ContratoView, canActivate: [adminGuard] },
     ],
   },
 ];

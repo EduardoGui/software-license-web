@@ -1,0 +1,192 @@
+<section class="contrato-form">
+  <header class="topo">
+    <h1>Novo contrato</h1>
+    <button type="button" class="botao botao--texto" (click)="voltar()">Voltar</button>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()">
+    <fieldset>
+      <legend>Dados do contrato</legend>
+      <div class="grid">
+        <label>
+          Número
+          <input type="text" formControlName="numero" placeholder="SUB_HOPE_0001_2026" />
+        </label>
+        <label>
+          Fornecedor
+          <select formControlName="fornecedorId">
+            <option [ngValue]="null">Selecione</option>
+            @for (fornecedor of fornecedores(); track fornecedor.id) {
+              <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+            }
+          </select>
+        </label>
+        <label class="grid__full">
+          Objeto
+          <input type="text" formControlName="objeto" />
+        </label>
+        <label class="grid__full">
+          Natureza
+          <input type="text" formControlName="natureza" />
+        </label>
+        <label>
+          Data de assinatura
+          <input type="date" formControlName="dataAssinatura" />
+        </label>
+        <label>
+          Início da vigência
+          <input type="date" formControlName="dataInicioVigencia" />
+        </label>
+        <label>
+          Fim da vigência (original)
+          <input type="date" formControlName="dataFimVigenciaOriginal" />
+        </label>
+        <label>
+          Valor original (R$)
+          <input type="number" step="0.01" min="0" formControlName="valorOriginal" />
+        </label>
+        <label class="grid__full">
+          Observações
+          <textarea rows="2" formControlName="observacoes"></textarea>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Itens do contrato</legend>
+      <div class="tabela-scroll" formArrayName="itens">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Unidade</th>
+              <th>Quantidade</th>
+              <th>Valor unitário (R$)</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of itens.controls; track item; let i = $index) {
+              <tr [formGroupName]="i">
+                <td><input type="text" formControlName="codigo" /></td>
+                <td><input type="text" formControlName="descricao" /></td>
+                <td><input type="text" formControlName="unidade" placeholder="mês, un, %..." /></td>
+                <td><input type="number" step="0.000001" min="0" formControlName="quantidadeContratada" /></td>
+                <td><input type="number" step="0.01" min="0" formControlName="valorUnitario" /></td>
+                <td>
+                  <button
+                    type="button"
+                    class="botao botao--texto"
+                    (click)="removerItem(i)"
+                    [disabled]="itens.length === 1"
+                    title="Remover item"
+                  >
+                    <app-icon name="trash" [size]="16" />
+                  </button>
+                </td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6">Nenhum item adicionado.</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <button type="button" class="botao" (click)="adicionarItem()">+ Adicionar item</button>
+    </fieldset>
+
+    <fieldset>
+      <legend>Configuração de medição</legend>
+      <div class="grid">
+        <label>
+          Tipo de medição
+          <select formControlName="tipoMedicao">
+            <option value="MensalFixo">Mensal fixo</option>
+            <option value="MensalVariavel">Mensal variável</option>
+            <option value="QuantidadeXPrecoUnitario">Quantidade × preço unitário</option>
+            <option value="EtapasPercentuais">Etapas / percentuais</option>
+            <option value="ParcelaUnica">Parcela única</option>
+            <option value="Outro">Outro</option>
+          </select>
+        </label>
+        <label>
+          Dia início do período
+          <input type="number" min="1" max="31" formControlName="diaInicioPeriodo" />
+        </label>
+        <label>
+          Dia fim do período
+          <input type="number" min="1" max="31" formControlName="diaFimPeriodo" />
+        </label>
+        <label>
+          Dias de antecedência do alerta
+          <input type="number" min="0" formControlName="diasAntecedenciaAlerta" />
+        </label>
+        <label class="grid__check">
+          <input type="checkbox" formControlName="exigeBm" />
+          Exige Boletim de Medição
+        </label>
+        <label class="grid__check">
+          <input type="checkbox" formControlName="exigeAprovacao" />
+          Exige aprovação
+        </label>
+        <label class="grid__check">
+          <input type="checkbox" formControlName="exigeAssinatura" />
+          Exige assinatura
+        </label>
+        <label class="grid__check">
+          <input type="checkbox" formControlName="permiteProRata" />
+          Permite pro-rata
+        </label>
+        <label>
+          Método de pro-rata
+          <select formControlName="metodoProRata">
+            <option [ngValue]="null">Nenhum</option>
+            <option value="DiasCorridos">Dias corridos</option>
+            <option value="MesComercial30">Mês comercial (30 dias)</option>
+            <option value="DiasUteis">Dias úteis</option>
+            <option value="FracaoManual">Fração manual</option>
+            <option value="ValorManual">Valor manual</option>
+          </select>
+        </label>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Configuração de faturamento</legend>
+      <div class="grid">
+        <label>
+          Janela de NF — dia inicial
+          <input type="number" min="1" max="31" formControlName="diaInicialJanelaNf" />
+        </label>
+        <label>
+          Janela de NF — dia final
+          <input type="number" min="1" max="31" formControlName="diaFinalJanelaNf" />
+        </label>
+        <label>
+          Prazo de pagamento (dias)
+          <input type="number" min="0" formControlName="prazoPagamentoDias" />
+        </label>
+        <label class="grid__check">
+          <input type="checkbox" formControlName="exigeBmAprovado" />
+          Exige BM aprovado
+        </label>
+        <label class="grid__check">
+          <input type="checkbox" formControlName="exigeBmAssinado" />
+          Exige BM assinado
+        </label>
+      </div>
+    </fieldset>
+
+    @if (erro()) {
+      <p class="status status--erro">{{ erro() }}</p>
+    }
+
+    <div class="acoes-form">
+      <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        {{ salvando() ? 'Salvando...' : 'Salvar contrato' }}
+      </button>
+    </div>
+  </form>
+</section>
