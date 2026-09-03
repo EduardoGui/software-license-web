@@ -7,7 +7,18 @@ import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { adicionarMeses, diasEntre, hojeIso, inicioDoMes, paraData } from '../timeline/timeline-datas';
-import { Aditivo, ContratoDetalhe, ContratoStatus, MetodoProRata, TipoMedicao } from './contrato';
+import {
+  Aditivo,
+  ContratoDetalhe,
+  ContratoSaldoItem,
+  ContratoStatus,
+  MedicaoBm,
+  MedicaoBmAcerto,
+  MedicaoBmImposto,
+  MedicaoBmItem,
+  MetodoProRata,
+  TipoMedicao,
+} from './contrato';
 import { ContratoService } from './contrato.service';
 
 interface MarcaMes {
@@ -46,6 +57,18 @@ export class ContratoView {
   protected readonly salvandoAditivo = signal(false);
   protected readonly erroAditivo = signal<string | null>(null);
   protected readonly formalizandoId = signal<number | null>(null);
+
+  protected readonly medicoes = signal<MedicaoBm[]>([]);
+  protected readonly medicaoExpandidaId = signal<number | null>(null);
+  protected readonly salvandoNovaMedicao = signal(false);
+  protected readonly erroNovaMedicao = signal<string | null>(null);
+  protected readonly salvandoItensMedicao = signal(false);
+  protected readonly erroItensMedicao = signal<string | null>(null);
+  protected readonly decidindoMedicaoId = signal<number | null>(null);
+  protected readonly reprovandoMedicaoId = signal<number | null>(null);
+  protected readonly erroDecisaoMedicao = signal<string | null>(null);
+
+  protected readonly saldo = signal<ContratoSaldoItem[]>([]);
 
   protected readonly formDados = this.fb.nonNullable.group({
     objeto: ['', Validators.required],
@@ -89,9 +112,43 @@ export class ContratoView {
     return this.formAditivo.controls.itens;
   }
 
+  protected readonly formNovaMedicao = this.fb.nonNullable.group({
+    periodoInicio: ['', Validators.required],
+    periodoFim: ['', Validators.required],
+    observacao: [''],
+  });
+
+  protected readonly formReprovarMedicao = this.fb.nonNullable.group({
+    observacaoAprovador: [''],
+  });
+
+  protected readonly formItensMedicao = this.fb.nonNullable.group({
+    itens: this.fb.array<ReturnType<typeof this.criarLinhaItemMedicao>>([]),
+    acertos: this.fb.array<ReturnType<typeof this.criarLinhaAcerto>>([]),
+    impostos: this.fb.array<ReturnType<typeof this.criarLinhaImposto>>([]),
+  });
+
+  protected get itensMedicao(): FormArray {
+    return this.formItensMedicao.controls.itens;
+  }
+
+  protected get acertosMedicao(): FormArray {
+    return this.formItensMedicao.controls.acertos;
+  }
+
+  protected get impostosMedicao(): FormArray {
+    return this.formItensMedicao.controls.impostos;
+  }
+
   constructor() {
     this.carregar();
     this.carregarAditivos();
+    this.carregarMedicoes();
+    this.carregarSaldo();
+  }
+
+  private carregarSaldo(): void {
+    this.contratoService.obterSaldo(this.contratoId).subscribe((saldo) => this.saldo.set(saldo));
   }
 
   protected voltar(): void {
@@ -279,6 +336,7 @@ export class ContratoView {
         this.formalizandoId.set(null);
         this.carregarAditivos();
         this.carregar();
+        this.carregarSaldo();
       },
       error: (err) => {
         this.formalizandoId.set(null);
@@ -323,5 +381,222 @@ export class ContratoView {
       return null;
     }
     return this.posicaoTimelinePx(c, hoje);
+  }
+
+  private carregarMedicoes(): void {
+    this.contratoService.listarMedicoes(this.contratoId).subscribe((medicoes) => this.medicoes.set(medicoes));
+  }
+
+  protected criarMedicaoBm(): void {
+    if (this.formNovaMedicao.invalid) {
+      this.formNovaMedicao.markAllAsTouched();
+      return;
+    }
+
+    const valor = this.formNovaMedicao.getRawValue();
+    this.salvandoNovaMedicao.set(true);
+    this.erroNovaMedicao.set(null);
+
+    this.contratoService
+      .criarMedicaoBm(this.contratoId, {
+        periodoInicio: valor.periodoInicio,
+        periodoFim: valor.periodoFim,
+        dataEnvio: null,
+        observacao: valor.observacao || null,
+      })
+      .subscribe({
+        next: (bm) => {
+          this.salvandoNovaMedicao.set(false);
+          this.formNovaMedicao.reset({ periodoInicio: '', periodoFim: '', observacao: '' });
+          this.carregarMedicoes();
+          this.preencherFormItensMedicao(bm);
+        },
+        error: (err) => {
+          this.salvandoNovaMedicao.set(false);
+          this.erroNovaMedicao.set(err?.error?.message ?? 'Não foi possível criar o BM.');
+        },
+      });
+  }
+
+  private criarLinhaItemMedicao(item: MedicaoBmItem) {
+    return this.fb.nonNullable.group({
+      itemId: [item.id],
+      descricaoNoMomento: [item.descricaoNoMomento],
+      unidadeNoMomento: [item.unidadeNoMomento],
+      saldoAntes: [item.saldoAntes],
+      valorUnitarioNoMomento: [item.valorUnitarioNoMomento],
+      quantidadeMedidaNestaBm: [item.quantidadeMedidaNestaBm, [Validators.required, Validators.min(0)]],
+      inicioEfetivo: this.fb.control<string | null>(item.inicioEfetivo),
+      fimEfetivo: this.fb.control<string | null>(item.fimEfetivo),
+      percentualProRata: this.fb.control<number | null>(item.percentualProRata),
+      ajusteManual: this.fb.control<number | null>(item.ajusteManual),
+      justificativaAjuste: [item.justificativaAjuste ?? ''],
+    });
+  }
+
+  protected medicaoSelecionada(): MedicaoBm | undefined {
+    return this.medicoes().find((m) => m.id === this.medicaoExpandidaId());
+  }
+
+  protected expandirMedicao(bm: MedicaoBm): void {
+    if (this.medicaoExpandidaId() === bm.id) {
+      this.medicaoExpandidaId.set(null);
+      return;
+    }
+
+    this.preencherFormItensMedicao(bm);
+  }
+
+  private preencherFormItensMedicao(bm: MedicaoBm): void {
+    this.medicaoExpandidaId.set(bm.id);
+
+    this.itensMedicao.clear();
+    for (const item of bm.itens) {
+      this.itensMedicao.push(this.criarLinhaItemMedicao(item));
+    }
+
+    this.acertosMedicao.clear();
+    for (const acerto of bm.acertos) {
+      this.acertosMedicao.push(this.criarLinhaAcerto(acerto));
+    }
+
+    this.impostosMedicao.clear();
+    for (const imposto of bm.impostos) {
+      this.impostosMedicao.push(this.criarLinhaImposto(imposto));
+    }
+  }
+
+  private criarLinhaAcerto(acerto?: MedicaoBmAcerto) {
+    return this.fb.nonNullable.group({
+      descricao: [acerto?.descricao ?? '', Validators.required],
+      unidade: [acerto?.unidade ?? ''],
+      quantidade: this.fb.control<number | null>(acerto?.quantidade ?? null),
+      precoUnitario: this.fb.control<number | null>(acerto?.precoUnitario ?? null),
+      precoTotal: [acerto?.precoTotal ?? 0, Validators.required],
+    });
+  }
+
+  protected adicionarAcerto(): void {
+    this.acertosMedicao.push(this.criarLinhaAcerto());
+  }
+
+  protected removerAcerto(index: number): void {
+    this.acertosMedicao.removeAt(index);
+  }
+
+  private criarLinhaImposto(imposto?: MedicaoBmImposto) {
+    return this.fb.nonNullable.group({
+      descricao: [imposto?.descricao ?? '', Validators.required],
+      aliquota: [imposto?.aliquota ?? 0],
+      base: [imposto?.base ?? 0],
+      valorTotal: [imposto?.valorTotal ?? 0, Validators.required],
+    });
+  }
+
+  protected adicionarImposto(): void {
+    this.impostosMedicao.push(this.criarLinhaImposto());
+  }
+
+  protected removerImposto(index: number): void {
+    this.impostosMedicao.removeAt(index);
+  }
+
+  protected salvarItensMedicao(): void {
+    const medicaoId = this.medicaoExpandidaId();
+    if (medicaoId === null || this.formItensMedicao.invalid) {
+      this.formItensMedicao.markAllAsTouched();
+      return;
+    }
+
+    const valor = this.formItensMedicao.getRawValue();
+    this.salvandoItensMedicao.set(true);
+    this.erroItensMedicao.set(null);
+
+    this.contratoService
+      .atualizarMedicaoBm(this.contratoId, medicaoId, {
+        dataEnvio: null,
+        observacao: null,
+        itens: valor.itens.map((item) => ({
+          itemId: item.itemId,
+          quantidadeMedidaNestaBm: item.quantidadeMedidaNestaBm,
+          inicioEfetivo: item.inicioEfetivo || null,
+          fimEfetivo: item.fimEfetivo || null,
+          percentualProRata: item.percentualProRata,
+          ajusteManual: item.ajusteManual,
+          justificativaAjuste: item.justificativaAjuste || null,
+        })),
+        acertos: valor.acertos.map((a) => ({
+          medicaoBmItemId: null,
+          descricao: a.descricao,
+          unidade: a.unidade || null,
+          quantidade: a.quantidade,
+          precoUnitario: a.precoUnitario,
+          precoTotal: a.precoTotal,
+        })),
+        impostos: valor.impostos.map((i) => ({
+          medicaoBmItemId: null,
+          descricao: i.descricao,
+          aliquota: i.aliquota,
+          base: i.base,
+          valorTotal: i.valorTotal,
+        })),
+      })
+      .subscribe({
+        next: (bm) => {
+          this.salvandoItensMedicao.set(false);
+          this.carregarMedicoes();
+          this.preencherFormItensMedicao(bm);
+        },
+        error: (err) => {
+          this.salvandoItensMedicao.set(false);
+          this.erroItensMedicao.set(err?.error?.message ?? 'Não foi possível salvar a medição.');
+        },
+      });
+  }
+
+  protected aprovarMedicao(bmId: number): void {
+    this.decidindoMedicaoId.set(bmId);
+    this.erroDecisaoMedicao.set(null);
+
+    this.contratoService.aprovarMedicaoBm(this.contratoId, bmId).subscribe({
+      next: (bm) => {
+        this.decidindoMedicaoId.set(null);
+        this.carregarMedicoes();
+        this.carregarSaldo();
+        this.preencherFormItensMedicao(bm);
+      },
+      error: (err) => {
+        this.decidindoMedicaoId.set(null);
+        this.erroDecisaoMedicao.set(err?.error?.message ?? 'Não foi possível aprovar o BM.');
+      },
+    });
+  }
+
+  protected iniciarReprovarMedicao(bmId: number): void {
+    this.reprovandoMedicaoId.set(bmId);
+    this.formReprovarMedicao.reset({ observacaoAprovador: '' });
+  }
+
+  protected cancelarReprovarMedicao(): void {
+    this.reprovandoMedicaoId.set(null);
+  }
+
+  protected confirmarReprovarMedicao(bmId: number): void {
+    this.decidindoMedicaoId.set(bmId);
+    this.erroDecisaoMedicao.set(null);
+    const observacaoAprovador = this.formReprovarMedicao.getRawValue().observacaoAprovador || null;
+
+    this.contratoService.reprovarMedicaoBm(this.contratoId, bmId, { observacaoAprovador }).subscribe({
+      next: (bm) => {
+        this.decidindoMedicaoId.set(null);
+        this.reprovandoMedicaoId.set(null);
+        this.carregarMedicoes();
+        this.preencherFormItensMedicao(bm);
+      },
+      error: (err) => {
+        this.decidindoMedicaoId.set(null);
+        this.erroDecisaoMedicao.set(err?.error?.message ?? 'Não foi possível reprovar o BM.');
+      },
+    });
   }
 }

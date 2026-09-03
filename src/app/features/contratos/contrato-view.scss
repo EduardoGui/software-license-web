@@ -58,9 +58,25 @@ h1 {
   color: #a16207;
 }
 
-.badge--formalizado {
+.badge--formalizado,
+.badge--aprovado {
   background: #dcfce7;
   color: #15803d;
+}
+
+.badge--rascunho {
+  background: var(--color-bg-subtle);
+  color: var(--color-secondary);
+}
+
+.badge--aguardandoaprovacao {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.badge--reprovado {
+  background: #fee2e2;
+  color: #b91c1c;
 }
 
 .grid-info {
@@ -84,6 +100,13 @@ h1 {
 .grid-info strong {
   color: var(--color-text);
   font-size: 0.95rem;
+}
+
+.medicao-totais {
+  margin: 1rem 0;
+  padding: 0.85rem 1rem;
+  background: var(--color-bg-subtle);
+  border-radius: 8px;
 }
 
 .grid {
@@ -158,6 +181,33 @@ td input {
 td select:last-child,
 td input:last-child {
   margin-bottom: 0;
+}
+
+input:read-only,
+input:disabled {
+  background: var(--color-bg-subtle);
+  color: var(--color-text-muted);
+  cursor: default;
+}
+
+.tabela-scroll--sub table {
+  min-width: 500px;
+}
+
+.painel-bm-expandido {
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-top: 0.75rem;
+  background: var(--color-bg-subtle);
+}
+
+.bloco-reprovar {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-top: 0.5rem;
 }
 
 .rotulo-inline {
@@ -318,6 +368,23 @@ td input:last-child {
 .tl-marco--formalizado {
   background: #dcfce7;
   border-color: #15803d;
+}
+
+.tl-barra--bm {
+  height: 0.7rem;
+  cursor: default;
+}
+
+.tl-barra--bm-rascunho {
+  background: var(--color-secondary);
+}
+
+.tl-barra--bm-aprovado {
+  background: #15803d;
+}
+
+.tl-barra--bm-reprovado {
+  background: #b91c1c;
 }
 
 .tl-aviso {

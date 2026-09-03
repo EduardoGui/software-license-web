@@ -90,6 +90,40 @@
     </section>
 
     <section class="painel">
+      <h2>Saldo do contrato</h2>
+      @if (saldo().length > 0) {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Contratado (atual)</th>
+                <th>Já medido (aprovado)</th>
+                <th>Saldo quantidade</th>
+                <th>Valor contratado (atual)</th>
+                <th>Saldo valor</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of saldo(); track (item.contratoItemId ?? 0) + '-' + (item.aditivoItemId ?? 0)) {
+                <tr>
+                  <td>{{ item.descricao }} ({{ item.unidade }})</td>
+                  <td>{{ item.quantidadeContratadaAtual }}</td>
+                  <td>{{ item.quantidadeJaMedida }}</td>
+                  <td>{{ item.saldoQuantidade }}</td>
+                  <td>R$ {{ item.valorContratadoAtual | number: '1.2-2' }}</td>
+                  <td>R$ {{ item.saldoValor | number: '1.2-2' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      } @else {
+        <p class="status">Nenhum item de saldo disponível.</p>
+      }
+    </section>
+
+    <section class="painel">
       <h2>Aditivos</h2>
 
       @if (aditivos().length > 0) {
@@ -247,6 +281,300 @@
     </section>
 
     <section class="painel">
+      <h2>Medições (BM)</h2>
+
+      @if (medicoes().length > 0) {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Nº</th>
+                <th>Período</th>
+                <th>Status</th>
+                <th>Valor total medido</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (bm of medicoes(); track bm.id) {
+                <tr>
+                  <td>{{ bm.numero }}</td>
+                  <td>{{ bm.periodoInicio | dataBr }} – {{ bm.periodoFim | dataBr }}</td>
+                  <td>
+                    <span class="badge" [class]="'badge--' + bm.status.toLowerCase()">{{ bm.status }}</span>
+                  </td>
+                  <td>R$ {{ bm.valorTotalMedido | number: '1.2-2' }}</td>
+                  <td>
+                    <button type="button" class="botao botao--texto" (click)="expandirMedicao(bm)">
+                      {{ medicaoExpandidaId() === bm.id ? 'Fechar' : bm.status === 'Rascunho' ? 'Editar' : 'Ver' }}
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (medicaoSelecionada(); as bm) {
+          <div class="painel-bm-expandido">
+            <form [formGroup]="formItensMedicao" (ngSubmit)="salvarItensMedicao()">
+              <div class="tabela-scroll" formArrayName="itens">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Item</th>
+                      <th>Contratado (atual)</th>
+                      <th>Já medido antes</th>
+                      <th>Saldo qtde. antes</th>
+                      <th>Medido nesta BM</th>
+                      <th>Saldo qtde. depois</th>
+                      <th>Início/Fim efetivo</th>
+                      <th>% Pró-rata</th>
+                      <th>Ajuste manual</th>
+                      <th>Valor total</th>
+                      <th>Saldo valor (pós-BM)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (item of itensMedicao.controls; track item; let i = $index) {
+                      <tr [formGroupName]="i">
+                        <td>{{ item.value.descricaoNoMomento }} ({{ item.value.unidadeNoMomento }})</td>
+                        <td>{{ bm.itens[i].quantidadeContratadaNoMomento }}</td>
+                        <td>{{ bm.itens[i].quantidadeJaMedidaAntes }}</td>
+                        <td>{{ item.value.saldoAntes }}</td>
+                        <td>
+                          <input
+                            type="number"
+                            step="0.000001"
+                            min="0"
+                            formControlName="quantidadeMedidaNestaBm"
+                            [readonly]="bm.status !== 'Rascunho'"
+                          />
+                        </td>
+                        <td>{{ bm.itens[i].saldoDepois }}</td>
+                        <td>
+                          <label class="rotulo-inline">
+                            Início
+                            <input type="date" formControlName="inicioEfetivo" [readonly]="bm.status !== 'Rascunho'" />
+                          </label>
+                          <label class="rotulo-inline">
+                            Fim
+                            <input type="date" formControlName="fimEfetivo" [readonly]="bm.status !== 'Rascunho'" />
+                          </label>
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            step="0.0001"
+                            min="0"
+                            max="100"
+                            formControlName="percentualProRata"
+                            [readonly]="bm.status !== 'Rascunho'"
+                            placeholder="auto"
+                          />
+                        </td>
+                        <td>
+                          <input type="number" step="0.01" formControlName="ajusteManual" [readonly]="bm.status !== 'Rascunho'" placeholder="R$" />
+                          <input
+                            type="text"
+                            formControlName="justificativaAjuste"
+                            [readonly]="bm.status !== 'Rascunho'"
+                            placeholder="Justificativa"
+                          />
+                        </td>
+                        <td>R$ {{ bm.itens[i].valorTotalItem | number: '1.2-2' }}</td>
+                        <td>R$ {{ bm.itens[i].saldoValorDepois | number: '1.2-2' }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <h3>Acertos e Descontos</h3>
+              <div class="tabela-scroll tabela-scroll--sub" formArrayName="acertos">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Descrição</th>
+                      <th>Unid.</th>
+                      <th>Qtde.</th>
+                      <th>Preço unit.</th>
+                      <th>Preço total</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (acerto of acertosMedicao.controls; track acerto; let i = $index) {
+                      <tr [formGroupName]="i">
+                        <td><input type="text" formControlName="descricao" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td><input type="text" formControlName="unidade" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td><input type="number" step="0.000001" formControlName="quantidade" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td><input type="number" step="0.01" formControlName="precoUnitario" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td><input type="number" step="0.01" formControlName="precoTotal" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td>
+                          @if (bm.status === 'Rascunho') {
+                            <button type="button" class="botao botao--texto" (click)="removerAcerto(i)" title="Remover">
+                              <app-icon name="trash" [size]="16" />
+                            </button>
+                          }
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="6">Nenhum acerto ou desconto lançado.</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              @if (bm.status === 'Rascunho') {
+                <button type="button" class="botao" (click)="adicionarAcerto()">+ Adicionar acerto/desconto</button>
+              }
+
+              <h3>Impostos e Retenções</h3>
+              <div class="tabela-scroll tabela-scroll--sub" formArrayName="impostos">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Descrição</th>
+                      <th>Alíquota (%)</th>
+                      <th>Base</th>
+                      <th>Valor total</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (imposto of impostosMedicao.controls; track imposto; let i = $index) {
+                      <tr [formGroupName]="i">
+                        <td><input type="text" formControlName="descricao" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td><input type="number" step="0.0001" formControlName="aliquota" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td><input type="number" step="0.01" formControlName="base" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td><input type="number" step="0.01" formControlName="valorTotal" [readonly]="bm.status !== 'Rascunho'" /></td>
+                        <td>
+                          @if (bm.status === 'Rascunho') {
+                            <button type="button" class="botao botao--texto" (click)="removerImposto(i)" title="Remover">
+                              <app-icon name="trash" [size]="16" />
+                            </button>
+                          }
+                        </td>
+                      </tr>
+                    } @empty {
+                      <tr>
+                        <td colspan="5">Nenhum imposto ou retenção lançado.</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+              @if (bm.status === 'Rascunho') {
+                <button type="button" class="botao" (click)="adicionarImposto()">+ Adicionar imposto/retenção</button>
+              }
+
+              <div class="grid-info medicao-totais">
+                <div><span>Total bruto medido</span><strong>R$ {{ bm.valorTotalMedido | number: '1.2-2' }}</strong></div>
+                <div><span>Total acertos/descontos</span><strong>R$ {{ bm.valorTotalAcertos | number: '1.2-2' }}</strong></div>
+                <div><span>Total impostos/retenções</span><strong>R$ {{ bm.valorTotalImpostos | number: '1.2-2' }}</strong></div>
+                <div><span>Valor líquido</span><strong>R$ {{ bm.valorLiquido | number: '1.2-2' }}</strong></div>
+              </div>
+
+              @if (bm.status !== 'Rascunho' && bm.observacaoAprovador) {
+                <p class="status">
+                  <strong>Observação de {{ bm.status === 'Aprovado' ? 'aprovação' : 'reprovação' }}:</strong>
+                  {{ bm.observacaoAprovador }}
+                </p>
+              }
+
+              @if (erroItensMedicao()) {
+                <p class="status status--erro">{{ erroItensMedicao() }}</p>
+              }
+              @if (erroDecisaoMedicao()) {
+                <p class="status status--erro">{{ erroDecisaoMedicao() }}</p>
+              }
+
+              @if (reprovandoMedicaoId() === bm.id) {
+                <div [formGroup]="formReprovarMedicao" class="grid bloco-reprovar">
+                  <label class="grid__full">
+                    Motivo da reprovação
+                    <textarea rows="2" formControlName="observacaoAprovador"></textarea>
+                  </label>
+                </div>
+              }
+
+              @if (bm.status === 'Rascunho') {
+                <div class="acoes-form">
+                  @if (reprovandoMedicaoId() === bm.id) {
+                    <button type="button" class="botao botao--texto" (click)="cancelarReprovarMedicao()">Cancelar</button>
+                    <button
+                      type="button"
+                      class="botao"
+                      (click)="confirmarReprovarMedicao(bm.id)"
+                      [disabled]="decidindoMedicaoId() === bm.id"
+                    >
+                      Confirmar reprovação
+                    </button>
+                  } @else {
+                    <button
+                      type="button"
+                      class="botao"
+                      (click)="iniciarReprovarMedicao(bm.id)"
+                      [disabled]="decidindoMedicaoId() === bm.id"
+                    >
+                      Reprovar
+                    </button>
+                    <button
+                      type="button"
+                      class="botao"
+                      (click)="aprovarMedicao(bm.id)"
+                      [disabled]="decidindoMedicaoId() === bm.id"
+                    >
+                      {{ decidindoMedicaoId() === bm.id ? 'Aprovando...' : 'Aprovar' }}
+                    </button>
+                    <button type="submit" class="botao botao--primario" [disabled]="salvandoItensMedicao()">
+                      {{ salvandoItensMedicao() ? 'Salvando...' : 'Salvar medição' }}
+                    </button>
+                  }
+                </div>
+              }
+            </form>
+
+            <h3>Anexos do BM</h3>
+            <app-anexos-secao [recurso]="'contratos/' + contratoId + '/medicoes'" [entidadeId]="bm.id" />
+          </div>
+        }
+      } @else {
+        <p class="status">Nenhum BM registrado ainda.</p>
+      }
+
+      <h3>Novo BM</h3>
+      <form [formGroup]="formNovaMedicao" (ngSubmit)="criarMedicaoBm()">
+        <div class="grid">
+          <label>
+            Início do período
+            <input type="date" formControlName="periodoInicio" />
+          </label>
+          <label>
+            Fim do período
+            <input type="date" formControlName="periodoFim" />
+          </label>
+          <label class="grid__full">
+            Observação
+            <textarea rows="2" formControlName="observacao"></textarea>
+          </label>
+        </div>
+
+        @if (erroNovaMedicao()) {
+          <p class="status status--erro">{{ erroNovaMedicao() }}</p>
+        }
+
+        <div class="acoes-form">
+          <button type="submit" class="botao botao--primario" [disabled]="salvandoNovaMedicao()">
+            {{ salvandoNovaMedicao() ? 'Criando...' : 'Criar BM' }}
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="painel">
       <h2>Linha do tempo do contrato</h2>
       <div class="tl-scroll">
         <div class="tl-corpo">
@@ -302,10 +630,27 @@
             </div>
           </div>
 
-          <div class="tl-linha tl-linha--reservada">
+          <div class="tl-linha" [class.tl-linha--reservada]="medicoes().length === 0">
             <div class="tl-rotulo">Medições</div>
-            <div class="tl-trilha tl-trilha--vazia" [style.width.px]="larguraTotalTimelinePx(c)">
-              <span class="tl-aviso">Aguardando módulo de Medição</span>
+            <div class="tl-trilha" [class.tl-trilha--vazia]="medicoes().length === 0" [style.width.px]="larguraTotalTimelinePx(c)">
+              @if (posicaoHojeTimelinePx(c) !== null) {
+                <div class="tl-marca-hoje" [style.left.px]="posicaoHojeTimelinePx(c)"></div>
+              }
+              @if (medicoes().length === 0) {
+                <span class="tl-aviso">Nenhum BM registrado ainda</span>
+              } @else {
+                @for (bm of medicoes(); track bm.id) {
+                  <div
+                    class="tl-barra tl-barra--bm"
+                    [class.tl-barra--bm-rascunho]="bm.status === 'Rascunho'"
+                    [class.tl-barra--bm-aprovado]="bm.status === 'Aprovado'"
+                    [class.tl-barra--bm-reprovado]="bm.status === 'Reprovado'"
+                    [style.left.px]="posicaoTimelinePx(c, bm.periodoInicio)"
+                    [style.width.px]="larguraBarraTimelinePx(bm.periodoInicio, bm.periodoFim)"
+                    [title]="'BM nº ' + bm.numero + ' — ' + (bm.periodoInicio | dataBr) + ' a ' + (bm.periodoFim | dataBr) + ' (' + bm.status + ') — R$ ' + (bm.valorLiquido | number: '1.2-2')"
+                  ></div>
+                }
+              }
             </div>
           </div>
         </div>

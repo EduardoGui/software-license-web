@@ -10,9 +10,14 @@ import {
   ContratoFaturamentoConfig,
   ContratoFiltro,
   ContratoMedicaoConfig,
+  ContratoSaldoItem,
   CreateAditivoPayload,
   CreateContratoPayload,
+  CreateMedicaoBmPayload,
+  MedicaoBm,
+  ReprovarMedicaoBmPayload,
   UpdateContratoPayload,
+  UpdateMedicaoBmPayload,
 } from './contrato';
 
 @Injectable({ providedIn: 'root' })
@@ -60,5 +65,29 @@ export class ContratoService {
 
   formalizarAditivo(contratoId: number, aditivoId: number): Observable<Aditivo> {
     return this.http.patch<Aditivo>(`${this.baseUrl}/${contratoId}/aditivos/${aditivoId}/formalizar`, {});
+  }
+
+  listarMedicoes(contratoId: number): Observable<MedicaoBm[]> {
+    return this.http.get<MedicaoBm[]>(`${this.baseUrl}/${contratoId}/medicoes`);
+  }
+
+  criarMedicaoBm(contratoId: number, payload: CreateMedicaoBmPayload): Observable<MedicaoBm> {
+    return this.http.post<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes`, payload);
+  }
+
+  atualizarMedicaoBm(contratoId: number, medicaoId: number, payload: UpdateMedicaoBmPayload): Observable<MedicaoBm> {
+    return this.http.put<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}`, payload);
+  }
+
+  aprovarMedicaoBm(contratoId: number, medicaoId: number): Observable<MedicaoBm> {
+    return this.http.patch<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}/aprovar`, {});
+  }
+
+  reprovarMedicaoBm(contratoId: number, medicaoId: number, payload: ReprovarMedicaoBmPayload): Observable<MedicaoBm> {
+    return this.http.patch<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}/reprovar`, payload);
+  }
+
+  obterSaldo(contratoId: number): Observable<ContratoSaldoItem[]> {
+    return this.http.get<ContratoSaldoItem[]>(`${this.baseUrl}/${contratoId}/saldo`);
   }
 }

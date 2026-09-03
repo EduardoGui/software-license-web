@@ -145,3 +145,130 @@ export interface CreateAditivoPayload {
   observacao: string | null;
   itens: CreateAditivoItemPayload[];
 }
+
+export type MedicaoBmStatus = 'Rascunho' | 'AguardandoAprovacao' | 'Aprovado' | 'Reprovado';
+
+export interface MedicaoBmItem {
+  id: number;
+  contratoItemId: number | null;
+  aditivoItemId: number | null;
+  descricaoNoMomento: string;
+  unidadeNoMomento: string;
+  quantidadeContratadaNoMomento: number;
+  quantidadeJaMedidaAntes: number;
+  saldoAntes: number;
+  quantidadeMedidaNestaBm: number;
+  saldoDepois: number;
+  valorUnitarioNoMomento: number;
+  valorTotalItem: number;
+  saldoValorAntes: number;
+  saldoValorDepois: number;
+  inicioEfetivo: string | null;
+  fimEfetivo: string | null;
+  diasBase: number | null;
+  diasMedidos: number | null;
+  percentualProRata: number | null;
+  ajusteManual: number | null;
+  justificativaAjuste: string | null;
+}
+
+export interface MedicaoBmAcerto {
+  id: number;
+  medicaoBmItemId: number | null;
+  descricao: string;
+  unidade: string | null;
+  quantidade: number | null;
+  precoUnitario: number | null;
+  precoTotal: number;
+}
+
+export interface MedicaoBmImposto {
+  id: number;
+  medicaoBmItemId: number | null;
+  descricao: string;
+  aliquota: number;
+  base: number;
+  valorTotal: number;
+}
+
+export interface MedicaoBm {
+  id: number;
+  contratoId: number;
+  numero: number;
+  periodoInicio: string;
+  periodoFim: string;
+  dataEnvio: string | null;
+  status: MedicaoBmStatus;
+  aprovadorId: number | null;
+  aprovadorNome: string | null;
+  observacaoAprovador: string | null;
+  dataDecisao: string | null;
+  valorTotalMedido: number;
+  valorTotalAcertos: number;
+  valorTotalImpostos: number;
+  valorLiquido: number;
+  observacao: string | null;
+  dataCriacao: string;
+  itens: MedicaoBmItem[];
+  acertos: MedicaoBmAcerto[];
+  impostos: MedicaoBmImposto[];
+}
+
+export interface CreateMedicaoBmPayload {
+  periodoInicio: string;
+  periodoFim: string;
+  dataEnvio: string | null;
+  observacao: string | null;
+}
+
+export interface UpdateMedicaoBmItemPayload {
+  itemId: number;
+  quantidadeMedidaNestaBm: number;
+  inicioEfetivo: string | null;
+  fimEfetivo: string | null;
+  percentualProRata: number | null;
+  ajusteManual: number | null;
+  justificativaAjuste: string | null;
+}
+
+export interface UpdateMedicaoBmAcertoPayload {
+  medicaoBmItemId: number | null;
+  descricao: string;
+  unidade: string | null;
+  quantidade: number | null;
+  precoUnitario: number | null;
+  precoTotal: number;
+}
+
+export interface UpdateMedicaoBmImpostoPayload {
+  medicaoBmItemId: number | null;
+  descricao: string;
+  aliquota: number;
+  base: number;
+  valorTotal: number;
+}
+
+export interface UpdateMedicaoBmPayload {
+  dataEnvio: string | null;
+  observacao: string | null;
+  itens: UpdateMedicaoBmItemPayload[];
+  acertos: UpdateMedicaoBmAcertoPayload[];
+  impostos: UpdateMedicaoBmImpostoPayload[];
+}
+
+export interface ReprovarMedicaoBmPayload {
+  observacaoAprovador: string | null;
+}
+
+export interface ContratoSaldoItem {
+  contratoItemId: number | null;
+  aditivoItemId: number | null;
+  descricao: string;
+  unidade: string;
+  quantidadeContratadaAtual: number;
+  quantidadeJaMedida: number;
+  saldoQuantidade: number;
+  valorUnitario: number;
+  valorContratadoAtual: number;
+  saldoValor: number;
+}
