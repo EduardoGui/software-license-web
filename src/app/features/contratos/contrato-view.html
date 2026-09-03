@@ -174,7 +174,8 @@
         <p class="status">Nenhum aditivo registrado ainda.</p>
       }
 
-      <h3>Novo aditivo</h3>
+      <details>
+        <summary><span class="seta" aria-hidden="true">▸</span><h3>Novo aditivo</h3></summary>
       <form [formGroup]="formAditivo" (ngSubmit)="salvarAditivo()">
         <div class="grid">
           <label class="grid__full">
@@ -278,6 +279,7 @@
           </button>
         </div>
       </form>
+      </details>
     </section>
 
     <section class="painel">
@@ -306,7 +308,7 @@
                   <td>R$ {{ bm.valorTotalMedido | number: '1.2-2' }}</td>
                   <td>
                     <button type="button" class="botao botao--texto" (click)="expandirMedicao(bm)">
-                      {{ medicaoExpandidaId() === bm.id ? 'Fechar' : bm.status === 'Rascunho' ? 'Editar' : 'Ver' }}
+                      {{ bm.status === 'Rascunho' ? 'Editar' : 'Ver' }}
                     </button>
                   </td>
                 </tr>
@@ -316,32 +318,61 @@
         </div>
 
         @if (medicaoSelecionada(); as bm) {
-          <div class="painel-bm-expandido">
-            <form [formGroup]="formItensMedicao" (ngSubmit)="salvarItensMedicao()">
+          <div class="modal-fundo" (click)="fecharModalMedicao()">
+            <div class="modal modal--largo" role="dialog" aria-modal="true" [attr.aria-label]="'BM nº ' + bm.numero" (click)="$event.stopPropagation()">
+              <div class="modal__cabecalho">
+                <h2>
+                  BM nº {{ bm.numero }}
+                  <span class="badge" [class]="'badge--' + bm.status.toLowerCase()">{{ bm.status }}</span>
+                </h2>
+                <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fecharModalMedicao()">×</button>
+              </div>
+
+              <div class="grid-info bm-cabecalho">
+                <div><span>Subcontratado</span><strong>{{ c.fornecedorNome }}</strong></div>
+                <div><span>Nº do contrato</span><strong>{{ c.numero }}</strong></div>
+                <div><span>Nº do BM</span><strong>{{ bm.numero }}</strong></div>
+                <div><span>Período</span><strong>{{ bm.periodoInicio | dataBr }} – {{ bm.periodoFim | dataBr }}</strong></div>
+                <div><span>Data</span><strong>{{ bm.dataEnvio ? (bm.dataEnvio | dataBr) : '—' }}</strong></div>
+              </div>
+
+              <form [formGroup]="formItensMedicao" (ngSubmit)="salvarItensMedicao()">
+              <div class="grid">
+                <label>
+                  Nº de referência
+                  <input type="text" formControlName="numeroReferencia" [readonly]="bm.status !== 'Rascunho'" placeholder="ex.: 006" />
+                </label>
+              </div>
+
+              <h3>Serviços executados</h3>
               <div class="tabela-scroll" formArrayName="itens">
-                <table>
+                <table class="tabela-bm">
                   <thead>
                     <tr>
-                      <th>Item</th>
-                      <th>Contratado (atual)</th>
-                      <th>Já medido antes</th>
-                      <th>Saldo qtde. antes</th>
-                      <th>Medido nesta BM</th>
-                      <th>Saldo qtde. depois</th>
-                      <th>Início/Fim efetivo</th>
-                      <th>% Pró-rata</th>
-                      <th>Ajuste manual</th>
-                      <th>Valor total</th>
-                      <th>Saldo valor (pós-BM)</th>
+                      <th rowspan="2">Item</th>
+                      <th colspan="3" class="divisor-grupo">Quantidades</th>
+                      <th colspan="2" class="divisor-grupo">Valor da medição</th>
+                      <th colspan="2" class="divisor-grupo">Saldo contratual</th>
+                      <th rowspan="2">Início/Fim efetivo</th>
+                      <th rowspan="2">% Pró-rata</th>
+                      <th rowspan="2">Ajuste manual</th>
+                    </tr>
+                    <tr>
+                      <th class="divisor-grupo">Contrato</th>
+                      <th>Medida</th>
+                      <th>BM atual</th>
+                      <th class="divisor-grupo">Unit.</th>
+                      <th>Total</th>
+                      <th class="divisor-grupo">Qtde.</th>
+                      <th>Valor</th>
                     </tr>
                   </thead>
                   <tbody>
                     @for (item of itensMedicao.controls; track item; let i = $index) {
                       <tr [formGroupName]="i">
                         <td>{{ item.value.descricaoNoMomento }} ({{ item.value.unidadeNoMomento }})</td>
-                        <td>{{ bm.itens[i].quantidadeContratadaNoMomento }}</td>
+                        <td class="divisor-grupo">{{ bm.itens[i].quantidadeContratadaNoMomento }}</td>
                         <td>{{ bm.itens[i].quantidadeJaMedidaAntes }}</td>
-                        <td>{{ item.value.saldoAntes }}</td>
                         <td>
                           <input
                             type="number"
@@ -351,7 +382,10 @@
                             [readonly]="bm.status !== 'Rascunho'"
                           />
                         </td>
-                        <td>{{ bm.itens[i].saldoDepois }}</td>
+                        <td class="divisor-grupo">R$ {{ item.value.valorUnitarioNoMomento | number: '1.2-2' }}</td>
+                        <td>R$ {{ bm.itens[i].valorTotalItem | number: '1.2-2' }}</td>
+                        <td class="divisor-grupo">{{ bm.itens[i].saldoDepois }}</td>
+                        <td>R$ {{ bm.itens[i].saldoValorDepois | number: '1.2-2' }}</td>
                         <td>
                           <label class="rotulo-inline">
                             Início
@@ -382,14 +416,21 @@
                             placeholder="Justificativa"
                           />
                         </td>
-                        <td>R$ {{ bm.itens[i].valorTotalItem | number: '1.2-2' }}</td>
-                        <td>R$ {{ bm.itens[i].saldoValorDepois | number: '1.2-2' }}</td>
                       </tr>
                     }
                   </tbody>
+                  <tfoot>
+                    <tr class="linha-total">
+                      <td colspan="5">TOTAL BRUTO:</td>
+                      <td>R$ {{ bm.valorTotalMedido | number: '1.2-2' }}</td>
+                      <td colspan="5"></td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
 
+              <div class="bm-ajustes">
+              <div>
               <h3>Acertos e Descontos</h3>
               <div class="tabela-scroll tabela-scroll--sub" formArrayName="acertos">
                 <table>
@@ -425,12 +466,21 @@
                       </tr>
                     }
                   </tbody>
+                  <tfoot>
+                    <tr class="linha-total">
+                      <td colspan="4">TOTAL:</td>
+                      <td>R$ {{ bm.valorTotalAcertos | number: '1.2-2' }}</td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
               @if (bm.status === 'Rascunho') {
                 <button type="button" class="botao" (click)="adicionarAcerto()">+ Adicionar acerto/desconto</button>
               }
+              </div>
 
+              <div>
               <h3>Impostos e Retenções</h3>
               <div class="tabela-scroll tabela-scroll--sub" formArrayName="impostos">
                 <table>
@@ -464,17 +514,27 @@
                       </tr>
                     }
                   </tbody>
+                  <tfoot>
+                    <tr class="linha-total">
+                      <td colspan="3">TOTAL:</td>
+                      <td>R$ {{ bm.valorTotalImpostos | number: '1.2-2' }}</td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
                 </table>
               </div>
               @if (bm.status === 'Rascunho') {
                 <button type="button" class="botao" (click)="adicionarImposto()">+ Adicionar imposto/retenção</button>
               }
+              </div>
+              </div>
 
+              <h3>Conclusão</h3>
               <div class="grid-info medicao-totais">
-                <div><span>Total bruto medido</span><strong>R$ {{ bm.valorTotalMedido | number: '1.2-2' }}</strong></div>
-                <div><span>Total acertos/descontos</span><strong>R$ {{ bm.valorTotalAcertos | number: '1.2-2' }}</strong></div>
-                <div><span>Total impostos/retenções</span><strong>R$ {{ bm.valorTotalImpostos | number: '1.2-2' }}</strong></div>
-                <div><span>Valor líquido</span><strong>R$ {{ bm.valorLiquido | number: '1.2-2' }}</strong></div>
+                <div><span>Total bruto da medição</span><strong>R$ {{ bm.valorTotalMedido | number: '1.2-2' }}</strong></div>
+                <div><span>Total de acertos e descontos</span><strong>R$ {{ bm.valorTotalAcertos | number: '1.2-2' }}</strong></div>
+                <div><span>Total de impostos e retenções</span><strong>R$ {{ bm.valorTotalImpostos | number: '1.2-2' }}</strong></div>
+                <div><span>Total líquido a receber</span><strong>R$ {{ bm.valorLiquido | number: '1.2-2' }}</strong></div>
               </div>
 
               @if (bm.status !== 'Rascunho' && bm.observacaoAprovador) {
@@ -490,6 +550,9 @@
               @if (erroDecisaoMedicao()) {
                 <p class="status status--erro">{{ erroDecisaoMedicao() }}</p>
               }
+              @if (erroExclusaoMedicao()) {
+                <p class="status status--erro">{{ erroExclusaoMedicao() }}</p>
+              }
 
               @if (reprovandoMedicaoId() === bm.id) {
                 <div [formGroup]="formReprovarMedicao" class="grid bloco-reprovar">
@@ -500,9 +563,20 @@
                 </div>
               }
 
+              @if (confirmandoExclusaoMedicao()) {
+                <div class="bloco-reprovar">
+                  <p>Tem certeza que quer excluir este BM? Essa ação não pode ser desfeita.</p>
+                </div>
+              }
+
               @if (bm.status === 'Rascunho') {
                 <div class="acoes-form">
-                  @if (reprovandoMedicaoId() === bm.id) {
+                  @if (confirmandoExclusaoMedicao()) {
+                    <button type="button" class="botao botao--texto" (click)="cancelarExcluirMedicao()">Cancelar</button>
+                    <button type="button" class="botao" (click)="confirmarExcluirMedicao()" [disabled]="excluindoMedicao()">
+                      {{ excluindoMedicao() ? 'Excluindo...' : 'Confirmar exclusão' }}
+                    </button>
+                  } @else if (reprovandoMedicaoId() === bm.id) {
                     <button type="button" class="botao botao--texto" (click)="cancelarReprovarMedicao()">Cancelar</button>
                     <button
                       type="button"
@@ -513,6 +587,7 @@
                       Confirmar reprovação
                     </button>
                   } @else {
+                    <button type="button" class="botao botao--perigo botao--separado" (click)="iniciarExcluirMedicao()">Excluir</button>
                     <button
                       type="button"
                       class="botao"
@@ -535,17 +610,19 @@
                   }
                 </div>
               }
-            </form>
+              </form>
 
-            <h3>Anexos do BM</h3>
-            <app-anexos-secao [recurso]="'contratos/' + contratoId + '/medicoes'" [entidadeId]="bm.id" />
+              <h3>Anexos do BM</h3>
+              <app-anexos-secao [recurso]="'contratos/' + contratoId + '/medicoes'" [entidadeId]="bm.id" />
+            </div>
           </div>
         }
       } @else {
         <p class="status">Nenhum BM registrado ainda.</p>
       }
 
-      <h3>Novo BM</h3>
+      <details>
+        <summary><span class="seta" aria-hidden="true">▸</span><h3>Novo BM</h3></summary>
       <form [formGroup]="formNovaMedicao" (ngSubmit)="criarMedicaoBm()">
         <div class="grid">
           <label>
@@ -572,6 +649,7 @@
           </button>
         </div>
       </form>
+      </details>
     </section>
 
     <section class="painel">
@@ -658,7 +736,8 @@
     </section>
 
     <section class="painel">
-      <h2>Configuração de medição</h2>
+      <details>
+        <summary><span class="seta" aria-hidden="true">▸</span><h2>Configuração de medição</h2></summary>
       <form [formGroup]="formMedicao" (ngSubmit)="salvarMedicao()">
         <div class="grid">
           <label>
@@ -721,10 +800,12 @@
           </button>
         </div>
       </form>
+      </details>
     </section>
 
     <section class="painel">
-      <h2>Configuração de faturamento</h2>
+      <details>
+        <summary><span class="seta" aria-hidden="true">▸</span><h2>Configuração de faturamento</h2></summary>
       <form [formGroup]="formFaturamento" (ngSubmit)="salvarFaturamento()">
         <div class="grid">
           <label>
@@ -757,6 +838,7 @@
           </button>
         </div>
       </form>
+      </details>
     </section>
 
     <section class="painel">

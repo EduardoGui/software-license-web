@@ -195,6 +195,7 @@ export interface MedicaoBm {
   id: number;
   contratoId: number;
   numero: number;
+  numeroReferencia: string | null;
   periodoInicio: string;
   periodoFim: string;
   dataEnvio: string | null;
@@ -249,6 +250,7 @@ export interface UpdateMedicaoBmImpostoPayload {
 }
 
 export interface UpdateMedicaoBmPayload {
+  numeroReferencia: string | null;
   dataEnvio: string | null;
   observacao: string | null;
   itens: UpdateMedicaoBmItemPayload[];

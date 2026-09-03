@@ -79,6 +79,10 @@ export class ContratoService {
     return this.http.put<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}`, payload);
   }
 
+  excluirMedicaoBm(contratoId: number, medicaoId: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}`);
+  }
+
   aprovarMedicaoBm(contratoId: number, medicaoId: number): Observable<MedicaoBm> {
     return this.http.patch<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}/aprovar`, {});
   }

@@ -67,6 +67,9 @@ export class ContratoView {
   protected readonly decidindoMedicaoId = signal<number | null>(null);
   protected readonly reprovandoMedicaoId = signal<number | null>(null);
   protected readonly erroDecisaoMedicao = signal<string | null>(null);
+  protected readonly confirmandoExclusaoMedicao = signal(false);
+  protected readonly excluindoMedicao = signal(false);
+  protected readonly erroExclusaoMedicao = signal<string | null>(null);
 
   protected readonly saldo = signal<ContratoSaldoItem[]>([]);
 
@@ -123,6 +126,7 @@ export class ContratoView {
   });
 
   protected readonly formItensMedicao = this.fb.nonNullable.group({
+    numeroReferencia: [''],
     itens: this.fb.array<ReturnType<typeof this.criarLinhaItemMedicao>>([]),
     acertos: this.fb.array<ReturnType<typeof this.criarLinhaAcerto>>([]),
     impostos: this.fb.array<ReturnType<typeof this.criarLinhaImposto>>([]),
@@ -439,16 +443,20 @@ export class ContratoView {
   }
 
   protected expandirMedicao(bm: MedicaoBm): void {
-    if (this.medicaoExpandidaId() === bm.id) {
-      this.medicaoExpandidaId.set(null);
-      return;
-    }
-
     this.preencherFormItensMedicao(bm);
+  }
+
+  protected fecharModalMedicao(): void {
+    this.medicaoExpandidaId.set(null);
+    this.confirmandoExclusaoMedicao.set(false);
+    this.erroExclusaoMedicao.set(null);
   }
 
   private preencherFormItensMedicao(bm: MedicaoBm): void {
     this.medicaoExpandidaId.set(bm.id);
+    this.confirmandoExclusaoMedicao.set(false);
+    this.erroExclusaoMedicao.set(null);
+    this.formItensMedicao.patchValue({ numeroReferencia: bm.numeroReferencia ?? '' });
 
     this.itensMedicao.clear();
     for (const item of bm.itens) {
@@ -514,6 +522,7 @@ export class ContratoView {
 
     this.contratoService
       .atualizarMedicaoBm(this.contratoId, medicaoId, {
+        numeroReferencia: valor.numeroReferencia || null,
         dataEnvio: null,
         observacao: null,
         itens: valor.itens.map((item) => ({
@@ -596,6 +605,36 @@ export class ContratoView {
       error: (err) => {
         this.decidindoMedicaoId.set(null);
         this.erroDecisaoMedicao.set(err?.error?.message ?? 'Não foi possível reprovar o BM.');
+      },
+    });
+  }
+
+  protected iniciarExcluirMedicao(): void {
+    this.confirmandoExclusaoMedicao.set(true);
+  }
+
+  protected cancelarExcluirMedicao(): void {
+    this.confirmandoExclusaoMedicao.set(false);
+  }
+
+  protected confirmarExcluirMedicao(): void {
+    const medicaoId = this.medicaoExpandidaId();
+    if (medicaoId === null) {
+      return;
+    }
+
+    this.excluindoMedicao.set(true);
+    this.erroExclusaoMedicao.set(null);
+
+    this.contratoService.excluirMedicaoBm(this.contratoId, medicaoId).subscribe({
+      next: () => {
+        this.excluindoMedicao.set(false);
+        this.fecharModalMedicao();
+        this.carregarMedicoes();
+      },
+      error: (err) => {
+        this.excluindoMedicao.set(false);
+        this.erroExclusaoMedicao.set(err?.error?.message ?? 'Não foi possível excluir o BM.');
       },
     });
   }
