@@ -60,6 +60,7 @@ import { FornecedorForm } from './features/fornecedores/fornecedor-form';
 import { ContratosList } from './features/contratos/contratos-list';
 import { ContratoForm } from './features/contratos/contrato-form';
 import { ContratoView } from './features/contratos/contrato-view';
+import { MedicaoBmImprimir } from './features/contratos/medicao-bm-imprimir';
 import { PlanoSaudeCustosPage } from './features/plano-saude-custos/plano-saude-custos-page';
 import { PlanoSaudeRelatorioPage } from './features/plano-saude-relatorio/plano-saude-relatorio-page';
 import { NotasDebitoPjList } from './features/notas-debito-pj/notas-debito-pj-list';
@@ -69,6 +70,11 @@ import { NotaDebitoPjView } from './features/notas-debito-pj/nota-debito-pj-view
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'definir-senha', component: DefinirSenha },
+  {
+    path: 'contratos/:id/medicoes/:medicaoId/imprimir',
+    component: MedicaoBmImprimir,
+    canActivate: [authGuard, adminGuard],
+  },
   {
     path: '',
     canActivateChild: [authGuard],

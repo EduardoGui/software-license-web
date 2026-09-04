@@ -1,0 +1,173 @@
+:host {
+  display: block;
+  background: #7c8794;
+  min-height: 100vh;
+  padding: 1.5rem 0 3rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.status {
+  color: #fff;
+  text-align: center;
+}
+
+.botao-imprimir {
+  display: block;
+  margin: 0 auto 1rem;
+  padding: 0.6rem 1.5rem;
+  border: none;
+  border-radius: 6px;
+  background: var(--color-primary, #27394f);
+  color: #fff;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.folha {
+  width: 210mm;
+  min-height: 297mm;
+  margin: 0 auto;
+  padding: 8mm;
+  background: #fff;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  color: #1a1a1a;
+  font-size: 7.5pt;
+  box-sizing: border-box;
+}
+
+.tabela-doc {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2px;
+
+  th,
+  td {
+    border: 1px solid #333;
+    padding: 2px 4px;
+    font-size: 7.5pt;
+    text-align: center;
+  }
+}
+
+.tabela-topo {
+  td {
+    border: none;
+    padding: 4px;
+  }
+}
+
+.celula-logo {
+  width: 90px;
+  text-align: left;
+  padding: 0 !important;
+
+  img {
+    height: 32px;
+    display: block;
+    margin-left: 1px;
+  }
+}
+
+.celula-titulo {
+  text-align: center;
+  font-weight: bold;
+  font-size: 13pt;
+  color: #27394f;
+}
+
+.linha-escura th {
+  background: #27394f;
+  color: #fff;
+  text-transform: uppercase;
+  font-size: 7pt;
+  font-weight: 600;
+}
+
+.celula-descricao {
+  text-align: left;
+  max-width: 220px;
+}
+
+.tabela-itens td:nth-child(2) {
+  text-align: left;
+}
+
+.linha-total td {
+  font-weight: bold;
+  background: #e9ebed;
+}
+
+.tabela-ajustes,
+.tabela-conclusao {
+  &.tabela-doc > tr > td.metade {
+    border: none;
+    padding: 0 4px 0 0;
+    vertical-align: top;
+  }
+
+  &.tabela-doc > tr > td.metade:last-child {
+    padding-right: 0;
+    padding-left: 4px;
+  }
+}
+
+.tabela-conclusao td.metade > table td {
+  text-align: left;
+}
+
+.celula-assinaturas {
+  padding: 4px 8px;
+  vertical-align: top;
+}
+
+.grade-assinaturas {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 12px;
+}
+
+.bloco-assinatura {
+  text-align: center;
+
+  .linha-assinatura {
+    border-bottom: 1px solid #333;
+    height: 22px;
+  }
+
+  span {
+    font-size: 6.5pt;
+    text-transform: uppercase;
+    color: #444;
+  }
+}
+
+.celula-observacoes {
+  min-height: 40px;
+  height: 40px;
+  vertical-align: top;
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+@media print {
+  :host {
+    background: #fff;
+    padding: 0;
+  }
+
+  .botao-imprimir {
+    display: none;
+  }
+
+  .folha {
+    box-shadow: none;
+    margin: 0;
+    width: auto;
+    min-height: 0;
+  }
+}
+
+@page {
+  size: A4;
+  margin: 10mm;
+}

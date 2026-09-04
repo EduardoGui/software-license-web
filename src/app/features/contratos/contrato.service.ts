@@ -75,6 +75,10 @@ export class ContratoService {
     return this.http.post<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes`, payload);
   }
 
+  obterMedicao(contratoId: number, medicaoId: number): Observable<MedicaoBm> {
+    return this.http.get<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}`);
+  }
+
   atualizarMedicaoBm(contratoId: number, medicaoId: number, payload: UpdateMedicaoBmPayload): Observable<MedicaoBm> {
     return this.http.put<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}`, payload);
   }

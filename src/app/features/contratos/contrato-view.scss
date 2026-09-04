@@ -317,6 +317,12 @@ input:disabled {
   }
 }
 
+.modal__acoes-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
 .botao-fechar {
   border: none;
   background: none;

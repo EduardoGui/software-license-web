@@ -1,7 +1,7 @@
 import { DecimalPipe, Location, formatDate } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
@@ -30,7 +30,7 @@ const PX_POR_DIA = 6;
 
 @Component({
   selector: 'app-contrato-view',
-  imports: [ReactiveFormsModule, DataBrPipe, DecimalPipe, AnexosSecao, Icon],
+  imports: [ReactiveFormsModule, DataBrPipe, DecimalPipe, AnexosSecao, Icon, RouterLink],
   templateUrl: './contrato-view.html',
   styleUrl: './contrato-view.scss',
 })

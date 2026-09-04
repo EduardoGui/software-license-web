@@ -17,7 +17,10 @@ export class App {
 
   protected readonly urlAtual = signal(this.router.url);
   protected readonly mostrarShell = computed(
-    () => !this.urlAtual().startsWith('/login') && !this.urlAtual().startsWith('/definir-senha'),
+    () =>
+      !this.urlAtual().startsWith('/login') &&
+      !this.urlAtual().startsWith('/definir-senha') &&
+      !this.urlAtual().includes('/imprimir'),
   );
   protected readonly grupoTiAberto = signal(false);
   protected readonly grupoDpAberto = signal(false);

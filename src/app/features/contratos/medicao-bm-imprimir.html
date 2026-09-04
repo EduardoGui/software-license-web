@@ -1,0 +1,186 @@
+@if (carregando()) {
+  <p class="status">Carregando...</p>
+} @else if (erro() || !bm() || !contrato()) {
+  <p class="status status--erro">Não foi possível carregar o BM.</p>
+} @else {
+  @let c = contrato()!;
+  @let f = fornecedor();
+  @let m = bm()!;
+
+  <button type="button" class="botao-imprimir" (click)="imprimir()">Imprimir / Salvar como PDF</button>
+
+  <div class="folha">
+    <table class="tabela-doc tabela-topo">
+      <tr>
+        <td class="celula-logo" rowspan="1"><img src="/logo-hope.png" alt="hope" /></td>
+        <td class="celula-titulo" colspan="6">BOLETIM DE MEDIÇÃO - MEMÓRIA DE CÁLCULO</td>
+      </tr>
+    </table>
+
+    <table class="tabela-doc">
+      <tr class="linha-escura">
+        <th colspan="3">SUBCONTRATADO</th>
+        <th>CNPJ</th>
+        <th>Nº DO CONTRATO</th>
+        <th>Nº DO BM</th>
+        <th>PERÍODO</th>
+        <th>DATA</th>
+      </tr>
+      <tr>
+        <td colspan="3">{{ f?.nome ?? c.fornecedorNome }}</td>
+        <td>{{ f?.cnpj ?? '—' }}</td>
+        <td>{{ c.numero }}</td>
+        <td>{{ m.numeroReferencia || m.numero }}</td>
+        <td>{{ m.periodoInicio | dataBr }} a {{ m.periodoFim | dataBr }}</td>
+        <td>{{ m.dataEnvio ? (m.dataEnvio | dataBr) : '—' }}</td>
+      </tr>
+    </table>
+
+    <table class="tabela-doc">
+      <tr class="linha-escura">
+        <th colspan="8">SERVIÇOS EXECUTADOS</th>
+      </tr>
+    </table>
+
+    <table class="tabela-doc tabela-itens">
+      <thead>
+        <tr class="linha-escura">
+          <th rowspan="2">ITEM</th>
+          <th rowspan="2">DESCRIÇÃO</th>
+          <th rowspan="2">UN.</th>
+          <th colspan="3">QUANTIDADES</th>
+          <th colspan="2">VALOR DA MEDIÇÃO</th>
+          <th colspan="2">SALDO CONTRATUAL</th>
+        </tr>
+        <tr class="linha-escura">
+          <th>CONTRATO</th>
+          <th>MEDIDA</th>
+          <th>BM ATUAL</th>
+          <th>UNIT.</th>
+          <th>TOTAL</th>
+          <th>QTDE.</th>
+          <th>VALOR</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (item of m.itens; track item.id; let i = $index) {
+          <tr>
+            <td>{{ i + 1 }}</td>
+            <td class="celula-descricao">{{ item.descricaoNoMomento }}</td>
+            <td>{{ item.unidadeNoMomento }}</td>
+            <td>{{ item.quantidadeContratadaNoMomento | number: '1.2-2' }}</td>
+            <td>{{ item.quantidadeJaMedidaAntes | number: '1.2-2' }}</td>
+            <td>{{ item.quantidadeMedidaNestaBm | number: '1.2-2' }}</td>
+            <td>{{ item.valorUnitarioNoMomento | number: '1.2-2' }}</td>
+            <td>{{ item.valorTotalItem | number: '1.2-2' }}</td>
+            <td>{{ item.saldoDepois | number: '1.2-2' }}</td>
+            <td>{{ item.saldoValorDepois | number: '1.2-2' }}</td>
+          </tr>
+        }
+      </tbody>
+      <tfoot>
+        <tr class="linha-total">
+          <td colspan="7">TOTAL BRUTO:</td>
+          <td>{{ m.valorTotalMedido | number: '1.2-2' }}</td>
+          <td></td>
+          <td>{{ somaSaldoValor(m.itens) | number: '1.2-2' }}</td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <table class="tabela-doc tabela-ajustes">
+      <tr>
+        <td class="metade">
+          <table class="tabela-doc">
+            <tr class="linha-escura"><th colspan="5">ACERTOS E DESCONTOS</th></tr>
+            <tr class="linha-escura">
+              <th>ITEM</th>
+              <th>DESCRIÇÃO</th>
+              <th>UN.</th>
+              <th>QTDE.</th>
+              <th>PREÇO TOTAL</th>
+            </tr>
+            @for (acerto of m.acertos; track acerto.id; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ acerto.descricao }}</td>
+                <td>{{ acerto.unidade ?? '—' }}</td>
+                <td>{{ acerto.quantidade ?? '—' }}</td>
+                <td>{{ acerto.precoTotal | number: '1.2-2' }}</td>
+              </tr>
+            }
+            <tr class="linha-total">
+              <td colspan="4">TOTAL:</td>
+              <td>{{ m.valorTotalAcertos | number: '1.2-2' }}</td>
+            </tr>
+          </table>
+        </td>
+        <td class="metade">
+          <table class="tabela-doc">
+            <tr class="linha-escura"><th colspan="4">IMPOSTOS E RETENÇÕES</th></tr>
+            <tr class="linha-escura">
+              <th>ITEM</th>
+              <th>ALÍQUOTA (%)</th>
+              <th>BASE</th>
+              <th>VALOR TOTAL</th>
+            </tr>
+            @for (imposto of m.impostos; track imposto.id; let i = $index) {
+              <tr>
+                <td>{{ i + 1 }}</td>
+                <td>{{ imposto.aliquota | number: '1.2-2' }}</td>
+                <td>{{ imposto.base | number: '1.2-2' }}</td>
+                <td>{{ imposto.valorTotal | number: '1.2-2' }}</td>
+              </tr>
+            }
+            <tr class="linha-total">
+              <td colspan="3">TOTAL:</td>
+              <td>{{ m.valorTotalImpostos | number: '1.2-2' }}</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <table class="tabela-doc">
+      <tr class="linha-escura"><th colspan="8">CONCLUSÃO E ASSINATURAS</th></tr>
+    </table>
+
+    <table class="tabela-doc tabela-conclusao">
+      <tr>
+        <td class="metade">
+          <table class="tabela-doc">
+            <tr><td>TOTAL BRUTO DA MEDIÇÃO:</td><td>R$ {{ m.valorTotalMedido | number: '1.2-2' }}</td></tr>
+            <tr><td>TOTAL DE ACERTOS E DESCONTOS:</td><td>R$ {{ m.valorTotalAcertos | number: '1.2-2' }}</td></tr>
+            <tr><td>TOTAL DE IMPOSTOS E RETENÇÕES:</td><td>R$ {{ m.valorTotalImpostos | number: '1.2-2' }}</td></tr>
+            <tr class="linha-total"><td>TOTAL LÍQUIDO A RECEBER:</td><td>R$ {{ m.valorLiquido | number: '1.2-2' }}</td></tr>
+          </table>
+        </td>
+        <td class="metade celula-assinaturas">
+          <div class="grade-assinaturas">
+            <div class="bloco-assinatura">
+              <div class="linha-assinatura"></div>
+              <span>CONTRATADA</span>
+            </div>
+            <div class="bloco-assinatura">
+              <div class="linha-assinatura"></div>
+              <span>SOLICITANTE</span>
+            </div>
+            <div class="bloco-assinatura">
+              <div class="linha-assinatura"></div>
+              <span>CONTRATANTE</span>
+            </div>
+            <div class="bloco-assinatura">
+              <div class="linha-assinatura"></div>
+              <span>CONTRATANTE</span>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <table class="tabela-doc">
+      <tr class="linha-escura"><th colspan="8">OBSERVAÇÕES E COMENTÁRIOS</th></tr>
+      <tr><td class="celula-observacoes" colspan="8">{{ m.observacao }}</td></tr>
+    </table>
+  </div>
+}

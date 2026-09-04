@@ -325,7 +325,18 @@
                   BM nº {{ bm.numero }}
                   <span class="badge" [class]="'badge--' + bm.status.toLowerCase()">{{ bm.status }}</span>
                 </h2>
-                <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fecharModalMedicao()">×</button>
+                <div class="modal__acoes-cabecalho">
+                  @if (bm.status === 'Aprovado') {
+                    <a
+                      class="botao botao--texto"
+                      [routerLink]="['/contratos', contratoId, 'medicoes', bm.id, 'imprimir']"
+                      target="_blank"
+                    >
+                      Imprimir
+                    </a>
+                  }
+                  <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fecharModalMedicao()">×</button>
+                </div>
               </div>
 
               <div class="grid-info bm-cabecalho">
