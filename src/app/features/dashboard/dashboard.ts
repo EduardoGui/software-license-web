@@ -17,6 +17,11 @@ export interface EquipamentoContagemPorTipo {
   quantidade: number;
 }
 
+export interface LicencaContagemPorNome {
+  nome: string;
+  quantidade: number;
+}
+
 export interface AlertaMedicao {
   contratoId: number;
   contratoNumero: string;
@@ -31,6 +36,8 @@ export interface DashboardData {
   licencasEmUso: number;
   licencasDisponiveis: number;
   proximosVencimentos: Vencimento[];
+  licencasEmUsoPorNome: LicencaContagemPorNome[];
+  licencasDisponiveisPorNome: LicencaContagemPorNome[];
   equipamentosEmUsoPorTipo: EquipamentoContagemPorTipo[];
   equipamentosDisponiveisPorTipo: EquipamentoContagemPorTipo[];
   equipamentosLocadosAtivosPorTipo: EquipamentoContagemPorTipo[];

@@ -28,6 +28,30 @@
         <span class="card__rotulo">Próximos vencimentos</span>
       </div>
       <div class="card card--lista">
+        <span class="card__rotulo">Licenças em uso</span>
+        @if (dados()!.licencasEmUsoPorNome.length === 0) {
+          <span class="card__vazio">Nenhuma</span>
+        } @else {
+          <ul class="card__lista">
+            @for (item of dados()!.licencasEmUsoPorNome; track item.nome) {
+              <li><span>{{ item.nome }}</span><span>{{ item.quantidade }}</span></li>
+            }
+          </ul>
+        }
+      </div>
+      <div class="card card--lista">
+        <span class="card__rotulo">Licenças disponíveis</span>
+        @if (dados()!.licencasDisponiveisPorNome.length === 0) {
+          <span class="card__vazio">Nenhuma</span>
+        } @else {
+          <ul class="card__lista">
+            @for (item of dados()!.licencasDisponiveisPorNome; track item.nome) {
+              <li><span>{{ item.nome }}</span><span>{{ item.quantidade }}</span></li>
+            }
+          </ul>
+        }
+      </div>
+      <div class="card card--lista">
         <span class="card__rotulo">Equipamentos locados em uso</span>
         @if (dados()!.equipamentosEmUsoPorTipo.length === 0) {
           <span class="card__vazio">Nenhum</span>
