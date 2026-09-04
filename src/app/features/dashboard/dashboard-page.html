@@ -67,6 +67,10 @@
         <span class="card__valor">{{ dados()!.custoMensalLocacaoAtual | number: '1.2-2' }}</span>
         <span class="card__rotulo">Custo mensal de locação (mês atual)</span>
       </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.alertasMedicao.length }}</span>
+        <span class="card__rotulo">Alertas de medição</span>
+      </div>
     </div>
 
     <div class="vencimentos">
@@ -131,6 +135,44 @@
                       <span class="badge badge--vencendo">Vence hoje</span>
                     } @else {
                       <span class="badge badge--vencendo">Vence em {{ vencimento.diasParaVencer }} dia(s)</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <div class="vencimentos">
+      <h2>Alertas de medição</h2>
+      @if (dados()!.alertasMedicao.length === 0) {
+        <p class="status">Nenhum alerta de medição.</p>
+      } @else {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Contrato</th>
+                <th>Fornecedor</th>
+                <th>Fim do período</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (alerta of dados()!.alertasMedicao; track alerta.contratoId) {
+                <tr>
+                  <td><a [routerLink]="['/contratos', alerta.contratoId]">{{ alerta.contratoNumero }}</a></td>
+                  <td>{{ alerta.fornecedorNome }}</td>
+                  <td>{{ alerta.periodoFim | dataBr }}</td>
+                  <td>
+                    @if (alerta.diasParaVencer < 0) {
+                      <span class="badge badge--vencida">Vencido há {{ -alerta.diasParaVencer }} dia(s)</span>
+                    } @else if (alerta.diasParaVencer === 0) {
+                      <span class="badge badge--vencendo">Vence hoje</span>
+                    } @else {
+                      <span class="badge badge--vencendo">Vence em {{ alerta.diasParaVencer }} dia(s)</span>
                     }
                   </td>
                 </tr>

@@ -17,6 +17,14 @@ export interface EquipamentoContagemPorTipo {
   quantidade: number;
 }
 
+export interface AlertaMedicao {
+  contratoId: number;
+  contratoNumero: string;
+  fornecedorNome: string;
+  periodoFim: string;
+  diasParaVencer: number;
+}
+
 export interface DashboardData {
   usuariosAtivos: number;
   licencasAdquiridas: number;
@@ -28,4 +36,5 @@ export interface DashboardData {
   equipamentosLocadosAtivosPorTipo: EquipamentoContagemPorTipo[];
   custoMensalLocacaoAtual: number;
   proximosVencimentosContratos: VencimentoContrato[];
+  alertasMedicao: AlertaMedicao[];
 }
