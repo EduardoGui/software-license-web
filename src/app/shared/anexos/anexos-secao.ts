@@ -5,6 +5,7 @@ import { Icon } from '../icons/icon';
 import { DataBrPipe } from '../pipes/data-br.pipe';
 import { Anexo } from './anexo';
 import { AnexoRecurso, AnexoService } from './anexo.service';
+import { comprimirImagemSeNecessario } from './comprimir-imagem';
 
 @Component({
   selector: 'app-anexos-secao',
@@ -50,15 +51,17 @@ export class AnexosSecao {
     this.inputArquivo()?.nativeElement.click();
   }
 
-  protected aoSelecionarArquivo(event: Event): void {
+  protected async aoSelecionarArquivo(event: Event): Promise<void> {
     const input = event.target as HTMLInputElement;
-    const arquivo = input.files?.[0];
-    if (!arquivo) {
+    const arquivoOriginal = input.files?.[0];
+    if (!arquivoOriginal) {
       return;
     }
 
     this.enviando.set(true);
     this.erro.set(null);
+
+    const arquivo = await comprimirImagemSeNecessario(arquivoOriginal);
 
     this.anexoService.enviar(this.recurso(), this.entidadeId(), arquivo).subscribe({
       next: (anexo) => {
