@@ -23,10 +23,6 @@
         <span class="card__valor">{{ dados()!.licencasDisponiveis }}</span>
         <span class="card__rotulo">Licenças disponíveis</span>
       </div>
-      <div class="card">
-        <span class="card__valor">{{ dados()!.proximosVencimentos.length }}</span>
-        <span class="card__rotulo">Próximos vencimentos</span>
-      </div>
       <div class="card card--lista">
         <span class="card__rotulo">Licenças em uso</span>
         @if (dados()!.licencasEmUsoPorNome.length === 0) {
@@ -92,153 +88,51 @@
         <span class="card__rotulo">Custo mensal de locação (mês atual)</span>
       </div>
       <div class="card">
-        <span class="card__valor">{{ dados()!.alertasMedicao.length }}</span>
-        <span class="card__rotulo">Alertas de medição</span>
-      </div>
-      <div class="card">
-        <span class="card__valor">{{ dados()!.tarefasPendentes.length }}</span>
-        <span class="card__rotulo">Tarefas pendentes</span>
+        <span class="card__valor">{{ dados()!.pendencias.length }}</span>
+        <span class="card__rotulo">Pendências</span>
       </div>
     </div>
 
     <div class="vencimentos">
-      <h2>Próximos vencimentos</h2>
-      @if (dados()!.proximosVencimentos.length === 0) {
-        <p class="status">Nenhuma licença perto do vencimento.</p>
+      <h2>Pendências</h2>
+      @if (dados()!.pendencias.length === 0) {
+        <p class="status">Nenhuma pendência no momento.</p>
       } @else {
         <div class="tabela-scroll">
           <table>
             <thead>
               <tr>
-                <th>Licença</th>
-                <th>Término previsto</th>
-                <th>Situação</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (vencimento of dados()!.proximosVencimentos; track vencimento.licencaId) {
-                <tr>
-                  <td><a [routerLink]="['/licencas', vencimento.licencaId]">{{ vencimento.nome }}</a></td>
-                  <td>{{ vencimento.dataTerminoPrevisto | dataBr }}</td>
-                  <td>
-                    @if (vencimento.diasParaVencer < 0) {
-                      <span class="badge badge--vencida">Vencida há {{ -vencimento.diasParaVencer }} dia(s)</span>
-                    } @else if (vencimento.diasParaVencer === 0) {
-                      <span class="badge badge--vencendo">Vence hoje</span>
-                    } @else {
-                      <span class="badge badge--vencendo">Vence em {{ vencimento.diasParaVencer }} dia(s)</span>
-                    }
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
-    </div>
-
-    <div class="vencimentos">
-      <h2>Contratos de locação vencendo em breve</h2>
-      @if (dados()!.proximosVencimentosContratos.length === 0) {
-        <p class="status">Nenhum contrato de locação perto do vencimento.</p>
-      } @else {
-        <div class="tabela-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Equipamento</th>
-                <th>Fim do contrato</th>
-                <th>Situação</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (vencimento of dados()!.proximosVencimentosContratos; track vencimento.equipamentoId) {
-                <tr>
-                  <td><a [routerLink]="['/equipamentos/lista', vencimento.equipamentoId, 'editar']">{{ vencimento.descricao }}</a></td>
-                  <td>{{ vencimento.dataFimContrato | dataBr }}</td>
-                  <td>
-                    @if (vencimento.diasParaVencer < 0) {
-                      <span class="badge badge--vencida">Vencido há {{ -vencimento.diasParaVencer }} dia(s)</span>
-                    } @else if (vencimento.diasParaVencer === 0) {
-                      <span class="badge badge--vencendo">Vence hoje</span>
-                    } @else {
-                      <span class="badge badge--vencendo">Vence em {{ vencimento.diasParaVencer }} dia(s)</span>
-                    }
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
-    </div>
-
-    <div class="vencimentos">
-      <h2>Alertas de medição</h2>
-      @if (dados()!.alertasMedicao.length === 0) {
-        <p class="status">Nenhum alerta de medição.</p>
-      } @else {
-        <div class="tabela-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Contrato</th>
-                <th>Fornecedor</th>
-                <th>Fim do período</th>
-                <th>Situação</th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (alerta of dados()!.alertasMedicao; track alerta.contratoId) {
-                <tr>
-                  <td><a [routerLink]="['/contratos', alerta.contratoId]">{{ alerta.contratoNumero }}</a></td>
-                  <td>{{ alerta.fornecedorNome }}</td>
-                  <td>{{ alerta.periodoFim | dataBr }}</td>
-                  <td>
-                    @if (alerta.diasParaVencer < 0) {
-                      <span class="badge badge--vencida">Vencido há {{ -alerta.diasParaVencer }} dia(s)</span>
-                    } @else if (alerta.diasParaVencer === 0) {
-                      <span class="badge badge--vencendo">Vence hoje</span>
-                    } @else {
-                      <span class="badge badge--vencendo">Vence em {{ alerta.diasParaVencer }} dia(s)</span>
-                    }
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </div>
-      }
-    </div>
-
-    <div class="vencimentos">
-      <h2>Tarefas pendentes</h2>
-      @if (dados()!.tarefasPendentes.length === 0) {
-        <p class="status">Nenhuma tarefa pendente.</p>
-      } @else {
-        <div class="tabela-scroll">
-          <table>
-            <thead>
-              <tr>
-                <th>Tarefa</th>
-                <th>Data prevista</th>
+                <th>Origem</th>
+                <th>Descrição</th>
+                <th>Data</th>
                 <th>Observação</th>
                 <th>Situação</th>
               </tr>
             </thead>
             <tbody>
-              @for (tarefa of dados()!.tarefasPendentes; track tarefa.id) {
+              @for (pendencia of dados()!.pendencias; track pendencia.origem + pendencia.titulo + pendencia.data) {
                 <tr>
-                  <td>{{ tarefa.titulo }}</td>
-                  <td>{{ tarefa.dataPrevistaAtual | dataBr }}</td>
-                  <td>{{ tarefa.observacao || '—' }}</td>
+                  <td>{{ pendencia.origem }}</td>
                   <td>
-                    @if (tarefa.diasParaVencer < 0) {
-                      <span class="badge badge--vencida">Vencida há {{ -tarefa.diasParaVencer }} dia(s)</span>
-                    } @else if (tarefa.diasParaVencer === 0) {
+                    @if (pendencia.origem === 'Licença') {
+                      <a [routerLink]="['/licencas', pendencia.licencaId]">{{ pendencia.titulo }}</a>
+                    } @else if (pendencia.origem === 'Equipamento') {
+                      <a [routerLink]="['/equipamentos/lista', pendencia.equipamentoId, 'editar']">{{ pendencia.titulo }}</a>
+                    } @else if (pendencia.origem === 'Medição') {
+                      <a [routerLink]="['/contratos', pendencia.contratoId]">{{ pendencia.titulo }}</a>
+                    } @else {
+                      {{ pendencia.titulo }}
+                    }
+                  </td>
+                  <td>{{ pendencia.data | dataBr }}</td>
+                  <td>{{ pendencia.observacao || '—' }}</td>
+                  <td>
+                    @if (pendencia.diasParaVencer < 0) {
+                      <span class="badge badge--vencida">Vencida há {{ -pendencia.diasParaVencer }} dia(s)</span>
+                    } @else if (pendencia.diasParaVencer === 0) {
                       <span class="badge badge--vencendo">Vence hoje</span>
                     } @else {
-                      <span class="badge badge--vencendo">Vence em {{ tarefa.diasParaVencer }} dia(s)</span>
+                      <span class="badge badge--vencendo">Vence em {{ pendencia.diasParaVencer }} dia(s)</span>
                     }
                   </td>
                 </tr>

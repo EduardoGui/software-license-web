@@ -1,17 +1,3 @@
-export interface Vencimento {
-  licencaId: number;
-  nome: string;
-  dataTerminoPrevisto: string;
-  diasParaVencer: number;
-}
-
-export interface VencimentoContrato {
-  equipamentoId: number;
-  descricao: string;
-  dataFimContrato: string;
-  diasParaVencer: number;
-}
-
 export interface EquipamentoContagemPorTipo {
   tipoEquipamentoNome: string;
   quantidade: number;
@@ -22,20 +8,18 @@ export interface LicencaContagemPorNome {
   quantidade: number;
 }
 
-export interface AlertaMedicao {
-  contratoId: number;
-  contratoNumero: string;
-  fornecedorNome: string;
-  periodoFim: string;
-  diasParaVencer: number;
-}
+export type PendenciaOrigem = 'Tarefa' | 'Licença' | 'Equipamento' | 'Medição';
 
-export interface TarefaPendente {
-  id: number;
+export interface Pendencia {
+  origem: PendenciaOrigem;
   titulo: string;
-  dataPrevistaAtual: string;
   observacao: string | null;
+  data: string;
   diasParaVencer: number;
+  tarefaOcorrenciaId: number | null;
+  licencaId: number | null;
+  equipamentoId: number | null;
+  contratoId: number | null;
 }
 
 export interface DashboardData {
@@ -43,14 +27,11 @@ export interface DashboardData {
   licencasAdquiridas: number;
   licencasEmUso: number;
   licencasDisponiveis: number;
-  proximosVencimentos: Vencimento[];
   licencasEmUsoPorNome: LicencaContagemPorNome[];
   licencasDisponiveisPorNome: LicencaContagemPorNome[];
   equipamentosEmUsoPorTipo: EquipamentoContagemPorTipo[];
   equipamentosDisponiveisPorTipo: EquipamentoContagemPorTipo[];
   equipamentosLocadosAtivosPorTipo: EquipamentoContagemPorTipo[];
   custoMensalLocacaoAtual: number;
-  proximosVencimentosContratos: VencimentoContrato[];
-  alertasMedicao: AlertaMedicao[];
-  tarefasPendentes: TarefaPendente[];
+  pendencias: Pendencia[];
 }
