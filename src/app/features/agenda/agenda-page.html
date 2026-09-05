@@ -1,0 +1,71 @@
+<section class="agenda">
+  <header class="topo">
+    <h1>Agenda</h1>
+    <a routerLink="/agenda/tarefas" class="botao botao--texto"><app-icon name="pencil" [size]="16" /> Gerenciar tarefas recorrentes</a>
+  </header>
+
+  @if (erroAcao()) {
+    <p class="status status--erro">{{ erroAcao() }}</p>
+  }
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">{{ erro() }}</p>
+  } @else if (ocorrencias().length === 0) {
+    <p class="status">Nenhuma tarefa pendente.</p>
+  } @else {
+    <ul class="lista-ocorrencias">
+      @for (ocorrencia of ocorrencias(); track ocorrencia.id) {
+        <li class="ocorrencia">
+          <div class="ocorrencia__topo">
+            <div class="ocorrencia__info">
+              <strong class="ocorrencia__titulo">{{ ocorrencia.titulo }}</strong>
+              <span class="ocorrencia__data">{{ ocorrencia.dataPrevistaAtual | dataBr }}</span>
+            </div>
+            @if (ocorrencia.diasParaVencer < 0) {
+              <span class="badge badge--vencida">Vencida há {{ -ocorrencia.diasParaVencer }} dia(s)</span>
+            } @else if (ocorrencia.diasParaVencer === 0) {
+              <span class="badge badge--vencendo">Vence hoje</span>
+            } @else {
+              <span class="badge badge--vencendo">Vence em {{ ocorrencia.diasParaVencer }} dia(s)</span>
+            }
+          </div>
+
+          @if (ocorrencia.observacao) {
+            <p class="ocorrencia__observacao">{{ ocorrencia.observacao }}</p>
+          }
+
+          @if (adiandoId() === ocorrencia.id) {
+            <form [formGroup]="formAdiar" (ngSubmit)="confirmarAdiar(ocorrencia.id)" class="form-adiar">
+              <label>
+                Nova data
+                <input type="date" formControlName="novaData" />
+              </label>
+              <label>
+                Observação
+                <input type="text" formControlName="observacao" placeholder="Opcional" />
+              </label>
+              <div class="ocorrencia__acoes">
+                <button type="submit" class="botao botao--primario"><app-icon name="check" [size]="16" /> Confirmar</button>
+                <button type="button" class="botao botao--texto" (click)="cancelarAdiar()"><app-icon name="x" [size]="16" /> Cancelar</button>
+              </div>
+            </form>
+          } @else {
+            <div class="ocorrencia__acoes">
+              <button
+                type="button"
+                class="botao botao--primario"
+                [disabled]="concluindoId() === ocorrencia.id"
+                (click)="concluir(ocorrencia.id)"
+              >
+                <app-icon name="check" [size]="16" /> {{ concluindoId() === ocorrencia.id ? 'Concluindo...' : 'Concluir' }}
+              </button>
+              <button type="button" class="botao" (click)="iniciarAdiar(ocorrencia)"><app-icon name="calendar" [size]="16" /> Adiar</button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>

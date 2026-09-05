@@ -1,0 +1,68 @@
+<section class="tarefas-recorrentes">
+  <header class="topo">
+    <h1>Tarefas recorrentes</h1>
+    <a class="botao botao--primario" routerLink="/agenda/tarefas/novo"><app-icon name="plus" [size]="16" /> Nova tarefa</a>
+  </header>
+
+  <a routerLink="/agenda" class="botao-voltar"><app-icon name="arrow-left" [size]="16" /> Voltar para a Agenda</a>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Título
+      <input type="text" name="titulo" [(ngModel)]="filtro.titulo" placeholder="Buscar por título" />
+    </label>
+    <label>
+      Status
+      <select name="ativa" [(ngModel)]="filtro.ativa">
+        <option [ngValue]="undefined">Todas</option>
+        <option [ngValue]="true">Ativa</option>
+        <option [ngValue]="false">Inativa</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as tarefas. Verifique se a API está em execução.</p>
+  } @else if (tarefas().length === 0) {
+    <p class="status">Nenhuma tarefa recorrente encontrada.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Dia do mês</th>
+            <th>Observação</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (tarefa of tarefas(); track tarefa.id) {
+            <tr>
+              <td>{{ tarefa.titulo }}</td>
+              <td>{{ tarefa.diaDoMes }}</td>
+              <td>{{ tarefa.observacao || '-' }}</td>
+              <td>
+                <span class="badge" [class.badge--ativa]="tarefa.ativa" [class.badge--inativa]="!tarefa.ativa">
+                  {{ tarefa.ativa ? 'Ativa' : 'Inativa' }}
+                </span>
+              </td>
+              <td class="acoes">
+                <a [routerLink]="['/agenda/tarefas', tarefa.id, 'editar']" title="Editar" aria-label="Editar">
+                  <app-icon name="pencil" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

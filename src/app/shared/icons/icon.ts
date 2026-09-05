@@ -14,7 +14,8 @@ export type IconName =
   | 'paperclip'
   | 'download'
   | 'trash'
-  | 'mail';
+  | 'mail'
+  | 'calendar';
 
 @Component({
   selector: 'app-icon',
@@ -92,6 +93,12 @@ export type IconName =
         @case ('mail') {
           <rect x="2" y="4" width="20" height="16" rx="2" />
           <path d="m22 6-10 7L2 6" />
+        }
+        @case ('calendar') {
+          <rect x="3" y="4" width="18" height="18" rx="2" />
+          <path d="M16 2v4" />
+          <path d="M8 2v4" />
+          <path d="M3 10h18" />
         }
       }
     </svg>

@@ -25,6 +25,7 @@
           >
             Dashboard
           </a>
+          <a routerLink="/agenda" routerLinkActive="menu__item--ativo" class="menu__item">Agenda</a>
           <a routerLink="/usuarios" routerLinkActive="menu__item--ativo" class="menu__item">Usuários</a>
           <button type="button" class="menu__grupo" (click)="alternarGrupoTi()">
             <span class="menu__grupo-seta">{{ grupoTiAberto() ? '▾' : '▸' }}</span>

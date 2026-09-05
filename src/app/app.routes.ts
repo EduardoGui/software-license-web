@@ -6,6 +6,9 @@ import { usuarioViewGuard } from './core/usuario-view-guard';
 import { Login } from './features/auth/login';
 import { DefinirSenha } from './features/auth/definir-senha';
 import { DashboardPage } from './features/dashboard/dashboard-page';
+import { AgendaPage } from './features/agenda/agenda-page';
+import { TarefasRecorrentesList } from './features/tarefas-recorrentes/tarefas-recorrentes-list';
+import { TarefaRecorrenteForm } from './features/tarefas-recorrentes/tarefa-recorrente-form';
 import { UsuariosList } from './features/usuarios/usuarios-list';
 import { UsuarioForm } from './features/usuarios/usuario-form';
 import { UsuarioView } from './features/usuarios/usuario-view';
@@ -80,6 +83,10 @@ export const routes: Routes = [
     canActivateChild: [authGuard],
     children: [
       { path: '', component: DashboardPage, canActivate: [adminGuard] },
+      { path: 'agenda', component: AgendaPage, canActivate: [adminGuard] },
+      { path: 'agenda/tarefas', component: TarefasRecorrentesList, canActivate: [adminGuard] },
+      { path: 'agenda/tarefas/novo', component: TarefaRecorrenteForm, canActivate: [adminGuard] },
+      { path: 'agenda/tarefas/:id/editar', component: TarefaRecorrenteForm, canActivate: [adminGuard] },
       { path: 'usuarios', component: UsuariosList, canActivate: [adminGuard] },
       { path: 'usuarios/novo', component: UsuarioForm, canActivate: [adminGuard] },
       { path: 'usuarios/:id/editar', component: UsuarioForm, canActivate: [adminGuard] },

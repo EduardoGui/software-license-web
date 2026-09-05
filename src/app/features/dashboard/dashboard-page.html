@@ -95,6 +95,10 @@
         <span class="card__valor">{{ dados()!.alertasMedicao.length }}</span>
         <span class="card__rotulo">Alertas de medição</span>
       </div>
+      <div class="card">
+        <span class="card__valor">{{ dados()!.tarefasPendentes.length }}</span>
+        <span class="card__rotulo">Tarefas pendentes</span>
+      </div>
     </div>
 
     <div class="vencimentos">
@@ -197,6 +201,44 @@
                       <span class="badge badge--vencendo">Vence hoje</span>
                     } @else {
                       <span class="badge badge--vencendo">Vence em {{ alerta.diasParaVencer }} dia(s)</span>
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+
+    <div class="vencimentos">
+      <h2>Tarefas pendentes</h2>
+      @if (dados()!.tarefasPendentes.length === 0) {
+        <p class="status">Nenhuma tarefa pendente.</p>
+      } @else {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Tarefa</th>
+                <th>Data prevista</th>
+                <th>Observação</th>
+                <th>Situação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (tarefa of dados()!.tarefasPendentes; track tarefa.id) {
+                <tr>
+                  <td>{{ tarefa.titulo }}</td>
+                  <td>{{ tarefa.dataPrevistaAtual | dataBr }}</td>
+                  <td>{{ tarefa.observacao || '—' }}</td>
+                  <td>
+                    @if (tarefa.diasParaVencer < 0) {
+                      <span class="badge badge--vencida">Vencida há {{ -tarefa.diasParaVencer }} dia(s)</span>
+                    } @else if (tarefa.diasParaVencer === 0) {
+                      <span class="badge badge--vencendo">Vence hoje</span>
+                    } @else {
+                      <span class="badge badge--vencendo">Vence em {{ tarefa.diasParaVencer }} dia(s)</span>
                     }
                   </td>
                 </tr>

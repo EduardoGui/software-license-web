@@ -30,6 +30,14 @@ export interface AlertaMedicao {
   diasParaVencer: number;
 }
 
+export interface TarefaPendente {
+  id: number;
+  titulo: string;
+  dataPrevistaAtual: string;
+  observacao: string | null;
+  diasParaVencer: number;
+}
+
 export interface DashboardData {
   usuariosAtivos: number;
   licencasAdquiridas: number;
@@ -44,4 +52,5 @@ export interface DashboardData {
   custoMensalLocacaoAtual: number;
   proximosVencimentosContratos: VencimentoContrato[];
   alertasMedicao: AlertaMedicao[];
+  tarefasPendentes: TarefaPendente[];
 }

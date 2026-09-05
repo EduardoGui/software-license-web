@@ -1,0 +1,52 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar tarefa recorrente' : 'Nova tarefa recorrente' }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Título *
+        <input type="text" formControlName="titulo" placeholder="Ex.: Pedir boleto do estacionamento" />
+        @if (form.controls.titulo.invalid && form.controls.titulo.touched) {
+          <span class="campo-erro">Título é obrigatório.</span>
+        }
+      </label>
+
+      <label>
+        Dia do mês *
+        <input type="number" min="1" max="31" formControlName="diaDoMes" />
+        @if (form.controls.diaDoMes.invalid && form.controls.diaDoMes.touched) {
+          <span class="campo-erro">Informe um dia entre 1 e 31.</span>
+        }
+      </label>
+
+      <label>
+        Observação
+        <textarea rows="2" formControlName="observacao" placeholder="Opcional"></textarea>
+      </label>
+
+      <label>
+        Status
+        <select formControlName="ativa">
+          <option [ngValue]="true">Ativa</option>
+          <option [ngValue]="false">Inativa</option>
+        </select>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/agenda/tarefas" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

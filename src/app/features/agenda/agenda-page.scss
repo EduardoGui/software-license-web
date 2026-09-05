@@ -1,0 +1,151 @@
+.agenda {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  color: var(--color-primary);
+  margin: 0;
+}
+
+.status {
+  color: var(--color-secondary);
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+.lista-ocorrencias {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.ocorrencia {
+  background: #fff;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.ocorrencia__topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.ocorrencia__info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.ocorrencia__titulo {
+  color: var(--color-primary);
+  font-size: 0.95rem;
+}
+
+.ocorrencia__data {
+  font-size: 0.8rem;
+  color: var(--color-text);
+}
+
+.ocorrencia__observacao {
+  margin: 0.6rem 0 0;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.ocorrencia__acoes {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.85rem;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge--vencida {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.badge--vencendo {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.form-adiar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.85rem;
+  padding-top: 0.85rem;
+  border-top: 1px dashed var(--color-border-light);
+}
+
+.form-adiar label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--color-text);
+}
+
+.form-adiar input {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.botao--primario {
+  background: var(--color-primary);
+  color: #fff;
+}
+
+.botao--primario:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.botao--texto {
+  border-color: transparent;
+  color: var(--color-secondary);
+}
