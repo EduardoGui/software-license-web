@@ -26,6 +26,7 @@ export interface NotaDebitoPj {
   dataPagamento: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
+  avisoEmail: string | null;
 }
 
 export interface CreateNotaDebitoPjPayload {

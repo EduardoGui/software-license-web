@@ -73,7 +73,7 @@ export class NotaDebitoPjView {
   }
 
   protected enviar(): void {
-    if (!confirm('Marcar esta nota de débito como enviada?')) {
+    if (!confirm('Enviar esta nota de débito por e-mail ao colaborador e marcá-la como enviada?')) {
       return;
     }
 
@@ -82,6 +82,9 @@ export class NotaDebitoPjView {
       next: (nota) => {
         this.nota.set(nota);
         this.processando.set(false);
+        if (nota.avisoEmail) {
+          alert(nota.avisoEmail);
+        }
       },
       error: (err) => {
         this.processando.set(false);
