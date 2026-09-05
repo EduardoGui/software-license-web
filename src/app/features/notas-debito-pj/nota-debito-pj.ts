@@ -4,6 +4,8 @@ export interface NotaDebitoPj {
   id: number;
   usuarioId: number;
   usuarioNome: string;
+  empresaPjNome: string | null;
+  empresaPjCnpj: string | null;
   ano: number;
   mes: number;
   valorBruto: number;

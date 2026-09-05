@@ -19,6 +19,19 @@
       </div>
 
       <div class="secao">
+        <h3>Destinatário</h3>
+        <dl>
+          @if (nota()!.empresaPjNome) {
+            <div><dt>Razão Social</dt><dd>{{ nota()!.empresaPjNome }}</dd></div>
+            <div><dt>CNPJ</dt><dd>{{ nota()!.empresaPjCnpj }}</dd></div>
+            <div class="dl-full"><dt>Colaborador (PJ) responsável</dt><dd>{{ nota()!.usuarioNome }}</dd></div>
+          } @else {
+            <div class="dl-full"><dt>Nome</dt><dd>{{ nota()!.usuarioNome }} <span class="aviso-sem-empresa">(sem Empresa PJ vinculada no cadastro)</span></dd></div>
+          }
+        </dl>
+      </div>
+
+      <div class="secao">
         <h3>Motivo da Cobrança</h3>
         <dl>
           <div><dt>Tipo de Despesa</dt><dd>Coparticipação {{ nota()!.operadoraSaude }}</dd></div>
