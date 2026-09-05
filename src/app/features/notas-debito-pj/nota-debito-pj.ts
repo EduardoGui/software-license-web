@@ -1,4 +1,4 @@
-export type NotaDebitoPjStatus = 'Rascunho' | 'Enviada' | 'Paga';
+export type NotaDebitoPjStatus = 'Rascunho' | 'Enviada' | 'Recebida';
 
 export interface NotaDebitoPj {
   id: number;

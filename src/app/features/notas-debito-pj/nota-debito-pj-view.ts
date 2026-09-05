@@ -103,7 +103,7 @@ export class NotaDebitoPjView {
       },
       error: (err) => {
         this.processando.set(false);
-        alert(err?.error?.message ?? 'Não foi possível marcar como paga.');
+        alert(err?.error?.message ?? 'Não foi possível marcar como recebida.');
       },
     });
   }
