@@ -1,8 +1,36 @@
 <section class="agenda">
   <header class="topo">
     <h1>Agenda</h1>
-    <a routerLink="/agenda/tarefas" class="botao botao--texto"><app-icon name="pencil" [size]="16" /> Gerenciar tarefas recorrentes</a>
+    <div class="topo__acoes">
+      <button type="button" class="botao botao--texto" (click)="iniciarNovaUnica()"><app-icon name="plus" [size]="16" /> Nova tarefa única</button>
+      <a routerLink="/agenda/tarefas" class="botao botao--texto"><app-icon name="pencil" [size]="16" /> Gerenciar tarefas recorrentes</a>
+    </div>
   </header>
+
+  @if (criandoUnica()) {
+    <div class="nova-unica">
+      <form [formGroup]="formUnica" (ngSubmit)="confirmarNovaUnica()" class="form-nova-unica">
+        <label>
+          Título
+          <input type="text" formControlName="titulo" placeholder="Ex.: Levar carro pra revisão" />
+        </label>
+        <label>
+          Data
+          <input type="date" formControlName="data" />
+        </label>
+        <label>
+          Observação
+          <input type="text" formControlName="observacao" placeholder="Opcional" />
+        </label>
+        <div class="ocorrencia__acoes">
+          <button type="submit" class="botao botao--primario" [disabled]="salvandoUnica()">
+            <app-icon name="check" [size]="16" /> {{ salvandoUnica() ? 'Salvando...' : 'Salvar' }}
+          </button>
+          <button type="button" class="botao botao--texto" (click)="cancelarNovaUnica()"><app-icon name="x" [size]="16" /> Cancelar</button>
+        </div>
+      </form>
+    </div>
+  }
 
   @if (erroAcao()) {
     <p class="status status--erro">{{ erroAcao() }}</p>

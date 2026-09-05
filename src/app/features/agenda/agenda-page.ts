@@ -23,9 +23,17 @@ export class AgendaPage {
   protected readonly erroAcao = signal<string | null>(null);
   protected readonly concluindoId = signal<number | null>(null);
   protected readonly adiandoId = signal<number | null>(null);
+  protected readonly criandoUnica = signal(false);
+  protected readonly salvandoUnica = signal(false);
 
   protected readonly formAdiar = this.fb.nonNullable.group({
     novaData: ['', Validators.required],
+    observacao: [''],
+  });
+
+  protected readonly formUnica = this.fb.nonNullable.group({
+    titulo: ['', Validators.required],
+    data: ['', Validators.required],
     observacao: [''],
   });
 
@@ -94,6 +102,41 @@ export class AgendaPage {
       },
       error: (err) => {
         this.erroAcao.set(err?.error?.message ?? 'Não foi possível adiar a tarefa.');
+      },
+    });
+  }
+
+  protected iniciarNovaUnica(): void {
+    this.criandoUnica.set(true);
+    this.erroAcao.set(null);
+    this.formUnica.reset({ titulo: '', data: '', observacao: '' });
+  }
+
+  protected cancelarNovaUnica(): void {
+    this.criandoUnica.set(false);
+  }
+
+  protected confirmarNovaUnica(): void {
+    if (this.formUnica.invalid) {
+      this.formUnica.markAllAsTouched();
+      return;
+    }
+
+    const valor = this.formUnica.getRawValue();
+    this.salvandoUnica.set(true);
+    this.erroAcao.set(null);
+
+    this.agendaService.criarUnica({ titulo: valor.titulo, data: valor.data, observacao: valor.observacao || null }).subscribe({
+      next: (criada) => {
+        this.salvandoUnica.set(false);
+        this.criandoUnica.set(false);
+        this.ocorrencias.update((lista) =>
+          [...lista, criada].sort((a, b) => a.dataPrevistaAtual.localeCompare(b.dataPrevistaAtual)),
+        );
+      },
+      error: (err) => {
+        this.salvandoUnica.set(false);
+        this.erroAcao.set(err?.error?.message ?? 'Não foi possível criar a tarefa.');
       },
     });
   }
