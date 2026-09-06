@@ -11,10 +11,6 @@
         <span class="card__valor">{{ dados()!.usuariosAtivos }}</span>
         <span class="card__rotulo">Usuários ativos</span>
       </div>
-      <div class="card">
-        <span class="card__valor">{{ dados()!.licencasDisponiveis }}</span>
-        <span class="card__rotulo">Licenças disponíveis</span>
-      </div>
       <div class="card card--lista">
         <span class="card__rotulo">Licenças em uso</span>
         @if (dados()!.licencasEmUsoPorNome.length === 0) {
@@ -78,10 +74,6 @@
       <div class="card">
         <span class="card__valor">{{ dados()!.custoMensalLocacaoAtual | number: '1.2-2' }}</span>
         <span class="card__rotulo">Custo mensal de locação (mês atual)</span>
-      </div>
-      <div class="card">
-        <span class="card__valor">{{ dados()!.pendencias.length }}</span>
-        <span class="card__rotulo">Pendências</span>
       </div>
     </div>
 

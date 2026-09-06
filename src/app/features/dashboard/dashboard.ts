@@ -24,7 +24,6 @@ export interface Pendencia {
 
 export interface DashboardData {
   usuariosAtivos: number;
-  licencasDisponiveis: number;
   licencasEmUsoPorNome: LicencaContagemPorNome[];
   licencasDisponiveisPorNome: LicencaContagemPorNome[];
   equipamentosEmUsoPorTipo: EquipamentoContagemPorTipo[];
