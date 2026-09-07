@@ -2,6 +2,7 @@ import { DecimalPipe, formatDate } from '@angular/common';
 import { Component, ElementRef, HostListener, computed, inject, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { catchError, forkJoin, of } from 'rxjs';
 
 import { Fornecedor } from '../fornecedores/fornecedor';
 import { FornecedorService } from '../fornecedores/fornecedor.service';
@@ -54,6 +55,7 @@ export class ContratosTimeline {
   protected readonly expandidos = signal<Set<number>>(new Set());
   protected readonly selecionado = signal<Contrato | null>(null);
   protected readonly periodoAtivo = signal<PeriodoPreset>('ultimos6meses');
+  protected readonly valoresMedidos = signal<Map<number, number>>(new Map());
 
   protected filtro: FiltroContratosTimeline = {};
 
@@ -131,11 +133,35 @@ export class ContratosTimeline {
         const filtrados = natureza ? contratos.filter((c) => c.natureza?.toLowerCase().includes(natureza)) : contratos;
         this.contratos.set(filtrados);
         this.carregando.set(false);
+        this.carregarValoresMedidos(filtrados);
       },
       error: () => {
         this.erro.set(true);
         this.carregando.set(false);
       },
+    });
+  }
+
+  private carregarValoresMedidos(contratos: Contrato[]): void {
+    if (contratos.length === 0) {
+      this.valoresMedidos.set(new Map());
+      return;
+    }
+
+    forkJoin(
+      contratos.map((contrato) =>
+        this.contratoService.obterSaldo(contrato.id).pipe(
+          catchError(() => of([])),
+        ),
+      ),
+    ).subscribe((saldosPorContrato) => {
+      const mapa = new Map<number, number>();
+      contratos.forEach((contrato, indice) => {
+        const itensSaldo = saldosPorContrato[indice];
+        const medido = itensSaldo.reduce((soma, item) => soma + (item.valorContratadoAtual - item.saldoValor), 0);
+        mapa.set(contrato.id, medido);
+      });
+      this.valoresMedidos.set(mapa);
     });
   }
 
@@ -261,6 +287,22 @@ export class ContratosTimeline {
     return this.posicaoPx(hoje);
   }
 
+  protected nomeCurto(nome: string): string {
+    return nome.trim().split(/\s+/).slice(0, 2).join(' ');
+  }
+
+  protected valorMedido(contrato: Contrato): number {
+    return this.valoresMedidos().get(contrato.id) ?? 0;
+  }
+
+  protected percentualMedido(contrato: Contrato): number {
+    if (contrato.valorAtual <= 0) {
+      return 0;
+    }
+    const percentual = (this.valorMedido(contrato) / contrato.valorAtual) * 100;
+    return Math.min(100, Math.max(0, percentual));
+  }
+
   protected tituloFornecedor(fornecedor: FornecedorAgrupado): string {
     const inicio = this.formatarData(fornecedor.dataInicio);
     const fim = this.formatarData(fornecedor.dataFim);
@@ -271,7 +313,13 @@ export class ContratosTimeline {
   protected tituloContrato(contrato: Contrato): string {
     const inicio = this.formatarData(contrato.dataInicioVigencia);
     const fim = this.formatarData(contrato.dataFimVigenciaAtual);
-    return `${contrato.numero} — ${contrato.objeto} (${contrato.status}): ${inicio} – ${fim}`;
+    const valorTotal = this.formatarMoeda(contrato.valorAtual);
+    const medido = this.formatarMoeda(this.valorMedido(contrato));
+    return `${contrato.numero} — ${contrato.objeto} (${contrato.status}): ${inicio} – ${fim}\nValor total: R$ ${valorTotal} | Medido: R$ ${medido}`;
+  }
+
+  private formatarMoeda(valor: number): string {
+    return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
   private formatarData(iso: string): string {

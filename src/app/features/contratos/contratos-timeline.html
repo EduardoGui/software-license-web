@@ -109,9 +109,14 @@
 
         @for (fornecedor of agrupados(); track fornecedor.fornecedorId) {
           <div class="linha linha--usuario">
-            <button type="button" class="rotulo rotulo--usuario" (click)="alternarExpandido(fornecedor.fornecedorId)">
+            <button
+              type="button"
+              class="rotulo rotulo--usuario"
+              [title]="fornecedor.fornecedorNome"
+              (click)="alternarExpandido(fornecedor.fornecedorId)"
+            >
               <span class="seta">{{ expandido(fornecedor.fornecedorId) ? '▾' : '▸' }}</span>
-              {{ fornecedor.fornecedorNome }}
+              {{ nomeCurto(fornecedor.fornecedorNome) }}
             </button>
             <div class="trilha" [style.width.px]="larguraTotalPx()">
               @if (posicaoHojePx() !== null) {
@@ -141,7 +146,9 @@
                     [style.background]="corStatus(contrato.status)"
                     [title]="tituloContrato(contrato)"
                     (click)="selecionar(contrato)"
-                  ></div>
+                  >
+                    <div class="barra__medido" [style.width.%]="percentualMedido(contrato)"></div>
+                  </div>
                 </div>
               </div>
             }
@@ -173,6 +180,8 @@
           <dd>{{ selecionado()!.dataInicioVigencia | dataBr }} – {{ selecionado()!.dataFimVigenciaAtual | dataBr }}</dd>
           <dt>Valor atual</dt>
           <dd>R$ {{ selecionado()!.valorAtual | number: '1.2-2' }}</dd>
+          <dt>Valor medido</dt>
+          <dd>R$ {{ valorMedido(selecionado()!) | number: '1.2-2' }}</dd>
           <dt>Status</dt>
           <dd>{{ selecionado()!.status }}</dd>
         </dl>
