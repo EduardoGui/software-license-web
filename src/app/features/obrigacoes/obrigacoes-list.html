@@ -1,0 +1,115 @@
+<section class="obrigacoes">
+  <header class="topo">
+    <h1>Controle de Obrigações</h1>
+  </header>
+
+  <div class="periodo">
+    <button type="button" class="botao" (click)="mesAnterior()">‹ Mês anterior</button>
+    <label>
+      De
+      <input type="month" name="competenciaDeMes" [(ngModel)]="filtro.competenciaDeMes" (change)="buscar()" />
+    </label>
+    <label>
+      Até
+      <input type="month" name="competenciaAteMes" [(ngModel)]="filtro.competenciaAteMes" (change)="buscar()" />
+    </label>
+    <button type="button" class="botao" (click)="proximoMes()">Próximo mês ›</button>
+  </div>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Tipo
+      <select name="tipoMovimento" [(ngModel)]="filtro.tipoMovimento">
+        <option [ngValue]="undefined">Todos</option>
+        <option value="Medição">Medição</option>
+        <option value="OC">Ordem de Compra</option>
+        <option value="Despesa Avulsa">Despesa Avulsa</option>
+      </select>
+    </label>
+    <label>
+      Fornecedor
+      <select name="fornecedorId" [(ngModel)]="filtro.fornecedorId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (fornecedor of fornecedores(); track fornecedor.id) {
+          <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Etapa
+      <select name="etapa" [(ngModel)]="filtro.etapa">
+        <option [ngValue]="undefined">Todas</option>
+        <option value="Aguardar Aprovação BM">Aguardar Aprovação BM</option>
+        <option value="Aguardar NF">Aguardar NF</option>
+        <option value="Criar Requisição">Criar Requisição</option>
+        <option value="Criar Assist Pgto">Criar Assist Pgto</option>
+        <option value="Aguardando Pagamento">Aguardando Pagamento</option>
+        <option value="Pago">Pago</option>
+      </select>
+    </label>
+    <label>
+      Pago
+      <select name="pago" [(ngModel)]="filtro.pago">
+        <option [ngValue]="undefined">Todos</option>
+        <option [ngValue]="true">Sim</option>
+        <option [ngValue]="false">Não</option>
+      </select>
+    </label>
+    <label class="filtros__check">
+      <input type="checkbox" name="incluirCanceladas" [(ngModel)]="filtro.incluirCanceladas" />
+      Incluir canceladas
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as obrigações. Verifique se a API está em execução.</p>
+  } @else if (obrigacoes().length === 0) {
+    <p class="status">Nenhuma obrigação encontrada para os filtros selecionados.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Tipo</th>
+            <th>Fornecedor</th>
+            <th>Competência</th>
+            <th>Nº NF</th>
+            <th>Vencimento</th>
+            <th>Valor previsto</th>
+            <th>Etapa</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (o of obrigacoes(); track o.id) {
+            <tr [class.linha--cancelada]="o.cancelada">
+              <td>{{ o.tipoMovimento }}</td>
+              <td>{{ o.fornecedorNome }}</td>
+              <td>{{ competenciaBr(o.competencia) }}</td>
+              <td>{{ o.numeroNf || '-' }}</td>
+              <td>{{ o.vencimento ? (o.vencimento | dataBr) : '-' }}</td>
+              <td>{{ o.valorPrevisto | number: '1.2-2' }}</td>
+              <td><span class="badge" [class]="classeEtapa(o.etapa)">{{ o.etapa }}</span></td>
+              <td class="acoes">
+                <a [routerLink]="['/obrigacoes', o.id]" title="Ver / editar" aria-label="Ver / editar">Ver</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="5"><strong>Total previsto no período</strong></td>
+            <td><strong>{{ totalPrevisto() | number: '1.2-2' }}</strong></td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  }
+</section>

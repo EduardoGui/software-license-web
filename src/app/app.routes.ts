@@ -76,6 +76,8 @@ import { OrdemCompraView } from './features/ordens-compra/ordem-compra-view';
 import { DespesasAvulsasList } from './features/despesas-avulsas/despesas-avulsas-list';
 import { DespesaAvulsaForm } from './features/despesas-avulsas/despesa-avulsa-form';
 import { DespesaAvulsaView } from './features/despesas-avulsas/despesa-avulsa-view';
+import { ObrigacoesList } from './features/obrigacoes/obrigacoes-list';
+import { ObrigacaoView } from './features/obrigacoes/obrigacao-view';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -183,6 +185,8 @@ export const routes: Routes = [
       { path: 'despesas-avulsas/novo', component: DespesaAvulsaForm, canActivate: [adminGuard] },
       { path: 'despesas-avulsas/:id/editar', component: DespesaAvulsaForm, canActivate: [adminGuard] },
       { path: 'despesas-avulsas/:id', component: DespesaAvulsaView, canActivate: [adminGuard] },
+      { path: 'obrigacoes', component: ObrigacoesList, canActivate: [adminGuard] },
+      { path: 'obrigacoes/:id', component: ObrigacaoView, canActivate: [adminGuard] },
     ],
   },
 ];

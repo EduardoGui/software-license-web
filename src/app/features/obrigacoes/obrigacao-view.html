@@ -1,0 +1,115 @@
+<section class="obrigacao-view">
+  <header class="topo">
+    <h1>Obrigação</h1>
+    <button type="button" class="botao botao--texto" (click)="voltar()">Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar a obrigação.</p>
+  } @else if (obrigacao(); as o) {
+    <section class="painel">
+      <div class="cabecalho">
+        <h2>{{ o.fornecedorNome }}</h2>
+        <span class="badge">{{ o.tipoMovimento }}</span>
+        <span class="badge badge--etapa">{{ o.etapa }}</span>
+      </div>
+
+      <div class="grid-info">
+        <div><span>Competência</span><strong>{{ competenciaBr(o.competencia) }}</strong></div>
+        <div><span>Valor previsto</span><strong>R$ {{ o.valorPrevisto | number: '1.2-2' }}</strong></div>
+        @if (o.contratoNumero) {
+          <div>
+            <span>Contrato</span>
+            <strong><a [routerLink]="['/contratos', o.contratoId]">{{ o.contratoNumero }}</a></strong>
+          </div>
+        }
+        @if (o.ordemCompraId) {
+          <div>
+            <span>Ordem de Compra</span>
+            <strong><a [routerLink]="['/ordens-compra', o.ordemCompraId]">OC {{ o.ordemCompraNumero!.toString().padStart(3, '0') }}</a></strong>
+          </div>
+        }
+        @if (o.despesaAvulsaId) {
+          <div>
+            <span>Despesa Avulsa</span>
+            <strong><a [routerLink]="['/despesas-avulsas', o.despesaAvulsaId]">Ver despesa</a></strong>
+          </div>
+        }
+      </div>
+
+      @if (erroAcao()) {
+        <p class="status status--erro">{{ erroAcao() }}</p>
+      }
+
+      <div class="acoes-topo">
+        @if (!o.cancelada && !o.pago) {
+          <button type="button" class="botao botao--primario" [disabled]="processando()" (click)="marcarPaga()">
+            {{ processando() ? 'Salvando...' : 'Marcar como paga' }}
+          </button>
+        }
+        @if (!o.cancelada && o.pago) {
+          <button type="button" class="botao" [disabled]="processando()" (click)="desmarcarPaga()">Desmarcar pagamento</button>
+        }
+        @if (!o.cancelada && !o.pago) {
+          <button type="button" class="botao botao--perigo" [disabled]="processando()" (click)="cancelar()">Cancelar</button>
+        }
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Acompanhamento</h2>
+      <form [formGroup]="form" (ngSubmit)="salvar()">
+        <div class="grid">
+          <label>
+            Data da NF
+            <input type="date" formControlName="dataNf" />
+          </label>
+          <label>
+            Número da NF
+            <input type="text" formControlName="numeroNf" />
+          </label>
+          <label>
+            Valor da nota (R$)
+            <input type="number" step="0.01" min="0" formControlName="valorNota" />
+          </label>
+          <label>
+            Vencimento
+            <input type="date" formControlName="vencimento" />
+          </label>
+          <label>
+            Data da requisição (lançado no ERP)
+            <input type="date" formControlName="dataRequisicao" />
+          </label>
+          <label>
+            Data do assist. de pagamento
+            <input type="date" formControlName="dataAssistPgto" />
+          </label>
+          <label>
+            Data de envio ao financeiro
+            <input type="date" formControlName="dataEnvioFinanceiro" />
+          </label>
+          <label>
+            Data prevista de pagamento
+            <input type="date" formControlName="dataPrevistaPagamento" />
+          </label>
+          <label class="grid__full">
+            Observações
+            <textarea rows="2" formControlName="observacoes"></textarea>
+          </label>
+        </div>
+
+        @if (erroSalvar()) {
+          <p class="status status--erro">{{ erroSalvar() }}</p>
+        }
+
+        <div class="acoes-form">
+          <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+            {{ salvando() ? 'Salvando...' : 'Salvar acompanhamento' }}
+          </button>
+        </div>
+      </form>
+    </section>
+  }
+</section>
