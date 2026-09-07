@@ -1,4 +1,13 @@
-export type DespesaAvulsaCategoria = 'Serviços' | 'Equipamentos' | 'Materiais' | 'Licenças' | 'Seguros' | 'Outros';
+export type DespesaAvulsaCategoria =
+  | 'Serviços'
+  | 'Equipamentos'
+  | 'Materiais'
+  | 'Licenças'
+  | 'Seguros'
+  | 'Viagem/Hospedagem'
+  | 'Plano de Saúde'
+  | 'Estacionamento'
+  | 'Outros';
 
 export interface DespesaAvulsa {
   id: number;
