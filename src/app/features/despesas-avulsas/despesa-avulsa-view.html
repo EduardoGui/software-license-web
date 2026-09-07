@@ -1,0 +1,45 @@
+<section class="despesa-avulsa-view">
+  <header class="topo">
+    <h1>Despesa Avulsa</h1>
+    <button type="button" class="botao botao--texto" (click)="voltar()">Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar a despesa avulsa.</p>
+  } @else if (despesa(); as d) {
+    <section class="painel">
+      <div class="cabecalho">
+        <h2>{{ d.fornecedorNome }}</h2>
+        <span class="badge">{{ d.categoria }}</span>
+        @if (d.recorrente) {
+          <span class="badge badge--recorrente">Recorrente</span>
+        }
+      </div>
+
+      <div class="grid-info">
+        <div><span>Descrição</span><strong>{{ d.descricao }}</strong></div>
+        <div><span>Número da NF</span><strong>{{ d.numeroNf || '-' }}</strong></div>
+        <div><span>Valor</span><strong>R$ {{ d.valor | number: '1.2-2' }}</strong></div>
+        <div><span>Data de emissão</span><strong>{{ d.dataEmissao ? (d.dataEmissao | dataBr) : '-' }}</strong></div>
+        <div><span>Vencimento</span><strong>{{ d.vencimento ? (d.vencimento | dataBr) : '-' }}</strong></div>
+      </div>
+
+      @if (d.observacoes) {
+        <div class="grid-info">
+          <div><span>Observações</span><strong>{{ d.observacoes }}</strong></div>
+        </div>
+      }
+
+      <div class="acoes">
+        <a class="botao" [routerLink]="['/despesas-avulsas', d.id, 'editar']">Editar</a>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Anexos</h2>
+      <app-anexos-secao recurso="despesas-avulsas" [entidadeId]="despesaId" />
+    </section>
+  }
+</section>

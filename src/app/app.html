@@ -124,6 +124,9 @@
             <a routerLink="/ordens-compra" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
               Ordens de Compra
             </a>
+            <a routerLink="/despesas-avulsas" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
+              Despesas Avulsas
+            </a>
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoCadastrosGerais()">
             <span class="menu__grupo-seta">{{ grupoCadastrosGeraisAberto() ? '▾' : '▸' }}</span>

@@ -73,6 +73,9 @@ import { NotaDebitoPjView } from './features/notas-debito-pj/nota-debito-pj-view
 import { OrdensCompraList } from './features/ordens-compra/ordens-compra-list';
 import { OrdemCompraForm } from './features/ordens-compra/ordem-compra-form';
 import { OrdemCompraView } from './features/ordens-compra/ordem-compra-view';
+import { DespesasAvulsasList } from './features/despesas-avulsas/despesas-avulsas-list';
+import { DespesaAvulsaForm } from './features/despesas-avulsas/despesa-avulsa-form';
+import { DespesaAvulsaView } from './features/despesas-avulsas/despesa-avulsa-view';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -176,6 +179,10 @@ export const routes: Routes = [
       { path: 'ordens-compra/novo', component: OrdemCompraForm, canActivate: [adminGuard] },
       { path: 'ordens-compra/:id/editar', component: OrdemCompraForm, canActivate: [adminGuard] },
       { path: 'ordens-compra/:id', component: OrdemCompraView, canActivate: [adminGuard] },
+      { path: 'despesas-avulsas', component: DespesasAvulsasList, canActivate: [adminGuard] },
+      { path: 'despesas-avulsas/novo', component: DespesaAvulsaForm, canActivate: [adminGuard] },
+      { path: 'despesas-avulsas/:id/editar', component: DespesaAvulsaForm, canActivate: [adminGuard] },
+      { path: 'despesas-avulsas/:id', component: DespesaAvulsaView, canActivate: [adminGuard] },
     ],
   },
 ];

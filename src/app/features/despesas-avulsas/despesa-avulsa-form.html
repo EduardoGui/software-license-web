@@ -1,0 +1,77 @@
+<section class="despesa-avulsa-form">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar despesa avulsa' : 'Nova despesa avulsa' }}</h1>
+    <button type="button" class="botao botao--texto" (click)="voltar()">Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      <fieldset>
+        <legend>Dados da despesa</legend>
+        <div class="grid">
+          <label>
+            Fornecedor
+            <select formControlName="fornecedorId">
+              <option [ngValue]="null">Selecione</option>
+              @for (fornecedor of fornecedores(); track fornecedor.id) {
+                <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+              }
+            </select>
+          </label>
+          <label>
+            Categoria
+            <select formControlName="categoria">
+              <option value="">Selecione</option>
+              <option value="Serviços">Serviços</option>
+              <option value="Equipamentos">Equipamentos</option>
+              <option value="Materiais">Materiais</option>
+              <option value="Licenças">Licenças</option>
+              <option value="Seguros">Seguros</option>
+              <option value="Outros">Outros</option>
+            </select>
+          </label>
+          <label class="grid__full">
+            Descrição
+            <input type="text" formControlName="descricao" />
+          </label>
+          <label>
+            Número da NF
+            <input type="text" formControlName="numeroNf" />
+          </label>
+          <label>
+            Valor (R$)
+            <input type="number" step="0.01" min="0" formControlName="valor" />
+          </label>
+          <label>
+            Data de emissão
+            <input type="date" formControlName="dataEmissao" />
+          </label>
+          <label>
+            Vencimento
+            <input type="date" formControlName="vencimento" />
+          </label>
+          <label class="grid__check">
+            <input type="checkbox" formControlName="recorrente" />
+            Despesa recorrente (repete todo mês)
+          </label>
+          <label class="grid__full">
+            Observações
+            <textarea rows="2" formControlName="observacoes"></textarea>
+          </label>
+        </div>
+      </fieldset>
+
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <div class="acoes-form">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          {{ salvando() ? 'Salvando...' : 'Salvar despesa avulsa' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

@@ -1,0 +1,94 @@
+<section class="despesas-avulsas">
+  <header class="topo">
+    <h1>Despesas Avulsas</h1>
+    <a class="botao botao--primario" routerLink="/despesas-avulsas/novo"><app-icon name="plus" [size]="16" /> Nova despesa avulsa</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Fornecedor
+      <select name="fornecedorId" [(ngModel)]="filtro.fornecedorId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (fornecedor of fornecedores(); track fornecedor.id) {
+          <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Categoria
+      <select name="categoria" [(ngModel)]="filtro.categoria">
+        <option [ngValue]="undefined">Todas</option>
+        <option value="Serviços">Serviços</option>
+        <option value="Equipamentos">Equipamentos</option>
+        <option value="Materiais">Materiais</option>
+        <option value="Licenças">Licenças</option>
+        <option value="Seguros">Seguros</option>
+        <option value="Outros">Outros</option>
+      </select>
+    </label>
+    <label>
+      Emissão de
+      <input type="date" name="dataEmissaoDe" [(ngModel)]="filtro.dataEmissaoDe" />
+    </label>
+    <label>
+      Emissão até
+      <input type="date" name="dataEmissaoAte" [(ngModel)]="filtro.dataEmissaoAte" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as despesas avulsas. Verifique se a API está em execução.</p>
+  } @else if (despesas().length === 0) {
+    <p class="status">Nenhuma despesa avulsa encontrada.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Fornecedor</th>
+            <th>Categoria</th>
+            <th>Descrição</th>
+            <th>Nº NF</th>
+            <th>Emissão</th>
+            <th>Vencimento</th>
+            <th>Valor</th>
+            <th>Recorrente</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (d of despesas(); track d.id) {
+            <tr>
+              <td>{{ d.fornecedorNome }}</td>
+              <td><span class="badge">{{ d.categoria }}</span></td>
+              <td>{{ d.descricao }}</td>
+              <td>{{ d.numeroNf || '-' }}</td>
+              <td>{{ d.dataEmissao ? (d.dataEmissao | dataBr) : '-' }}</td>
+              <td>{{ d.vencimento ? (d.vencimento | dataBr) : '-' }}</td>
+              <td>{{ d.valor | number: '1.2-2' }}</td>
+              <td>{{ d.recorrente ? 'Sim' : 'Não' }}</td>
+              <td class="acoes">
+                <a [routerLink]="['/despesas-avulsas', d.id]" title="Visualizar" aria-label="Visualizar">
+                  <app-icon name="eye" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+        <tfoot>
+          <tr>
+            <td colspan="6"><strong>Total</strong></td>
+            <td><strong>{{ totalValor() | number: '1.2-2' }}</strong></td>
+            <td colspan="2"></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  }
+</section>
