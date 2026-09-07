@@ -26,6 +26,13 @@ export class FornecedorForm {
   protected readonly form = this.fb.nonNullable.group({
     nome: ['', Validators.required],
     cnpj: ['', Validators.required],
+    contato: [''],
+    telefone: [''],
+    endereco: [''],
+    inscricaoEstadual: [''],
+    inscricaoMunicipal: [''],
+    email: [''],
+    dadosBancarios: [''],
     ativo: [true, Validators.required],
   });
 
@@ -57,6 +64,13 @@ export class FornecedorForm {
         this.form.patchValue({
           nome: fornecedor.nome,
           cnpj: fornecedor.cnpj ?? '',
+          contato: fornecedor.contato ?? '',
+          telefone: fornecedor.telefone ?? '',
+          endereco: fornecedor.endereco ?? '',
+          inscricaoEstadual: fornecedor.inscricaoEstadual ?? '',
+          inscricaoMunicipal: fornecedor.inscricaoMunicipal ?? '',
+          email: fornecedor.email ?? '',
+          dadosBancarios: fornecedor.dadosBancarios ?? '',
           ativo: fornecedor.ativo,
         });
         this.carregando.set(false);
@@ -78,16 +92,28 @@ export class FornecedorForm {
     this.salvando.set(true);
     this.erro.set(null);
 
+    const camposComuns = {
+      contato: valor.contato || null,
+      telefone: valor.telefone || null,
+      endereco: valor.endereco || null,
+      inscricaoEstadual: valor.inscricaoEstadual || null,
+      inscricaoMunicipal: valor.inscricaoMunicipal || null,
+      email: valor.email || null,
+      dadosBancarios: valor.dadosBancarios || null,
+    };
+
     const requisicao = this.editando
       ? this.fornecedorService.atualizar(this.fornecedorId()!, {
           nome: valor.nome,
           cnpj: valor.cnpj || null,
           ativo: valor.ativo,
+          ...camposComuns,
         })
       : this.fornecedorService.criar({
           nome: valor.nome,
           cnpj: valor.cnpj,
           ativo: valor.ativo,
+          ...camposComuns,
         });
 
     requisicao.subscribe({

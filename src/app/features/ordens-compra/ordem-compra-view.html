@@ -1,0 +1,107 @@
+<section class="ordem-compra-view">
+  <header class="topo">
+    <h1>Ordem de Compra</h1>
+    <button type="button" class="botao botao--texto" (click)="voltar()">Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar a ordem de compra.</p>
+  } @else if (ordemCompra(); as oc) {
+    <section class="painel">
+      <div class="cabecalho-oc">
+        <h2>OC {{ oc.numero.toString().padStart(3, '0') }}</h2>
+        <span class="badge" [class]="'badge--' + oc.status.toLowerCase()">{{ oc.status }}</span>
+      </div>
+
+      <div class="grid-info">
+        <div><span>Data</span><strong>{{ oc.data | dataBr }}</strong></div>
+        <div><span>Solicitante</span><strong>{{ oc.solicitante }}</strong></div>
+        <div><span>Obra</span><strong>{{ oc.localNome }}</strong></div>
+        <div><span>Fornecedor</span><strong>{{ oc.fornecedorNome }}</strong></div>
+        <div><span>Condição de pagamento</span><strong>{{ oc.condicaoPagamento }}</strong></div>
+        <div><span>Valor total</span><strong>R$ {{ oc.valorTotal | number: '1.2-2' }}</strong></div>
+      </div>
+
+      <div class="grid-info">
+        <div><span>Tipo de frete</span><strong>{{ oc.tipoFrete || '-' }}</strong></div>
+        <div><span>Valor do frete</span><strong>R$ {{ oc.valorFrete | number: '1.2-2' }}</strong></div>
+        <div><span>Local de entrega</span><strong>{{ oc.localEntrega || '-' }}</strong></div>
+        <div><span>Prazo de entrega</span><strong>{{ oc.prazoEntrega || '-' }}</strong></div>
+      </div>
+
+      @if (oc.observacoesSolicitante || oc.observacoesFornecedor) {
+        <div class="grid-info">
+          @if (oc.observacoesSolicitante) {
+            <div><span>Observações do solicitante</span><strong>{{ oc.observacoesSolicitante }}</strong></div>
+          }
+          @if (oc.observacoesFornecedor) {
+            <div><span>Observações do fornecedor</span><strong>{{ oc.observacoesFornecedor }}</strong></div>
+          }
+        </div>
+      }
+
+      @if (erroAcao()) {
+        <p class="status status--erro">{{ erroAcao() }}</p>
+      }
+
+      <div class="acoes-oc">
+        @if (oc.status === 'Rascunho') {
+          <a class="botao" [routerLink]="['/ordens-compra', oc.id, 'editar']"><app-icon name="pencil" [size]="16" /> Editar</a>
+          <button type="button" class="botao botao--primario" [disabled]="processando()" (click)="emitir()">
+            {{ processando() ? 'Emitindo...' : 'Emitir' }}
+          </button>
+        }
+        @if (oc.status === 'Emitida') {
+          <button type="button" class="botao botao--primario" [disabled]="processando()" (click)="marcarAssinada()">
+            {{ processando() ? 'Salvando...' : 'Marcar como assinada' }}
+          </button>
+        }
+        @if (oc.status === 'Rascunho' || oc.status === 'Emitida') {
+          <button type="button" class="botao botao--perigo" [disabled]="processando()" (click)="cancelar()">Cancelar</button>
+        }
+        <button type="button" class="botao" [disabled]="baixandoPdf()" (click)="baixarPdf()">
+          <app-icon name="download" [size]="16" /> {{ baixandoPdf() ? 'Gerando...' : 'Baixar PDF para assinatura' }}
+        </button>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Itens</h2>
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Descrição</th>
+              <th>Unidade</th>
+              <th>Marca/Referência</th>
+              <th>Quantidade</th>
+              <th>Valor unitário (R$)</th>
+              <th>Total (R$)</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (item of oc.itens; track item.id) {
+              <tr>
+                <td>{{ item.codigo || '-' }}</td>
+                <td>{{ item.descricao }}</td>
+                <td>{{ item.unidade }}</td>
+                <td>{{ item.marcaReferencia || '-' }}</td>
+                <td>{{ item.quantidade | number: '1.2-6' }}</td>
+                <td>{{ item.valorUnitario | number: '1.2-2' }}</td>
+                <td>{{ item.valorTotal | number: '1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Anexos</h2>
+      <app-anexos-secao recurso="ordens-compra" [entidadeId]="ordemCompraId" />
+    </section>
+  }
+</section>

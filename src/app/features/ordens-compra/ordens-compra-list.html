@@ -1,0 +1,88 @@
+<section class="ordens-compra">
+  <header class="topo">
+    <h1>Ordens de Compra</h1>
+    <a class="botao botao--primario" routerLink="/ordens-compra/novo"><app-icon name="plus" [size]="16" /> Nova ordem de compra</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Número
+      <input type="number" name="numero" [(ngModel)]="filtro.numero" placeholder="Buscar por número" />
+    </label>
+    <label>
+      Fornecedor
+      <select name="fornecedorId" [(ngModel)]="filtro.fornecedorId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (fornecedor of fornecedores(); track fornecedor.id) {
+          <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Obra
+      <select name="localId" [(ngModel)]="filtro.localId">
+        <option [ngValue]="undefined">Todas</option>
+        @for (local of locais(); track local.id) {
+          <option [ngValue]="local.id">{{ local.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option [ngValue]="undefined">Todos</option>
+        <option value="Rascunho">Rascunho</option>
+        <option value="Emitida">Emitida</option>
+        <option value="Assinada">Assinada</option>
+        <option value="Cancelada">Cancelada</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as ordens de compra. Verifique se a API está em execução.</p>
+  } @else if (ordens().length === 0) {
+    <p class="status">Nenhuma ordem de compra encontrada.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Número</th>
+            <th>Data</th>
+            <th>Fornecedor</th>
+            <th>Obra</th>
+            <th>Valor total</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (oc of ordens(); track oc.id) {
+            <tr>
+              <td>OC {{ oc.numero.toString().padStart(3, '0') }}</td>
+              <td>{{ oc.data | dataBr }}</td>
+              <td>{{ oc.fornecedorNome }}</td>
+              <td>{{ oc.localNome }}</td>
+              <td>{{ oc.valorTotal | number: '1.2-2' }}</td>
+              <td>
+                <span class="badge" [class]="'badge--' + oc.status.toLowerCase()">{{ oc.status }}</span>
+              </td>
+              <td class="acoes">
+                <a [routerLink]="['/ordens-compra', oc.id]" title="Visualizar" aria-label="Visualizar">
+                  <app-icon name="eye" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

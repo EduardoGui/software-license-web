@@ -70,6 +70,9 @@ import { PlanoSaudeRelatorioPage } from './features/plano-saude-relatorio/plano-
 import { NotasDebitoPjList } from './features/notas-debito-pj/notas-debito-pj-list';
 import { NotaDebitoPjForm } from './features/notas-debito-pj/nota-debito-pj-form';
 import { NotaDebitoPjView } from './features/notas-debito-pj/nota-debito-pj-view';
+import { OrdensCompraList } from './features/ordens-compra/ordens-compra-list';
+import { OrdemCompraForm } from './features/ordens-compra/ordem-compra-form';
+import { OrdemCompraView } from './features/ordens-compra/ordem-compra-view';
 
 export const routes: Routes = [
   { path: 'login', component: Login },
@@ -169,6 +172,10 @@ export const routes: Routes = [
       { path: 'contratos/novo', component: ContratoForm, canActivate: [adminGuard] },
       { path: 'contratos/timeline', component: ContratosTimeline, canActivate: [adminGuard] },
       { path: 'contratos/:id', component: ContratoView, canActivate: [adminGuard] },
+      { path: 'ordens-compra', component: OrdensCompraList, canActivate: [adminGuard] },
+      { path: 'ordens-compra/novo', component: OrdemCompraForm, canActivate: [adminGuard] },
+      { path: 'ordens-compra/:id/editar', component: OrdemCompraForm, canActivate: [adminGuard] },
+      { path: 'ordens-compra/:id', component: OrdemCompraView, canActivate: [adminGuard] },
     ],
   },
 ];
