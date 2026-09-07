@@ -74,6 +74,9 @@
             <a routerLink="/contratos" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
               Contratos
             </a>
+            <a routerLink="/contratos/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Linha do Tempo
+            </a>
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoDp()">
             <span class="menu__grupo-seta">{{ grupoDpAberto() ? '▾' : '▸' }}</span>

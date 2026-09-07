@@ -1,0 +1,183 @@
+<section class="timeline-page">
+  <header class="topo">
+    <h1>Linha do Tempo de Contratos</h1>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Fornecedor
+      <select name="fornecedorId" [(ngModel)]="filtro.fornecedorId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (fornecedor of fornecedoresFiltro(); track fornecedor.id) {
+          <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option [ngValue]="undefined">Todos</option>
+        <option value="Ativo">Ativo</option>
+        <option value="Suspenso">Suspenso</option>
+        <option value="Encerrado">Encerrado</option>
+      </select>
+    </label>
+    <label>
+      Natureza
+      <input type="text" name="natureza" [(ngModel)]="filtro.natureza" placeholder="Buscar por natureza" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  <div class="periodo">
+    <span class="periodo__rotulo">Período</span>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--ativo]="periodoAtivo() === 'ultimos3meses'"
+      (click)="definirPeriodo('ultimos3meses')"
+    >
+      Últimos 3 meses
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--ativo]="periodoAtivo() === 'ultimos6meses'"
+      (click)="definirPeriodo('ultimos6meses')"
+    >
+      Últimos 6 meses
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--ativo]="periodoAtivo() === 'ultimos12meses'"
+      (click)="definirPeriodo('ultimos12meses')"
+    >
+      Últimos 12 meses
+    </button>
+    <button type="button" class="chip" [class.chip--ativo]="periodoAtivo() === 'anoatual'" (click)="definirPeriodo('anoatual')">
+      Ano atual
+    </button>
+    <button
+      type="button"
+      class="chip"
+      [class.chip--ativo]="periodoAtivo() === 'personalizado'"
+      (click)="definirPeriodo('personalizado')"
+    >
+      Personalizado
+    </button>
+    <button type="button" class="chip chip--hoje" (click)="irParaHoje()">Hoje</button>
+  </div>
+
+  @if (periodoAtivo() === 'personalizado') {
+    <div class="periodo-custom">
+      <label>
+        De
+        <input type="date" name="dataInicialCustom" [(ngModel)]="filtro.dataInicial" />
+      </label>
+      <label>
+        Até
+        <input type="date" name="dataFinalCustom" [(ngModel)]="filtro.dataFinal" />
+      </label>
+      <button type="button" class="botao" (click)="buscar()">Aplicar</button>
+    </div>
+  }
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar a linha do tempo. Verifique se a API está em execução.</p>
+  } @else if (agrupados().length === 0) {
+    <p class="status">Nenhum contrato encontrado para os filtros selecionados.</p>
+  } @else {
+    <div class="timeline-scroll" #scrollContainer>
+      <div class="timeline-corpo">
+        <div class="linha linha--cabecalho">
+          <div class="rotulo"></div>
+          <div class="trilha trilha--eixo" [style.width.px]="larguraTotalPx()">
+            @for (marca of marcasDeMes(); track marca.posicaoPx) {
+              <span class="marca-mes" [style.left.px]="marca.posicaoPx">{{ marca.label }}</span>
+            }
+            @if (posicaoHojePx() !== null) {
+              <div class="marca-hoje" [style.left.px]="posicaoHojePx()"></div>
+            }
+          </div>
+        </div>
+
+        @for (fornecedor of agrupados(); track fornecedor.fornecedorId) {
+          <div class="linha linha--usuario">
+            <button type="button" class="rotulo rotulo--usuario" (click)="alternarExpandido(fornecedor.fornecedorId)">
+              <span class="seta">{{ expandido(fornecedor.fornecedorId) ? '▾' : '▸' }}</span>
+              {{ fornecedor.fornecedorNome }}
+            </button>
+            <div class="trilha" [style.width.px]="larguraTotalPx()">
+              @if (posicaoHojePx() !== null) {
+                <div class="marca-hoje" [style.left.px]="posicaoHojePx()"></div>
+              }
+              <div
+                class="barra barra--usuario"
+                [style.left.px]="posicaoPx(fornecedor.dataInicio)"
+                [style.width.px]="larguraPx(fornecedor.dataInicio, fornecedor.dataFim)"
+                [title]="tituloFornecedor(fornecedor)"
+              ></div>
+            </div>
+          </div>
+
+          @if (expandido(fornecedor.fornecedorId)) {
+            @for (contrato of fornecedor.contratos; track contrato.id) {
+              <div class="linha linha--licenca">
+                <div class="rotulo rotulo--licenca">{{ contrato.numero }}</div>
+                <div class="trilha" [style.width.px]="larguraTotalPx()">
+                  @if (posicaoHojePx() !== null) {
+                    <div class="marca-hoje" [style.left.px]="posicaoHojePx()"></div>
+                  }
+                  <div
+                    class="barra barra--licenca"
+                    [style.left.px]="posicaoPx(contrato.dataInicioVigencia)"
+                    [style.width.px]="larguraPx(contrato.dataInicioVigencia, contrato.dataFimVigenciaAtual)"
+                    [style.background]="corStatus(contrato.status)"
+                    [title]="tituloContrato(contrato)"
+                    (click)="selecionar(contrato)"
+                  ></div>
+                </div>
+              </div>
+            }
+          }
+        }
+      </div>
+    </div>
+  }
+
+  @if (selecionado()) {
+    <div class="modal-fundo" (click)="selecionado.set(null)">
+      <div class="modal" role="dialog" aria-modal="true" aria-label="Detalhes do contrato" (click)="$event.stopPropagation()">
+        <div class="modal__cabecalho">
+          <h2>Detalhes</h2>
+          <button type="button" class="botao-fechar" aria-label="Fechar detalhes" (click)="selecionado.set(null)">×</button>
+        </div>
+        <dl>
+          <dt>Número</dt>
+          <dd>{{ selecionado()!.numero }}</dd>
+          <dt>Fornecedor</dt>
+          <dd>{{ selecionado()!.fornecedorNome }}</dd>
+          <dt>Objeto</dt>
+          <dd>{{ selecionado()!.objeto }}</dd>
+          @if (selecionado()!.natureza) {
+            <dt>Natureza</dt>
+            <dd>{{ selecionado()!.natureza }}</dd>
+          }
+          <dt>Vigência</dt>
+          <dd>{{ selecionado()!.dataInicioVigencia | dataBr }} – {{ selecionado()!.dataFimVigenciaAtual | dataBr }}</dd>
+          <dt>Valor atual</dt>
+          <dd>R$ {{ selecionado()!.valorAtual | number: '1.2-2' }}</dd>
+          <dt>Status</dt>
+          <dd>{{ selecionado()!.status }}</dd>
+        </dl>
+        <a class="botao botao--primario" [routerLink]="['/contratos', selecionado()!.id]">Ver contrato completo</a>
+      </div>
+    </div>
+  }
+</section>
