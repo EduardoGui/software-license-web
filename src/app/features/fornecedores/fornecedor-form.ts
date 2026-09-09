@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
+import { cnpjValidator } from '../../shared/validators/cnpj-validator';
 import { FornecedorService } from './fornecedor.service';
 
 @Component({
@@ -25,7 +26,7 @@ export class FornecedorForm {
 
   protected readonly form = this.fb.nonNullable.group({
     nome: ['', Validators.required],
-    cnpj: ['', Validators.required],
+    cnpj: ['', [Validators.required, cnpjValidator]],
     contato: [''],
     telefone: [''],
     endereco: [''],
@@ -51,7 +52,8 @@ export class FornecedorForm {
       this.fornecedorId.set(id);
       // CNPJ nunca foi capturado em fornecedores migrados de notas fiscais antigas —
       // só é exigido ao cadastrar um fornecedor novo, não ao editar um já existente.
-      this.form.controls.cnpj.clearValidators();
+      // Continua validando o formato caso algo seja digitado.
+      this.form.controls.cnpj.setValidators(cnpjValidator);
       this.form.controls.cnpj.updateValueAndValidity();
       this.carregar(id);
     }
