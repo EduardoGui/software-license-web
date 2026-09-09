@@ -78,7 +78,71 @@
     </div>
 
     <div class="vencimentos">
-      <h2>Pendências</h2>
+      <div class="vencimentos__cabecalho">
+        <h2>Pendências</h2>
+        <div class="acoes-inline">
+          <button type="button" class="botao botao--pequeno" (click)="iniciarNovaUnica()">
+            <app-icon name="plus" [size]="14" /> Nova tarefa
+          </button>
+          <button type="button" class="botao botao--pequeno" (click)="iniciarNovaRecorrente()">
+            <app-icon name="plus" [size]="14" /> Nova tarefa recorrente
+          </button>
+        </div>
+      </div>
+
+      @if (criandoUnica()) {
+        <form [formGroup]="formUnica" (ngSubmit)="confirmarNovaUnica()" class="form-nova-tarefa">
+          <label>
+            Título
+            <input type="text" formControlName="titulo" />
+          </label>
+          <label>
+            Data
+            <input type="date" formControlName="data" />
+          </label>
+          <label>
+            Observação
+            <input type="text" formControlName="observacao" placeholder="Opcional" />
+          </label>
+          <div class="acoes-inline">
+            <button type="submit" class="botao botao--primario botao--pequeno" [disabled]="salvandoUnica()">
+              <app-icon name="check" [size]="14" /> {{ salvandoUnica() ? 'Salvando...' : 'Salvar' }}
+            </button>
+            <button type="button" class="botao botao--texto botao--pequeno" (click)="cancelarNovaUnica()">
+              <app-icon name="x" [size]="14" /> Cancelar
+            </button>
+          </div>
+        </form>
+      }
+
+      @if (criandoRecorrente()) {
+        <form [formGroup]="formRecorrente" (ngSubmit)="confirmarNovaRecorrente()" class="form-nova-tarefa">
+          <label>
+            Título
+            <input type="text" formControlName="titulo" />
+          </label>
+          <label>
+            Dia do mês
+            <input type="number" min="1" max="31" formControlName="diaDoMes" />
+          </label>
+          <label>
+            Observação
+            <input type="text" formControlName="observacao" placeholder="Opcional" />
+          </label>
+          <div class="acoes-inline">
+            <button type="submit" class="botao botao--primario botao--pequeno" [disabled]="salvandoRecorrente()">
+              <app-icon name="check" [size]="14" /> {{ salvandoRecorrente() ? 'Salvando...' : 'Salvar' }}
+            </button>
+            <button type="button" class="botao botao--texto botao--pequeno" (click)="cancelarNovaRecorrente()">
+              <app-icon name="x" [size]="14" /> Cancelar
+            </button>
+          </div>
+        </form>
+      }
+
+      @if (erroAcaoTarefa()) {
+        <p class="status status--erro">{{ erroAcaoTarefa() }}</p>
+      }
       @if (dados()!.pendencias.length === 0) {
         <p class="status">Nenhuma pendência no momento.</p>
       } @else {
@@ -91,6 +155,7 @@
                 <th>Data</th>
                 <th>Observação</th>
                 <th>Situação</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody>
@@ -117,6 +182,45 @@
                       <span class="badge badge--vencendo">Vence hoje</span>
                     } @else {
                       <span class="badge badge--vencendo">Vence em {{ pendencia.diasParaVencer }} dia(s)</span>
+                    }
+                  </td>
+                  <td>
+                    @if (pendencia.origem === 'Tarefa' && pendencia.tarefaOcorrenciaId !== null) {
+                      @if (adiandoId() === pendencia.tarefaOcorrenciaId) {
+                        <form
+                          [formGroup]="formAdiar"
+                          (ngSubmit)="confirmarAdiar(pendencia.tarefaOcorrenciaId)"
+                          class="form-adiar-dashboard"
+                        >
+                          <input type="date" formControlName="novaData" />
+                          <input type="text" formControlName="observacao" placeholder="Observação (opcional)" />
+                          <div class="acoes-inline">
+                            <button type="submit" class="botao botao--primario botao--pequeno" title="Confirmar">
+                              <app-icon name="check" [size]="14" />
+                            </button>
+                            <button type="button" class="botao botao--texto botao--pequeno" (click)="cancelarAdiar()" title="Cancelar">
+                              <app-icon name="x" [size]="14" />
+                            </button>
+                          </div>
+                        </form>
+                      } @else {
+                        <div class="acoes-inline">
+                          <button
+                            type="button"
+                            class="botao botao--primario botao--pequeno"
+                            [disabled]="concluindoId() === pendencia.tarefaOcorrenciaId"
+                            (click)="concluirTarefa(pendencia.tarefaOcorrenciaId)"
+                          >
+                            <app-icon name="check" [size]="14" />
+                            {{ concluindoId() === pendencia.tarefaOcorrenciaId ? 'Concluindo...' : 'Concluir' }}
+                          </button>
+                          <button type="button" class="botao botao--pequeno" (click)="iniciarAdiar(pendencia)">
+                            <app-icon name="calendar" [size]="14" /> Adiar
+                          </button>
+                        </div>
+                      }
+                    } @else {
+                      —
                     }
                   </td>
                 </tr>
