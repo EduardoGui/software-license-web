@@ -49,6 +49,7 @@ legend {
   gap: 0.25rem;
   font-size: 0.85rem;
   color: var(--color-text);
+  min-width: 0;
 }
 
 input,
@@ -138,11 +139,14 @@ td input {
 
 .campo-com-acao {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+  min-width: 0;
 
   select {
     flex: 1;
+    min-width: 0;
   }
 
   button {
