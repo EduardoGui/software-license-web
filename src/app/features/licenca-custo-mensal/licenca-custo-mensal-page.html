@@ -34,7 +34,7 @@
     <p class="status">Carregando...</p>
   } @else if (erro() || !relatorio()) {
     <p class="status status--erro">Não foi possível carregar o relatório. Verifique se a API está em execução.</p>
-  } @else if (relatorio()!.grupos.length === 0) {
+  } @else if (relatorio()!.gruposMensal.length === 0 && relatorio()!.gruposAnual.length === 0) {
     <p class="status">Nenhuma licença ativa no período selecionado.</p>
   } @else {
     <div class="resumo">
@@ -44,48 +44,103 @@
       </button>
     </div>
 
-    <div class="tabela-scroll">
-      <table>
-        <thead>
-          <tr>
-            <th>Licença</th>
-            <th>Usuário</th>
-            <th>Dias ativos</th>
-            <th>Valor proporcional</th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (grupo of relatorio()!.grupos; track grupo.tipo) {
-            <tr class="linha-grupo">
-              <td colspan="4">{{ grupo.tipo }}</td>
+    @if (relatorio()!.gruposMensal.length > 0) {
+      <h2 class="titulo-secao">Custo Mensal</h2>
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Licença</th>
+              <th>Usuário</th>
+              <th>Dias ativos</th>
+              <th>Valor proporcional</th>
             </tr>
-            @for (licenca of grupo.licencas; track licenca.licencaId) {
-              @for (usuario of licenca.usuarios; track usuario.usuarioId; let primeiro = $first) {
-                <tr>
-                  <td>{{ primeiro ? licenca.nome : '' }}</td>
-                  <td>{{ usuario.usuarioNome }}</td>
-                  <td>{{ usuario.diasAtivos }}/{{ licenca.diasNoMes }}</td>
-                  <td>{{ usuario.valorProporcional | number: '1.2-2' }}</td>
+          </thead>
+          <tbody>
+            @for (grupo of relatorio()!.gruposMensal; track grupo.tipo) {
+              <tr class="linha-grupo">
+                <td colspan="4">{{ grupo.tipo }}</td>
+              </tr>
+              @for (licenca of grupo.licencas; track licenca.licencaId) {
+                @for (usuario of licenca.usuarios; track usuario.usuarioId; let primeiro = $first) {
+                  <tr>
+                    <td>{{ primeiro ? licenca.nome : '' }}</td>
+                    <td>{{ usuario.usuarioNome }}</td>
+                    <td>{{ usuario.diasAtivos }}/{{ licenca.diasNoMes }}</td>
+                    <td>{{ usuario.valorProporcional | number: '1.2-2' }}</td>
+                  </tr>
+                }
+                <tr class="linha-subtotal-licenca">
+                  <td colspan="3">Subtotal — {{ licenca.nome }}</td>
+                  <td>{{ licenca.subtotal | number: '1.2-2' }}</td>
                 </tr>
               }
-              <tr class="linha-subtotal-licenca">
-                <td colspan="3">Subtotal — {{ licenca.nome }}</td>
-                <td>{{ licenca.subtotal | number: '1.2-2' }}</td>
+              <tr class="linha-subtotal-grupo">
+                <td colspan="3">Subtotal — {{ grupo.tipo }}</td>
+                <td>{{ grupo.subtotal | number: '1.2-2' }}</td>
               </tr>
             }
-            <tr class="linha-subtotal-grupo">
-              <td colspan="3">Subtotal — {{ grupo.tipo }}</td>
-              <td>{{ grupo.subtotal | number: '1.2-2' }}</td>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3"><strong>Total — Custo Mensal</strong></td>
+              <td><strong>{{ relatorio()!.subtotalMensal | number: '1.2-2' }}</strong></td>
             </tr>
-          }
-        </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="3"><strong>Medição da Empresa (Total)</strong></td>
-            <td><strong>{{ relatorio()!.valorTotal | number: '1.2-2' }}</strong></td>
-          </tr>
-        </tfoot>
-      </table>
+          </tfoot>
+        </table>
+      </div>
+    }
+
+    @if (relatorio()!.gruposAnual.length > 0) {
+      <h2 class="titulo-secao">Custo Anual (equivalente mensal)</h2>
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Licença</th>
+              <th>Usuário</th>
+              <th>Dias ativos</th>
+              <th>Valor proporcional</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (grupo of relatorio()!.gruposAnual; track grupo.tipo) {
+              <tr class="linha-grupo">
+                <td colspan="4">{{ grupo.tipo }}</td>
+              </tr>
+              @for (licenca of grupo.licencas; track licenca.licencaId) {
+                @for (usuario of licenca.usuarios; track usuario.usuarioId; let primeiro = $first) {
+                  <tr>
+                    <td>{{ primeiro ? licenca.nome : '' }}</td>
+                    <td>{{ usuario.usuarioNome }}</td>
+                    <td>{{ usuario.diasAtivos }}/{{ licenca.diasNoMes }}</td>
+                    <td>{{ usuario.valorProporcional | number: '1.2-2' }}</td>
+                  </tr>
+                }
+                <tr class="linha-subtotal-licenca">
+                  <td colspan="3">Subtotal — {{ licenca.nome }}</td>
+                  <td>{{ licenca.subtotal | number: '1.2-2' }}</td>
+                </tr>
+              }
+              <tr class="linha-subtotal-grupo">
+                <td colspan="3">Subtotal — {{ grupo.tipo }}</td>
+                <td>{{ grupo.subtotal | number: '1.2-2' }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="3"><strong>Total — Custo Anual (equivalente mensal)</strong></td>
+              <td><strong>{{ relatorio()!.subtotalAnual | number: '1.2-2' }}</strong></td>
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+    }
+
+    <div class="total-geral">
+      <strong>Medição da Empresa (Total)</strong>
+      <strong>{{ relatorio()!.valorTotal | number: '1.2-2' }}</strong>
     </div>
   }
 </section>

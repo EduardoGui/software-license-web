@@ -22,7 +22,10 @@ export interface RelatorioMensalCustoLicencasGrupo {
 export interface RelatorioMensalCustoLicencas {
   ano: number;
   mes: number;
-  grupos: RelatorioMensalCustoLicencasGrupo[];
+  gruposMensal: RelatorioMensalCustoLicencasGrupo[];
+  subtotalMensal: number;
+  gruposAnual: RelatorioMensalCustoLicencasGrupo[];
+  subtotalAnual: number;
   valorTotal: number;
 }
 

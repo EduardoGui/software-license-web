@@ -147,3 +147,25 @@ tfoot td {
   color: var(--color-primary);
   border-bottom: 2px solid var(--color-primary-tint-border);
 }
+
+.titulo-secao {
+  color: var(--color-primary);
+  font-size: 1rem;
+  margin: 1.5rem 0 0.5rem;
+}
+
+.titulo-secao:first-of-type {
+  margin-top: 0;
+}
+
+.total-geral {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 1.25rem;
+  padding: 0.85rem 1.1rem;
+  background: var(--color-primary);
+  color: var(--color-on-dark);
+  border-radius: 8px;
+  font-size: 1rem;
+}

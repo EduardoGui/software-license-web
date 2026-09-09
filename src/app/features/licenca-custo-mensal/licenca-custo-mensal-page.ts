@@ -66,7 +66,13 @@ export class LicencaCustoMensalPage {
   }
 
   protected contarLicencas(): number {
-    return this.relatorio()?.grupos.reduce((total, grupo) => total + grupo.licencas.length, 0) ?? 0;
+    const relatorio = this.relatorio();
+    if (!relatorio) {
+      return 0;
+    }
+
+    const contar = (grupos: typeof relatorio.gruposMensal) => grupos.reduce((total, grupo) => total + grupo.licencas.length, 0);
+    return contar(relatorio.gruposMensal) + contar(relatorio.gruposAnual);
   }
 
   protected exportar(): void {
