@@ -1,0 +1,40 @@
+@if (aberto) {
+  <div class="overlay" (click)="fecharModal()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <header>
+        <h2>Dados da Hope</h2>
+        <button type="button" class="botao-fechar" (click)="fecharModal()" aria-label="Fechar">
+          <app-icon name="x" [size]="18" />
+        </button>
+      </header>
+
+      <div class="lista">
+        @for (campo of campos; track campo.rotulo) {
+          <div class="campo">
+            <div class="campo__texto">
+              <span class="campo__rotulo">{{ campo.rotulo }}</span>
+              <span class="campo__valor">{{ campo.valor }}</span>
+            </div>
+            <button type="button" class="botao-copiar" (click)="copiar(campo)" [title]="'Copiar ' + campo.rotulo">
+              @if (copiadoRotulo() === campo.rotulo) {
+                <app-icon name="check" [size]="14" />
+              } @else {
+                <app-icon name="copy" [size]="14" />
+              }
+            </button>
+          </div>
+        }
+      </div>
+
+      <footer>
+        <button type="button" class="botao botao--primario" (click)="copiarTudo()">
+          @if (copiadoRotulo() === '__tudo__') {
+            <app-icon name="check" [size]="16" /> Copiado!
+          } @else {
+            <app-icon name="copy" [size]="16" /> Copiar todos os dados
+          }
+        </button>
+      </footer>
+    </div>
+  </div>
+}

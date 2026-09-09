@@ -49,6 +49,17 @@
           Observações
           <textarea rows="2" formControlName="observacoes"></textarea>
         </label>
+        <label>
+          Contato para aprovação de BM
+          <input type="text" formControlName="contatoAprovacaoNome" placeholder="Nome do responsável" />
+        </label>
+        <label>
+          E-mail do contato
+          <input type="email" formControlName="contatoAprovacaoEmail" placeholder="nome@fornecedor.com" />
+          @if (form.controls.contatoAprovacaoEmail.invalid && form.controls.contatoAprovacaoEmail.touched) {
+            <span class="campo-erro">E-mail inválido.</span>
+          }
+        </label>
       </div>
     </fieldset>
 

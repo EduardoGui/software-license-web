@@ -47,6 +47,8 @@ export class OrdemCompraForm {
     prazoEntrega: [''],
     observacoesSolicitante: [''],
     observacoesFornecedor: [''],
+    contatoAprovacaoNome: [''],
+    contatoAprovacaoEmail: ['', Validators.email],
     itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([]),
   });
 
@@ -158,6 +160,8 @@ export class OrdemCompraForm {
           prazoEntrega: oc.prazoEntrega ?? '',
           observacoesSolicitante: oc.observacoesSolicitante ?? '',
           observacoesFornecedor: oc.observacoesFornecedor ?? '',
+          contatoAprovacaoNome: oc.contatoAprovacaoNome ?? '',
+          contatoAprovacaoEmail: oc.contatoAprovacaoEmail ?? '',
         });
 
         this.itens.clear();
@@ -204,6 +208,8 @@ export class OrdemCompraForm {
       prazoEntrega: valor.prazoEntrega || null,
       observacoesSolicitante: valor.observacoesSolicitante || null,
       observacoesFornecedor: valor.observacoesFornecedor || null,
+      contatoAprovacaoNome: valor.contatoAprovacaoNome || null,
+      contatoAprovacaoEmail: valor.contatoAprovacaoEmail || null,
       itens: valor.itens.map((item) => ({
         codigo: item.codigo || null,
         descricao: item.descricao,

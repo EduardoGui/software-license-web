@@ -21,9 +21,13 @@
 .marca {
   display: flex;
   justify-content: center;
+  width: 100%;
   padding: 0 1.25rem 1.25rem;
+  border: none;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   margin-bottom: 1rem;
+  background: transparent;
+  cursor: pointer;
 }
 
 .marca__logo {

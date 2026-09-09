@@ -36,6 +36,8 @@ export class ContratoForm {
     dataFimVigenciaOriginal: ['', Validators.required],
     valorOriginal: [0, [Validators.required, Validators.min(0)]],
     observacoes: [''],
+    contatoAprovacaoNome: [''],
+    contatoAprovacaoEmail: ['', Validators.email],
     itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([]),
     tipoMedicao: ['MensalFixo' as TipoMedicao, Validators.required],
     diaInicioPeriodo: this.fb.control<number | null>(null),
@@ -101,6 +103,8 @@ export class ContratoForm {
       dataFimVigenciaOriginal: valor.dataFimVigenciaOriginal,
       valorOriginal: valor.valorOriginal,
       observacoes: valor.observacoes || null,
+      contatoAprovacaoNome: valor.contatoAprovacaoNome || null,
+      contatoAprovacaoEmail: valor.contatoAprovacaoEmail || null,
       itens: valor.itens.map((item) => ({
         codigo: item.codigo || null,
         descricao: item.descricao,

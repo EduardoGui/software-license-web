@@ -17,6 +17,8 @@ export interface Contrato {
   valorAtual: number;
   status: ContratoStatus;
   observacoes: string | null;
+  contatoAprovacaoNome: string | null;
+  contatoAprovacaoEmail: string | null;
   quantidadeItens: number;
   dataCriacao: string;
   dataAtualizacao: string;
@@ -77,6 +79,8 @@ export interface CreateContratoPayload {
   dataFimVigenciaOriginal: string;
   valorOriginal: number;
   observacoes: string | null;
+  contatoAprovacaoNome: string | null;
+  contatoAprovacaoEmail: string | null;
   itens: CreateContratoItemPayload[];
   medicaoConfig: ContratoMedicaoConfig;
   faturamentoConfig: ContratoFaturamentoConfig;
@@ -87,6 +91,8 @@ export interface UpdateContratoPayload {
   natureza: string | null;
   status: ContratoStatus;
   observacoes: string | null;
+  contatoAprovacaoNome: string | null;
+  contatoAprovacaoEmail: string | null;
 }
 
 export interface ContratoFiltro {

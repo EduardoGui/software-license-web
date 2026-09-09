@@ -1,5 +1,6 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
+import { Title } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 
@@ -19,6 +20,7 @@ export class MedicaoBmImprimir {
   private readonly route = inject(ActivatedRoute);
   private readonly contratoService = inject(ContratoService);
   private readonly fornecedorService = inject(FornecedorService);
+  private readonly title = inject(Title);
 
   protected readonly contratoId = Number(this.route.snapshot.paramMap.get('id'));
   protected readonly medicaoId = Number(this.route.snapshot.paramMap.get('medicaoId'));
@@ -41,6 +43,9 @@ export class MedicaoBmImprimir {
           next: (fornecedor) => {
             this.fornecedor.set(fornecedor);
             this.carregando.set(false);
+            // Vira o nome sugerido ao salvar como PDF pela impressão do navegador.
+            const numeroBm = bm.numero.toString().padStart(3, '0');
+            this.title.setTitle(`BM-${numeroBm} - ${contrato.numero} - ${fornecedor.nome.toUpperCase()}`);
           },
           error: () => this.carregando.set(false),
         });
@@ -54,6 +59,10 @@ export class MedicaoBmImprimir {
 
   protected imprimir(): void {
     window.print();
+  }
+
+  protected numeroBmExibicao(m: MedicaoBm): string {
+    return m.numeroReferencia || m.numero.toString().padStart(3, '0');
   }
 
   protected somaSaldoValor(itens: MedicaoBmItem[]): number {

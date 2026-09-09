@@ -30,7 +30,7 @@
         <td colspan="3">{{ f?.nome ?? c.fornecedorNome }}</td>
         <td>{{ f?.cnpj ?? '—' }}</td>
         <td>{{ c.numero }}</td>
-        <td>{{ m.numeroReferencia || m.numero }}</td>
+        <td>{{ numeroBmExibicao(m) }}</td>
         <td>{{ m.periodoInicio | dataBr }} a {{ m.periodoFim | dataBr }}</td>
         <td>{{ m.dataEnvio ? (m.dataEnvio | dataBr) : '—' }}</td>
       </tr>

@@ -31,6 +31,13 @@
         <div><span>Prazo de entrega</span><strong>{{ oc.prazoEntrega || '-' }}</strong></div>
       </div>
 
+      @if (oc.contatoAprovacaoNome || oc.contatoAprovacaoEmail) {
+        <div class="grid-info">
+          <div><span>Contato para aprovação</span><strong>{{ oc.contatoAprovacaoNome || '-' }}</strong></div>
+          <div><span>E-mail do contato</span><strong>{{ oc.contatoAprovacaoEmail || '-' }}</strong></div>
+        </div>
+      }
+
       @if (oc.observacoesSolicitante || oc.observacoesFornecedor) {
         <div class="grid-info">
           @if (oc.observacoesSolicitante) {

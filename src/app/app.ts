@@ -3,17 +3,20 @@ import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } fro
 import { filter } from 'rxjs';
 
 import { AuthService } from './features/auth/auth.service';
+import { DadosHopeModal } from './shared/dados-hope/dados-hope-modal';
 import { Icon } from './shared/icons/icon';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, Icon],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, Icon, DadosHopeModal],
   templateUrl: './app.html',
   styleUrl: './app.scss',
 })
 export class App {
   private readonly router = inject(Router);
   protected readonly authService = inject(AuthService);
+
+  protected readonly dadosHopeAberto = signal(false);
 
   protected readonly urlAtual = signal(this.router.url);
   protected readonly mostrarShell = computed(
@@ -154,6 +157,10 @@ export class App {
 
   protected alternarMenuMobile(): void {
     this.menuMobileAberto.update((aberto) => !aberto);
+  }
+
+  protected abrirDadosHope(): void {
+    this.dadosHopeAberto.set(true);
   }
 
   protected sair(): void {

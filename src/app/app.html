@@ -2,9 +2,9 @@
   <div class="shell">
     <aside class="sidebar">
       <div class="sidebar__topo">
-        <div class="marca">
+        <button type="button" class="marca" (click)="abrirDadosHope()" title="Ver dados da Hope (CNPJ, endereço...)">
           <img src="logo-hope.png" alt="Adm Hope" class="marca__logo" />
-        </div>
+        </button>
         <button
           type="button"
           class="botao-hamburguer"
@@ -184,6 +184,7 @@
       <router-outlet></router-outlet>
     </main>
   </div>
+  <app-dados-hope-modal [aberto]="dadosHopeAberto()" (fechar)="dadosHopeAberto.set(false)" />
 } @else {
   <router-outlet></router-outlet>
 }

@@ -45,6 +45,8 @@ export interface OrdemCompraDetalhe {
   prazoEntrega: string | null;
   observacoesSolicitante: string | null;
   observacoesFornecedor: string | null;
+  contatoAprovacaoNome: string | null;
+  contatoAprovacaoEmail: string | null;
   status: OrdemCompraStatus;
   valorTotal: number;
   dataCriacao: string;
@@ -73,6 +75,8 @@ export interface CreateOrdemCompraPayload {
   prazoEntrega: string | null;
   observacoesSolicitante: string | null;
   observacoesFornecedor: string | null;
+  contatoAprovacaoNome: string | null;
+  contatoAprovacaoEmail: string | null;
   itens: CreateOrdemCompraItemPayload[];
 }
 

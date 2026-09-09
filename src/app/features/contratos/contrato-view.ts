@@ -78,6 +78,8 @@ export class ContratoView {
     natureza: [''],
     status: ['Ativo' as ContratoStatus, Validators.required],
     observacoes: [''],
+    contatoAprovacaoNome: [''],
+    contatoAprovacaoEmail: ['', Validators.email],
   });
 
   protected readonly formMedicao = this.fb.nonNullable.group({
@@ -171,6 +173,8 @@ export class ContratoView {
           natureza: contrato.natureza ?? '',
           status: contrato.status,
           observacoes: contrato.observacoes ?? '',
+          contatoAprovacaoNome: contrato.contatoAprovacaoNome ?? '',
+          contatoAprovacaoEmail: contrato.contatoAprovacaoEmail ?? '',
         });
         if (contrato.medicaoConfig) {
           this.formMedicao.reset(contrato.medicaoConfig);
@@ -202,6 +206,8 @@ export class ContratoView {
         objeto: valor.objeto,
         natureza: valor.natureza || null,
         status: valor.status,
+        contatoAprovacaoNome: valor.contatoAprovacaoNome || null,
+        contatoAprovacaoEmail: valor.contatoAprovacaoEmail || null,
         observacoes: valor.observacoes || null,
       })
       .subscribe({
