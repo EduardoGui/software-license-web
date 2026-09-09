@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
 import { cnpjValidator } from '../../shared/validators/cnpj-validator';
@@ -17,7 +17,11 @@ export class FornecedorForm {
   private readonly fb = inject(FormBuilder);
   private readonly fornecedorService = inject(FornecedorService);
   private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
   private readonly location = inject(Location);
+
+  /** Quando viemos do formulário de Ordem de Compra porque o fornecedor desejado não existia. */
+  protected readonly retornoParaNovaOc = this.route.snapshot.queryParamMap.get('retorno') === 'nova-oc';
 
   protected readonly fornecedorId = signal<number | null>(null);
   protected readonly carregando = signal(false);
@@ -119,7 +123,13 @@ export class FornecedorForm {
         });
 
     requisicao.subscribe({
-      next: () => this.location.back(),
+      next: (fornecedor) => {
+        if (this.retornoParaNovaOc && !this.editando) {
+          this.router.navigate(['/ordens-compra/novo'], { queryParams: { fornecedorId: fornecedor.id } });
+        } else {
+          this.location.back();
+        }
+      },
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar o fornecedor.');

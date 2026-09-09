@@ -8,6 +8,11 @@
     <p class="status">Carregando...</p>
   } @else {
     <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (retornoParaNovaOc) {
+        <p class="status status--info">
+          Cadastre o fornecedor e ele será selecionado automaticamente ao voltar para a Ordem de Compra.
+        </p>
+      }
       @if (erro()) {
         <p class="status status--erro">{{ erro() }}</p>
       }
@@ -78,7 +83,11 @@
         <button type="submit" class="botao botao--primario" [disabled]="salvando()">
           <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
         </button>
-        <a routerLink="/dp/fornecedores" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+        @if (retornoParaNovaOc) {
+          <button type="button" class="botao botao--texto" (click)="voltar()"><app-icon name="x" [size]="16" /> Cancelar</button>
+        } @else {
+          <a routerLink="/dp/fornecedores" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+        }
       </div>
     </form>
   }

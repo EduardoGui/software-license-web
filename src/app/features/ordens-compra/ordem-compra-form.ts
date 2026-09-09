@@ -25,12 +25,15 @@ export class OrdemCompraForm {
   private readonly router = inject(Router);
   private readonly location = inject(Location);
 
+  private static readonly ChaveRascunho = 'oc-form-rascunho';
+
   protected readonly ordemCompraId = signal<number | null>(null);
   protected readonly fornecedores = signal<Fornecedor[]>([]);
   protected readonly locais = signal<Local[]>([]);
   protected readonly carregando = signal(false);
   protected readonly salvando = signal(false);
   protected readonly erro = signal<string | null>(null);
+  protected readonly erroValidacao = signal(false);
 
   protected readonly form = this.fb.nonNullable.group({
     data: ['', Validators.required],
@@ -68,8 +71,55 @@ export class OrdemCompraForm {
       const id = Number(idParam);
       this.ordemCompraId.set(id);
       this.carregar(id);
-    } else {
+    } else if (!this.restaurarRascunho()) {
       this.adicionarItem();
+    }
+  }
+
+  /** Chamado quando o fornecedor desejado ainda não existe: guarda o que já foi
+   * preenchido nesta OC e abre o cadastro de fornecedor, voltando para cá depois. */
+  protected novoFornecedor(): void {
+    sessionStorage.setItem(OrdemCompraForm.ChaveRascunho, JSON.stringify(this.form.getRawValue()));
+    this.router.navigate(['/dp/fornecedores/novo'], { queryParams: { retorno: 'nova-oc' } });
+  }
+
+  private restaurarRascunho(): boolean {
+    const rascunho = sessionStorage.getItem(OrdemCompraForm.ChaveRascunho);
+    if (!rascunho) {
+      return false;
+    }
+
+    sessionStorage.removeItem(OrdemCompraForm.ChaveRascunho);
+
+    try {
+      const dados = JSON.parse(rascunho);
+      this.itens.clear();
+      for (const item of dados.itens ?? []) {
+        this.itens.push(
+          this.fb.nonNullable.group({
+            codigo: [item.codigo ?? ''],
+            descricao: [item.descricao ?? '', Validators.required],
+            unidade: [item.unidade ?? '', Validators.required],
+            marcaReferencia: [item.marcaReferencia ?? ''],
+            quantidade: [item.quantidade ?? 0, [Validators.required, Validators.min(0.000001)]],
+            valorUnitario: [item.valorUnitario ?? 0, [Validators.required, Validators.min(0)]],
+          }),
+        );
+      }
+      if (this.itens.length === 0) {
+        this.adicionarItem();
+      }
+
+      this.form.patchValue(dados);
+
+      const novoFornecedorId = this.route.snapshot.queryParamMap.get('fornecedorId');
+      if (novoFornecedorId) {
+        this.form.patchValue({ fornecedorId: Number(novoFornecedorId) });
+      }
+
+      return true;
+    } catch {
+      return false;
     }
   }
 
@@ -136,9 +186,11 @@ export class OrdemCompraForm {
   protected salvar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.erroValidacao.set(true);
       return;
     }
 
+    this.erroValidacao.set(false);
     const valor = this.form.getRawValue();
     const payload = {
       data: valor.data,

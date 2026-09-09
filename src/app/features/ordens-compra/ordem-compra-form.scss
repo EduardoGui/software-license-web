@@ -126,3 +126,26 @@ td input {
 .status--erro {
   color: #b91c1c;
 }
+
+.campo-erro {
+  color: #b91c1c;
+  font-size: 0.78rem;
+}
+
+.invalido {
+  border-color: #b91c1c !important;
+}
+
+.campo-com-acao {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+
+  select {
+    flex: 1;
+  }
+
+  button {
+    white-space: nowrap;
+  }
+}
