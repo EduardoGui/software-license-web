@@ -22,6 +22,9 @@
       <dt>Quantidade total</dt>
       <dd>{{ licenca()!.quantidadeTotal }}</dd>
 
+      <dt>Forma de cobrança</dt>
+      <dd>{{ licenca()!.formaCobranca === 'Pacote' ? 'Pacote fechado (valor dividido entre usuários)' : 'Por vaga (valor × quantidade)' }}</dd>
+
       <dt>Em uso</dt>
       <dd>{{ licenca()!.quantidadeEmUso }}</dd>
 

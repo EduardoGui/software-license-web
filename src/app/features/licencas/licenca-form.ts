@@ -6,7 +6,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Icon } from '../../shared/icons/icon';
 import { NotaFiscalEntrada } from '../notas-fiscais-entrada/nota-fiscal-entrada';
 import { NotaFiscalEntradaService } from '../notas-fiscais-entrada/nota-fiscal-entrada.service';
-import { CreateLicencaPayload, LicencaPeriodicidade } from './licenca';
+import { CreateLicencaPayload, LicencaFormaCobranca, LicencaPeriodicidade } from './licenca';
 import { LicencaService } from './licenca.service';
 
 @Component({
@@ -34,6 +34,7 @@ export class LicencaForm {
     tipo: [''],
     descricao: [''],
     quantidadeTotal: [1, [Validators.required, Validators.min(1)]],
+    formaCobranca: ['PorVaga' as LicencaFormaCobranca, Validators.required],
     dataInicio: ['', Validators.required],
     dataTerminoPrevisto: ['', Validators.required],
     diasAntecedenciaAviso: [30, [Validators.required, Validators.min(0)]],
@@ -76,6 +77,7 @@ export class LicencaForm {
           tipo: licenca.tipo ?? '',
           descricao: licenca.descricao ?? '',
           quantidadeTotal: licenca.quantidadeTotal,
+          formaCobranca: licenca.formaCobranca,
           dataInicio: licenca.dataInicio,
           dataTerminoPrevisto: licenca.dataTerminoPrevisto,
           diasAntecedenciaAviso: licenca.diasAntecedenciaAviso,
@@ -104,6 +106,7 @@ export class LicencaForm {
       tipo: valor.tipo || null,
       descricao: valor.descricao || null,
       quantidadeTotal: valor.quantidadeTotal,
+      formaCobranca: valor.formaCobranca,
       dataInicio: valor.dataInicio,
       dataTerminoPrevisto: valor.dataTerminoPrevisto,
       diasAntecedenciaAviso: valor.diasAntecedenciaAviso,

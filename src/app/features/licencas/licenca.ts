@@ -1,4 +1,5 @@
 export type LicencaPeriodicidade = 'Mensal' | 'Anual';
+export type LicencaFormaCobranca = 'PorVaga' | 'Pacote';
 
 export interface Licenca {
   id: number;
@@ -6,6 +7,7 @@ export interface Licenca {
   tipo: string | null;
   descricao: string | null;
   quantidadeTotal: number;
+  formaCobranca: LicencaFormaCobranca;
   quantidadeEmUso: number;
   quantidadeDisponivel: number;
   dataInicio: string;
@@ -27,6 +29,7 @@ export interface LicencaPayload {
   tipo: string | null;
   descricao: string | null;
   quantidadeTotal: number;
+  formaCobranca: LicencaFormaCobranca;
   dataInicio: string;
   dataTerminoPrevisto: string;
   diasAntecedenciaAviso: number;

@@ -38,6 +38,14 @@
         }
       </label>
 
+      <label>
+        Forma de cobrança *
+        <select formControlName="formaCobranca">
+          <option value="PorVaga">Por vaga (valor de uma unidade × quantidade)</option>
+          <option value="Pacote">Pacote fechado (valor total do lote, dividido entre os usuários)</option>
+        </select>
+      </label>
+
       @if (!editando) {
         <label>
           Valor *
