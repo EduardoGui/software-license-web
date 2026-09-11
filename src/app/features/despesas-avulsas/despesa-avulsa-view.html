@@ -32,8 +32,15 @@
         </div>
       }
 
+      @if (erroExclusao()) {
+        <p class="status status--erro">{{ erroExclusao() }}</p>
+      }
+
       <div class="acoes">
         <a class="botao" [routerLink]="['/despesas-avulsas', d.id, 'editar']">Editar</a>
+        <button type="button" class="botao botao--perigo" [disabled]="excluindo()" (click)="excluir()">
+          {{ excluindo() ? 'Excluindo...' : 'Excluir' }}
+        </button>
       </div>
     </section>
 

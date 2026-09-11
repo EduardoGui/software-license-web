@@ -37,4 +37,8 @@ export class DespesaAvulsaService {
   atualizar(id: number, payload: UpdateDespesaAvulsaPayload): Observable<DespesaAvulsa> {
     return this.http.put<DespesaAvulsa>(`${this.baseUrl}/${id}`, payload);
   }
+
+  excluir(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }
