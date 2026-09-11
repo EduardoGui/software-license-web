@@ -52,7 +52,7 @@
           <th colspan="2">VALOR DA MEDIÇÃO</th>
           <th colspan="2">SALDO CONTRATUAL</th>
         </tr>
-        <tr class="linha-escura">
+        <tr class="linha-subcabecalho">
           <th>CONTRATO</th>
           <th>MEDIDA</th>
           <th>BM ATUAL</th>
@@ -152,7 +152,7 @@
             <tr><td>TOTAL BRUTO DA MEDIÇÃO:</td><td>R$ {{ m.valorTotalMedido | number: '1.2-2' }}</td></tr>
             <tr><td>TOTAL DE ACERTOS E DESCONTOS:</td><td>R$ {{ m.valorTotalAcertos | number: '1.2-2' }}</td></tr>
             <tr><td>TOTAL DE IMPOSTOS E RETENÇÕES:</td><td>R$ {{ m.valorTotalImpostos | number: '1.2-2' }}</td></tr>
-            <tr class="linha-total"><td>TOTAL LÍQUIDO A RECEBER:</td><td>R$ {{ m.valorLiquido | number: '1.2-2' }}</td></tr>
+            <tr class="linha-destaque"><td>TOTAL LÍQUIDO A RECEBER:</td><td>R$ {{ m.valorLiquido | number: '1.2-2' }}</td></tr>
           </table>
         </td>
         <td class="metade celula-assinaturas">

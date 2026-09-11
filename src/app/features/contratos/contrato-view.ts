@@ -129,6 +129,8 @@ export class ContratoView {
 
   protected readonly formItensMedicao = this.fb.nonNullable.group({
     numeroReferencia: [''],
+    dataEnvio: [''],
+    observacao: [''],
     itens: this.fb.array<ReturnType<typeof this.criarLinhaItemMedicao>>([]),
     acertos: this.fb.array<ReturnType<typeof this.criarLinhaAcerto>>([]),
     impostos: this.fb.array<ReturnType<typeof this.criarLinhaImposto>>([]),
@@ -462,7 +464,11 @@ export class ContratoView {
     this.medicaoExpandidaId.set(bm.id);
     this.confirmandoExclusaoMedicao.set(false);
     this.erroExclusaoMedicao.set(null);
-    this.formItensMedicao.patchValue({ numeroReferencia: bm.numeroReferencia ?? '' });
+    this.formItensMedicao.patchValue({
+      numeroReferencia: bm.numeroReferencia ?? '',
+      dataEnvio: bm.dataEnvio ?? hojeIso(),
+      observacao: bm.observacao ?? '',
+    });
 
     this.itensMedicao.clear();
     for (const item of bm.itens) {
@@ -529,8 +535,8 @@ export class ContratoView {
     this.contratoService
       .atualizarMedicaoBm(this.contratoId, medicaoId, {
         numeroReferencia: valor.numeroReferencia || null,
-        dataEnvio: null,
-        observacao: null,
+        dataEnvio: valor.dataEnvio || null,
+        observacao: valor.observacao || null,
         itens: valor.itens.map((item) => ({
           itemId: item.itemId,
           quantidadeMedidaNestaBm: item.quantidadeMedidaNestaBm,

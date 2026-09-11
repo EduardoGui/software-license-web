@@ -364,6 +364,14 @@
                   Nº de referência
                   <input type="text" formControlName="numeroReferencia" [readonly]="bm.status !== 'Rascunho'" placeholder="ex.: 006" />
                 </label>
+                <label>
+                  Data de emissão
+                  <input type="date" formControlName="dataEnvio" [readonly]="bm.status !== 'Rascunho'" />
+                </label>
+                <label class="grid__full">
+                  Observação
+                  <textarea rows="2" formControlName="observacao" [readonly]="bm.status !== 'Rascunho'"></textarea>
+                </label>
               </div>
 
               <h3>Serviços executados</h3>

@@ -33,6 +33,15 @@
   color: #1a1a1a;
   font-size: 7.5pt;
   box-sizing: border-box;
+
+  // Sem isso, a maioria dos navegadores ignora cor de fundo ao "Salvar como PDF"
+  // (a menos que "Imprimir imagens de segundo plano" esteja marcado manualmente),
+  // fazendo o navy/verde da marca sumir e o documento sair em tons de cinza.
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    color-adjust: exact;
+  }
 }
 
 .tabela-doc {
@@ -81,6 +90,19 @@
   text-transform: uppercase;
   font-size: 7pt;
   font-weight: 600;
+}
+
+.linha-subcabecalho th {
+  background: #e9ebed;
+  color: #27394f;
+  font-size: 7pt;
+  font-weight: 600;
+}
+
+.linha-destaque td {
+  background: #d4dad9;
+  color: #2f4643;
+  font-weight: bold;
 }
 
 .celula-descricao {
