@@ -26,14 +26,17 @@
         <option value="Despesa Avulsa">Despesa Avulsa</option>
       </select>
     </label>
-    <label>
+    <label class="filtros__fornecedor">
       Fornecedor
-      <select name="fornecedorId" [(ngModel)]="filtro.fornecedorId">
-        <option [ngValue]="undefined">Todos</option>
-        @for (fornecedor of fornecedores(); track fornecedor.id) {
-          <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
-        }
-      </select>
+      <span class="filtros__fornecedor-linha">
+        <select name="fornecedorId" [(ngModel)]="filtro.fornecedorId">
+          <option [ngValue]="undefined">Todos</option>
+          @for (fornecedor of fornecedores(); track fornecedor.id) {
+            <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+          }
+        </select>
+        <button type="button" class="botao-add" title="Cadastrar novo fornecedor" (click)="abrirModalFornecedor()">+</button>
+      </span>
     </label>
     <label>
       Etapa
@@ -76,40 +79,144 @@
       <table>
         <thead>
           <tr>
-            <th>Tipo</th>
-            <th>Fornecedor</th>
+            <th>Identificação</th>
             <th>Competência</th>
-            <th>Nº NF</th>
             <th>Vencimento</th>
             <th>Valor previsto</th>
             <th>Etapa</th>
-            <th>Ações</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
           @for (o of obrigacoes(); track o.id) {
-            <tr [class.linha--cancelada]="o.cancelada">
-              <td>{{ o.tipoMovimento }}</td>
-              <td>{{ o.fornecedorNome }}</td>
+            <tr
+              class="linha-clicavel"
+              [class.linha--cancelada]="o.cancelada"
+              [class.linha--expandida]="linhaExpandida(o)"
+              (click)="alternarLinha(o)"
+            >
+              <td>{{ identificacao(o) }}</td>
               <td>{{ competenciaBr(o.competencia) }}</td>
-              <td>{{ o.numeroNf || '-' }}</td>
               <td>{{ o.vencimento ? (o.vencimento | dataBr) : '-' }}</td>
               <td>{{ o.valorPrevisto | number: '1.2-2' }}</td>
               <td><span class="badge" [class]="classeEtapa(o.etapa)">{{ o.etapa }}</span></td>
               <td class="acoes">
-                <a [routerLink]="['/obrigacoes', o.id]" title="Ver / editar" aria-label="Ver / editar">Ver</a>
+                <span class="seta">{{ linhaExpandida(o) ? '▲' : '▼' }}</span>
               </td>
             </tr>
+            @if (linhaExpandida(o)) {
+              <tr class="linha-expandida">
+                <td colspan="6">
+                  <div class="acompanhamento" (click)="$event.stopPropagation()">
+                    <form [formGroup]="formLinha" (ngSubmit)="salvarLinha(o)">
+                      <div class="grid">
+                        <label>
+                          Data da NF
+                          <input type="date" formControlName="dataNf" />
+                        </label>
+                        <label>
+                          Número da NF
+                          <input type="text" formControlName="numeroNf" />
+                        </label>
+                        <label>
+                          Valor da nota (R$)
+                          <input type="number" step="0.01" min="0" formControlName="valorNota" />
+                        </label>
+                        <label>
+                          Vencimento
+                          <input type="date" formControlName="vencimento" />
+                        </label>
+                        <label>
+                          Data da requisição (ERP)
+                          <input type="date" formControlName="dataRequisicao" />
+                        </label>
+                        <label>
+                          Data do assist. de pagamento
+                          <input type="date" formControlName="dataAssistPgto" />
+                        </label>
+                        <label>
+                          Data de envio ao financeiro
+                          <input type="date" formControlName="dataEnvioFinanceiro" />
+                        </label>
+                        <label>
+                          Data prevista de pagamento
+                          <input type="date" formControlName="dataPrevistaPagamento" />
+                        </label>
+                        <label class="grid__full">
+                          Observações
+                          <textarea rows="2" formControlName="observacoes"></textarea>
+                        </label>
+                      </div>
+
+                      @if (erroLinha()) {
+                        <p class="status status--erro">{{ erroLinha() }}</p>
+                      }
+
+                      <div class="acoes-linha">
+                        <div class="acoes-linha__pagamento">
+                          @if (!o.cancelada && !o.pago) {
+                            <button type="button" class="botao botao--primario" [disabled]="processandoAcao()" (click)="marcarPaga(o)">
+                              Marcar como paga
+                            </button>
+                          }
+                          @if (!o.cancelada && o.pago) {
+                            <button type="button" class="botao" [disabled]="processandoAcao()" (click)="desmarcarPaga(o)">
+                              Desmarcar pagamento
+                            </button>
+                          }
+                          @if (!o.cancelada && !o.pago) {
+                            <button type="button" class="botao botao--perigo" [disabled]="processandoAcao()" (click)="cancelar(o)">
+                              Cancelar
+                            </button>
+                          }
+                        </div>
+                        <button type="submit" class="botao botao--primario" [disabled]="salvandoLinha()">
+                          {{ salvandoLinha() ? 'Salvando...' : 'Salvar acompanhamento' }}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </td>
+              </tr>
+            }
           }
         </tbody>
-        <tfoot>
-          <tr>
-            <td colspan="5"><strong>Total previsto no período</strong></td>
-            <td><strong>{{ totalPrevisto() | number: '1.2-2' }}</strong></td>
-            <td colspan="2"></td>
-          </tr>
-        </tfoot>
       </table>
+    </div>
+  }
+
+  @if (modalFornecedorAberto()) {
+    <div class="overlay" (click)="fecharModalFornecedor()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <header>
+          <h2>Novo fornecedor</h2>
+          <button type="button" class="botao-fechar" (click)="fecharModalFornecedor()" aria-label="Fechar">×</button>
+        </header>
+
+        <form [formGroup]="formFornecedor" (ngSubmit)="salvarFornecedor()">
+          <div class="modal__corpo">
+            <label>
+              Nome*
+              <input type="text" formControlName="nome" />
+            </label>
+            <label>
+              CNPJ*
+              <input type="text" formControlName="cnpj" placeholder="00.000.000/0000-00" />
+            </label>
+
+            @if (erroFornecedor()) {
+              <p class="status status--erro">{{ erroFornecedor() }}</p>
+            }
+          </div>
+
+          <footer>
+            <button type="button" class="botao botao--texto" (click)="fecharModalFornecedor()">Cancelar</button>
+            <button type="submit" class="botao botao--primario" [disabled]="salvandoFornecedor()">
+              {{ salvandoFornecedor() ? 'Salvando...' : 'Salvar' }}
+            </button>
+          </footer>
+        </form>
+      </div>
     </div>
   }
 </section>

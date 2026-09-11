@@ -13,11 +13,13 @@ export interface Obrigacao {
   id: number;
   tipoMovimento: ObrigacaoTipoMovimento;
   medicaoBmId: number | null;
+  medicaoBmNumero: number | null;
   contratoId: number | null;
   contratoNumero: string | null;
   ordemCompraId: number | null;
   ordemCompraNumero: number | null;
   despesaAvulsaId: number | null;
+  despesaAvulsaDescricao: string | null;
   fornecedorId: number;
   fornecedorNome: string;
   competencia: string;
