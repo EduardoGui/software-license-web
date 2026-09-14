@@ -14,6 +14,7 @@ export interface Obrigacao {
   tipoMovimento: ObrigacaoTipoMovimento;
   medicaoBmId: number | null;
   medicaoBmNumero: number | null;
+  medicaoBmNumeroReferencia: string | null;
   contratoId: number | null;
   contratoNumero: string | null;
   ordemCompraId: number | null;

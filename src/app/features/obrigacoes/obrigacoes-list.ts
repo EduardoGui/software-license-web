@@ -149,7 +149,8 @@ export class ObrigacoesList {
     }
 
     if (o.tipoMovimento === 'Medição') {
-      return `BM-${String(o.medicaoBmNumero).padStart(3, '0')} · ${primeiraPalavra}`;
+      const numeroBm = o.medicaoBmNumeroReferencia || String(o.medicaoBmNumero).padStart(3, '0');
+      return `BM-${numeroBm} · ${primeiraPalavra}`;
     }
 
     const parteFornecedor = o.fornecedorNome.slice(0, 18);
