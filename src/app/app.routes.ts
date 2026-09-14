@@ -5,6 +5,7 @@ import { adminGuard } from './core/admin-guard';
 import { usuarioViewGuard } from './core/usuario-view-guard';
 import { Login } from './features/auth/login';
 import { DefinirSenha } from './features/auth/definir-senha';
+import { RecebimentoPage } from './features/recebimento/recebimento-page';
 import { DashboardPage } from './features/dashboard/dashboard-page';
 import { AgendaPage } from './features/agenda/agenda-page';
 import { TarefasRecorrentesList } from './features/tarefas-recorrentes/tarefas-recorrentes-list';
@@ -84,6 +85,7 @@ import { ObrigacaoView } from './features/obrigacoes/obrigacao-view';
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'definir-senha', component: DefinirSenha },
+  { path: 'recebimento/:token', component: RecebimentoPage },
   {
     path: 'contratos/:id/medicoes/:medicaoId/imprimir',
     component: MedicaoBmImprimir,

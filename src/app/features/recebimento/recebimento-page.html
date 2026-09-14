@@ -1,0 +1,85 @@
+<section class="recebimento-page">
+  <div class="cartao">
+    <img src="logo-hope.png" alt="Adm Hope" class="logo" />
+
+    @if (carregando()) {
+      <p class="status">Carregando...</p>
+    } @else if (erro()) {
+      <h1>Link inválido</h1>
+      <p class="status status--erro">{{ erro() }}</p>
+    } @else if (recebimento(); as r) {
+      <h1>Confirmação de Recebimento</h1>
+
+      <div class="grid-info">
+        <div><span>Colaborador</span><strong>{{ r.usuarioNome }}</strong></div>
+        <div><span>Campanha</span><strong>{{ r.campanhaNome }}</strong></div>
+        @if (r.dataEntregaFisica) {
+          <div><span>Data da entrega</span><strong>{{ r.dataEntregaFisica | dataBr }}</strong></div>
+        }
+      </div>
+
+      <h2>Itens</h2>
+      <ul class="lista-itens">
+        @for (item of r.itens; track item.id) {
+          <li>{{ item.quantidade }}× {{ item.descricao }}{{ item.tamanho ? ' (' + item.tamanho + ')' : '' }}</li>
+        }
+      </ul>
+
+      @if (r.status === 'EmailEnviado') {
+        <p class="declaracao">Declaro que recebi os itens relacionados acima.</p>
+
+        @if (erroAcao()) {
+          <p class="status status--erro">{{ erroAcao() }}</p>
+        }
+
+        @if (!divergenciaAberta()) {
+          <div class="acoes">
+            <button type="button" class="botao botao--primario" [disabled]="processando()" (click)="confirmar()">
+              {{ processando() ? 'Enviando...' : 'Confirmo o recebimento' }}
+            </button>
+            <button type="button" class="botao botao--perigo" [disabled]="processando()" (click)="abrirDivergencia()">
+              Há divergência
+            </button>
+          </div>
+        } @else {
+          <form [formGroup]="formDivergencia" (ngSubmit)="enviarDivergencia()" class="form-divergencia">
+            <label>
+              O que houve?
+              <select formControlName="tipoDivergencia">
+                <option value="" disabled>Selecione</option>
+                <option value="NaoRecebi">Não recebi</option>
+                <option value="QuantidadeIncorreta">Quantidade incorreta</option>
+                <option value="ItemDiferente">Item diferente</option>
+                <option value="ItemDanificado">Item danificado</option>
+                <option value="Outro">Outro</option>
+              </select>
+            </label>
+            <label>
+              Observação (opcional)
+              <textarea rows="3" formControlName="observacao"></textarea>
+            </label>
+            <div class="acoes">
+              <button type="button" class="botao botao--texto" [disabled]="processando()" (click)="fecharDivergencia()">Voltar</button>
+              <button type="submit" class="botao botao--perigo" [disabled]="processando()">
+                {{ processando() ? 'Enviando...' : 'Enviar divergência' }}
+              </button>
+            </div>
+          </form>
+        }
+      } @else if (r.status === 'Confirmado') {
+        <p class="status status--sucesso">
+          ✓ Recebimento confirmado{{ r.dataConfirmacao ? ' em ' + (r.dataConfirmacao | dataBr) : '' }}. Obrigado!
+        </p>
+      } @else if (r.status === 'Divergencia') {
+        <div class="status status--alerta">
+          <p><strong>Divergência registrada{{ r.dataConfirmacao ? ' em ' + (r.dataConfirmacao | dataBr) : '' }}:</strong> {{ rotulosDivergencia[r.tipoDivergencia!] ?? r.tipoDivergencia }}</p>
+          @if (r.observacaoDivergencia) {
+            <p>{{ r.observacaoDivergencia }}</p>
+          }
+        </div>
+      } @else if (r.status === 'Cancelado') {
+        <p class="status">Esta entrega foi cancelada e não precisa de confirmação.</p>
+      }
+    }
+  </div>
+</section>

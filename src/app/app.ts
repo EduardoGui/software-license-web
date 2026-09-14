@@ -23,6 +23,7 @@ export class App {
     () =>
       !this.urlAtual().startsWith('/login') &&
       !this.urlAtual().startsWith('/definir-senha') &&
+      !this.urlAtual().startsWith('/recebimento') &&
       !this.urlAtual().includes('/imprimir'),
   );
   protected readonly grupoTiAberto = signal(false);
