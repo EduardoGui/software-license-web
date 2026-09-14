@@ -63,6 +63,17 @@ export class CampanhaEntregaDetail {
     itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([]),
   });
 
+  protected readonly salvandoItensCampanha = signal(false);
+  protected readonly erroItensCampanha = signal<string | null>(null);
+
+  protected readonly formItensCampanha = this.fb.group({
+    itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([]),
+  });
+
+  protected get itensCampanha(): FormArray {
+    return this.formItensCampanha.get('itens') as FormArray;
+  }
+
   protected readonly formEntregaFisica = this.fb.nonNullable.group({
     dataEntregaFisica: ['', Validators.required],
     responsavelEntregaId: this.fb.control<number | null>(null, Validators.required),
@@ -81,14 +92,6 @@ export class CampanhaEntregaDetail {
   protected readonly erroColaboradores = signal<string | null>(null);
   protected filtroColaboradores: { nome?: string; setorId?: number } = {};
 
-  protected readonly formItensPadrao = this.fb.group({
-    itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([this.criarLinhaItem()]),
-  });
-
-  protected get itensPadrao(): FormArray {
-    return this.formItensPadrao.get('itens') as FormArray;
-  }
-
   constructor() {
     this.carregarTudo();
     this.usuarioService.listar().subscribe((usuarios) => this.usuarios.set(usuarios));
@@ -104,7 +107,10 @@ export class CampanhaEntregaDetail {
     this.erro.set(false);
 
     this.campanhaEntregaService.obter(this.campanhaId).subscribe({
-      next: (campanha) => this.campanha.set(campanha),
+      next: (campanha) => {
+        this.campanha.set(campanha);
+        this.preencherFormItensCampanha(campanha.itens);
+      },
       error: () => this.erro.set(true),
     });
     this.campanhaEntregaService.obterResumo(this.campanhaId).subscribe((resumo) => this.resumo.set(resumo));
@@ -173,6 +179,52 @@ export class CampanhaEntregaDetail {
       error: (err) => {
         this.processando.set(false);
         this.erroAcao.set(err?.error?.message ?? 'Não foi possível encerrar a campanha.');
+      },
+    });
+  }
+
+  // --- Itens da campanha (aplicados automaticamente a quem for adicionado) ---
+
+  private preencherFormItensCampanha(itens: Entrega['itens']): void {
+    this.itensCampanha.clear();
+    for (const item of itens) {
+      this.itensCampanha.push(this.criarLinhaItem(item));
+    }
+  }
+
+  protected adicionarLinhaItemCampanha(): void {
+    this.itensCampanha.push(this.criarLinhaItem());
+  }
+
+  protected removerLinhaItemCampanha(index: number): void {
+    this.itensCampanha.removeAt(index);
+  }
+
+  protected salvarItensCampanha(): void {
+    if (this.itensCampanha.invalid) {
+      this.itensCampanha.markAllAsTouched();
+      return;
+    }
+
+    this.salvandoItensCampanha.set(true);
+    this.erroItensCampanha.set(null);
+
+    const itens = this.itensCampanha.getRawValue().map((i) => ({
+      descricao: i.descricao,
+      tamanho: i.tamanho || null,
+      quantidade: i.quantidade,
+      validade: i.validade || null,
+    }));
+
+    this.campanhaEntregaService.atualizarItensCampanha(this.campanhaId, { itens }).subscribe({
+      next: (campanha) => {
+        this.campanha.set(campanha);
+        this.salvandoItensCampanha.set(false);
+        this.atualizarTudo();
+      },
+      error: (err) => {
+        this.salvandoItensCampanha.set(false);
+        this.erroItensCampanha.set(err?.error?.message ?? 'Não foi possível salvar os itens da campanha.');
       },
     });
   }
@@ -350,8 +402,6 @@ export class CampanhaEntregaDetail {
     this.filtroColaboradores = {};
     this.selecionados.set(new Set());
     this.erroColaboradores.set(null);
-    this.itensPadrao.clear();
-    this.itensPadrao.push(this.criarLinhaItem());
     this.modalColaboradoresAberto.set(true);
     this.buscarColaboradoresDisponiveis();
   }
@@ -398,14 +448,6 @@ export class CampanhaEntregaDetail {
     this.selecionados.set(new Set(this.colaboradoresDisponiveis().map((c) => c.id)));
   }
 
-  protected adicionarLinhaItemPadrao(): void {
-    this.itensPadrao.push(this.criarLinhaItem());
-  }
-
-  protected removerLinhaItemPadrao(index: number): void {
-    this.itensPadrao.removeAt(index);
-  }
-
   protected adicionarSelecionados(): void {
     const usuarioIds = [...this.selecionados()];
     if (usuarioIds.length === 0) {
@@ -413,19 +455,10 @@ export class CampanhaEntregaDetail {
       return;
     }
 
-    const itensPadrao = this.itensPadrao.getRawValue()
-      .filter((i) => i.descricao?.trim())
-      .map((i) => ({
-        descricao: i.descricao!,
-        tamanho: i.tamanho || null,
-        quantidade: i.quantidade!,
-        validade: i.validade || null,
-      }));
-
     this.salvandoColaboradores.set(true);
     this.erroColaboradores.set(null);
 
-    this.campanhaEntregaService.adicionarEntregasLote(this.campanhaId, { usuarioIds, itensPadrao }).subscribe({
+    this.campanhaEntregaService.adicionarEntregasLote(this.campanhaId, { usuarioIds }).subscribe({
       next: () => {
         this.salvandoColaboradores.set(false);
         this.modalColaboradoresAberto.set(false);

@@ -60,6 +60,10 @@ export class CampanhaEntregaService {
     return this.http.get<CampanhaEntregaResumo>(`${this.baseUrl}/${id}/resumo`);
   }
 
+  atualizarItensCampanha(id: number, payload: UpdateEntregaItensPayload): Observable<CampanhaEntrega> {
+    return this.http.put<CampanhaEntrega>(`${this.baseUrl}/${id}/itens`, payload);
+  }
+
   listarColaboradoresDisponiveis(id: number, filtro: ColaboradorDisponivelFiltro = {}): Observable<ColaboradorDisponivel[]> {
     let params = new HttpParams();
     if (filtro.nome) params = params.set('nome', filtro.nome);

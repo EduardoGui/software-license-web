@@ -32,6 +32,26 @@ h1 {
   margin-bottom: 1rem;
 }
 
+.painel-itens-campanha {
+  background: #fff;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.painel-itens-campanha h2 {
+  color: var(--color-primary);
+  margin: 0 0 0.35rem;
+  font-size: 1.05rem;
+}
+
+.dica {
+  color: var(--color-text-muted);
+  font-size: 0.8rem;
+  margin: 0 0 0.85rem;
+}
+
 .resumo {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));

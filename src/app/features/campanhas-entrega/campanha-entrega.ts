@@ -9,6 +9,7 @@ export interface CampanhaEntrega {
   nome: string;
   descricao: string | null;
   status: CampanhaEntregaStatus;
+  itens: EntregaItem[];
   dataCriacao: string;
   dataAtualizacao: string;
 }
@@ -86,12 +87,10 @@ export interface Entrega {
 
 export interface CreateEntregaPayload {
   usuarioId: number;
-  itens: CreateEntregaItemPayload[];
 }
 
 export interface CreateEntregaLotePayload {
   usuarioIds: number[];
-  itensPadrao: CreateEntregaItemPayload[];
 }
 
 export interface UpdateEntregaItensPayload {
