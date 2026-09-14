@@ -1,0 +1,97 @@
+<section class="campanhas">
+  <header class="topo">
+    <h1>Campanhas de Entrega</h1>
+    <button type="button" class="botao botao--primario" (click)="abrirModal()">+ Nova campanha</button>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Nome
+      <input type="text" name="nome" [(ngModel)]="filtro.nome" placeholder="Buscar por nome" />
+    </label>
+    <label>
+      Status
+      <select name="status" [(ngModel)]="filtro.status">
+        <option [ngValue]="undefined">Todos</option>
+        <option value="Rascunho">Rascunho</option>
+        <option value="EmAndamento">Em andamento</option>
+        <option value="Encerrada">Encerrada</option>
+        <option value="Cancelada">Cancelada</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as campanhas. Verifique se a API está em execução.</p>
+  } @else if (campanhas().length === 0) {
+    <p class="status">Nenhuma campanha encontrada.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Descrição</th>
+            <th>Status</th>
+            <th>Criada em</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (c of campanhas(); track c.id) {
+            <tr>
+              <td>{{ c.nome }}</td>
+              <td>{{ c.descricao || '-' }}</td>
+              <td><span class="badge" [class]="classeStatus(c.status)">{{ c.status }}</span></td>
+              <td>{{ c.dataCriacao | dataBr }}</td>
+              <td class="acoes">
+                <a [routerLink]="['/campanhas-entrega', c.id]">Ver</a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+
+  @if (modalAberto()) {
+    <div class="overlay" (click)="fecharModal()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <header>
+          <h2>Nova campanha</h2>
+          <button type="button" class="botao-fechar" (click)="fecharModal()" aria-label="Fechar">×</button>
+        </header>
+
+        <form [formGroup]="formNovaCampanha" (ngSubmit)="salvarNovaCampanha()">
+          <div class="modal__corpo">
+            <label>
+              Nome*
+              <input type="text" formControlName="nome" placeholder="ex.: Uniformes 2º Semestre 2026" />
+            </label>
+            <label>
+              Descrição
+              <textarea rows="2" formControlName="descricao"></textarea>
+            </label>
+
+            @if (erroSalvar()) {
+              <p class="status status--erro">{{ erroSalvar() }}</p>
+            }
+          </div>
+
+          <footer>
+            <button type="button" class="botao botao--texto" (click)="fecharModal()">Cancelar</button>
+            <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+              {{ salvando() ? 'Salvando...' : 'Criar e continuar' }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
+  }
+</section>

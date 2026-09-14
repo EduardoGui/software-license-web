@@ -1,0 +1,286 @@
+<section class="campanha-detail">
+  <header class="topo">
+    <button type="button" class="botao botao--texto" (click)="voltar()">‹ Voltar</button>
+  </header>
+
+  @if (carregando() && !campanha()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() && !campanha()) {
+    <p class="status status--erro">Não foi possível carregar a campanha.</p>
+  } @else if (campanha(); as c) {
+    <div class="cabecalho">
+      <h1>{{ c.nome }}</h1>
+      <span class="badge" [class]="classeStatus(c.status)">{{ c.status }}</span>
+    </div>
+    @if (c.descricao) {
+      <p class="descricao">{{ c.descricao }}</p>
+    }
+
+    @if (erroAcao()) {
+      <p class="status status--erro">{{ erroAcao() }}</p>
+    }
+
+    <div class="acoes-campanha">
+      @if (c.status !== 'Cancelada' && c.status !== 'Encerrada') {
+        <button type="button" class="botao" [disabled]="processando()" (click)="encerrarCampanha()">Encerrar campanha</button>
+        <button type="button" class="botao botao--perigo" [disabled]="processando()" (click)="cancelarCampanha()">Cancelar campanha</button>
+      }
+    </div>
+
+    @if (resumo(); as r) {
+      <div class="resumo">
+        <div class="resumo__card">
+          <span>Total</span>
+          <strong>{{ r.total }}</strong>
+        </div>
+        <div class="resumo__card">
+          <span>Pendentes</span>
+          <strong>{{ r.pendentes }}</strong>
+        </div>
+        <div class="resumo__card">
+          <span>E-mail enviado</span>
+          <strong>{{ r.emailEnviado }}</strong>
+        </div>
+        <div class="resumo__card resumo__card--sucesso">
+          <span>Confirmados</span>
+          <strong>{{ r.confirmados }}</strong>
+        </div>
+        <div class="resumo__card resumo__card--alerta">
+          <span>Divergências</span>
+          <strong>{{ r.divergencias }}</strong>
+        </div>
+        <div class="resumo__card resumo__card--inativo">
+          <span>Cancelados</span>
+          <strong>{{ r.cancelados }}</strong>
+        </div>
+      </div>
+    }
+
+    <div class="secao-cabecalho">
+      <h2>Colaboradores</h2>
+      <button type="button" class="botao botao--primario" (click)="abrirModalColaboradores()">+ Adicionar colaboradores</button>
+    </div>
+
+    <form class="filtros" (ngSubmit)="buscarEntregas()">
+      <label>
+        Setor
+        <select name="setorId" [(ngModel)]="filtro.setorId">
+          <option [ngValue]="undefined">Todos</option>
+          @for (setor of setores(); track setor.id) {
+            <option [ngValue]="setor.id">{{ setor.nome }}</option>
+          }
+        </select>
+      </label>
+      <label>
+        Item
+        <input type="text" name="item" [(ngModel)]="filtro.item" placeholder="ex.: Camisa" />
+      </label>
+      <label>
+        Status
+        <select name="status" [(ngModel)]="filtro.status">
+          <option [ngValue]="undefined">Todos</option>
+          <option value="Pendente">Pendente</option>
+          <option value="EmailEnviado">E-mail enviado</option>
+          <option value="Confirmado">Confirmado</option>
+          <option value="Divergencia">Divergência</option>
+          <option value="Cancelado">Cancelado</option>
+        </select>
+      </label>
+      <div class="filtros__acoes">
+        <button type="submit" class="botao">Filtrar</button>
+        <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+      </div>
+    </form>
+
+    @if (carregando()) {
+      <p class="status">Carregando...</p>
+    } @else if (entregas().length === 0) {
+      <p class="status">Nenhum colaborador nesta campanha ainda.</p>
+    } @else {
+      <div class="tabela-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>Colaborador</th>
+              <th>Itens</th>
+              <th>Entrega física</th>
+              <th>Status</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (e of entregas(); track e.id) {
+              <tr class="linha-clicavel" [class.linha--expandida]="linhaExpandida(e)" (click)="alternarLinha(e)">
+                <td>{{ e.usuarioNome }}</td>
+                <td>{{ resumoItens(e) || '-' }}</td>
+                <td>{{ e.dataEntregaFisica ? (e.dataEntregaFisica | dataBr) : '-' }}</td>
+                <td><span class="badge" [class]="classeStatus(e.status)">{{ rotulosStatus[e.status] }}</span></td>
+                <td class="acoes"><span class="seta">{{ linhaExpandida(e) ? '▲' : '▼' }}</span></td>
+              </tr>
+              @if (linhaExpandida(e)) {
+                <tr class="linha-expandida">
+                  <td colspan="5">
+                    <div class="painel-linha" (click)="$event.stopPropagation()">
+                      @if (e.status === 'Divergencia') {
+                        <div class="aviso-divergencia">
+                          <strong>Divergência reportada:</strong> {{ rotulosDivergencia[e.tipoDivergencia!] ?? e.tipoDivergencia }}
+                          @if (e.observacaoDivergencia) {
+                            <p>{{ e.observacaoDivergencia }}</p>
+                          }
+                        </div>
+                      }
+
+                      <h4>Itens</h4>
+                      <form [formGroup]="formItensLinha">
+                        <div formArrayName="itens" class="itens-linha">
+                          @for (item of itensLinha.controls; track $index; let i = $index) {
+                            <div [formGroupName]="i" class="item-linha">
+                              <input type="text" formControlName="descricao" placeholder="Descrição" [readonly]="e.status !== 'Pendente'" />
+                              <input type="text" formControlName="tamanho" placeholder="Tamanho" [readonly]="e.status !== 'Pendente'" />
+                              <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." [readonly]="e.status !== 'Pendente'" />
+                              <input type="date" formControlName="validade" title="Validade (opcional)" [readonly]="e.status !== 'Pendente'" />
+                              @if (e.status === 'Pendente') {
+                                <button type="button" class="botao-remover" (click)="removerLinhaItem(i)" aria-label="Remover item">×</button>
+                              }
+                            </div>
+                          }
+                        </div>
+                        @if (e.status === 'Pendente') {
+                          <button type="button" class="botao botao--texto" (click)="adicionarLinhaItem()">+ Adicionar item</button>
+                        }
+                      </form>
+
+                      @if (erroLinha()) {
+                        <p class="status status--erro">{{ erroLinha() }}</p>
+                      }
+
+                      @if (e.status === 'Pendente') {
+                        <div class="acoes-linha">
+                          <button type="button" class="botao botao--primario" [disabled]="salvandoLinha()" (click)="salvarItens(e)">
+                            {{ salvandoLinha() ? 'Salvando...' : 'Salvar itens' }}
+                          </button>
+                        </div>
+                      }
+
+                      <h4>Entrega física</h4>
+                      <form [formGroup]="formEntregaFisica" class="form-entrega-fisica">
+                        <label>
+                          Data
+                          <input type="date" formControlName="dataEntregaFisica" />
+                        </label>
+                        <label>
+                          Responsável
+                          <select formControlName="responsavelEntregaId">
+                            <option [ngValue]="null">Selecione</option>
+                            @for (u of usuarios(); track u.id) {
+                              <option [ngValue]="u.id">{{ u.nome }}</option>
+                            }
+                          </select>
+                        </label>
+                        <button type="button" class="botao" [disabled]="salvandoLinha()" (click)="registrarEntregaFisica(e)">
+                          Registrar entrega física
+                        </button>
+                      </form>
+
+                      @if (e.status === 'Pendente' || e.status === 'EmailEnviado') {
+                        <div class="acoes-linha acoes-linha--fim">
+                          <button type="button" class="botao botao--perigo" [disabled]="salvandoLinha()" (click)="cancelarEntrega(e)">
+                            Cancelar entrega
+                          </button>
+                        </div>
+                      }
+                    </div>
+                  </td>
+                </tr>
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+
+  @if (modalColaboradoresAberto()) {
+    <div class="overlay" (click)="fecharModalColaboradores()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <header>
+          <h2>Adicionar colaboradores</h2>
+          <button type="button" class="botao-fechar" (click)="fecharModalColaboradores()" aria-label="Fechar">×</button>
+        </header>
+
+        <div class="modal__corpo">
+          <form class="filtros filtros--modal" (ngSubmit)="buscarColaboradoresDisponiveis()">
+            <label>
+              Nome
+              <input type="text" name="nomeColab" [(ngModel)]="filtroColaboradores.nome" />
+            </label>
+            <label>
+              Setor
+              <select name="setorColab" [(ngModel)]="filtroColaboradores.setorId">
+                <option [ngValue]="undefined">Todos</option>
+                @for (setor of setores(); track setor.id) {
+                  <option [ngValue]="setor.id">{{ setor.nome }}</option>
+                }
+              </select>
+            </label>
+            <button type="submit" class="botao">Buscar</button>
+          </form>
+
+          @if (carregandoColaboradores()) {
+            <p class="status">Carregando...</p>
+          } @else if (colaboradoresDisponiveis().length === 0) {
+            <p class="status">Nenhum colaborador disponível para os filtros selecionados.</p>
+          } @else {
+            <div class="tabela-scroll tabela-colaboradores">
+              <table>
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" [checked]="todosSelecionados()" (change)="alternarSelecionarTodos()" /></th>
+                    <th>Nome</th>
+                    <th>Setor</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (colab of colaboradoresDisponiveis(); track colab.id) {
+                    <tr (click)="alternarSelecionado(colab.id)" class="linha-clicavel">
+                      <td><input type="checkbox" [checked]="estaSelecionado(colab.id)" (click)="$event.stopPropagation()" (change)="alternarSelecionado(colab.id)" /></td>
+                      <td>{{ colab.nome }}</td>
+                      <td>{{ colab.setorNome || '-' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+
+          <h4>Itens padrão para os selecionados</h4>
+          <form [formGroup]="formItensPadrao">
+            <div formArrayName="itens" class="itens-linha">
+              @for (item of itensPadrao.controls; track $index; let i = $index) {
+                <div [formGroupName]="i" class="item-linha">
+                  <input type="text" formControlName="descricao" placeholder="Descrição" />
+                  <input type="text" formControlName="tamanho" placeholder="Tamanho" />
+                  <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
+                  <input type="date" formControlName="validade" title="Validade (opcional)" />
+                  <button type="button" class="botao-remover" (click)="removerLinhaItemPadrao(i)" aria-label="Remover item">×</button>
+                </div>
+              }
+            </div>
+            <button type="button" class="botao botao--texto" (click)="adicionarLinhaItemPadrao()">+ Adicionar item</button>
+          </form>
+
+          @if (erroColaboradores()) {
+            <p class="status status--erro">{{ erroColaboradores() }}</p>
+          }
+        </div>
+
+        <footer>
+          <button type="button" class="botao botao--texto" (click)="fecharModalColaboradores()">Cancelar</button>
+          <button type="button" class="botao botao--primario" [disabled]="salvandoColaboradores()" (click)="adicionarSelecionados()">
+            {{ salvandoColaboradores() ? 'Adicionando...' : 'Adicionar selecionados' }}
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+</section>

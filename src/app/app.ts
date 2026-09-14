@@ -35,6 +35,7 @@ export class App {
   protected readonly grupoPatrimonioAberto = signal(false);
   protected readonly grupoContratosAberto = signal(false);
   protected readonly grupoReembolsoAberto = signal(false);
+  protected readonly grupoEntregasAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
 
   constructor() {
@@ -54,6 +55,7 @@ export class App {
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
+      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -67,6 +69,7 @@ export class App {
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
+      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -80,6 +83,7 @@ export class App {
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
+      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -93,6 +97,7 @@ export class App {
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
+      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -106,6 +111,7 @@ export class App {
       this.grupoDpAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
+      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -119,6 +125,7 @@ export class App {
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
+      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -132,6 +139,21 @@ export class App {
       this.grupoDpAberto.set(false);
       this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
+      this.grupoEntregasAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoEntregas(): void {
+    const abrindo = !this.grupoEntregasAberto();
+    this.grupoEntregasAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoTiAberto.set(false);
+      this.grupoPatrimonioAberto.set(false);
+      this.grupoContratosAberto.set(false);
+      this.grupoDpAberto.set(false);
+      this.grupoPlanoSaudeAberto.set(false);
+      this.grupoSuprimentosAberto.set(false);
+      this.grupoCadastrosGeraisAberto.set(false);
     }
   }
 

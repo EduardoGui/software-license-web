@@ -131,6 +131,15 @@
               Controle de Obrigações
             </a>
           }
+          <button type="button" class="menu__grupo" (click)="alternarGrupoEntregas()">
+            <span class="menu__grupo-seta">{{ grupoEntregasAberto() ? '▾' : '▸' }}</span>
+            Entregas
+          </button>
+          @if (grupoEntregasAberto()) {
+            <a routerLink="/campanhas-entrega" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
+              Campanhas de Entrega
+            </a>
+          }
           <button type="button" class="menu__grupo" (click)="alternarGrupoCadastrosGerais()">
             <span class="menu__grupo-seta">{{ grupoCadastrosGeraisAberto() ? '▾' : '▸' }}</span>
             Cadastros Gerais
