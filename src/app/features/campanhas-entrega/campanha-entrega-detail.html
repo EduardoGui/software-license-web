@@ -58,8 +58,17 @@
 
     <div class="secao-cabecalho">
       <h2>Colaboradores</h2>
-      <button type="button" class="botao botao--primario" (click)="abrirModalColaboradores()">+ Adicionar colaboradores</button>
+      <div class="secao-cabecalho__acoes">
+        <button type="button" class="botao" [disabled]="reenviando()" (click)="reenviarPendentes()">
+          {{ reenviando() ? 'Reenviando...' : 'Reenviar aos pendentes' }}
+        </button>
+        <button type="button" class="botao botao--primario" (click)="abrirModalColaboradores()">+ Adicionar colaboradores</button>
+      </div>
     </div>
+
+    @if (avisoReenvio()) {
+      <p class="status status--aviso">{{ avisoReenvio() }}</p>
+    }
 
     <form class="filtros" (ngSubmit)="buscarEntregas()">
       <label>
@@ -160,6 +169,24 @@
                             {{ salvandoLinha() ? 'Salvando...' : 'Salvar itens' }}
                           </button>
                         </div>
+                      }
+
+                      @if (avisoLinha()) {
+                        <p class="status status--aviso">{{ avisoLinha() }}</p>
+                      }
+
+                      <h4>E-mail de confirmação</h4>
+                      <p class="info-email">
+                        @if (e.dataEnvioEmail) {
+                          Enviado em {{ e.dataEnvioEmail | dataBr }}.
+                        } @else {
+                          Ainda não enviado.
+                        }
+                      </p>
+                      @if (e.status === 'Pendente' || e.status === 'EmailEnviado') {
+                        <button type="button" class="botao" [disabled]="salvandoLinha() || e.itens.length === 0" (click)="enviarEmail(e)">
+                          {{ e.dataEnvioEmail ? 'Reenviar e-mail' : 'Enviar e-mail' }}
+                        </button>
                       }
 
                       <h4>Entrega física</h4>

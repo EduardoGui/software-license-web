@@ -97,4 +97,12 @@ export class CampanhaEntregaService {
   cancelarEntrega(id: number, entregaId: number): Observable<Entrega> {
     return this.http.patch<Entrega>(`${this.baseUrl}/${id}/entregas/${entregaId}/cancelar`, {});
   }
+
+  enviarEmail(id: number, entregaId: number): Observable<Entrega> {
+    return this.http.post<Entrega>(`${this.baseUrl}/${id}/entregas/${entregaId}/enviar-email`, {});
+  }
+
+  reenviarPendentes(id: number): Observable<Entrega[]> {
+    return this.http.post<Entrega[]>(`${this.baseUrl}/${id}/reenviar-pendentes`, {});
+  }
 }

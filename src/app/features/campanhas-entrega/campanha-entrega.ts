@@ -76,6 +76,8 @@ export interface Entrega {
   tipoDivergencia: TipoDivergenciaEntrega | null;
   observacaoDivergencia: string | null;
 
+  avisoEmail: string | null;
+
   itens: EntregaItem[];
 
   dataCriacao: string;

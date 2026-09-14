@@ -85,6 +85,21 @@ h1 {
   font-size: 1.1rem;
 }
 
+.secao-cabecalho__acoes {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.status--aviso {
+  color: #a16207;
+}
+
+.info-email {
+  margin: 0 0 0.5rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
 .filtros {
   display: flex;
   flex-wrap: wrap;

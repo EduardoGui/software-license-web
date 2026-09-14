@@ -54,6 +54,10 @@ export class CampanhaEntregaDetail {
   protected readonly expandidoId = signal<number | null>(null);
   protected readonly salvandoLinha = signal(false);
   protected readonly erroLinha = signal<string | null>(null);
+  protected readonly avisoLinha = signal<string | null>(null);
+
+  protected readonly reenviando = signal(false);
+  protected readonly avisoReenvio = signal<string | null>(null);
 
   protected readonly formItensLinha = this.fb.group({
     itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([]),
@@ -187,6 +191,7 @@ export class CampanhaEntregaDetail {
 
     this.expandidoId.set(entrega.id);
     this.erroLinha.set(null);
+    this.avisoLinha.set(null);
 
     this.itensLinha.clear();
     for (const item of entrega.itens) {
@@ -290,6 +295,46 @@ export class CampanhaEntregaDetail {
       error: (err) => {
         this.salvandoLinha.set(false);
         this.erroLinha.set(err?.error?.message ?? 'Não foi possível cancelar a entrega.');
+      },
+    });
+  }
+
+  protected enviarEmail(entrega: Entrega): void {
+    this.salvandoLinha.set(true);
+    this.erroLinha.set(null);
+    this.avisoLinha.set(null);
+
+    this.campanhaEntregaService.enviarEmail(this.campanhaId, entrega.id).subscribe({
+      next: (atualizada) => {
+        this.substituirEntrega(atualizada);
+        this.salvandoLinha.set(false);
+        this.avisoLinha.set(atualizada.avisoEmail);
+      },
+      error: (err) => {
+        this.salvandoLinha.set(false);
+        this.erroLinha.set(err?.error?.message ?? 'Não foi possível enviar o e-mail.');
+      },
+    });
+  }
+
+  protected reenviarPendentes(): void {
+    this.reenviando.set(true);
+    this.avisoReenvio.set(null);
+
+    this.campanhaEntregaService.reenviarPendentes(this.campanhaId).subscribe({
+      next: (entregas) => {
+        this.reenviando.set(false);
+        const falhas = entregas.filter((e) => e.avisoEmail).length;
+        this.avisoReenvio.set(
+          entregas.length === 0
+            ? 'Nenhum colaborador pendente para reenviar.'
+            : `${entregas.length} e-mail(s) processado(s)${falhas > 0 ? `, ${falhas} com falha no envio` : ''}.`,
+        );
+        this.atualizarTudo();
+      },
+      error: (err) => {
+        this.reenviando.set(false);
+        this.avisoReenvio.set(err?.error?.message ?? 'Não foi possível reenviar os e-mails.');
       },
     });
   }
