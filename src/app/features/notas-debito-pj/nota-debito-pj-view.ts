@@ -29,6 +29,15 @@ export class NotaDebitoPjView {
 
   private readonly notaId = Number(this.route.snapshot.paramMap.get('id'));
 
+  private static readonly NOMES_MESES = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro',
+  ];
+
+  protected competencia(nota: NotaDebitoPj): string {
+    return `${NotaDebitoPjView.NOMES_MESES[nota.mes - 1]}/${nota.ano}`;
+  }
+
   constructor() {
     this.carregar();
   }

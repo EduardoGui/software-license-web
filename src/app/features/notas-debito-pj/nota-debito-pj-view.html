@@ -19,6 +19,16 @@
       </div>
 
       <div class="secao">
+        <h3>Dados da Fatura</h3>
+        <dl>
+          <div><dt>Nº Fatura</dt><dd>{{ nota()!.numeroFatura || '-' }}</dd></div>
+          <div><dt>Data de Emissão</dt><dd>{{ nota()!.dataEmissao ? (nota()!.dataEmissao | dataBr) : '-' }}</dd></div>
+          <div><dt>Vencimento</dt><dd>{{ nota()!.dataVencimento ? (nota()!.dataVencimento | dataBr) : '-' }}</dd></div>
+          <div><dt>Competência</dt><dd>{{ competencia(nota()!) }}</dd></div>
+        </dl>
+      </div>
+
+      <div class="secao">
         <h3>Destinatário</h3>
         <dl>
           @if (nota()!.empresaPjNome) {
@@ -35,10 +45,34 @@
         <h3>Motivo da Cobrança</h3>
         <dl>
           <div><dt>Tipo de Despesa</dt><dd>Coparticipação {{ nota()!.operadoraSaude }}</dd></div>
-          <div><dt>Nº do Documento</dt><dd>{{ nota()!.numeroDocumento || '-' }}</dd></div>
           <div class="dl-full"><dt>Descrição</dt><dd>{{ nota()!.descricao || '-' }}</dd></div>
         </dl>
       </div>
+
+      @if (nota()!.itens.length > 0) {
+        <div class="secao">
+          <h3>Beneficiários</h3>
+          <table class="tabela-beneficiarios">
+            <thead>
+              <tr>
+                <th>Beneficiário</th>
+                <th>Mensalidade</th>
+                <th>Coparticipação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of nota()!.itens; track item.nomeBeneficiario) {
+                <tr>
+                  <td>{{ item.nomeBeneficiario }}</td>
+                  <td>{{ item.valorMensalidade > 0 ? ('R$ ' + (item.valorMensalidade | number: '1.2-2')) : '-' }}</td>
+                  <td>{{ item.valorCoparticipacao > 0 ? ('R$ ' + (item.valorCoparticipacao | number: '1.2-2')) : '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+          <p class="dica-beneficiarios">Mensalidade é só informativa — a cobrança desta nota é somente da Coparticipação.</p>
+        </div>
+      }
 
       <div class="secao">
         <h3>Valores</h3>
@@ -53,7 +87,6 @@
       <div class="secao">
         <h3>Pagamento</h3>
         <dl>
-          <div><dt>Vencimento</dt><dd>{{ nota()!.dataVencimento ? (nota()!.dataVencimento | dataBr) : '-' }}</dd></div>
           <div><dt>Forma de Pagamento</dt><dd>{{ nota()!.formaPagamento || '-' }}</dd></div>
           <div><dt>Data de Envio</dt><dd>{{ nota()!.dataEnvio ? (nota()!.dataEnvio | dataBr) : '-' }}</dd></div>
           <div><dt>Data de Pagamento</dt><dd>{{ nota()!.dataPagamento ? (nota()!.dataPagamento | dataBr) : '-' }}</dd></div>

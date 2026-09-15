@@ -44,10 +44,20 @@
         <input type="text" formControlName="operadoraSaude" placeholder="Ex.: AMIL" />
       </label>
 
-      <label>
-        Nº do Documento
-        <input type="text" formControlName="numeroDocumento" placeholder="Nº da nota/recibo/comprovante" />
-      </label>
+      <div class="linha">
+        <label>
+          Nº Fatura
+          <input type="text" formControlName="numeroFatura" placeholder="Nº da fatura da operadora" />
+        </label>
+        <label>
+          Data de Emissão
+          <input type="date" formControlName="dataEmissao" />
+        </label>
+        <label>
+          Vencimento
+          <input type="date" formControlName="dataVencimento" />
+        </label>
+      </div>
 
       <label>
         Descrição
@@ -62,13 +72,6 @@
         <label>
           Retenção Tributária (R$)
           <input type="number" step="0.01" formControlName="retencaoTributaria" />
-        </label>
-      </div>
-
-      <div class="linha">
-        <label>
-          Vencimento
-          <input type="date" formControlName="dataVencimento" />
         </label>
         <label>
           Forma de Pagamento

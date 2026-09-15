@@ -1,5 +1,12 @@
 export type NotaDebitoPjStatus = 'Rascunho' | 'Enviada' | 'Recebida';
 
+export interface NotaDebitoPjItem {
+  dependenteId: number | null;
+  nomeBeneficiario: string;
+  valorMensalidade: number;
+  valorCoparticipacao: number;
+}
+
 export interface NotaDebitoPj {
   id: number;
   usuarioId: number;
@@ -13,8 +20,9 @@ export interface NotaDebitoPj {
   retencaoTributaria: number;
   valorLiquido: number;
   operadoraSaude: string;
-  numeroDocumento: string | null;
+  numeroFatura: string | null;
   descricao: string | null;
+  dataEmissao: string | null;
   dataVencimento: string | null;
   formaPagamento: string | null;
   centroCusto: string | null;
@@ -26,6 +34,7 @@ export interface NotaDebitoPj {
   dataPagamento: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
+  itens: NotaDebitoPjItem[];
   avisoEmail: string | null;
 }
 
@@ -34,10 +43,11 @@ export interface CreateNotaDebitoPjPayload {
   ano: number;
   mes: number;
   operadoraSaude: string;
-  numeroDocumento: string | null;
+  numeroFatura: string | null;
   descricao: string | null;
   desconto: number;
   retencaoTributaria: number;
+  dataEmissao: string | null;
   dataVencimento: string | null;
   formaPagamento: string | null;
   centroCusto: string | null;

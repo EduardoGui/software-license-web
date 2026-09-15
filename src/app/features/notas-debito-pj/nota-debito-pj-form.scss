@@ -58,6 +58,11 @@ label {
 .linha {
   display: flex;
   gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.linha label {
+  min-width: 160px;
 }
 
 input,

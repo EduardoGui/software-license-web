@@ -118,6 +118,36 @@ dl div {
   font-size: 0.8rem;
 }
 
+.tabela-beneficiarios {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.tabela-beneficiarios th,
+.tabela-beneficiarios td {
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.tabela-beneficiarios th:not(:first-child),
+.tabela-beneficiarios td:not(:first-child) {
+  text-align: right;
+}
+
+.tabela-beneficiarios th {
+  color: var(--color-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.dica-beneficiarios {
+  margin: 0.5rem 0 0;
+  color: var(--color-secondary);
+  font-size: 0.8rem;
+}
+
 dt {
   font-size: 0.75rem;
   text-transform: uppercase;
