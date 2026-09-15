@@ -1,0 +1,70 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar Fatura' : 'Nova Fatura' }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      @if (!editando) {
+        <label>
+          Operadora de Saúde *
+          <input type="text" formControlName="operadoraSaude" placeholder="Ex.: AMIL" />
+        </label>
+
+        <div class="linha">
+          <label>
+            Ano *
+            <input type="number" formControlName="ano" />
+          </label>
+          <label>
+            Mês *
+            <input type="number" min="1" max="12" formControlName="mes" />
+          </label>
+        </div>
+      } @else {
+        <p class="campo-fixo">
+          <strong>{{ fatura()?.operadoraSaude }}</strong> — referência {{ fatura()?.mes?.toString()?.padStart(2, '0') }}/{{ fatura()?.ano }}
+        </p>
+      }
+
+      <label>
+        Nº Fatura *
+        <input type="text" formControlName="numeroFatura" placeholder="Nº da fatura da operadora" />
+      </label>
+
+      <div class="linha">
+        <label>
+          Data de Emissão
+          <input type="date" formControlName="dataEmissao" />
+        </label>
+        <label>
+          Vencimento
+          <input type="date" formControlName="dataVencimento" />
+        </label>
+        <label>
+          Valor Total (R$)
+          <input type="number" step="0.01" formControlName="valorTotal" />
+        </label>
+      </div>
+
+      <label>
+        Observação
+        <textarea formControlName="observacao" rows="2"></textarea>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/dp/plano-saude/faturas" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

@@ -33,31 +33,49 @@
             <input type="number" min="1" max="12" formControlName="mes" />
           </label>
         </div>
+
+        <label>
+          Fatura vinculada
+          <select formControlName="faturaOperadoraSaudeId">
+            <option [ngValue]="null">Nenhuma — preencher manualmente</option>
+            @for (fatura of faturasFiltradas(); track fatura.id) {
+              <option [ngValue]="fatura.id">{{ fatura.operadoraSaude }} — Nº {{ fatura.numeroFatura }}</option>
+            }
+          </select>
+        </label>
       } @else {
         <p class="campo-fixo">
           <strong>{{ nota()?.usuarioNome }}</strong> — referência {{ nota()?.mes?.toString()?.padStart(2, '0') }}/{{ nota()?.ano }}
         </p>
       }
 
-      <label>
-        Operadora de Saúde *
-        <input type="text" formControlName="operadoraSaude" placeholder="Ex.: AMIL" />
-      </label>
+      @if (temFaturaVinculada()) {
+        <p class="campo-fixo">
+          <strong>{{ resumoFatura()?.operadoraSaude }}</strong> — Nº Fatura {{ resumoFatura()?.numeroFatura || '-' }}<br />
+          Emissão {{ resumoFatura()?.dataEmissao ? (resumoFatura()!.dataEmissao | dataBr) : '-' }} · Vencimento
+          {{ resumoFatura()?.dataVencimento ? (resumoFatura()!.dataVencimento | dataBr) : '-' }}
+        </p>
+      } @else {
+        <label>
+          Operadora de Saúde *
+          <input type="text" formControlName="operadoraSaude" placeholder="Ex.: AMIL" />
+        </label>
 
-      <div class="linha">
-        <label>
-          Nº Fatura
-          <input type="text" formControlName="numeroFatura" placeholder="Nº da fatura da operadora" />
-        </label>
-        <label>
-          Data de Emissão
-          <input type="date" formControlName="dataEmissao" />
-        </label>
-        <label>
-          Vencimento
-          <input type="date" formControlName="dataVencimento" />
-        </label>
-      </div>
+        <div class="linha">
+          <label>
+            Nº Fatura
+            <input type="text" formControlName="numeroFatura" placeholder="Nº da fatura da operadora" />
+          </label>
+          <label>
+            Data de Emissão
+            <input type="date" formControlName="dataEmissao" />
+          </label>
+          <label>
+            Vencimento
+            <input type="date" formControlName="dataVencimento" />
+          </label>
+        </div>
+      }
 
       <label>
         Descrição

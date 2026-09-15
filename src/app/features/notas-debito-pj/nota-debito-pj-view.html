@@ -25,6 +25,12 @@
           <div><dt>Data de Emissão</dt><dd>{{ nota()!.dataEmissao ? (nota()!.dataEmissao | dataBr) : '-' }}</dd></div>
           <div><dt>Vencimento</dt><dd>{{ nota()!.dataVencimento ? (nota()!.dataVencimento | dataBr) : '-' }}</dd></div>
           <div><dt>Competência</dt><dd>{{ competencia(nota()!) }}</dd></div>
+          @if (nota()!.faturaOperadoraSaudeId) {
+            <div class="dl-full">
+              <dt>Fatura</dt>
+              <dd><a [routerLink]="['/dp/plano-saude/faturas', nota()!.faturaOperadoraSaudeId]">Ver fatura vinculada</a></dd>
+            </div>
+          }
         </dl>
       </div>
 

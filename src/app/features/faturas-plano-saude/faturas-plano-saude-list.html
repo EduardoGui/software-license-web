@@ -1,0 +1,71 @@
+<section class="notas">
+  <header class="topo">
+    <h1>Faturas de Plano de Saúde</h1>
+    <a class="botao botao--primario" routerLink="/dp/plano-saude/faturas/nova">
+      <app-icon name="plus" [size]="16" /> Nova fatura
+    </a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Ano
+      <input type="number" name="ano" [(ngModel)]="filtro.ano" placeholder="Ex.: 2026" />
+    </label>
+    <label>
+      Mês
+      <input type="number" name="mes" min="1" max="12" [(ngModel)]="filtro.mes" placeholder="1-12" />
+    </label>
+    <label>
+      Operadora
+      <input type="text" name="operadoraSaude" [(ngModel)]="filtro.operadoraSaude" placeholder="Ex.: AMIL" />
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as faturas. Verifique se a API está em execução.</p>
+  } @else if (faturas().length === 0) {
+    <p class="status">Nenhuma fatura encontrada.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Operadora</th>
+            <th>Nº Fatura</th>
+            <th>Mês/Ano</th>
+            <th>Vencimento</th>
+            <th>Valor Total</th>
+            <th>NDs Vinculadas</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fatura of faturas(); track fatura.id) {
+            <tr>
+              <td>{{ fatura.operadoraSaude }}</td>
+              <td>{{ fatura.numeroFatura }}</td>
+              <td>{{ fatura.mes.toString().padStart(2, '0') }}/{{ fatura.ano }}</td>
+              <td>{{ fatura.dataVencimento ? (fatura.dataVencimento | dataBr) : '-' }}</td>
+              <td>{{ fatura.valorTotal !== null ? (fatura.valorTotal | number: '1.2-2') : '-' }}</td>
+              <td>{{ fatura.quantidadeNotasDebito }}</td>
+              <td class="acoes">
+                <a [routerLink]="['/dp/plano-saude/faturas', fatura.id]" title="Ver" aria-label="Ver">
+                  <app-icon name="eye" [size]="18" />
+                </a>
+                <a [routerLink]="['/dp/plano-saude/faturas', fatura.id, 'editar']" title="Editar" aria-label="Editar">
+                  <app-icon name="pencil" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

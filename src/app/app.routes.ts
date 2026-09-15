@@ -71,6 +71,9 @@ import { PlanoSaudeRelatorioPage } from './features/plano-saude-relatorio/plano-
 import { NotasDebitoPjList } from './features/notas-debito-pj/notas-debito-pj-list';
 import { NotaDebitoPjForm } from './features/notas-debito-pj/nota-debito-pj-form';
 import { NotaDebitoPjView } from './features/notas-debito-pj/nota-debito-pj-view';
+import { FaturasPlanoSaudeList } from './features/faturas-plano-saude/faturas-plano-saude-list';
+import { FaturaPlanoSaudeForm } from './features/faturas-plano-saude/fatura-plano-saude-form';
+import { FaturaPlanoSaudeView } from './features/faturas-plano-saude/fatura-plano-saude-view';
 import { OrdensCompraList } from './features/ordens-compra/ordens-compra-list';
 import { OrdemCompraForm } from './features/ordens-compra/ordem-compra-form';
 import { OrdemCompraView } from './features/ordens-compra/ordem-compra-view';
@@ -169,6 +172,10 @@ export const routes: Routes = [
       { path: 'dp/plano-saude/notas-debito/nova', component: NotaDebitoPjForm, canActivate: [adminGuard] },
       { path: 'dp/plano-saude/notas-debito/:id/editar', component: NotaDebitoPjForm, canActivate: [adminGuard] },
       { path: 'dp/plano-saude/notas-debito/:id', component: NotaDebitoPjView, canActivate: [adminGuard] },
+      { path: 'dp/plano-saude/faturas', component: FaturasPlanoSaudeList, canActivate: [adminGuard] },
+      { path: 'dp/plano-saude/faturas/nova', component: FaturaPlanoSaudeForm, canActivate: [adminGuard] },
+      { path: 'dp/plano-saude/faturas/:id/editar', component: FaturaPlanoSaudeForm, canActivate: [adminGuard] },
+      { path: 'dp/plano-saude/faturas/:id', component: FaturaPlanoSaudeView, canActivate: [adminGuard] },
       { path: 'reembolsos-despesa', component: ReembolsosDespesaList },
       { path: 'reembolsos-despesa/novo', component: ReembolsoDespesaForm },
       { path: 'reembolsos-despesa/pendentes', component: ReembolsosDespesaPendentesList },

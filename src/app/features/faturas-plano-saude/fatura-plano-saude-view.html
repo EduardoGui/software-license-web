@@ -1,0 +1,68 @@
+<section class="detalhe">
+  <header class="topo">
+    <h1>Fatura de Plano de Saúde</h1>
+    <a class="botao-voltar" routerLink="/dp/plano-saude/faturas"><app-icon name="arrow-left" [size]="16" /> Voltar</a>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !fatura()) {
+    <p class="status status--erro">{{ erro() }}</p>
+  } @else {
+    <div class="cartao">
+      <div class="cabecalho-cartao">
+        <div>
+          <h2>{{ fatura()!.operadoraSaude }} — Nº {{ fatura()!.numeroFatura }}</h2>
+          <p class="referencia">Referência {{ fatura()!.mes.toString().padStart(2, '0') }}/{{ fatura()!.ano }}</p>
+        </div>
+        <a [routerLink]="['/dp/plano-saude/faturas', fatura()!.id, 'editar']" class="botao"><app-icon name="pencil" [size]="16" /> Editar</a>
+      </div>
+
+      <div class="secao">
+        <h3>Dados da Fatura</h3>
+        <dl>
+          <div><dt>Data de Emissão</dt><dd>{{ fatura()!.dataEmissao ? (fatura()!.dataEmissao | dataBr) : '-' }}</dd></div>
+          <div><dt>Vencimento</dt><dd>{{ fatura()!.dataVencimento ? (fatura()!.dataVencimento | dataBr) : '-' }}</dd></div>
+          <div><dt>Valor Total</dt><dd>{{ fatura()!.valorTotal !== null ? ('R$ ' + (fatura()!.valorTotal | number: '1.2-2')) : '-' }}</dd></div>
+          <div><dt>Soma das Notas de Débito</dt><dd>R$ {{ fatura()!.valorTotalNotasDebito | number: '1.2-2' }}</dd></div>
+          <div class="dl-full"><dt>Observação</dt><dd>{{ fatura()!.observacao || '-' }}</dd></div>
+        </dl>
+      </div>
+
+      <div class="secao">
+        <h3>Notas de Débito Vinculadas ({{ fatura()!.quantidadeNotasDebito }})</h3>
+        @if (carregandoNotas()) {
+          <p class="status">Carregando...</p>
+        } @else if (notasDebito().length === 0) {
+          <p class="status">Nenhuma nota de débito vinculada a esta fatura ainda.</p>
+        } @else {
+          <table class="tabela-notas">
+            <thead>
+              <tr>
+                <th>Nº</th>
+                <th>Colaborador</th>
+                <th>Valor Líquido</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (nota of notasDebito(); track nota.id) {
+                <tr>
+                  <td><a [routerLink]="['/dp/plano-saude/notas-debito', nota.id]">Nº {{ nota.id.toString().padStart(4, '0') }}</a></td>
+                  <td>{{ nota.usuarioNome }}</td>
+                  <td>R$ {{ nota.valorLiquido | number: '1.2-2' }}</td>
+                  <td><span class="badge" [class]="'badge--' + nota.status.toLowerCase()">{{ nota.status }}</span></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+    </div>
+
+    <section class="anexos">
+      <h3>Fatura Original / Anexos</h3>
+      <app-anexos-secao recurso="faturas-plano-saude" [entidadeId]="fatura()!.id" />
+    </section>
+  }
+</section>

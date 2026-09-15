@@ -21,6 +21,7 @@ export class NotaDebitoPjService {
     if (filtro.mes) params = params.set('mes', filtro.mes);
     if (filtro.usuarioId) params = params.set('usuarioId', filtro.usuarioId);
     if (filtro.status) params = params.set('status', filtro.status);
+    if (filtro.faturaOperadoraSaudeId) params = params.set('faturaOperadoraSaudeId', filtro.faturaOperadoraSaudeId);
 
     return this.http.get<NotaDebitoPj[]>(this.baseUrl, { params });
   }

@@ -113,41 +113,6 @@ dl div {
   grid-column: 1 / -1;
 }
 
-.aviso-sem-empresa {
-  color: #a16207;
-  font-size: 0.8rem;
-}
-
-.tabela-beneficiarios {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.85rem;
-}
-
-.tabela-beneficiarios th,
-.tabela-beneficiarios td {
-  text-align: left;
-  padding: 0.4rem 0.5rem;
-  border-bottom: 1px solid var(--color-border-light);
-}
-
-.tabela-beneficiarios th:not(:first-child),
-.tabela-beneficiarios td:not(:first-child) {
-  text-align: right;
-}
-
-.tabela-beneficiarios th {
-  color: var(--color-secondary);
-  font-size: 0.75rem;
-  text-transform: uppercase;
-}
-
-.dica-beneficiarios {
-  margin: 0.5rem 0 0;
-  color: var(--color-secondary);
-  font-size: 0.8rem;
-}
-
 dt {
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -160,19 +125,32 @@ dd {
   color: var(--color-text);
 }
 
-dd a {
+.tabela-notas {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+.tabela-notas th,
+.tabela-notas td {
+  text-align: left;
+  padding: 0.4rem 0.5rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.tabela-notas th {
+  color: var(--color-secondary);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+}
+
+.tabela-notas a {
   color: var(--color-primary);
   text-decoration: none;
 }
 
-dd a:hover {
+.tabela-notas a:hover {
   text-decoration: underline;
-}
-
-.acoes {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
 }
 
 .botao {
@@ -187,50 +165,6 @@ dd a:hover {
   cursor: pointer;
   font-size: 0.85rem;
   text-decoration: none;
-}
-
-.botao:disabled {
-  opacity: 0.6;
-  cursor: default;
-}
-
-.botao--primario {
-  background: var(--color-primary);
-  color: #fff;
-}
-
-.botao--texto {
-  border-color: transparent;
-  color: var(--color-secondary);
-}
-
-.botao--perigo {
-  border-color: #b91c1c;
-  color: #b91c1c;
-}
-
-.form-pagamento {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.75rem;
-  background: var(--color-bg-subtle);
-  border-radius: 6px;
-  padding: 0.75rem 1rem;
-}
-
-.form-pagamento label {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  font-size: 0.85rem;
-  color: var(--color-text);
-}
-
-.form-pagamento input {
-  padding: 0.4rem 0.6rem;
-  border: 1px solid var(--color-border);
-  border-radius: 6px;
-  font-size: 0.9rem;
 }
 
 .anexos {

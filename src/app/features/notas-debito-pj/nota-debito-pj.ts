@@ -21,6 +21,7 @@ export interface NotaDebitoPj {
   valorLiquido: number;
   operadoraSaude: string;
   numeroFatura: string | null;
+  faturaOperadoraSaudeId: number | null;
   descricao: string | null;
   dataEmissao: string | null;
   dataVencimento: string | null;
@@ -42,7 +43,8 @@ export interface CreateNotaDebitoPjPayload {
   usuarioId: number;
   ano: number;
   mes: number;
-  operadoraSaude: string;
+  faturaOperadoraSaudeId: number | null;
+  operadoraSaude: string | null;
   numeroFatura: string | null;
   descricao: string | null;
   desconto: number;
@@ -56,11 +58,12 @@ export interface CreateNotaDebitoPjPayload {
   projetoContrato: string | null;
 }
 
-export type UpdateNotaDebitoPjPayload = Omit<CreateNotaDebitoPjPayload, 'usuarioId' | 'ano' | 'mes'>;
+export type UpdateNotaDebitoPjPayload = Omit<CreateNotaDebitoPjPayload, 'usuarioId' | 'ano' | 'mes' | 'faturaOperadoraSaudeId'>;
 
 export interface NotaDebitoPjFiltro {
   ano?: number;
   mes?: number;
   usuarioId?: number;
   status?: string;
+  faturaOperadoraSaudeId?: number;
 }

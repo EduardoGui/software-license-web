@@ -42,6 +42,7 @@
         <thead>
           <tr>
             <th>Nº</th>
+            <th>Nº Fatura</th>
             <th>Mês/Ano</th>
             <th>Usuário</th>
             <th>Operadora</th>
@@ -54,6 +55,7 @@
           @for (nota of notas(); track nota.id) {
             <tr>
               <td>{{ nota.id.toString().padStart(4, '0') }}</td>
+              <td>{{ nota.numeroFatura || '-' }}</td>
               <td>{{ nota.mes.toString().padStart(2, '0') }}/{{ nota.ano }}</td>
               <td>{{ nota.usuarioNome }}</td>
               <td>{{ nota.operadoraSaude }}</td>
