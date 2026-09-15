@@ -93,16 +93,6 @@
         </dl>
       </div>
 
-      <div class="secao">
-        <h3>Classificação Contábil</h3>
-        <dl>
-          <div><dt>Centro de Custo</dt><dd>{{ nota()!.centroCusto || '-' }}</dd></div>
-          <div><dt>Área</dt><dd>{{ nota()!.area || '-' }}</dd></div>
-          <div><dt>Conta Contábil</dt><dd>{{ nota()!.contaContabil || '-' }}</dd></div>
-          <div><dt>Projeto / Contrato</dt><dd>{{ nota()!.projetoContrato || '-' }}</dd></div>
-        </dl>
-      </div>
-
       <div class="acoes">
         <button type="button" class="botao" (click)="baixarPdf()"><app-icon name="download" [size]="16" /> Baixar PDF</button>
 
