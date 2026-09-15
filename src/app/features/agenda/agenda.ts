@@ -17,6 +17,10 @@ export interface AdiarTarefaOcorrenciaPayload {
   observacao: string | null;
 }
 
+export interface AtualizarObservacaoTarefaOcorrenciaPayload {
+  observacao: string | null;
+}
+
 export interface CreateTarefaUnicaPayload {
   titulo: string;
   data: string;

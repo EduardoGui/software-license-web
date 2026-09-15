@@ -176,6 +176,47 @@ td a:hover {
   flex-wrap: wrap;
 }
 
+.acoes-inline--nowrap {
+  flex-wrap: nowrap;
+}
+
+.col-observacao {
+  max-width: 220px;
+}
+
+.observacao-editavel,
+.observacao-texto {
+  display: block;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.observacao-editavel {
+  cursor: pointer;
+}
+
+.observacao-editavel:hover {
+  text-decoration: underline;
+  text-decoration-style: dotted;
+}
+
+.form-observacao-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  min-width: 160px;
+
+  input {
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: inherit;
+  }
+}
+
 .form-adiar-dashboard {
   display: flex;
   flex-direction: column;

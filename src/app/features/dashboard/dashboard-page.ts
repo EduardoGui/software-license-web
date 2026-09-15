@@ -29,6 +29,8 @@ export class DashboardPage {
   protected readonly erroAcaoTarefa = signal<string | null>(null);
   protected readonly concluindoId = signal<number | null>(null);
   protected readonly adiandoId = signal<number | null>(null);
+  protected readonly editandoObservacaoId = signal<number | null>(null);
+  protected readonly salvandoObservacao = signal(false);
 
   protected readonly criandoUnica = signal(false);
   protected readonly salvandoUnica = signal(false);
@@ -37,6 +39,10 @@ export class DashboardPage {
 
   protected readonly formAdiar = this.fb.nonNullable.group({
     novaData: ['', Validators.required],
+    observacao: [''],
+  });
+
+  protected readonly formObservacao = this.fb.nonNullable.group({
     observacao: [''],
   });
 
@@ -117,6 +123,38 @@ export class DashboardPage {
       },
       error: (err) => {
         this.erroAcaoTarefa.set(err?.error?.message ?? 'Não foi possível adiar a tarefa.');
+      },
+    });
+  }
+
+  protected iniciarEditarObservacao(pendencia: Pendencia): void {
+    if (pendencia.tarefaOcorrenciaId === null) {
+      return;
+    }
+
+    this.editandoObservacaoId.set(pendencia.tarefaOcorrenciaId);
+    this.erroAcaoTarefa.set(null);
+    this.formObservacao.reset({ observacao: pendencia.observacao ?? '' });
+  }
+
+  protected cancelarEditarObservacao(): void {
+    this.editandoObservacaoId.set(null);
+  }
+
+  protected confirmarEditarObservacao(tarefaOcorrenciaId: number): void {
+    const valor = this.formObservacao.getRawValue();
+    this.salvandoObservacao.set(true);
+    this.erroAcaoTarefa.set(null);
+
+    this.agendaService.atualizarObservacao(tarefaOcorrenciaId, { observacao: valor.observacao || null }).subscribe({
+      next: () => {
+        this.salvandoObservacao.set(false);
+        this.editandoObservacaoId.set(null);
+        this.carregar();
+      },
+      error: (err) => {
+        this.salvandoObservacao.set(false);
+        this.erroAcaoTarefa.set(err?.error?.message ?? 'Não foi possível salvar a observação.');
       },
     });
   }

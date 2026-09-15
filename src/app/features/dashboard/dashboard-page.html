@@ -174,14 +174,42 @@
                     }
                   </td>
                   <td>{{ pendencia.data | dataBr }}</td>
-                  <td>{{ pendencia.observacao || '—' }}</td>
+                  <td class="col-observacao">
+                    @if (pendencia.origem === 'Tarefa' && pendencia.tarefaOcorrenciaId !== null && editandoObservacaoId() === pendencia.tarefaOcorrenciaId) {
+                      <form
+                        [formGroup]="formObservacao"
+                        (ngSubmit)="confirmarEditarObservacao(pendencia.tarefaOcorrenciaId)"
+                        class="form-observacao-dashboard"
+                      >
+                        <input type="text" formControlName="observacao" placeholder="Observação" />
+                        <div class="acoes-inline acoes-inline--nowrap">
+                          <button type="submit" class="botao botao--primario botao--pequeno" [disabled]="salvandoObservacao()" title="Salvar">
+                            <app-icon name="check" [size]="14" />
+                          </button>
+                          <button type="button" class="botao botao--texto botao--pequeno" (click)="cancelarEditarObservacao()" title="Cancelar">
+                            <app-icon name="x" [size]="14" />
+                          </button>
+                        </div>
+                      </form>
+                    } @else if (pendencia.origem === 'Tarefa' && pendencia.tarefaOcorrenciaId !== null) {
+                      <span
+                        class="observacao-editavel"
+                        [title]="pendencia.observacao || 'Clique para adicionar uma observação'"
+                        (click)="iniciarEditarObservacao(pendencia)"
+                      >
+                        {{ pendencia.observacao || '—' }}
+                      </span>
+                    } @else {
+                      <span class="observacao-texto" [title]="pendencia.observacao || ''">{{ pendencia.observacao || '—' }}</span>
+                    }
+                  </td>
                   <td>
                     @if (pendencia.diasParaVencer < 0) {
-                      <span class="badge badge--vencida">Vencida há {{ -pendencia.diasParaVencer }} dia(s)</span>
+                      <span class="badge badge--vencida">Vencido {{ -pendencia.diasParaVencer }} d.</span>
                     } @else if (pendencia.diasParaVencer === 0) {
-                      <span class="badge badge--vencendo">Vence hoje</span>
+                      <span class="badge badge--vencendo">Hoje</span>
                     } @else {
-                      <span class="badge badge--vencendo">Vence em {{ pendencia.diasParaVencer }} dia(s)</span>
+                      <span class="badge badge--vencendo">Vence {{ pendencia.diasParaVencer }} d.</span>
                     }
                   </td>
                   <td>
@@ -194,7 +222,7 @@
                         >
                           <input type="date" formControlName="novaData" />
                           <input type="text" formControlName="observacao" placeholder="Observação (opcional)" />
-                          <div class="acoes-inline">
+                          <div class="acoes-inline acoes-inline--nowrap">
                             <button type="submit" class="botao botao--primario botao--pequeno" title="Confirmar">
                               <app-icon name="check" [size]="14" />
                             </button>
@@ -204,7 +232,7 @@
                           </div>
                         </form>
                       } @else {
-                        <div class="acoes-inline">
+                        <div class="acoes-inline acoes-inline--nowrap">
                           <button
                             type="button"
                             class="botao botao--primario botao--pequeno"
