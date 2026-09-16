@@ -12,7 +12,8 @@ export interface TarefaOcorrencia {
   diasParaVencer: number;
 }
 
-export interface AdiarTarefaOcorrenciaPayload {
+export interface EditarTarefaOcorrenciaPayload {
+  titulo: string;
   novaData: string;
   observacao: string | null;
 }

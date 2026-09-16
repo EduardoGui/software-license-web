@@ -22,11 +22,12 @@ export class AgendaPage {
   protected readonly erro = signal<string | null>(null);
   protected readonly erroAcao = signal<string | null>(null);
   protected readonly concluindoId = signal<number | null>(null);
-  protected readonly adiandoId = signal<number | null>(null);
+  protected readonly editandoId = signal<number | null>(null);
   protected readonly criandoUnica = signal(false);
   protected readonly salvandoUnica = signal(false);
 
-  protected readonly formAdiar = this.fb.nonNullable.group({
+  protected readonly formEditar = this.fb.nonNullable.group({
+    titulo: ['', Validators.required],
     novaData: ['', Validators.required],
     observacao: [''],
   });
@@ -73,27 +74,31 @@ export class AgendaPage {
     });
   }
 
-  protected iniciarAdiar(ocorrencia: TarefaOcorrencia): void {
-    this.adiandoId.set(ocorrencia.id);
+  protected iniciarEditar(ocorrencia: TarefaOcorrencia): void {
+    this.editandoId.set(ocorrencia.id);
     this.erroAcao.set(null);
-    this.formAdiar.reset({ novaData: ocorrencia.dataPrevistaAtual, observacao: ocorrencia.observacao ?? '' });
+    this.formEditar.reset({
+      titulo: ocorrencia.titulo,
+      novaData: ocorrencia.dataPrevistaAtual,
+      observacao: ocorrencia.observacao ?? '',
+    });
   }
 
-  protected cancelarAdiar(): void {
-    this.adiandoId.set(null);
+  protected cancelarEditar(): void {
+    this.editandoId.set(null);
   }
 
-  protected confirmarAdiar(id: number): void {
-    if (this.formAdiar.invalid) {
-      this.formAdiar.markAllAsTouched();
+  protected confirmarEditar(id: number): void {
+    if (this.formEditar.invalid) {
+      this.formEditar.markAllAsTouched();
       return;
     }
 
-    const valor = this.formAdiar.getRawValue();
+    const valor = this.formEditar.getRawValue();
 
-    this.agendaService.adiar(id, { novaData: valor.novaData, observacao: valor.observacao || null }).subscribe({
+    this.agendaService.editar(id, { titulo: valor.titulo, novaData: valor.novaData, observacao: valor.observacao || null }).subscribe({
       next: (atualizada) => {
-        this.adiandoId.set(null);
+        this.editandoId.set(null);
         this.ocorrencias.update((lista) =>
           lista
             .map((o) => (o.id === id ? atualizada : o))
@@ -101,7 +106,7 @@ export class AgendaPage {
         );
       },
       error: (err) => {
-        this.erroAcao.set(err?.error?.message ?? 'Não foi possível adiar a tarefa.');
+        this.erroAcao.set(err?.error?.message ?? 'Não foi possível editar a tarefa.');
       },
     });
   }

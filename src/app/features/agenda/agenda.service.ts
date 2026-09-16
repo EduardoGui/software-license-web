@@ -4,9 +4,9 @@ import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
 import {
-  AdiarTarefaOcorrenciaPayload,
   AtualizarObservacaoTarefaOcorrenciaPayload,
   CreateTarefaUnicaPayload,
+  EditarTarefaOcorrenciaPayload,
   TarefaOcorrencia,
 } from './agenda';
 
@@ -23,8 +23,8 @@ export class AgendaService {
     return this.http.patch<TarefaOcorrencia>(`${this.baseUrl}/${ocorrenciaId}/concluir`, {});
   }
 
-  adiar(ocorrenciaId: number, payload: AdiarTarefaOcorrenciaPayload): Observable<TarefaOcorrencia> {
-    return this.http.patch<TarefaOcorrencia>(`${this.baseUrl}/${ocorrenciaId}/adiar`, payload);
+  editar(ocorrenciaId: number, payload: EditarTarefaOcorrenciaPayload): Observable<TarefaOcorrencia> {
+    return this.http.patch<TarefaOcorrencia>(`${this.baseUrl}/${ocorrenciaId}/editar`, payload);
   }
 
   criarUnica(payload: CreateTarefaUnicaPayload): Observable<TarefaOcorrencia> {

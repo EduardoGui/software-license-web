@@ -28,7 +28,7 @@ export class DashboardPage {
 
   protected readonly erroAcaoTarefa = signal<string | null>(null);
   protected readonly concluindoId = signal<number | null>(null);
-  protected readonly adiandoId = signal<number | null>(null);
+  protected readonly editandoTarefaId = signal<number | null>(null);
   protected readonly editandoObservacaoId = signal<number | null>(null);
   protected readonly salvandoObservacao = signal(false);
 
@@ -37,7 +37,8 @@ export class DashboardPage {
   protected readonly criandoRecorrente = signal(false);
   protected readonly salvandoRecorrente = signal(false);
 
-  protected readonly formAdiar = this.fb.nonNullable.group({
+  protected readonly formEditarTarefa = this.fb.nonNullable.group({
+    titulo: ['', Validators.required],
     novaData: ['', Validators.required],
     observacao: [''],
   });
@@ -94,37 +95,39 @@ export class DashboardPage {
     });
   }
 
-  protected iniciarAdiar(pendencia: Pendencia): void {
+  protected iniciarEditarTarefa(pendencia: Pendencia): void {
     if (pendencia.tarefaOcorrenciaId === null) {
       return;
     }
 
-    this.adiandoId.set(pendencia.tarefaOcorrenciaId);
+    this.editandoTarefaId.set(pendencia.tarefaOcorrenciaId);
     this.erroAcaoTarefa.set(null);
-    this.formAdiar.reset({ novaData: pendencia.data, observacao: pendencia.observacao ?? '' });
+    this.formEditarTarefa.reset({ titulo: pendencia.titulo, novaData: pendencia.data, observacao: pendencia.observacao ?? '' });
   }
 
-  protected cancelarAdiar(): void {
-    this.adiandoId.set(null);
+  protected cancelarEditarTarefa(): void {
+    this.editandoTarefaId.set(null);
   }
 
-  protected confirmarAdiar(tarefaOcorrenciaId: number): void {
-    if (this.formAdiar.invalid) {
-      this.formAdiar.markAllAsTouched();
+  protected confirmarEditarTarefa(tarefaOcorrenciaId: number): void {
+    if (this.formEditarTarefa.invalid) {
+      this.formEditarTarefa.markAllAsTouched();
       return;
     }
 
-    const valor = this.formAdiar.getRawValue();
+    const valor = this.formEditarTarefa.getRawValue();
 
-    this.agendaService.adiar(tarefaOcorrenciaId, { novaData: valor.novaData, observacao: valor.observacao || null }).subscribe({
-      next: () => {
-        this.adiandoId.set(null);
-        this.carregar();
-      },
-      error: (err) => {
-        this.erroAcaoTarefa.set(err?.error?.message ?? 'Não foi possível adiar a tarefa.');
-      },
-    });
+    this.agendaService
+      .editar(tarefaOcorrenciaId, { titulo: valor.titulo, novaData: valor.novaData, observacao: valor.observacao || null })
+      .subscribe({
+        next: () => {
+          this.editandoTarefaId.set(null);
+          this.carregar();
+        },
+        error: (err) => {
+          this.erroAcaoTarefa.set(err?.error?.message ?? 'Não foi possível editar a tarefa.');
+        },
+      });
   }
 
   protected iniciarEditarObservacao(pendencia: Pendencia): void {

@@ -214,19 +214,25 @@
                   </td>
                   <td>
                     @if (pendencia.origem === 'Tarefa' && pendencia.tarefaOcorrenciaId !== null) {
-                      @if (adiandoId() === pendencia.tarefaOcorrenciaId) {
+                      @if (editandoTarefaId() === pendencia.tarefaOcorrenciaId) {
                         <form
-                          [formGroup]="formAdiar"
-                          (ngSubmit)="confirmarAdiar(pendencia.tarefaOcorrenciaId)"
+                          [formGroup]="formEditarTarefa"
+                          (ngSubmit)="confirmarEditarTarefa(pendencia.tarefaOcorrenciaId)"
                           class="form-adiar-dashboard"
                         >
+                          <input type="text" formControlName="titulo" placeholder="Título" />
                           <input type="date" formControlName="novaData" />
                           <input type="text" formControlName="observacao" placeholder="Observação (opcional)" />
                           <div class="acoes-inline acoes-inline--nowrap">
                             <button type="submit" class="botao botao--primario botao--pequeno" title="Confirmar">
                               <app-icon name="check" [size]="14" />
                             </button>
-                            <button type="button" class="botao botao--texto botao--pequeno" (click)="cancelarAdiar()" title="Cancelar">
+                            <button
+                              type="button"
+                              class="botao botao--texto botao--pequeno"
+                              (click)="cancelarEditarTarefa()"
+                              title="Cancelar"
+                            >
                               <app-icon name="x" [size]="14" />
                             </button>
                           </div>
@@ -242,8 +248,8 @@
                             <app-icon name="check" [size]="14" />
                             {{ concluindoId() === pendencia.tarefaOcorrenciaId ? 'Concluindo...' : 'Concluir' }}
                           </button>
-                          <button type="button" class="botao botao--pequeno" (click)="iniciarAdiar(pendencia)">
-                            <app-icon name="calendar" [size]="14" /> Adiar
+                          <button type="button" class="botao botao--pequeno" (click)="iniciarEditarTarefa(pendencia)">
+                            <app-icon name="pencil" [size]="14" /> Editar
                           </button>
                         </div>
                       }

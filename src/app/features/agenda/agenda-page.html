@@ -64,10 +64,14 @@
             <p class="ocorrencia__observacao">{{ ocorrencia.observacao }}</p>
           }
 
-          @if (adiandoId() === ocorrencia.id) {
-            <form [formGroup]="formAdiar" (ngSubmit)="confirmarAdiar(ocorrencia.id)" class="form-adiar">
+          @if (editandoId() === ocorrencia.id) {
+            <form [formGroup]="formEditar" (ngSubmit)="confirmarEditar(ocorrencia.id)" class="form-adiar">
               <label>
-                Nova data
+                Título
+                <input type="text" formControlName="titulo" />
+              </label>
+              <label>
+                Data
                 <input type="date" formControlName="novaData" />
               </label>
               <label>
@@ -76,7 +80,7 @@
               </label>
               <div class="ocorrencia__acoes">
                 <button type="submit" class="botao botao--primario"><app-icon name="check" [size]="16" /> Confirmar</button>
-                <button type="button" class="botao botao--texto" (click)="cancelarAdiar()"><app-icon name="x" [size]="16" /> Cancelar</button>
+                <button type="button" class="botao botao--texto" (click)="cancelarEditar()"><app-icon name="x" [size]="16" /> Cancelar</button>
               </div>
             </form>
           } @else {
@@ -89,7 +93,7 @@
               >
                 <app-icon name="check" [size]="16" /> {{ concluindoId() === ocorrencia.id ? 'Concluindo...' : 'Concluir' }}
               </button>
-              <button type="button" class="botao" (click)="iniciarAdiar(ocorrencia)"><app-icon name="calendar" [size]="16" /> Adiar</button>
+              <button type="button" class="botao" (click)="iniciarEditar(ocorrencia)"><app-icon name="pencil" [size]="16" /> Editar</button>
             </div>
           }
         </li>
