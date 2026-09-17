@@ -139,6 +139,12 @@ th {
   color: var(--color-text-muted);
 }
 
+.pj-nome {
+  white-space: normal;
+  color: var(--color-secondary);
+  font-size: 0.78rem;
+}
+
 .linha--inativa .acoes a {
   color: var(--color-text-muted);
 }

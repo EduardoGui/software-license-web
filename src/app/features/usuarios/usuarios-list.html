@@ -50,7 +50,12 @@
         <tbody>
           @for (usuario of usuarios(); track usuario.id) {
             <tr [class.linha--inativa]="usuario.status === 'Inativo'">
-              <td>{{ usuario.nome }}</td>
+              <td>
+                {{ usuario.nome }}
+                @if (usuario.tipo === 'Pj' && usuario.empresaPjNome) {
+                  <div class="pj-nome">{{ usuario.empresaPjNome }}</div>
+                }
+              </td>
               <td>{{ usuario.dataInicio | dataBr }}</td>
               <td>{{ usuario.dataFim | dataBr }}</td>
               <td><span class="badge" [class]="'badge--' + usuario.status.toLowerCase()">{{ usuario.status }}</span></td>
