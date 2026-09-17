@@ -1,0 +1,81 @@
+<section class="unidades-orcamentarias">
+  <header class="topo">
+    <h1>Plano de UA</h1>
+    <a class="botao botao--primario" routerLink="/dp/unidades-orcamentarias/novo"><app-icon name="plus" [size]="16" /> Nova UA</a>
+  </header>
+
+  <form class="filtros" (ngSubmit)="buscar()">
+    <label>
+      Setor
+      <select name="setorId" [(ngModel)]="filtro.setorId">
+        <option [ngValue]="undefined">Todos</option>
+        @for (setor of setores(); track setor.id) {
+          <option [ngValue]="setor.id">{{ setor.nome }}</option>
+        }
+      </select>
+    </label>
+    <label>
+      Código
+      <input type="text" name="codigo" [(ngModel)]="filtro.codigo" placeholder="ex.: HP.ADM" />
+    </label>
+    <label>
+      Descrição
+      <input type="text" name="descricao" [(ngModel)]="filtro.descricao" placeholder="Buscar por descrição" />
+    </label>
+    <label>
+      Status
+      <select name="ativa" [(ngModel)]="filtro.ativa">
+        <option [ngValue]="undefined">Todos</option>
+        <option [ngValue]="true">Ativa</option>
+        <option [ngValue]="false">Inativa</option>
+      </select>
+    </label>
+    <div class="filtros__acoes">
+      <button type="submit" class="botao">Filtrar</button>
+      <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+    </div>
+  </form>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar as Unidades Orçamentárias. Verifique se a API está em execução.</p>
+  } @else if (unidades().length === 0) {
+    <p class="status">Nenhuma Unidade Orçamentária encontrada.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Setor</th>
+            <th>Código</th>
+            <th>Descrição</th>
+            <th>Apropriação</th>
+            <th>Status</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (unidade of unidades(); track unidade.id) {
+            <tr>
+              <td>{{ unidade.setorNome }}</td>
+              <td>{{ unidade.codigo }}</td>
+              <td>{{ unidade.descricao }}</td>
+              <td class="celula-truncada" [title]="unidade.apropriacao || ''">{{ unidade.apropriacao || '-' }}</td>
+              <td>
+                <span class="badge" [class.badge--ativa]="unidade.ativa" [class.badge--inativa]="!unidade.ativa">
+                  {{ unidade.ativa ? 'Ativa' : 'Inativa' }}
+                </span>
+              </td>
+              <td class="acoes">
+                <a [routerLink]="['/dp/unidades-orcamentarias', unidade.id, 'editar']" title="Editar" aria-label="Editar">
+                  <app-icon name="pencil" [size]="18" />
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

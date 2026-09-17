@@ -1,0 +1,65 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar UA' : 'Nova UA' }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Setor *
+        <select formControlName="setorId">
+          <option [ngValue]="null">Selecione</option>
+          @for (setor of setores(); track setor.id) {
+            <option [ngValue]="setor.id">{{ setor.nome }}</option>
+          }
+        </select>
+        @if (form.controls.setorId.invalid && form.controls.setorId.touched) {
+          <span class="campo-erro">Setor é obrigatório.</span>
+        }
+      </label>
+
+      <label>
+        Código *
+        <input type="text" formControlName="codigo" placeholder="ex.: HP.ADM.2001" />
+        @if (form.controls.codigo.invalid && form.controls.codigo.touched) {
+          <span class="campo-erro">Código é obrigatório.</span>
+        }
+      </label>
+
+      <label>
+        Descrição *
+        <input type="text" formControlName="descricao" />
+        @if (form.controls.descricao.invalid && form.controls.descricao.touched) {
+          <span class="campo-erro">Descrição é obrigatória.</span>
+        }
+      </label>
+
+      <label>
+        Apropriação
+        <textarea rows="3" formControlName="apropriacao"></textarea>
+      </label>
+
+      <label>
+        Status
+        <select formControlName="ativa">
+          <option [ngValue]="true">Ativa</option>
+          <option [ngValue]="false">Inativa</option>
+        </select>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/dp/unidades-orcamentarias" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>
