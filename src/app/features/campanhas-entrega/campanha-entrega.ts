@@ -9,9 +9,32 @@ export interface CampanhaEntrega {
   nome: string;
   descricao: string | null;
   status: CampanhaEntregaStatus;
-  itens: EntregaItem[];
+  itens: CampanhaEntregaItem[];
   dataCriacao: string;
   dataAtualizacao: string;
+}
+
+export interface CampanhaEntregaItem {
+  id: number;
+  descricao: string;
+  tamanho: string | null;
+  quantidade: number;
+  validade: string | null;
+  quantidadeDisponivel: number | null;
+  quantidadeEntregue: number;
+  saldoDisponivel: number | null;
+}
+
+export interface CampanhaEntregaItemPayload {
+  descricao: string;
+  tamanho: string | null;
+  quantidade: number;
+  validade: string | null;
+  quantidadeDisponivel: number | null;
+}
+
+export interface UpdateCampanhaEntregaItensPayload {
+  itens: CampanhaEntregaItemPayload[];
 }
 
 export interface CreateCampanhaEntregaPayload {
@@ -77,6 +100,9 @@ export interface Entrega {
   tipoDivergencia: TipoDivergenciaEntrega | null;
   observacaoDivergencia: string | null;
 
+  quantidadeKits: number;
+  observacao: string | null;
+
   avisoEmail: string | null;
 
   itens: EntregaItem[];
@@ -87,10 +113,14 @@ export interface Entrega {
 
 export interface CreateEntregaPayload {
   usuarioId: number;
+  quantidadeKits?: number;
+  observacao?: string | null;
 }
 
 export interface CreateEntregaLotePayload {
   usuarioIds: number[];
+  quantidadeKits?: number;
+  observacao?: string | null;
 }
 
 export interface UpdateEntregaItensPayload {

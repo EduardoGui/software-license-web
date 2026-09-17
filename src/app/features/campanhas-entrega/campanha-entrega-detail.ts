@@ -11,6 +11,7 @@ import { Usuario } from '../usuarios/usuario';
 import { UsuarioService } from '../usuarios/usuario.service';
 import {
   CampanhaEntrega,
+  CampanhaEntregaItem,
   CampanhaEntregaResumo,
   ColaboradorDisponivel,
   Entrega,
@@ -59,6 +60,15 @@ export class CampanhaEntregaDetail {
   protected readonly reenviando = signal(false);
   protected readonly avisoReenvio = signal<string | null>(null);
 
+  protected readonly novaEntregaAberta = signal(false);
+  protected readonly salvandoNovaEntrega = signal(false);
+  protected readonly erroNovaEntrega = signal<string | null>(null);
+
+  protected readonly formNovaEntrega = this.fb.nonNullable.group({
+    quantidadeKits: [1, [Validators.required, Validators.min(1)]],
+    observacao: [''],
+  });
+
   protected readonly formItensLinha = this.fb.group({
     itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([]),
   });
@@ -67,7 +77,7 @@ export class CampanhaEntregaDetail {
   protected readonly erroItensCampanha = signal<string | null>(null);
 
   protected readonly formItensCampanha = this.fb.group({
-    itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([]),
+    itens: this.fb.array<ReturnType<typeof this.criarLinhaItemCampanha>>([]),
   });
 
   protected get itensCampanha(): FormArray {
@@ -137,6 +147,7 @@ export class CampanhaEntregaDetail {
   }
 
   private atualizarTudo(): void {
+    this.campanhaEntregaService.obter(this.campanhaId).subscribe((campanha) => this.campanha.set(campanha));
     this.campanhaEntregaService.obterResumo(this.campanhaId).subscribe((resumo) => this.resumo.set(resumo));
     this.buscarEntregas();
   }
@@ -185,15 +196,25 @@ export class CampanhaEntregaDetail {
 
   // --- Itens da campanha (aplicados automaticamente a quem for adicionado) ---
 
-  private preencherFormItensCampanha(itens: Entrega['itens']): void {
+  private preencherFormItensCampanha(itens: CampanhaEntregaItem[]): void {
     this.itensCampanha.clear();
     for (const item of itens) {
-      this.itensCampanha.push(this.criarLinhaItem(item));
+      this.itensCampanha.push(this.criarLinhaItemCampanha(item));
     }
   }
 
+  private criarLinhaItemCampanha(item?: CampanhaEntregaItem) {
+    return this.fb.group({
+      descricao: this.fb.nonNullable.control(item?.descricao ?? '', Validators.required),
+      tamanho: this.fb.nonNullable.control(item?.tamanho ?? ''),
+      quantidade: this.fb.nonNullable.control(item?.quantidade ?? 1, [Validators.required, Validators.min(1)]),
+      validade: this.fb.nonNullable.control(item?.validade ?? ''),
+      quantidadeDisponivel: this.fb.control<number | null>(item?.quantidadeDisponivel ?? null, Validators.min(0)),
+    });
+  }
+
   protected adicionarLinhaItemCampanha(): void {
-    this.itensCampanha.push(this.criarLinhaItem());
+    this.itensCampanha.push(this.criarLinhaItemCampanha());
   }
 
   protected removerLinhaItemCampanha(index: number): void {
@@ -214,6 +235,7 @@ export class CampanhaEntregaDetail {
       tamanho: i.tamanho || null,
       quantidade: i.quantidade,
       validade: i.validade || null,
+      quantidadeDisponivel: i.quantidadeDisponivel,
     }));
 
     this.campanhaEntregaService.atualizarItensCampanha(this.campanhaId, { itens }).subscribe({
@@ -244,6 +266,9 @@ export class CampanhaEntregaDetail {
     this.expandidoId.set(entrega.id);
     this.erroLinha.set(null);
     this.avisoLinha.set(null);
+    this.novaEntregaAberta.set(false);
+    this.erroNovaEntrega.set(null);
+    this.formNovaEntrega.reset({ quantidadeKits: 1, observacao: '' });
 
     this.itensLinha.clear();
     for (const item of entrega.itens) {
@@ -349,6 +374,46 @@ export class CampanhaEntregaDetail {
         this.erroLinha.set(err?.error?.message ?? 'Não foi possível cancelar a entrega.');
       },
     });
+  }
+
+  protected abrirNovaEntrega(): void {
+    this.novaEntregaAberta.set(true);
+    this.erroNovaEntrega.set(null);
+    this.formNovaEntrega.reset({ quantidadeKits: 1, observacao: '' });
+  }
+
+  protected fecharNovaEntrega(): void {
+    this.novaEntregaAberta.set(false);
+  }
+
+  protected confirmarNovaEntrega(entrega: Entrega): void {
+    if (this.formNovaEntrega.invalid) {
+      this.formNovaEntrega.markAllAsTouched();
+      return;
+    }
+
+    const valor = this.formNovaEntrega.getRawValue();
+    this.salvandoNovaEntrega.set(true);
+    this.erroNovaEntrega.set(null);
+
+    this.campanhaEntregaService
+      .adicionarEntrega(this.campanhaId, {
+        usuarioId: entrega.usuarioId,
+        quantidadeKits: valor.quantidadeKits,
+        observacao: valor.observacao || null,
+      })
+      .subscribe({
+        next: () => {
+          this.salvandoNovaEntrega.set(false);
+          this.novaEntregaAberta.set(false);
+          this.expandidoId.set(null);
+          this.atualizarTudo();
+        },
+        error: (err) => {
+          this.salvandoNovaEntrega.set(false);
+          this.erroNovaEntrega.set(err?.error?.message ?? 'Não foi possível registrar a nova entrega.');
+        },
+      });
   }
 
   protected enviarEmail(entrega: Entrega): void {

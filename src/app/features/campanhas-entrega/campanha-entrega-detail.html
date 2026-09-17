@@ -37,11 +37,12 @@
       <form [formGroup]="formItensCampanha">
         <div formArrayName="itens" class="itens-linha">
           @for (item of itensCampanha.controls; track $index; let i = $index) {
-            <div [formGroupName]="i" class="item-linha">
+            <div [formGroupName]="i" class="item-linha item-linha--campanha">
               <input type="text" formControlName="descricao" placeholder="Descrição" />
               <input type="text" formControlName="tamanho" placeholder="Tamanho" />
               <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
               <input type="date" formControlName="validade" title="Validade (opcional)" />
+              <input type="number" min="0" formControlName="quantidadeDisponivel" placeholder="Estoque (opcional)" title="Estoque disponível (opcional)" />
               <button type="button" class="botao-remover" (click)="removerLinhaItemCampanha(i)" aria-label="Remover item">×</button>
             </div>
           }
@@ -56,6 +57,42 @@
 
       @if (erroItensCampanha()) {
         <p class="status status--erro">{{ erroItensCampanha() }}</p>
+      }
+
+      @if (c.itens.length > 0) {
+        <div class="tabela-scroll">
+          <table class="tabela-estoque">
+            <thead>
+              <tr>
+                <th>Item</th>
+                <th>Tamanho</th>
+                <th>Estoque</th>
+                <th>Entregue</th>
+                <th>Saldo</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of c.itens; track item.id) {
+                <tr>
+                  <td>{{ item.descricao }}</td>
+                  <td>{{ item.tamanho || '-' }}</td>
+                  <td>{{ item.quantidadeDisponivel ?? '-' }}</td>
+                  <td>{{ item.quantidadeEntregue }}</td>
+                  <td>
+                    @if (item.saldoDisponivel !== null) {
+                      <span [class.status--erro]="item.saldoDisponivel <= 0">{{ item.saldoDisponivel }}</span>
+                      @if (item.saldoDisponivel <= 0) {
+                        <span class="badge badge--divergencia">estoque esgotado</span>
+                      }
+                    } @else {
+                      -
+                    }
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
       }
     </section>
 
@@ -161,7 +198,12 @@
             @for (e of entregas(); track e.id) {
               <tr class="linha-clicavel" [class.linha--expandida]="linhaExpandida(e)" (click)="alternarLinha(e)">
                 <td>{{ e.usuarioNome }}</td>
-                <td>{{ resumoItens(e) || '-' }}</td>
+                <td>
+                  {{ resumoItens(e) || '-' }}
+                  @if (e.quantidadeKits > 1) {
+                    <span class="badge badge--kits">×{{ e.quantidadeKits }} kits</span>
+                  }
+                </td>
                 <td>{{ e.dataEntregaFisica ? (e.dataEntregaFisica | dataBr) : '-' }}</td>
                 <td><span class="badge" [class]="classeStatus(e.status)">{{ rotulosStatus[e.status] }}</span></td>
                 <td class="acoes"><span class="seta">{{ linhaExpandida(e) ? '▲' : '▼' }}</span></td>
@@ -177,6 +219,10 @@
                             <p>{{ e.observacaoDivergencia }}</p>
                           }
                         </div>
+                      }
+
+                      @if (e.observacao) {
+                        <p class="observacao-entrega"><strong>Observação:</strong> {{ e.observacao }}</p>
                       }
 
                       <h4>Itens</h4>
@@ -255,6 +301,41 @@
                             Cancelar entrega
                           </button>
                         </div>
+                      }
+
+                      <h4>Nova entrega para {{ e.usuarioNome }}</h4>
+                      <p class="dica">
+                        Use quando esta pessoa retirar itens extras (ex.: para repassar a terceiros) além do que já recebeu aqui.
+                      </p>
+                      @if (!novaEntregaAberta()) {
+                        <button type="button" class="botao botao--texto" (click)="abrirNovaEntrega()">
+                          + Nova entrega pra essa pessoa
+                        </button>
+                      } @else {
+                        <form [formGroup]="formNovaEntrega" class="form-nova-entrega">
+                          <label>
+                            Quantidade de kits
+                            <input type="number" min="1" formControlName="quantidadeKits" />
+                          </label>
+                          <label>
+                            Observação
+                            <input type="text" formControlName="observacao" placeholder="ex.: para o cliente X" />
+                          </label>
+                          <div class="acoes-linha">
+                            <button type="button" class="botao botao--texto" (click)="fecharNovaEntrega()">Cancelar</button>
+                            <button
+                              type="button"
+                              class="botao botao--primario"
+                              [disabled]="salvandoNovaEntrega()"
+                              (click)="confirmarNovaEntrega(e)"
+                            >
+                              {{ salvandoNovaEntrega() ? 'Registrando...' : 'Confirmar nova entrega' }}
+                            </button>
+                          </div>
+                        </form>
+                        @if (erroNovaEntrega()) {
+                          <p class="status status--erro">{{ erroNovaEntrega() }}</p>
+                        }
                       }
                     </div>
                   </td>
