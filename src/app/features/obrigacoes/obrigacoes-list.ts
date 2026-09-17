@@ -1,6 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 
 import { Fornecedor } from '../fornecedores/fornecedor';
 import { FornecedorService } from '../fornecedores/fornecedor.service';
@@ -17,6 +18,7 @@ interface FiltroObrigacoes {
   etapa?: string;
   pago?: boolean;
   incluirCanceladas: boolean;
+  todosOsPeriodos: boolean;
 }
 
 @Component({
@@ -29,6 +31,7 @@ export class ObrigacoesList {
   private readonly fb = inject(FormBuilder);
   private readonly obrigacaoService = inject(ObrigacaoService);
   private readonly fornecedorService = inject(FornecedorService);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly obrigacoes = signal<Obrigacao[]>([]);
   protected readonly fornecedores = signal<Fornecedor[]>([]);
@@ -42,6 +45,7 @@ export class ObrigacoesList {
     competenciaAteMes: this.mesAtual,
     incluirCanceladas: false,
     pago: false,
+    todosOsPeriodos: false,
   };
 
   // Linha expansível (acompanhamento)
@@ -74,6 +78,15 @@ export class ObrigacoesList {
 
   constructor() {
     this.fornecedorService.listar().subscribe((fornecedores) => this.fornecedores.set(fornecedores));
+
+    const fornecedorId = Number(this.route.snapshot.queryParamMap.get('fornecedorId'));
+    if (fornecedorId) {
+      // Chegando de um link "Ver obrigações" (ex.: tela de Fornecedores) - mostra o
+      // extrato completo dele, não só o mês atual.
+      this.filtro.fornecedorId = fornecedorId;
+      this.filtro.todosOsPeriodos = true;
+    }
+
     this.buscar();
   }
 
@@ -83,8 +96,8 @@ export class ObrigacoesList {
     this.expandidoId.set(null);
 
     const filtroApi: ObrigacaoFiltro = {
-      competenciaDe: `${this.filtro.competenciaDeMes}-01`,
-      competenciaAte: `${this.filtro.competenciaAteMes}-01`,
+      competenciaDe: this.filtro.todosOsPeriodos ? undefined : `${this.filtro.competenciaDeMes}-01`,
+      competenciaAte: this.filtro.todosOsPeriodos ? undefined : `${this.filtro.competenciaAteMes}-01`,
       tipoMovimento: this.filtro.tipoMovimento,
       fornecedorId: this.filtro.fornecedorId,
       etapa: this.filtro.etapa,
@@ -110,6 +123,7 @@ export class ObrigacoesList {
       competenciaAteMes: this.mesAtual,
       incluirCanceladas: false,
       pago: false,
+      todosOsPeriodos: false,
     };
     this.buscar();
   }

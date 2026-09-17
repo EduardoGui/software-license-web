@@ -4,16 +4,20 @@
   </header>
 
   <div class="periodo">
-    <button type="button" class="botao" (click)="mesAnterior()">‹ Mês anterior</button>
+    <button type="button" class="botao" [disabled]="filtro.todosOsPeriodos" (click)="mesAnterior()">‹ Mês anterior</button>
     <label>
       De
-      <input type="month" name="competenciaDeMes" [(ngModel)]="filtro.competenciaDeMes" (change)="buscar()" />
+      <input type="month" name="competenciaDeMes" [(ngModel)]="filtro.competenciaDeMes" [disabled]="filtro.todosOsPeriodos" (change)="buscar()" />
     </label>
     <label>
       Até
-      <input type="month" name="competenciaAteMes" [(ngModel)]="filtro.competenciaAteMes" (change)="buscar()" />
+      <input type="month" name="competenciaAteMes" [(ngModel)]="filtro.competenciaAteMes" [disabled]="filtro.todosOsPeriodos" (change)="buscar()" />
     </label>
-    <button type="button" class="botao" (click)="proximoMes()">Próximo mês ›</button>
+    <button type="button" class="botao" [disabled]="filtro.todosOsPeriodos" (click)="proximoMes()">Próximo mês ›</button>
+    <label class="filtros__check">
+      <input type="checkbox" name="todosOsPeriodos" [(ngModel)]="filtro.todosOsPeriodos" (change)="buscar()" />
+      Todos os períodos
+    </label>
   </div>
 
   <form class="filtros" (ngSubmit)="buscar()">

@@ -16,6 +16,8 @@ export class ObrigacaoService {
     if (filtro.competenciaAte) params = params.set('competenciaAte', filtro.competenciaAte);
     if (filtro.tipoMovimento) params = params.set('tipoMovimento', filtro.tipoMovimento);
     if (filtro.fornecedorId) params = params.set('fornecedorId', filtro.fornecedorId);
+    if (filtro.contratoId) params = params.set('contratoId', filtro.contratoId);
+    if (filtro.ordemCompraId) params = params.set('ordemCompraId', filtro.ordemCompraId);
     if (filtro.etapa) params = params.set('etapa', filtro.etapa);
     if (filtro.pago !== undefined) params = params.set('pago', filtro.pago);
     if (filtro.cancelada !== undefined) params = params.set('cancelada', filtro.cancelada);

@@ -5,12 +5,13 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { ObrigacoesExtrato } from '../obrigacoes/obrigacoes-extrato';
 import { OrdemCompraDetalhe } from './ordem-compra';
 import { OrdemCompraService } from './ordem-compra.service';
 
 @Component({
   selector: 'app-ordem-compra-view',
-  imports: [RouterLink, DataBrPipe, DecimalPipe, AnexosSecao, Icon],
+  imports: [RouterLink, DataBrPipe, DecimalPipe, AnexosSecao, Icon, ObrigacoesExtrato],
   templateUrl: './ordem-compra-view.html',
   styleUrl: './ordem-compra-view.scss',
 })

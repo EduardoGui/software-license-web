@@ -51,6 +51,14 @@
                 </span>
               </td>
               <td class="acoes">
+                <a
+                  [routerLink]="['/obrigacoes']"
+                  [queryParams]="{ fornecedorId: fornecedor.id }"
+                  class="link-obrigacoes"
+                  title="Ver obrigações deste fornecedor"
+                >
+                  Obrigações
+                </a>
                 <a [routerLink]="['/dp/fornecedores', fornecedor.id, 'editar']" title="Editar" aria-label="Editar">
                   <app-icon name="pencil" [size]="18" />
                 </a>

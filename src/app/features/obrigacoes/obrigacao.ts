@@ -58,6 +58,8 @@ export interface ObrigacaoFiltro {
   competenciaAte?: string;
   tipoMovimento?: string;
   fornecedorId?: number;
+  contratoId?: number;
+  ordemCompraId?: number;
   etapa?: string;
   pago?: boolean;
   cancelada?: boolean;

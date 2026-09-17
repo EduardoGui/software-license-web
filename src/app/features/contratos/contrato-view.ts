@@ -1,11 +1,12 @@
 import { DecimalPipe, Location, formatDate } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, signal, viewChild } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { ObrigacoesExtrato } from '../obrigacoes/obrigacoes-extrato';
 import { adicionarMeses, diasEntre, hojeIso, inicioDoMes, paraData } from '../timeline/timeline-datas';
 import {
   Aditivo,
@@ -30,7 +31,7 @@ const PX_POR_DIA = 6;
 
 @Component({
   selector: 'app-contrato-view',
-  imports: [ReactiveFormsModule, DataBrPipe, DecimalPipe, AnexosSecao, Icon, RouterLink],
+  imports: [ReactiveFormsModule, DataBrPipe, DecimalPipe, AnexosSecao, Icon, RouterLink, ObrigacoesExtrato],
   templateUrl: './contrato-view.html',
   styleUrl: './contrato-view.scss',
 })
@@ -41,6 +42,7 @@ export class ContratoView {
   private readonly location = inject(Location);
 
   protected readonly contratoId = Number(this.route.snapshot.paramMap.get('id'));
+  private readonly obrigacoesExtrato = viewChild(ObrigacoesExtrato);
 
   protected readonly contrato = signal<ContratoDetalhe | null>(null);
   protected readonly carregando = signal(true);
@@ -422,6 +424,7 @@ export class ContratoView {
           this.formNovaMedicao.reset({ periodoInicio: '', periodoFim: '', observacao: '' });
           this.carregarMedicoes();
           this.preencherFormItensMedicao(bm);
+          this.obrigacoesExtrato()?.recarregar();
         },
         error: (err) => {
           this.salvandoNovaMedicao.set(false);
@@ -567,6 +570,7 @@ export class ContratoView {
           this.salvandoItensMedicao.set(false);
           this.carregarMedicoes();
           this.preencherFormItensMedicao(bm);
+          this.obrigacoesExtrato()?.recarregar();
         },
         error: (err) => {
           this.salvandoItensMedicao.set(false);
@@ -585,6 +589,7 @@ export class ContratoView {
         this.carregarMedicoes();
         this.carregarSaldo();
         this.preencherFormItensMedicao(bm);
+        this.obrigacoesExtrato()?.recarregar();
       },
       error: (err) => {
         this.decidindoMedicaoId.set(null);
@@ -613,6 +618,7 @@ export class ContratoView {
         this.reprovandoMedicaoId.set(null);
         this.carregarMedicoes();
         this.preencherFormItensMedicao(bm);
+        this.obrigacoesExtrato()?.recarregar();
       },
       error: (err) => {
         this.decidindoMedicaoId.set(null);
@@ -643,6 +649,7 @@ export class ContratoView {
         this.excluindoMedicao.set(false);
         this.fecharModalMedicao();
         this.carregarMedicoes();
+        this.obrigacoesExtrato()?.recarregar();
       },
       error: (err) => {
         this.excluindoMedicao.set(false);
