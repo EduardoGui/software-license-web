@@ -1,0 +1,78 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Política de Férias (PJ)</h1>
+  </header>
+
+  <p class="dica">
+    Parâmetros aplicados às regras de programação de férias — baseados na CLT, valendo hoje para colaboradores PJ.
+  </p>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+      @if (salvo()) {
+        <p class="status status--sucesso">Política salva com sucesso.</p>
+      }
+
+      <label>
+        Dias de direito por ano *
+        <input type="number" min="1" formControlName="diasDireitoPorAno" />
+      </label>
+
+      <label>
+        Máximo de fracionamentos *
+        <input type="number" min="1" formControlName="maxFracionamentos" />
+      </label>
+
+      <label>
+        Dias mínimos do último fracionamento *
+        <input type="number" min="1" formControlName="diasMinimoUltimoFracionamento" />
+      </label>
+
+      <label>
+        Dias mínimos dos demais fracionamentos *
+        <input type="number" min="1" formControlName="diasMinimoDemaisFracionamentos" />
+      </label>
+
+      <label>
+        Antecedência mínima para remarcação (dias) *
+        <input type="number" min="0" formControlName="diasAntecedenciaRemarcacao" />
+      </label>
+
+      <label>
+        Antecedência para marcação compulsória (dias) *
+        <input type="number" min="0" formControlName="diasAntecedenciaMarcacaoCompulsoria" />
+      </label>
+
+      <label class="campo-checkbox">
+        <input type="checkbox" formControlName="permiteAbonoPecuniario" />
+        Permite abono pecuniário
+      </label>
+
+      <label>
+        Máximo de dias de abono *
+        <input type="number" min="0" formControlName="maxDiasAbono" />
+      </label>
+
+      <label>
+        Dias mínimos antes de feriado/fim de semana *
+        <input type="number" min="0" formControlName="diasMinimosAntesFeriadoOuFimDeSemana" />
+      </label>
+
+      <label class="campo-checkbox">
+        <input type="checkbox" formControlName="ativa" />
+        Política ativa
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </div>
+    </form>
+  }
+</section>

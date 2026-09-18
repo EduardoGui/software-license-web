@@ -47,6 +47,16 @@
       </label>
 
       <label>
+        Gestor imediato
+        <select formControlName="gestorImediatoId">
+          <option [ngValue]="null">Não informado</option>
+          @for (gestor of usuariosParaGestor(); track gestor.id) {
+            <option [ngValue]="gestor.id">{{ gestor.nome }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
         Tipo
         <select formControlName="tipo">
           <option [ngValue]="null">Não informado</option>

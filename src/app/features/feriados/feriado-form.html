@@ -1,0 +1,70 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>{{ editando ? 'Editar feriado' : 'Novo feriado' }}</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else {
+    <form [formGroup]="form" (ngSubmit)="salvar()">
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <label>
+        Data *
+        <input type="date" formControlName="data" />
+        @if (form.controls.data.invalid && form.controls.data.touched) {
+          <span class="campo-erro">Data é obrigatória.</span>
+        }
+      </label>
+
+      <label>
+        Descrição *
+        <input type="text" formControlName="descricao" placeholder="ex.: Natal" />
+        @if (form.controls.descricao.invalid && form.controls.descricao.touched) {
+          <span class="campo-erro">Descrição é obrigatória.</span>
+        }
+      </label>
+
+      <label>
+        Abrangência *
+        <select formControlName="abrangencia">
+          <option value="Nacional">Nacional</option>
+          <option value="Estadual">Estadual</option>
+          <option value="Municipal">Municipal</option>
+        </select>
+      </label>
+
+      @if (form.controls.abrangencia.value === 'Estadual') {
+        <label>
+          UF *
+          <input type="text" formControlName="uf" placeholder="ex.: PA" maxlength="2" />
+        </label>
+      }
+
+      @if (form.controls.abrangencia.value === 'Municipal') {
+        <label>
+          Município *
+          <input type="text" formControlName="municipio" placeholder="ex.: Conceição do Araguaia" />
+        </label>
+      }
+
+      <label>
+        Status
+        <select formControlName="ativo">
+          <option [ngValue]="true">Ativo</option>
+          <option [ngValue]="false">Inativo</option>
+        </select>
+      </label>
+
+      <div class="acoes">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+          <app-icon name="check" [size]="16" /> {{ salvando() ? 'Salvando...' : 'Salvar' }}
+        </button>
+        <a routerLink="/dp/feriados" class="botao botao--texto"><app-icon name="x" [size]="16" /> Cancelar</a>
+      </div>
+    </form>
+  }
+</section>

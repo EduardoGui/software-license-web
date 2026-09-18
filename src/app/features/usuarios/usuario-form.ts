@@ -29,6 +29,7 @@ export class UsuarioForm {
   protected readonly salvando = signal(false);
   protected readonly erro = signal<string | null>(null);
   protected readonly empresasPj = signal<EmpresaPj[]>([]);
+  protected readonly usuariosParaGestor = signal<Usuario[]>([]);
 
   protected readonly form = this.fb.nonNullable.group({
     nome: ['', Validators.required],
@@ -38,6 +39,7 @@ export class UsuarioForm {
     observacao: [''],
     tipo: [null as UsuarioTipo | null],
     empresaPjId: [null as number | null],
+    gestorImediatoId: [null as number | null],
   });
 
   // Dependentes: gerenciados fora do form reativo principal (só existem depois do usuário salvo).
@@ -67,6 +69,10 @@ export class UsuarioForm {
     } else {
       this.restaurarRascunho();
     }
+
+    this.usuarioService.listar({ status: 'Ativo' }).subscribe((usuarios) => {
+      this.usuariosParaGestor.set(usuarios.filter((u) => u.id !== this.usuarioId()));
+    });
   }
 
   // Sair pra cadastrar/editar uma Empresa PJ destrói este componente; guarda o formulário
@@ -101,6 +107,7 @@ export class UsuarioForm {
           observacao: usuario.observacao ?? '',
           tipo: usuario.tipo,
           empresaPjId: usuario.empresaPjId,
+          gestorImediatoId: usuario.gestorImediatoId,
         });
         this.restaurarRascunho();
         this.carregando.set(false);
@@ -127,6 +134,7 @@ export class UsuarioForm {
       observacao: valor.observacao || null,
       tipo: valor.tipo,
       empresaPjId: valor.tipo === 'Pj' ? valor.empresaPjId : null,
+      gestorImediatoId: valor.gestorImediatoId,
     };
 
     this.salvando.set(true);

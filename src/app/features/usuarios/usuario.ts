@@ -26,6 +26,8 @@ export interface Usuario {
   tipo: UsuarioTipo | null;
   empresaPjId: number | null;
   empresaPjNome: string | null;
+  gestorImediatoId: number | null;
+  gestorImediatoNome: string | null;
   dependentes: Dependente[];
   dataCriacao: string;
   dataAtualizacao: string;
@@ -39,6 +41,7 @@ export interface UsuarioPayload {
   observacao: string | null;
   tipo: UsuarioTipo | null;
   empresaPjId: number | null;
+  gestorImediatoId: number | null;
 }
 
 export interface UsuarioFiltro {
