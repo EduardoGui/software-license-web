@@ -22,7 +22,7 @@ export interface PeriodoFeriasFiltro {
   usuarioId?: number;
 }
 
-export type MovimentacaoSaldoFeriasTipo = 'Aquisicao' | 'AjusteManual';
+export type MovimentacaoSaldoFeriasTipo = 'Aquisicao' | 'AjusteManual' | 'ProgramacaoFerias' | 'AbonoPecuniario';
 
 export interface MovimentacaoSaldoFerias {
   id: number;
@@ -43,4 +43,6 @@ export interface AjusteManualSaldoFeriasPayload {
 export const ROTULOS_TIPO_MOVIMENTACAO: Record<MovimentacaoSaldoFeriasTipo, string> = {
   Aquisicao: 'Aquisição',
   AjusteManual: 'Ajuste manual',
+  ProgramacaoFerias: 'Programação de férias',
+  AbonoPecuniario: 'Abono pecuniário',
 };

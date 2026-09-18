@@ -77,6 +77,107 @@
     </section>
 
     <section class="painel">
+      <div class="cabecalho-secao">
+        <h2>Programações de férias</h2>
+        <button type="button" class="botao botao--primario" (click)="alternarFormPrograma()">
+          {{ mostrarFormPrograma() ? 'Cancelar' : '+ Nova programação' }}
+        </button>
+      </div>
+
+      @if (mostrarFormPrograma()) {
+        <form [formGroup]="formPrograma" (ngSubmit)="criarPrograma()" class="form-programa">
+          <label>
+            Data de início *
+            <input type="date" formControlName="dataInicio" />
+          </label>
+          <label>
+            Quantidade de dias *
+            <input type="number" formControlName="quantidadeDias" min="1" max="30" />
+          </label>
+          <label class="form-programa__observacao">
+            Observação
+            <input type="text" formControlName="observacao" placeholder="opcional" />
+          </label>
+          <label class="form-programa__checkbox">
+            <input type="checkbox" formControlName="adiantamentoDecimoTerceiro" />
+            Adiantar 13º
+          </label>
+          <label class="form-programa__checkbox">
+            <input type="checkbox" formControlName="abonoPecuniario" />
+            Abono pecuniário
+          </label>
+          @if (formPrograma.controls.abonoPecuniario.value) {
+            <label>
+              Dias de abono
+              <input type="number" formControlName="diasAbono" min="1" max="30" />
+            </label>
+          }
+          <button type="submit" class="botao botao--primario" [disabled]="salvandoPrograma()">
+            {{ salvandoPrograma() ? 'Criando...' : 'Criar programação' }}
+          </button>
+        </form>
+
+        @if (erroPrograma()) {
+          <p class="status status--erro">{{ erroPrograma() }}</p>
+        }
+      }
+
+      @if (erroAcao()) {
+        <p class="status status--erro">{{ erroAcao() }}</p>
+      }
+
+      @if (programacoes().length === 0) {
+        <p class="status">Nenhuma programação de férias registrada ainda.</p>
+      } @else {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Dias</th>
+                <th>Status</th>
+                <th>Solicitante</th>
+                <th>Aprovador</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (prog of programacoes(); track prog.id) {
+                <tr>
+                  <td>{{ prog.dataInicio }}</td>
+                  <td>{{ prog.dataFim }}</td>
+                  <td>{{ prog.quantidadeDias }}{{ prog.abonoPecuniario ? ' (+' + prog.diasAbono + ' abono)' : '' }}</td>
+                  <td><span class="badge-status">{{ rotulosStatusProgramacao[prog.statusEfetivo] }}</span></td>
+                  <td>{{ prog.solicitanteNome || '-' }}</td>
+                  <td>{{ prog.aprovadorNome || '-' }}</td>
+                  <td class="acoes">
+                    @if (podeSolicitar(prog)) {
+                      <button type="button" class="botao-link" [disabled]="acaoEmAndamentoId() === prog.id" (click)="solicitar(prog)">Solicitar</button>
+                    }
+                    @if (podeDecidir(prog)) {
+                      <button type="button" class="botao-link" [disabled]="acaoEmAndamentoId() === prog.id" (click)="aprovar(prog)">Aprovar</button>
+                      <button type="button" class="botao-link" [disabled]="acaoEmAndamentoId() === prog.id" (click)="devolver(prog)">Devolver</button>
+                      <button type="button" class="botao-link botao-link--erro" [disabled]="acaoEmAndamentoId() === prog.id" (click)="reprovar(prog)">Reprovar</button>
+                    }
+                    @if (podeCancelar(prog)) {
+                      <button type="button" class="botao-link botao-link--erro" [disabled]="acaoEmAndamentoId() === prog.id" (click)="cancelar(prog)">Cancelar</button>
+                    }
+                  </td>
+                </tr>
+                @if (prog.observacaoAprovador) {
+                  <tr class="linha-observacao">
+                    <td colspan="7">Justificativa do aprovador: {{ prog.observacaoAprovador }}</td>
+                  </tr>
+                }
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <section class="painel">
       <h2>Extrato de movimentações</h2>
       @if (movimentacoes().length === 0) {
         <p class="status">Nenhuma movimentação registrada ainda.</p>

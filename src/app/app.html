@@ -100,6 +100,19 @@
             <a routerLink="/dp/logs-auditoria" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Log de Auditoria
             </a>
+            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoFerias()">
+              <span class="menu__grupo-seta">{{ grupoFeriasAberto() ? '▾' : '▸' }}</span>
+              Férias
+            </button>
+            @if (grupoFeriasAberto()) {
+              <a routerLink="/dp/feriados" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Feriados</a>
+              <a routerLink="/dp/politica-ferias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Política de Férias
+              </a>
+              <a routerLink="/ferias/saldo" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Saldo de Férias
+              </a>
+            }
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoPlanoSaude()">
             <span class="menu__grupo-seta">{{ grupoPlanoSaudeAberto() ? '▾' : '▸' }}</span>
@@ -161,13 +174,6 @@
             </a>
             <a routerLink="/dp/fornecedores" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Fornecedores
-            </a>
-            <a routerLink="/dp/feriados" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Feriados</a>
-            <a routerLink="/dp/politica-ferias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Política de Férias
-            </a>
-            <a routerLink="/ferias/saldo" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Saldo de Férias
             </a>
           }
         } @else {

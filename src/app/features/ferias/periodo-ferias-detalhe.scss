@@ -193,3 +193,95 @@ th {
   opacity: 0.6;
   cursor: default;
 }
+
+.cabecalho-secao {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.75rem;
+}
+
+.cabecalho-secao h2 {
+  margin: 0;
+}
+
+.form-programa {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.form-programa label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.form-programa input[type='text'],
+.form-programa input[type='date'],
+.form-programa input[type='number'] {
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.form-programa__observacao {
+  flex: 1;
+  min-width: 200px;
+}
+
+.form-programa__checkbox {
+  flex-direction: row !important;
+  align-items: center;
+  gap: 0.4rem !important;
+}
+
+.badge-status {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: var(--color-bg-subtle);
+  color: var(--color-text);
+  font-size: 0.78rem;
+  white-space: nowrap;
+}
+
+.acoes {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.botao-link {
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: 0.82rem;
+  padding: 0;
+  font-family: inherit;
+}
+
+.botao-link:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.botao-link--erro {
+  color: #b91c1c;
+}
+
+.linha-observacao td {
+  font-size: 0.78rem;
+  color: var(--color-secondary);
+  background: var(--color-bg-subtle);
+  padding-top: 0.3rem;
+  padding-bottom: 0.5rem;
+}
