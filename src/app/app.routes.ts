@@ -45,6 +45,8 @@ import { FeriadoForm } from './features/feriados/feriado-form';
 import { PoliticaFeriasForm } from './features/politica-ferias/politica-ferias-form';
 import { SaldoFeriasList } from './features/ferias/saldo-ferias-list';
 import { PeriodoFeriasDetalhe } from './features/ferias/periodo-ferias-detalhe';
+import { RecessosList } from './features/ferias/recessos-list';
+import { RecessoDetalhe } from './features/ferias/recesso-detalhe';
 import { UnidadesOrcamentariasList } from './features/unidades-orcamentarias/unidades-orcamentarias-list';
 import { UnidadeOrcamentariaForm } from './features/unidades-orcamentarias/unidade-orcamentaria-form';
 import { TiposDespesaList } from './features/tipos-despesa/tipos-despesa-list';
@@ -159,6 +161,8 @@ export const routes: Routes = [
       { path: 'dp/politica-ferias', component: PoliticaFeriasForm, canActivate: [adminGuard] },
       { path: 'ferias/saldo', component: SaldoFeriasList, canActivate: [adminGuard] },
       { path: 'ferias/periodos/:id', component: PeriodoFeriasDetalhe, canActivate: [adminGuard] },
+      { path: 'dp/recessos', component: RecessosList, canActivate: [adminGuard] },
+      { path: 'dp/recessos/:id', component: RecessoDetalhe, canActivate: [adminGuard] },
       { path: 'dp/unidades-orcamentarias', component: UnidadesOrcamentariasList, canActivate: [adminGuard] },
       { path: 'dp/unidades-orcamentarias/novo', component: UnidadeOrcamentariaForm, canActivate: [adminGuard] },
       { path: 'dp/unidades-orcamentarias/:id/editar', component: UnidadeOrcamentariaForm, canActivate: [adminGuard] },

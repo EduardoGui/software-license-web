@@ -48,6 +48,8 @@ export interface UsuarioFiltro {
   nome?: string;
   email?: string;
   status?: string;
+  tipo?: UsuarioTipo;
+  setorId?: number;
 }
 
 export interface PerfilPayload {

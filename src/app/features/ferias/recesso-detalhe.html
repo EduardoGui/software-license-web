@@ -1,0 +1,206 @@
+<section class="recesso-detalhe">
+  <header class="topo">
+    <h1>Recesso Corporativo</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !recesso()) {
+    <p class="status status--erro">Não foi possível carregar o recesso.</p>
+  } @else if (recesso(); as r) {
+    <section class="painel">
+      <div class="cabecalho-secao">
+        <h2>{{ r.nome }}</h2>
+        <span class="badge-status">{{ rotulosStatus[r.status] }}</span>
+      </div>
+      <div class="grid-resumo">
+        <div>
+          <span class="rotulo">Período</span>
+          <strong>{{ r.dataInicio }} a {{ r.dataFim }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Dias corridos</span>
+          <strong>{{ r.diasCorridos }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Dias a descontar</span>
+          <strong>{{ r.diasADescontar }}</strong>
+        </div>
+      </div>
+    </section>
+
+    @if (r.status === 'Rascunho') {
+      <section class="painel">
+        <h2>Editar recesso</h2>
+        <form [formGroup]="formEdicao" (ngSubmit)="salvarEdicao()" class="form-edicao">
+          <label class="form-edicao__nome">
+            Nome *
+            <input type="text" formControlName="nome" />
+          </label>
+          <label>
+            Data de início *
+            <input type="date" formControlName="dataInicio" />
+          </label>
+          <label>
+            Data de fim *
+            <input type="date" formControlName="dataFim" />
+          </label>
+          <label>
+            Dias a descontar *
+            <input type="number" formControlName="diasADescontar" min="0" />
+          </label>
+          <button type="submit" class="botao botao--primario" [disabled]="salvandoEdicao()">
+            {{ salvandoEdicao() ? 'Salvando...' : 'Salvar' }}
+          </button>
+        </form>
+        @if (erroEdicao()) {
+          <p class="status status--erro">{{ erroEdicao() }}</p>
+        }
+      </section>
+
+      <section class="painel">
+        <h2>Selecionar colaboradores</h2>
+        <p class="dica">Só colaboradores PJ ativos entram no módulo de férias.</p>
+
+        <div class="filtro-setor">
+          <label>
+            Filtrar por setor
+            <select (change)="filtrarPorSetor($any($event.target).value)">
+              <option value="">Todos os setores</option>
+              @for (setor of setores(); track setor.id) {
+                <option [value]="setor.id">{{ setor.nome }}</option>
+              }
+            </select>
+          </label>
+          <button type="button" class="botao" (click)="selecionarTodosVisiveis()">Selecionar todos</button>
+          <button type="button" class="botao" (click)="limparSelecao()">Limpar seleção</button>
+          <span class="contagem-selecao">{{ selecionados().size }} selecionado(s)</span>
+        </div>
+
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th></th>
+                <th>Colaborador</th>
+                <th>Setor</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (colaborador of colaboradoresPj(); track colaborador.id) {
+                <tr>
+                  <td>
+                    <input
+                      type="checkbox"
+                      [checked]="estaSelecionado(colaborador.id)"
+                      (change)="alternarSelecionado(colaborador.id)"
+                    />
+                  </td>
+                  <td>{{ colaborador.nome }}</td>
+                  <td>{{ colaborador.setorNome || '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <button type="button" class="botao botao--primario botao-simular" [disabled]="simulando()" (click)="simular()">
+          {{ simulando() ? 'Simulando...' : 'Simular' }}
+        </button>
+
+        @if (erroAcao()) {
+          <p class="status status--erro">{{ erroAcao() }}</p>
+        }
+      </section>
+
+      @if (linhasSimulacao(); as linhas) {
+        <section class="painel">
+          <h2>Simulação</h2>
+          @if (linhas.length === 0) {
+            <p class="status">Nenhum colaborador na simulação.</p>
+          } @else {
+            <div class="tabela-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Colaborador</th>
+                    <th>Saldo anterior</th>
+                    <th>Abatimento</th>
+                    <th>Saldo posterior</th>
+                    <th>Situação</th>
+                    <th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (linha of linhas; track linha.usuarioId) {
+                    <tr [class.linha-alerta]="linha.situacao === 'SaldoInsuficiente'">
+                      <td>{{ linha.usuarioNome }}</td>
+                      <td>{{ linha.saldoAnterior }}</td>
+                      <td>{{ linha.diasAbatidos }}</td>
+                      <td>{{ linha.saldoPosterior }}</td>
+                      <td>
+                        @if (linha.periodoFeriasId === null) {
+                          <span class="badge-alerta">Sem período de férias</span>
+                        } @else if (linha.situacao === 'SaldoInsuficiente') {
+                          <span class="badge-alerta">Saldo insuficiente</span>
+                        } @else {
+                          <span class="badge-ok">Normal</span>
+                        }
+                      </td>
+                      <td>
+                        <button type="button" class="botao-link" (click)="removerDaSimulacao(linha.usuarioId)">Remover</button>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <button type="button" class="botao botao--primario botao-confirmar" [disabled]="confirmando()" (click)="confirmar()">
+              {{ confirmando() ? 'Confirmando...' : 'Confirmar recesso' }}
+            </button>
+          }
+        </section>
+      }
+    } @else {
+      <section class="painel">
+        <h2>Colaboradores incluídos</h2>
+        @if (r.colaboradores.length === 0) {
+          <p class="status">Nenhum colaborador foi incluído neste recesso.</p>
+        } @else {
+          <div class="tabela-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Colaborador</th>
+                  <th>Saldo anterior</th>
+                  <th>Abatimento</th>
+                  <th>Saldo posterior</th>
+                  <th>Situação</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (colaborador of r.colaboradores; track colaborador.id) {
+                  <tr [class.linha-alerta]="colaborador.situacao === 'SaldoInsuficiente'">
+                    <td>{{ colaborador.usuarioNome }}</td>
+                    <td>{{ colaborador.saldoAnterior }}</td>
+                    <td>{{ colaborador.diasAbatidos }}</td>
+                    <td>{{ colaborador.saldoPosterior }}</td>
+                    <td>
+                      @if (colaborador.situacao === 'SaldoInsuficiente') {
+                        <span class="badge-alerta">Saldo insuficiente</span>
+                      } @else {
+                        <span class="badge-ok">Normal</span>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    }
+  }
+</section>

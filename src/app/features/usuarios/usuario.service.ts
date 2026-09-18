@@ -15,6 +15,8 @@ export class UsuarioService {
     if (filtro.nome) params = params.set('nome', filtro.nome);
     if (filtro.email) params = params.set('email', filtro.email);
     if (filtro.status) params = params.set('status', filtro.status);
+    if (filtro.tipo) params = params.set('tipo', filtro.tipo);
+    if (filtro.setorId) params = params.set('setorId', filtro.setorId);
 
     return this.http.get<Usuario[]>(this.baseUrl, { params });
   }

@@ -1,0 +1,78 @@
+<section class="recessos">
+  <header class="topo">
+    <h1>Recesso Corporativo</h1>
+    <button type="button" class="botao botao--primario" (click)="alternarForm()">
+      {{ mostrarForm() ? 'Cancelar' : '+ Novo recesso' }}
+    </button>
+  </header>
+
+  <p class="dica">
+    Ex.: Recesso de Fim de Ano. Os dias a descontar são sugeridos automaticamente (dias corridos menos feriados nacionais
+    no intervalo) e podem ser ajustados antes de confirmar.
+  </p>
+
+  @if (mostrarForm()) {
+    <form [formGroup]="form" (ngSubmit)="criar()" class="form-recesso">
+      <label class="form-recesso__nome">
+        Nome *
+        <input type="text" formControlName="nome" placeholder="ex.: Recesso de Fim de Ano 2026/2027" />
+      </label>
+      <label>
+        Data de início *
+        <input type="date" formControlName="dataInicio" />
+      </label>
+      <label>
+        Data de fim *
+        <input type="date" formControlName="dataFim" />
+      </label>
+      <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        {{ salvando() ? 'Criando...' : 'Criar recesso' }}
+      </button>
+    </form>
+
+    @if (erroSalvar()) {
+      <p class="status status--erro">{{ erroSalvar() }}</p>
+    }
+  }
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os recessos.</p>
+  } @else if (recessos().length === 0) {
+    <p class="status">Nenhum recesso corporativo cadastrado ainda.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Período</th>
+            <th>Dias corridos</th>
+            <th>Dias a descontar</th>
+            <th>Status</th>
+            <th>Colaboradores</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (recesso of recessos(); track recesso.id) {
+            <tr>
+              <td>{{ recesso.nome }}</td>
+              <td>{{ recesso.dataInicio }} a {{ recesso.dataFim }}</td>
+              <td>{{ recesso.diasCorridos }}</td>
+              <td>{{ recesso.diasADescontar }}</td>
+              <td><span class="badge-status">{{ rotulosStatus[recesso.status] }}</span></td>
+              <td>{{ recesso.colaboradores.length }}</td>
+              <td class="acoes">
+                <a [routerLink]="['/dp/recessos', recesso.id]" class="botao botao--texto">
+                  {{ recesso.status === 'Rascunho' ? 'Simular / Confirmar' : 'Ver' }}
+                </a>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

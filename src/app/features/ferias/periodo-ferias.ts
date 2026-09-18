@@ -22,7 +22,7 @@ export interface PeriodoFeriasFiltro {
   usuarioId?: number;
 }
 
-export type MovimentacaoSaldoFeriasTipo = 'Aquisicao' | 'AjusteManual' | 'ProgramacaoFerias' | 'AbonoPecuniario';
+export type MovimentacaoSaldoFeriasTipo = 'Aquisicao' | 'AjusteManual' | 'ProgramacaoFerias' | 'AbonoPecuniario' | 'Recesso';
 
 export interface MovimentacaoSaldoFerias {
   id: number;
@@ -45,4 +45,5 @@ export const ROTULOS_TIPO_MOVIMENTACAO: Record<MovimentacaoSaldoFeriasTipo, stri
   AjusteManual: 'Ajuste manual',
   ProgramacaoFerias: 'Programação de férias',
   AbonoPecuniario: 'Abono pecuniário',
+  Recesso: 'Recesso corporativo',
 };
