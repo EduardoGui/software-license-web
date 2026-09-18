@@ -1,0 +1,89 @@
+<section class="saldo-ferias">
+  <header class="topo">
+    <h1>Saldo de Férias (PJ)</h1>
+  </header>
+
+  <p class="dica">
+    Adquirido/Comprometido/Consumido/Disponível calculados a partir do histórico de movimentações de cada período — nunca
+    armazenados diretamente.
+  </p>
+
+  @if (erroGeracao()) {
+    <p class="status status--erro">{{ erroGeracao() }}</p>
+  }
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar o saldo de férias. Verifique se a API está em execução.</p>
+  } @else if (linhas().length === 0) {
+    <p class="status">Nenhum colaborador PJ ativo encontrado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Colaborador</th>
+            <th>Período aquisitivo</th>
+            <th>Progresso</th>
+            <th>Adquirido</th>
+            <th>Comprometido</th>
+            <th>Consumido</th>
+            <th>Disponível</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (linha of linhas(); track linha.usuario.id) {
+            <tr>
+              <td>{{ linha.usuario.nome }}</td>
+              @if (linha.periodo; as periodo) {
+                <td>{{ periodo.inicioAquisitivo }} a {{ periodo.fimAquisitivo }}</td>
+                <td class="celula-barra">
+                  <div class="barra">
+                    <div class="barra__preenchida" [style.width.%]="percentual(periodo)"></div>
+                  </div>
+                  <span class="barra__legenda">
+                    {{ periodo.aquisitivoFechado ? periodo.saldoDisponivel : periodo.projecaoProporcional }}/{{ periodo.diasDireito }}
+                    @if (!periodo.aquisitivoFechado) {
+                      <span class="badge badge--projecao">projeção</span>
+                    }
+                  </span>
+                </td>
+                <td>{{ periodo.direitoAdquirido }}</td>
+                <td>{{ periodo.comprometido }}</td>
+                <td>{{ periodo.consumido }}</td>
+                <td>{{ periodo.saldoDisponivel }}</td>
+                <td class="acoes">
+                  <a [routerLink]="['/ferias/periodos', periodo.id]" class="botao botao--texto">Ver extrato</a>
+                  @if (periodo.aquisitivoFechado) {
+                    <button
+                      type="button"
+                      class="botao"
+                      [disabled]="gerandoUsuarioId() === linha.usuario.id"
+                      (click)="gerarPeriodo(linha.usuario.id)"
+                    >
+                      {{ gerandoUsuarioId() === linha.usuario.id ? 'Gerando...' : 'Gerar próximo período' }}
+                    </button>
+                  }
+                </td>
+              } @else {
+                <td colspan="6" class="status">Nenhum período aquisitivo gerado ainda.</td>
+                <td class="acoes">
+                  <button
+                    type="button"
+                    class="botao botao--primario"
+                    [disabled]="gerandoUsuarioId() === linha.usuario.id"
+                    (click)="gerarPeriodo(linha.usuario.id)"
+                  >
+                    {{ gerandoUsuarioId() === linha.usuario.id ? 'Gerando...' : 'Gerar primeiro período' }}
+                  </button>
+                </td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</section>

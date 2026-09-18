@@ -1,0 +1,113 @@
+<section class="periodo-detalhe">
+  <header class="topo">
+    <h1>Período de Férias</h1>
+    <button type="button" class="botao-voltar" (click)="voltar()"><app-icon name="arrow-left" [size]="16" /> Voltar</button>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !periodo()) {
+    <p class="status status--erro">Não foi possível carregar o período de férias.</p>
+  } @else if (periodo(); as p) {
+    <section class="painel">
+      <h2>{{ p.usuarioNome }}</h2>
+      <div class="grid-resumo">
+        <div>
+          <span class="rotulo">Período aquisitivo</span>
+          <strong>{{ p.inicioAquisitivo }} a {{ p.fimAquisitivo }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Período concessivo</span>
+          <strong>{{ p.inicioConcessivo }} a {{ p.fimConcessivo }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Dias de direito</span>
+          <strong>{{ p.diasDireito }}</strong>
+        </div>
+        <div>
+          <span class="rotulo">Status do aquisitivo</span>
+          <strong>{{ p.aquisitivoFechado ? 'Fechado' : 'Em curso' }}</strong>
+        </div>
+      </div>
+
+      <div class="grid-saldo">
+        <div class="cartao-saldo">
+          <span class="rotulo">Adquirido</span>
+          <strong>{{ p.direitoAdquirido }}</strong>
+          @if (!p.aquisitivoFechado) {
+            <span class="nota">Projeção: {{ p.projecaoProporcional }} (ainda não é direito adquirido)</span>
+          }
+        </div>
+        <div class="cartao-saldo">
+          <span class="rotulo">Comprometido</span>
+          <strong>{{ p.comprometido }}</strong>
+        </div>
+        <div class="cartao-saldo">
+          <span class="rotulo">Consumido</span>
+          <strong>{{ p.consumido }}</strong>
+        </div>
+        <div class="cartao-saldo cartao-saldo--disponivel">
+          <span class="rotulo">Disponível</span>
+          <strong>{{ p.saldoDisponivel }}</strong>
+        </div>
+      </div>
+    </section>
+
+    <section class="painel">
+      <h2>Ajuste manual de saldo</h2>
+      <p class="dica">Todo ajuste exige justificativa e fica registrado no extrato abaixo, com data e responsável.</p>
+
+      <form [formGroup]="formAjuste" (ngSubmit)="registrarAjuste()" class="form-ajuste">
+        <label>
+          Quantidade (dias, use negativo para descontar)
+          <input type="number" formControlName="quantidade" placeholder="ex.: 2 ou -3" />
+        </label>
+        <label class="form-ajuste__observacao">
+          Justificativa *
+          <input type="text" formControlName="observacao" placeholder="ex.: compensação combinada com o colaborador" />
+        </label>
+        <button type="submit" class="botao botao--primario" [disabled]="salvandoAjuste()">
+          {{ salvandoAjuste() ? 'Registrando...' : 'Registrar ajuste' }}
+        </button>
+      </form>
+
+      @if (erroAjuste()) {
+        <p class="status status--erro">{{ erroAjuste() }}</p>
+      }
+    </section>
+
+    <section class="painel">
+      <h2>Extrato de movimentações</h2>
+      @if (movimentacoes().length === 0) {
+        <p class="status">Nenhuma movimentação registrada ainda.</p>
+      } @else {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Data</th>
+                <th>Tipo</th>
+                <th>Quantidade</th>
+                <th>Responsável</th>
+                <th>Observação</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (m of movimentacoes(); track m.id) {
+                <tr>
+                  <td>{{ m.data }}</td>
+                  <td>{{ rotulosTipo[m.tipo] }}</td>
+                  <td [class.valor-positivo]="m.quantidade > 0" [class.valor-negativo]="m.quantidade < 0">
+                    {{ m.quantidade > 0 ? '+' : '' }}{{ m.quantidade }}
+                  </td>
+                  <td>{{ m.usuarioResponsavelNome }}</td>
+                  <td>{{ m.observacao || '-' }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</section>

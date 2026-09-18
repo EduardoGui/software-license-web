@@ -166,6 +166,9 @@
             <a routerLink="/dp/politica-ferias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Política de Férias
             </a>
+            <a routerLink="/ferias/saldo" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+              Saldo de Férias
+            </a>
           }
         } @else {
           <a [routerLink]="['/usuarios', authService.obterUsuarioId()]" routerLinkActive="menu__item--ativo" class="menu__item">
