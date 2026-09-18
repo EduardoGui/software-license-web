@@ -1,0 +1,134 @@
+.ferias-dashboard {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1rem 2rem;
+  font-family: system-ui, sans-serif;
+}
+
+.topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  color: var(--color-primary);
+  margin: 0;
+}
+
+h2 {
+  color: var(--color-primary);
+  margin: 0 0 0.5rem;
+  font-size: 1.05rem;
+}
+
+.dica {
+  color: var(--color-secondary);
+  font-size: 0.8rem;
+  margin: 0 0 0.85rem;
+}
+
+.status {
+  color: var(--color-secondary);
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.card {
+  background: #fff;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.card__valor {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.card__rotulo {
+  font-size: 0.8rem;
+  color: var(--color-secondary);
+}
+
+.painel {
+  background: #fff;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.tabela-scroll {
+  overflow-x: auto;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  min-width: 700px;
+  border-collapse: collapse;
+  background: #fff;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+th {
+  background: var(--color-bg-page);
+  color: var(--color-text);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.linha-alerta {
+  background: #fef2f2;
+}
+
+.badge-alerta {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.botao-link {
+  color: var(--color-primary);
+  font-size: 0.82rem;
+  text-decoration: none;
+}
+
+.botao {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+  padding: 0.5rem 1.1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  text-decoration: none;
+}

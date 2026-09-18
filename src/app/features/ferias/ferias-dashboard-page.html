@@ -1,0 +1,116 @@
+<section class="ferias-dashboard">
+  <header class="topo">
+    <h1>Dashboard de Férias</h1>
+    <a routerLink="/ferias/calendario" class="botao">Ver calendário</a>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro() || !dashboard()) {
+    <p class="status status--erro">Não foi possível carregar o dashboard de férias.</p>
+  } @else if (dashboard(); as d) {
+    <div class="cards">
+      <div class="card">
+        <span class="card__valor">{{ d.colaboradoresPj }}</span>
+        <span class="card__rotulo">Colaboradores PJ ativos</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ d.colaboradoresSemPeriodoGerado }}</span>
+        <span class="card__rotulo">Sem período gerado</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ d.saldoTotalDisponivel }}</span>
+        <span class="card__rotulo">Saldo total disponível (dias)</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ d.programacoesPendentesAprovacao }}</span>
+        <span class="card__rotulo">Programações pendentes de aprovação</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ d.programacoesEmGozoHoje }}</span>
+        <span class="card__rotulo">Colaboradores em gozo hoje</span>
+      </div>
+      <div class="card">
+        <span class="card__valor">{{ d.recessosConfirmadosAnoAtual }}</span>
+        <span class="card__rotulo">Recessos confirmados no ano</span>
+      </div>
+    </div>
+
+    <section class="painel">
+      <h2>Concessivos próximos do vencimento</h2>
+      <p class="dica">Colaboradores com saldo ainda não usado e o período concessivo perto de terminar (risco de perda do direito).</p>
+      @if (d.concessivosProximosDoVencimento.length === 0) {
+        <p class="status">Nenhum concessivo próximo do vencimento.</p>
+      } @else {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Fim do concessivo</th>
+                <th>Saldo disponível</th>
+                <th>Dias para vencer</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of d.concessivosProximosDoVencimento; track item.usuarioId) {
+                <tr [class.linha-alerta]="item.diasParaVencer < 0">
+                  <td>{{ item.usuarioNome }}</td>
+                  <td>{{ item.fimConcessivo }}</td>
+                  <td>{{ item.saldoDisponivel }}</td>
+                  <td>
+                    @if (item.diasParaVencer < 0) {
+                      <span class="badge-alerta">Vencido há {{ -item.diasParaVencer }} d.</span>
+                    } @else {
+                      <span class="badge-alerta">{{ item.diasParaVencer }} d.</span>
+                    }
+                  </td>
+                  <td>
+                    <a [routerLink]="['/ferias/periodos', item.periodoFeriasId]" class="botao-link">Ver período</a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+
+    <section class="painel">
+      <h2>Fila de aprovação</h2>
+      @if (d.filaAprovacao.length === 0) {
+        <p class="status">Nenhuma programação pendente de aprovação.</p>
+      } @else {
+        <div class="tabela-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Colaborador</th>
+                <th>Início</th>
+                <th>Fim</th>
+                <th>Dias</th>
+                <th>Solicitado em</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (prog of d.filaAprovacao; track prog.id) {
+                <tr>
+                  <td>{{ prog.usuarioNome }}</td>
+                  <td>{{ prog.dataInicio }}</td>
+                  <td>{{ prog.dataFim }}</td>
+                  <td>{{ prog.quantidadeDias }}</td>
+                  <td>{{ prog.dataSolicitacao || '-' }}</td>
+                  <td>
+                    <a [routerLink]="['/ferias/periodos', prog.periodoFeriasId]" class="botao-link">Analisar</a>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</section>
