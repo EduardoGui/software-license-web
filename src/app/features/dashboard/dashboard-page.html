@@ -169,6 +169,8 @@
                       <a [routerLink]="['/equipamentos/lista', pendencia.equipamentoId, 'editar']">{{ pendencia.titulo }}</a>
                     } @else if (pendencia.origem === 'Medição') {
                       <a [routerLink]="['/contratos', pendencia.contratoId]">{{ pendencia.titulo }}</a>
+                    } @else if (pendencia.origem === 'Férias' && pendencia.periodoFeriasId !== null) {
+                      <a [routerLink]="['/ferias/periodos', pendencia.periodoFeriasId]">{{ pendencia.titulo }}</a>
                     } @else {
                       {{ pendencia.titulo }}
                     }
