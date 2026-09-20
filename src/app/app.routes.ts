@@ -40,15 +40,15 @@ import { RelatorioMensalLocacaoPage } from './features/relatorio-mensal-locacao/
 import { InventarioPage } from './features/inventario/inventario-page';
 import { SetoresList } from './features/setores/setores-list';
 import { SetorForm } from './features/setores/setor-form';
-import { FeriadosList } from './features/feriados/feriados-list';
 import { FeriadoForm } from './features/feriados/feriado-form';
-import { PoliticaFeriasForm } from './features/politica-ferias/politica-ferias-form';
 import { SaldoFeriasList } from './features/ferias/saldo-ferias-list';
 import { PeriodoFeriasDetalhe } from './features/ferias/periodo-ferias-detalhe';
 import { RecessosList } from './features/ferias/recessos-list';
 import { RecessoDetalhe } from './features/ferias/recesso-detalhe';
 import { FeriasDashboardPage } from './features/ferias/ferias-dashboard-page';
 import { FeriasCalendarioPage } from './features/ferias/ferias-calendario-page';
+import { FeriasPainel } from './features/ferias/ferias-painel';
+import { FeriasConfiguracoes } from './features/ferias/ferias-configuracoes';
 import { UnidadesOrcamentariasList } from './features/unidades-orcamentarias/unidades-orcamentarias-list';
 import { UnidadeOrcamentariaForm } from './features/unidades-orcamentarias/unidade-orcamentaria-form';
 import { TiposDespesaList } from './features/tipos-despesa/tipos-despesa-list';
@@ -157,16 +157,23 @@ export const routes: Routes = [
       { path: 'dp/setores', component: SetoresList, canActivate: [adminGuard] },
       { path: 'dp/setores/novo', component: SetorForm, canActivate: [adminGuard] },
       { path: 'dp/setores/:id/editar', component: SetorForm, canActivate: [adminGuard] },
-      { path: 'dp/feriados', component: FeriadosList, canActivate: [adminGuard] },
-      { path: 'dp/feriados/novo', component: FeriadoForm, canActivate: [adminGuard] },
-      { path: 'dp/feriados/:id/editar', component: FeriadoForm, canActivate: [adminGuard] },
-      { path: 'dp/politica-ferias', component: PoliticaFeriasForm, canActivate: [adminGuard] },
-      { path: 'ferias/saldo', component: SaldoFeriasList, canActivate: [adminGuard] },
-      { path: 'ferias/periodos/:id', component: PeriodoFeriasDetalhe, canActivate: [adminGuard] },
-      { path: 'dp/recessos', component: RecessosList, canActivate: [adminGuard] },
-      { path: 'dp/recessos/:id', component: RecessoDetalhe, canActivate: [adminGuard] },
-      { path: 'ferias/dashboard', component: FeriasDashboardPage, canActivate: [adminGuard] },
-      { path: 'ferias/calendario', component: FeriasCalendarioPage, canActivate: [adminGuard] },
+      {
+        path: 'ferias',
+        component: FeriasPainel,
+        canActivate: [adminGuard],
+        children: [
+          { path: '', redirectTo: 'visao-geral', pathMatch: 'full' },
+          { path: 'visao-geral', component: FeriasDashboardPage },
+          { path: 'colaboradores', component: SaldoFeriasList },
+          { path: 'colaboradores/:id', component: PeriodoFeriasDetalhe },
+          { path: 'calendario', component: FeriasCalendarioPage },
+          { path: 'recessos', component: RecessosList },
+          { path: 'recessos/:id', component: RecessoDetalhe },
+          { path: 'configuracoes', component: FeriasConfiguracoes },
+          { path: 'configuracoes/feriados/novo', component: FeriadoForm },
+          { path: 'configuracoes/feriados/:id/editar', component: FeriadoForm },
+        ],
+      },
       { path: 'dp/unidades-orcamentarias', component: UnidadesOrcamentariasList, canActivate: [adminGuard] },
       { path: 'dp/unidades-orcamentarias/novo', component: UnidadeOrcamentariaForm, canActivate: [adminGuard] },
       { path: 'dp/unidades-orcamentarias/:id/editar', component: UnidadeOrcamentariaForm, canActivate: [adminGuard] },

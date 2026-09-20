@@ -65,7 +65,7 @@
               <td><span class="badge-status">{{ rotulosStatus[recesso.status] }}</span></td>
               <td>{{ recesso.colaboradores.length }}</td>
               <td class="acoes">
-                <a [routerLink]="['/dp/recessos', recesso.id]" class="botao botao--texto">
+                <a [routerLink]="['/ferias/recessos', recesso.id]" class="botao botao--texto">
                   {{ recesso.status === 'Rascunho' ? 'Simular / Confirmar' : 'Ver' }}
                 </a>
               </td>

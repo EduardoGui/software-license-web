@@ -96,7 +96,7 @@ export class FeriadoForm {
       : this.feriadoService.criar(payload);
 
     requisicao.subscribe({
-      next: () => this.router.navigate(['/dp/feriados']),
+      next: () => this.router.navigate(['/ferias/configuracoes']),
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar o feriado.');

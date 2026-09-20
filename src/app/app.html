@@ -100,28 +100,7 @@
             <a routerLink="/dp/logs-auditoria" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Log de Auditoria
             </a>
-            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoFerias()">
-              <span class="menu__grupo-seta">{{ grupoFeriasAberto() ? '▾' : '▸' }}</span>
-              Férias
-            </button>
-            @if (grupoFeriasAberto()) {
-              <a routerLink="/dp/feriados" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">Feriados</a>
-              <a routerLink="/dp/politica-ferias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Política de Férias
-              </a>
-              <a routerLink="/ferias/saldo" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Saldo de Férias
-              </a>
-              <a routerLink="/dp/recessos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Recesso Corporativo
-              </a>
-              <a routerLink="/ferias/dashboard" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Dashboard de Férias
-              </a>
-              <a routerLink="/ferias/calendario" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Calendário de Férias
-              </a>
-            }
+            <a routerLink="/ferias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Férias</a>
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoPlanoSaude()">
             <span class="menu__grupo-seta">{{ grupoPlanoSaudeAberto() ? '▾' : '▸' }}</span>

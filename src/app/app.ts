@@ -33,7 +33,6 @@ export class App {
   protected readonly grupoCadastrosGeraisAberto = signal(false);
   protected readonly grupoLicencasAberto = signal(false);
   protected readonly grupoEquipamentosAberto = signal(false);
-  protected readonly grupoFeriasAberto = signal(false);
   protected readonly grupoPatrimonioAberto = signal(false);
   protected readonly grupoContratosAberto = signal(false);
   protected readonly grupoReembolsoAberto = signal(false);
@@ -173,10 +172,6 @@ export class App {
     if (abrindo) {
       this.grupoLicencasAberto.set(false);
     }
-  }
-
-  protected alternarGrupoFerias(): void {
-    this.grupoFeriasAberto.update((aberto) => !aberto);
   }
 
   protected alternarGrupoReembolso(): void {

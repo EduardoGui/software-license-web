@@ -55,7 +55,7 @@
                 <td>{{ periodo.consumido }}</td>
                 <td>{{ periodo.saldoDisponivel }}</td>
                 <td class="acoes">
-                  <a [routerLink]="['/ferias/periodos', periodo.id]" class="botao botao--texto">Ver extrato</a>
+                  <a [routerLink]="['/ferias/colaboradores', periodo.id]" class="botao botao--texto">Ver extrato</a>
                   @if (periodo.aquisitivoFechado) {
                     <button
                       type="button"

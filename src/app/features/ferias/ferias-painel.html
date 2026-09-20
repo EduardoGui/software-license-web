@@ -1,0 +1,17 @@
+<section class="ferias-painel">
+  <header class="ferias-painel__topo">
+    <h1>Férias</h1>
+  </header>
+
+  <nav class="ferias-painel__abas">
+    <a routerLink="visao-geral" routerLinkActive="aba--ativa" class="aba">Visão Geral</a>
+    <a routerLink="colaboradores" routerLinkActive="aba--ativa" class="aba">Colaboradores</a>
+    <a routerLink="calendario" routerLinkActive="aba--ativa" class="aba">Calendário</a>
+    <a routerLink="recessos" routerLinkActive="aba--ativa" class="aba">Recessos</a>
+    <a routerLink="configuracoes" routerLinkActive="aba--ativa" class="aba">Configurações</a>
+  </nav>
+
+  <div class="ferias-painel__conteudo">
+    <router-outlet></router-outlet>
+  </div>
+</section>

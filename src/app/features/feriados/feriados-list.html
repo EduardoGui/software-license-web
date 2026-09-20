@@ -1,7 +1,7 @@
 <section class="feriados">
   <header class="topo">
     <h1>Feriados</h1>
-    <a class="botao botao--primario" routerLink="/dp/feriados/novo"><app-icon name="plus" [size]="16" /> Novo feriado</a>
+    <a class="botao botao--primario" routerLink="/ferias/configuracoes/feriados/novo"><app-icon name="plus" [size]="16" /> Novo feriado</a>
   </header>
 
   <form class="filtros" (ngSubmit)="buscar()">
@@ -62,7 +62,7 @@
                 </span>
               </td>
               <td class="acoes">
-                <a [routerLink]="['/dp/feriados', feriado.id, 'editar']" title="Editar" aria-label="Editar">
+                <a [routerLink]="['/ferias/configuracoes/feriados', feriado.id, 'editar']" title="Editar" aria-label="Editar">
                   <app-icon name="pencil" [size]="18" />
                 </a>
               </td>
