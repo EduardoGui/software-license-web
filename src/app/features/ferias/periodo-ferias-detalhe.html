@@ -86,7 +86,10 @@
 
       @if (mostrarFormPrograma()) {
         @if (editandoProgramacaoId() !== null) {
-          <p class="dica">Editando a programação #{{ editandoProgramacaoId() }} (só é possível enquanto estiver em rascunho).</p>
+          <p class="dica">
+            Editando a programação #{{ editandoProgramacaoId() }}. Se ela já estiver aprovada, a edição lança um estorno
+            do débito antigo e um novo débito no extrato (nunca altera o lançamento já feito).
+          </p>
         }
         <form [formGroup]="formPrograma" (ngSubmit)="salvarPrograma()" class="form-programa">
           <label>

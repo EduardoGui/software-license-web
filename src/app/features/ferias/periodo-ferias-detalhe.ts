@@ -147,7 +147,7 @@ export class PeriodoFeriasDetalhe {
   }
 
   protected podeEditar(p: ProgramacaoFerias): boolean {
-    return p.status === 'Rascunho';
+    return p.status === 'Rascunho' || p.status === 'Aprovada';
   }
 
   protected salvarPrograma(): void {
