@@ -85,7 +85,10 @@
       </div>
 
       @if (mostrarFormPrograma()) {
-        <form [formGroup]="formPrograma" (ngSubmit)="criarPrograma()" class="form-programa">
+        @if (editandoProgramacaoId() !== null) {
+          <p class="dica">Editando a programação #{{ editandoProgramacaoId() }} (só é possível enquanto estiver em rascunho).</p>
+        }
+        <form [formGroup]="formPrograma" (ngSubmit)="salvarPrograma()" class="form-programa">
           <label>
             Data de início *
             <input type="date" formControlName="dataInicio" />
@@ -113,7 +116,7 @@
             </label>
           }
           <button type="submit" class="botao botao--primario" [disabled]="salvandoPrograma()">
-            {{ salvandoPrograma() ? 'Criando...' : 'Criar programação' }}
+            {{ salvandoPrograma() ? 'Salvando...' : (editandoProgramacaoId() !== null ? 'Salvar alterações' : 'Criar programação') }}
           </button>
         </form>
 
@@ -152,6 +155,9 @@
                   <td>{{ prog.solicitanteNome || '-' }}</td>
                   <td>{{ prog.aprovadorNome || '-' }}</td>
                   <td class="acoes">
+                    @if (podeEditar(prog)) {
+                      <button type="button" class="botao-link" [disabled]="acaoEmAndamentoId() === prog.id" (click)="editarPrograma(prog)">Editar</button>
+                    }
                     @if (podeSolicitar(prog)) {
                       <button type="button" class="botao-link" [disabled]="acaoEmAndamentoId() === prog.id" (click)="solicitar(prog)">Solicitar</button>
                     }
@@ -191,18 +197,24 @@
                 <th>Quantidade</th>
                 <th>Responsável</th>
                 <th>Observação</th>
+                <th>Situação</th>
               </tr>
             </thead>
             <tbody>
               @for (m of movimentacoes(); track m.id) {
-                <tr>
+                <tr [class.linha-anulada]="m.anulada">
                   <td>{{ m.data }}</td>
                   <td>{{ rotulosTipo[m.tipo] }}</td>
-                  <td [class.valor-positivo]="m.quantidade > 0" [class.valor-negativo]="m.quantidade < 0">
+                  <td [class.valor-positivo]="!m.anulada && m.quantidade > 0" [class.valor-negativo]="!m.anulada && m.quantidade < 0">
                     {{ m.quantidade > 0 ? '+' : '' }}{{ m.quantidade }}
                   </td>
                   <td>{{ m.usuarioResponsavelNome }}</td>
                   <td>{{ m.observacao || '-' }}</td>
+                  <td>
+                    @if (m.anulada) {
+                      <span class="badge-alerta" title="A programação vinculada foi cancelada/reprovada - não conta mais no saldo">Cancelada</span>
+                    }
+                  </td>
                 </tr>
               }
             </tbody>

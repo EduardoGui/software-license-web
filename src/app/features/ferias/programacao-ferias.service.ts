@@ -18,6 +18,10 @@ export class ProgramacaoFeriasService {
     return this.http.post<ProgramacaoFerias>(`${environment.apiUrl}/periodos-ferias/${periodoFeriasId}/programacoes`, payload);
   }
 
+  atualizar(id: number, payload: CreateProgramacaoFeriasPayload): Observable<ProgramacaoFerias> {
+    return this.http.put<ProgramacaoFerias>(`${this.baseUrl}/${id}`, payload);
+  }
+
   solicitar(id: number): Observable<ProgramacaoFerias> {
     return this.http.patch<ProgramacaoFerias>(`${this.baseUrl}/${id}/solicitar`, {});
   }

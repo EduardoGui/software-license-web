@@ -45,6 +45,7 @@ export class PeriodoFeriasDetalhe {
   protected readonly mostrarFormPrograma = signal(false);
   protected readonly salvandoPrograma = signal(false);
   protected readonly erroPrograma = signal<string | null>(null);
+  protected readonly editandoProgramacaoId = signal<number | null>(null);
 
   protected readonly formPrograma = this.fb.nonNullable.group({
     dataInicio: ['', Validators.required],
@@ -122,49 +123,83 @@ export class PeriodoFeriasDetalhe {
   }
 
   protected alternarFormPrograma(): void {
-    this.mostrarFormPrograma.update((valor) => !valor);
+    const abrindo = !this.mostrarFormPrograma();
+    this.mostrarFormPrograma.set(abrindo);
     this.erroPrograma.set(null);
+    this.editandoProgramacaoId.set(null);
+    if (!abrindo) {
+      this.resetarFormPrograma();
+    }
   }
 
-  protected criarPrograma(): void {
+  protected editarPrograma(p: ProgramacaoFerias): void {
+    this.editandoProgramacaoId.set(p.id);
+    this.erroPrograma.set(null);
+    this.formPrograma.setValue({
+      dataInicio: p.dataInicio,
+      quantidadeDias: p.quantidadeDias,
+      observacao: p.observacao ?? '',
+      adiantamentoDecimoTerceiro: p.adiantamentoDecimoTerceiro,
+      abonoPecuniario: p.abonoPecuniario,
+      diasAbono: p.diasAbono || null,
+    });
+    this.mostrarFormPrograma.set(true);
+  }
+
+  protected podeEditar(p: ProgramacaoFerias): boolean {
+    return p.status === 'Rascunho';
+  }
+
+  protected salvarPrograma(): void {
     if (this.formPrograma.invalid) {
       this.formPrograma.markAllAsTouched();
       return;
     }
 
     const valor = this.formPrograma.getRawValue();
+    const payload = {
+      dataInicio: valor.dataInicio,
+      quantidadeDias: valor.quantidadeDias!,
+      observacao: valor.observacao || undefined,
+      adiantamentoDecimoTerceiro: valor.adiantamentoDecimoTerceiro,
+      abonoPecuniario: valor.abonoPecuniario,
+      diasAbono: valor.abonoPecuniario ? (valor.diasAbono ?? 0) : 0,
+    };
+    const editandoId = this.editandoProgramacaoId();
+
     this.salvandoPrograma.set(true);
     this.erroPrograma.set(null);
 
-    this.programacaoFeriasService
-      .criar(this.periodoId, {
-        dataInicio: valor.dataInicio,
-        quantidadeDias: valor.quantidadeDias!,
-        observacao: valor.observacao || undefined,
-        adiantamentoDecimoTerceiro: valor.adiantamentoDecimoTerceiro,
-        abonoPecuniario: valor.abonoPecuniario,
-        diasAbono: valor.abonoPecuniario ? (valor.diasAbono ?? 0) : 0,
-      })
-      .subscribe({
-        next: () => {
-          this.salvandoPrograma.set(false);
-          this.mostrarFormPrograma.set(false);
-          this.formPrograma.reset({
-            dataInicio: '',
-            quantidadeDias: null,
-            observacao: '',
-            adiantamentoDecimoTerceiro: false,
-            abonoPecuniario: false,
-            diasAbono: null,
-          });
-          this.recarregarProgramacoes();
-          this.recarregarPeriodo();
-        },
-        error: (err) => {
-          this.salvandoPrograma.set(false);
-          this.erroPrograma.set(err?.error?.message ?? 'Não foi possível criar a programação de férias.');
-        },
-      });
+    const acao = editandoId === null
+      ? this.programacaoFeriasService.criar(this.periodoId, payload)
+      : this.programacaoFeriasService.atualizar(editandoId, payload);
+
+    acao.subscribe({
+      next: () => {
+        this.salvandoPrograma.set(false);
+        this.mostrarFormPrograma.set(false);
+        this.editandoProgramacaoId.set(null);
+        this.resetarFormPrograma();
+        this.recarregarProgramacoes();
+        this.recarregarPeriodo();
+        this.recarregarMovimentacoes();
+      },
+      error: (err) => {
+        this.salvandoPrograma.set(false);
+        this.erroPrograma.set(err?.error?.message ?? (editandoId === null ? 'Não foi possível criar a programação de férias.' : 'Não foi possível salvar as alterações.'));
+      },
+    });
+  }
+
+  private resetarFormPrograma(): void {
+    this.formPrograma.reset({
+      dataInicio: '',
+      quantidadeDias: null,
+      observacao: '',
+      adiantamentoDecimoTerceiro: false,
+      abonoPecuniario: false,
+      diasAbono: null,
+    });
   }
 
   protected podeSolicitar(p: ProgramacaoFerias): boolean {

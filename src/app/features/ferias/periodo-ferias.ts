@@ -32,6 +32,7 @@ export interface MovimentacaoSaldoFerias {
   usuarioResponsavelId: number | null;
   usuarioResponsavelNome: string;
   observacao: string | null;
+  anulada: boolean;
   dataCriacao: string;
 }
 

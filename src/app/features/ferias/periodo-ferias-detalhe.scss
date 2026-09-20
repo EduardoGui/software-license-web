@@ -285,3 +285,22 @@ th {
   padding-top: 0.3rem;
   padding-bottom: 0.5rem;
 }
+
+.linha-anulada td {
+  color: var(--color-secondary);
+  text-decoration: line-through;
+}
+
+.linha-anulada td:last-child {
+  text-decoration: none;
+}
+
+.badge-alerta {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
