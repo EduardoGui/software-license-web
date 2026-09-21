@@ -148,7 +148,7 @@ export class ObrigacaoView {
   }
 
   protected cancelar(): void {
-    if (!confirm('Cancelar esta obrigação? Essa ação não pode ser desfeita.')) {
+    if (!confirm('Cancelar esta obrigação?')) {
       return;
     }
 
@@ -163,6 +163,22 @@ export class ObrigacaoView {
       error: (err) => {
         this.processando.set(false);
         this.erroAcao.set(err?.error?.message ?? 'Não foi possível cancelar.');
+      },
+    });
+  }
+
+  protected reativar(): void {
+    this.processando.set(true);
+    this.erroAcao.set(null);
+
+    this.obrigacaoService.reativar(this.obrigacaoId).subscribe({
+      next: (o) => {
+        this.obrigacao.set(o);
+        this.processando.set(false);
+      },
+      error: (err) => {
+        this.processando.set(false);
+        this.erroAcao.set(err?.error?.message ?? 'Não foi possível reativar.');
       },
     });
   }

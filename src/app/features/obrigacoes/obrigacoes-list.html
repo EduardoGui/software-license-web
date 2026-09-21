@@ -173,6 +173,11 @@
                               Cancelar
                             </button>
                           }
+                          @if (o.cancelada) {
+                            <button type="button" class="botao" [disabled]="processandoAcao()" (click)="reativar(o)">
+                              Reativar
+                            </button>
+                          }
                         </div>
                         <button type="submit" class="botao botao--primario" [disabled]="salvandoLinha()">
                           {{ salvandoLinha() ? 'Salvando...' : 'Salvar acompanhamento' }}

@@ -55,6 +55,9 @@
         @if (!o.cancelada && !o.pago) {
           <button type="button" class="botao botao--perigo" [disabled]="processando()" (click)="cancelar()">Cancelar</button>
         }
+        @if (o.cancelada) {
+          <button type="button" class="botao" [disabled]="processando()" (click)="reativar()">Reativar</button>
+        }
       </div>
     </section>
 

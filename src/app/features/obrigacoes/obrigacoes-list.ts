@@ -262,7 +262,7 @@ export class ObrigacoesList {
   }
 
   protected cancelar(o: Obrigacao): void {
-    if (!confirm('Cancelar esta obrigação? Essa ação não pode ser desfeita.')) {
+    if (!confirm('Cancelar esta obrigação?')) {
       return;
     }
 
@@ -278,6 +278,22 @@ export class ObrigacoesList {
       error: (err) => {
         this.processandoAcao.set(false);
         this.erroLinha.set(err?.error?.message ?? 'Não foi possível cancelar.');
+      },
+    });
+  }
+
+  protected reativar(o: Obrigacao): void {
+    this.processandoAcao.set(true);
+    this.erroLinha.set(null);
+
+    this.obrigacaoService.reativar(o.id).subscribe({
+      next: (atualizada) => {
+        this.substituir(atualizada);
+        this.processandoAcao.set(false);
+      },
+      error: (err) => {
+        this.processandoAcao.set(false);
+        this.erroLinha.set(err?.error?.message ?? 'Não foi possível reativar.');
       },
     });
   }

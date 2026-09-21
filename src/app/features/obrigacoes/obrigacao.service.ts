@@ -44,4 +44,8 @@ export class ObrigacaoService {
   cancelar(id: number): Observable<Obrigacao> {
     return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/cancelar`, {});
   }
+
+  reativar(id: number): Observable<Obrigacao> {
+    return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/reativar`, {});
+  }
 }
