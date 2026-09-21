@@ -13,12 +13,15 @@
         <div class="grid">
           <label>
             Fornecedor
-            <select formControlName="fornecedorId">
-              <option [ngValue]="null">Selecione</option>
-              @for (fornecedor of fornecedores(); track fornecedor.id) {
-                <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
-              }
-            </select>
+            <div class="campo-com-acao">
+              <select formControlName="fornecedorId">
+                <option [ngValue]="null">Selecione</option>
+                @for (fornecedor of fornecedores(); track fornecedor.id) {
+                  <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
+                }
+              </select>
+              <button type="button" class="botao-add" title="Novo fornecedor" (click)="abrirModalFornecedor()">+</button>
+            </div>
           </label>
           <label>
             Categoria
@@ -76,5 +79,40 @@
         </button>
       </div>
     </form>
+  }
+
+  @if (modalFornecedorAberto()) {
+    <div class="overlay" (click)="fecharModalFornecedor()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <header>
+          <h2>Novo fornecedor</h2>
+          <button type="button" class="botao-fechar" (click)="fecharModalFornecedor()" aria-label="Fechar">×</button>
+        </header>
+
+        <form [formGroup]="formFornecedor" (ngSubmit)="salvarFornecedor()">
+          <div class="modal__corpo">
+            <label>
+              Nome*
+              <input type="text" formControlName="nome" />
+            </label>
+            <label>
+              CNPJ*
+              <input type="text" formControlName="cnpj" placeholder="00.000.000/0000-00" />
+            </label>
+
+            @if (erroFornecedor()) {
+              <p class="status status--erro">{{ erroFornecedor() }}</p>
+            }
+          </div>
+
+          <footer>
+            <button type="button" class="botao botao--texto" (click)="fecharModalFornecedor()">Cancelar</button>
+            <button type="submit" class="botao botao--primario" [disabled]="salvandoFornecedor()">
+              {{ salvandoFornecedor() ? 'Salvando...' : 'Salvar' }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
   }
 </section>

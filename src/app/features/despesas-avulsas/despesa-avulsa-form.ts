@@ -40,6 +40,16 @@ export class DespesaAvulsaForm {
     observacoes: [''],
   });
 
+  // Modal de cadastro rápido de fornecedor
+  protected readonly modalFornecedorAberto = signal(false);
+  protected readonly salvandoFornecedor = signal(false);
+  protected readonly erroFornecedor = signal<string | null>(null);
+
+  protected readonly formFornecedor = this.fb.nonNullable.group({
+    nome: ['', Validators.required],
+    cnpj: ['', Validators.required],
+  });
+
   protected get editando(): boolean {
     return this.despesaId() !== null;
   }
@@ -116,5 +126,54 @@ export class DespesaAvulsaForm {
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar a despesa avulsa.');
       },
     });
+  }
+
+  // --- Modal de cadastro rápido de fornecedor ---
+
+  protected abrirModalFornecedor(): void {
+    this.erroFornecedor.set(null);
+    this.formFornecedor.reset({ nome: '', cnpj: '' });
+    this.modalFornecedorAberto.set(true);
+  }
+
+  protected fecharModalFornecedor(): void {
+    this.modalFornecedorAberto.set(false);
+  }
+
+  protected salvarFornecedor(): void {
+    if (this.formFornecedor.invalid) {
+      this.formFornecedor.markAllAsTouched();
+      return;
+    }
+
+    const valor = this.formFornecedor.getRawValue();
+    this.salvandoFornecedor.set(true);
+    this.erroFornecedor.set(null);
+
+    this.fornecedorService
+      .criar({
+        nome: valor.nome.trim(),
+        cnpj: valor.cnpj.trim(),
+        contato: null,
+        telefone: null,
+        endereco: null,
+        inscricaoEstadual: null,
+        inscricaoMunicipal: null,
+        email: null,
+        dadosBancarios: null,
+        ativo: true,
+      })
+      .subscribe({
+        next: (novo) => {
+          this.fornecedores.set([...this.fornecedores(), novo].sort((a, b) => a.nome.localeCompare(b.nome)));
+          this.form.patchValue({ fornecedorId: novo.id });
+          this.salvandoFornecedor.set(false);
+          this.modalFornecedorAberto.set(false);
+        },
+        error: (err) => {
+          this.salvandoFornecedor.set(false);
+          this.erroFornecedor.set(err?.error?.message ?? 'Não foi possível cadastrar o fornecedor.');
+        },
+      });
   }
 }
