@@ -55,7 +55,7 @@
                   <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
                 }
               </select>
-              <button type="button" class="botao botao--texto" (click)="novoFornecedor()">+ Novo fornecedor</button>
+              <button type="button" class="botao-add" title="Novo fornecedor" (click)="novoFornecedor()">+</button>
             </div>
             @if (form.controls.fornecedorId.invalid && form.controls.fornecedorId.touched) {
               <span class="campo-erro">Fornecedor é obrigatório. Não encontrou? Use "+ Novo fornecedor".</span>
