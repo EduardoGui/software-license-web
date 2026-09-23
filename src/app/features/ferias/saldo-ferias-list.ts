@@ -67,10 +67,17 @@ export class SaldoFeriasList {
     });
   }
 
-  protected percentual(periodo: PeriodoFerias): number {
-    if (periodo.diasDireito <= 0) return 0;
-    const base = periodo.aquisitivoFechado ? periodo.saldoDisponivel : periodo.projecaoProporcional;
-    return Math.max(0, Math.min(100, Math.round((base / periodo.diasDireito) * 100)));
+  protected percentualDisponivel(periodo: PeriodoFerias): number {
+    return this.percentualDe(periodo.saldoDisponivel, periodo.diasDireito);
+  }
+
+  protected percentualProjecao(periodo: PeriodoFerias): number {
+    return this.percentualDe(periodo.projecaoProporcional, periodo.diasDireito);
+  }
+
+  private percentualDe(valor: number, diasDireito: number): number {
+    if (diasDireito <= 0) return 0;
+    return Math.max(0, Math.min(100, Math.round((valor / diasDireito) * 100)));
   }
 
   protected gerarPeriodo(usuarioId: number): void {

@@ -10,6 +10,7 @@ export interface PeriodoFerias {
   aquisitivoFechado: boolean;
   direitoAdquirido: number;
   projecaoProporcional: number;
+  antecipado: number;
   comprometido: number;
   consumido: number;
   saldoDisponivel: number;

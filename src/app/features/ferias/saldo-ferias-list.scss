@@ -74,6 +74,15 @@ th {
   border-radius: 999px;
 }
 
+.barra--fina {
+  height: 4px;
+  margin-bottom: 0.3rem;
+}
+
+.barra__preenchida--projecao {
+  background: var(--color-tertiary);
+}
+
 .barra__legenda {
   font-size: 0.78rem;
   color: var(--color-secondary);
@@ -93,6 +102,11 @@ th {
 .badge--projecao {
   background: var(--color-bg-subtle);
   color: var(--color-secondary);
+}
+
+.badge--antecipado {
+  background: var(--color-tertiary-tint);
+  color: var(--color-tertiary);
 }
 
 .acoes {

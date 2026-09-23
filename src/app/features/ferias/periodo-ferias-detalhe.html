@@ -32,10 +32,11 @@
 
       <div class="grid-saldo">
         <div class="cartao-saldo">
-          <span class="rotulo">Adquirido</span>
+          <span class="rotulo">Adquirido (concedido)</span>
           <strong>{{ p.direitoAdquirido }}</strong>
-          @if (!p.aquisitivoFechado) {
-            <span class="nota">Projeção: {{ p.projecaoProporcional }} (ainda não é direito adquirido)</span>
+          <span class="nota">Direito legal acumulado até hoje: {{ p.projecaoProporcional }}</span>
+          @if (p.antecipado > 0) {
+            <span class="nota nota--antecipado">Adiantado: {{ p.antecipado }} dia(s) (ainda não ganhos pela política)</span>
           }
         </div>
         <div class="cartao-saldo">

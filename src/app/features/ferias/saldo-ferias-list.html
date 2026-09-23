@@ -41,12 +41,15 @@
                 <td>{{ periodo.inicioAquisitivo }} a {{ periodo.fimAquisitivo }}</td>
                 <td class="celula-barra">
                   <div class="barra">
-                    <div class="barra__preenchida" [style.width.%]="percentual(periodo)"></div>
+                    <div class="barra__preenchida" [style.width.%]="percentualDisponivel(periodo)"></div>
+                  </div>
+                  <div class="barra barra--fina">
+                    <div class="barra__preenchida barra__preenchida--projecao" [style.width.%]="percentualProjecao(periodo)"></div>
                   </div>
                   <span class="barra__legenda">
-                    {{ periodo.aquisitivoFechado ? periodo.saldoDisponivel : periodo.projecaoProporcional }}/{{ periodo.diasDireito }}
-                    @if (!periodo.aquisitivoFechado) {
-                      <span class="badge badge--projecao">projeção</span>
+                    {{ periodo.saldoDisponivel }}/{{ periodo.diasDireito }}
+                    @if (periodo.antecipado > 0) {
+                      <span class="badge badge--antecipado">adiantado {{ periodo.antecipado }}</span>
                     }
                   </span>
                 </td>
