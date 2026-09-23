@@ -40,7 +40,12 @@ export class AuthService {
   }
 
   estaAutenticado(): boolean {
-    return !!this.obterToken();
+    return !!this.obterToken() && !this.tokenExpirado();
+  }
+
+  tokenExpirado(): boolean {
+    const exp = this.obterClaims()?.['exp'];
+    return typeof exp === 'number' && exp * 1000 <= Date.now();
   }
 
   ehAdministrador(): boolean {

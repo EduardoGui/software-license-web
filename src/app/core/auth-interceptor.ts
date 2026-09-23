@@ -16,7 +16,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((err) => {
       if (err.status === 401) {
         authService.logout();
-        router.navigate(['/login']);
+        router.navigate(['/login'], { queryParams: { expirada: '1' } });
       }
       return throwError(() => err);
     }),

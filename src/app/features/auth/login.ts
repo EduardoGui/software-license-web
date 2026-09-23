@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { AuthService } from './auth.service';
 
@@ -14,9 +14,12 @@ export class Login {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly route = inject(ActivatedRoute);
 
   protected readonly entrando = signal(false);
-  protected readonly erro = signal<string | null>(null);
+  protected readonly erro = signal<string | null>(
+    this.route.snapshot.queryParamMap.get('expirada') ? 'Sua sessão expirou. Faça login novamente.' : null,
+  );
 
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],

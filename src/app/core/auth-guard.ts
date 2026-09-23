@@ -11,6 +11,8 @@ export const authGuard: CanActivateFn = () => {
     return true;
   }
 
-  router.navigate(['/login']);
+  const tinhaToken = !!authService.obterToken();
+  authService.logout();
+  router.navigate(['/login'], tinhaToken ? { queryParams: { expirada: '1' } } : undefined);
   return false;
 };
