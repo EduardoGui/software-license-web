@@ -440,7 +440,7 @@ export class ContratoView {
       unidadeNoMomento: [item.unidadeNoMomento],
       saldoAntes: [item.saldoAntes],
       valorUnitarioNoMomento: [item.valorUnitarioNoMomento],
-      quantidadeMedidaNestaBm: [item.quantidadeMedidaNestaBm, [Validators.required, Validators.min(0)]],
+      quantidadeMedidaNestaBm: [item.quantidadeMedidaNestaBm, [Validators.required, Validators.min(0), Validators.max(item.saldoAntes)]],
       inicioEfetivo: this.fb.control<string | null>(item.inicioEfetivo),
       fimEfetivo: this.fb.control<string | null>(item.fimEfetivo),
       percentualProRata: this.fb.control<number | null>(item.percentualProRata),
