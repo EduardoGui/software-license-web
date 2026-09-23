@@ -37,7 +37,7 @@ export class SaldoFeriasList {
 
     this.usuarioService.listar({ status: 'Ativo' }).subscribe({
       next: (usuarios) => {
-        const usuariosPj = usuarios.filter((u) => u.tipo === 'Pj');
+        const usuariosPj = usuarios.filter((u) => u.tipo === 'Pj' || u.tipo === 'Clt');
         this.periodoFeriasService.listar().subscribe({
           next: (periodos) => {
             const maisRecentePorUsuario = new Map<number, PeriodoFerias>();

@@ -1,6 +1,6 @@
 <section class="saldo-ferias">
   <header class="topo">
-    <h1>Saldo de Férias (PJ)</h1>
+    <h1>Saldo de Férias</h1>
   </header>
 
   <p class="dica">
@@ -17,7 +17,7 @@
   } @else if (erro()) {
     <p class="status status--erro">Não foi possível carregar o saldo de férias. Verifique se a API está em execução.</p>
   } @else if (linhas().length === 0) {
-    <p class="status">Nenhum colaborador PJ ativo encontrado.</p>
+    <p class="status">Nenhum colaborador PJ ou CLT ativo encontrado.</p>
   } @else {
     <div class="tabela-scroll">
       <table>

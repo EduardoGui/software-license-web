@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { Icon } from '../../shared/icons/icon';
@@ -11,6 +11,8 @@ import { PoliticaFeriasService } from './politica-ferias.service';
   styleUrl: './politica-ferias-form.scss',
 })
 export class PoliticaFeriasForm {
+  readonly tipoVinculo = input<'Pj' | 'Clt'>('Pj');
+
   private readonly fb = inject(FormBuilder);
   private readonly politicaFeriasService = inject(PoliticaFeriasService);
 
@@ -41,8 +43,7 @@ export class PoliticaFeriasForm {
     this.carregando.set(true);
     this.politicaFeriasService.listar().subscribe({
       next: (politicas) => {
-        // Fase 0: uma única política (PJ) - se já existir, edita; senão, o form fica pronto para criar.
-        const politica = politicas[0];
+        const politica = politicas.find((p) => p.tipoVinculo === this.tipoVinculo());
         if (politica) {
           this.politicaId.set(politica.id);
           this.form.patchValue({
@@ -74,7 +75,7 @@ export class PoliticaFeriasForm {
     }
 
     const valor = this.form.getRawValue();
-    const payload = { tipoVinculo: 'Pj', ...valor };
+    const payload = { tipoVinculo: this.tipoVinculo(), ...valor };
 
     this.salvando.set(true);
     this.erro.set(null);

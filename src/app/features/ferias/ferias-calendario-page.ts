@@ -33,7 +33,9 @@ export class FeriasCalendarioPage {
 
   constructor() {
     this.setorService.listar({ ativo: true }).subscribe((setores) => this.setores.set(setores));
-    this.usuarioService.listar({ status: 'Ativo', tipo: 'Pj' }).subscribe((usuarios) => this.colaboradoresPj.set(usuarios));
+    this.usuarioService
+      .listar({ status: 'Ativo' })
+      .subscribe((usuarios) => this.colaboradoresPj.set(usuarios.filter((u) => u.tipo === 'Pj' || u.tipo === 'Clt')));
     this.irParaMesAtual();
   }
 
