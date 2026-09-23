@@ -31,16 +31,16 @@
               <td>{{ reembolso.finalidade }}</td>
               <td>{{ reembolso.valorTotal | number: '1.2-2' }}</td>
               <td class="acoes">
-                <a [routerLink]="['/reembolsos-despesa', reembolso.id, 'detalhe']" class="botao">Ver detalhes</a>
+                <a [routerLink]="['/reembolsos', reembolso.id, 'detalhe']" class="botao">Ver detalhes</a>
                 <button type="button" class="botao botao--aprovar" (click)="aprovar(reembolso)">Aprovar</button>
                 <a
-                  [routerLink]="['/reembolsos-despesa', reembolso.id, 'devolver']"
+                  [routerLink]="['/reembolsos', reembolso.id, 'devolver']"
                   [state]="{ numero: reembolso.numero, usuarioNome: reembolso.usuarioNome }"
                   class="botao botao--devolver"
                   >Devolver</a
                 >
                 <a
-                  [routerLink]="['/reembolsos-despesa', reembolso.id, 'reprovar']"
+                  [routerLink]="['/reembolsos', reembolso.id, 'reprovar']"
                   [state]="{ numero: reembolso.numero, usuarioNome: reembolso.usuarioNome }"
                   class="botao botao--reprovar"
                   >Reprovar</a

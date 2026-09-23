@@ -1,0 +1,18 @@
+<section class="reembolsos-painel">
+  <header class="reembolsos-painel__topo">
+    <h1>Reembolsos</h1>
+  </header>
+
+  <nav class="reembolsos-painel__abas">
+    <a routerLink="meus" routerLinkActive="aba--ativa" class="aba">Meus Reembolsos</a>
+    <a routerLink="pendentes" routerLinkActive="aba--ativa" class="aba">Aprovações Pendentes</a>
+    <a routerLink="aprovados" routerLinkActive="aba--ativa" class="aba">Reembolsos Aprovados</a>
+    @if (authService.ehAdministrador()) {
+      <a routerLink="configuracoes" routerLinkActive="aba--ativa" class="aba">Configurações</a>
+    }
+  </nav>
+
+  <div class="reembolsos-painel__conteudo">
+    <router-outlet></router-outlet>
+  </div>
+</section>

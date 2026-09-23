@@ -31,7 +31,7 @@
               <td>{{ reembolso.finalidade }}</td>
               <td>{{ reembolso.valorTotal | number: '1.2-2' }}</td>
               <td class="acoes">
-                <a [routerLink]="['/reembolsos-despesa', reembolso.id, 'detalhe']" class="botao">Ver detalhes</a>
+                <a [routerLink]="['/reembolsos', reembolso.id, 'detalhe']" class="botao">Ver detalhes</a>
               </td>
             </tr>
           }

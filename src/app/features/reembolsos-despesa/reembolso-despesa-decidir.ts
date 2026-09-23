@@ -55,7 +55,7 @@ export class ReembolsoDespesaDecidir {
         : this.reembolsoDespesaService.reprovar(this.reembolsoId, observacao);
 
     requisicao.subscribe({
-      next: () => this.router.navigate(['/reembolsos-despesa/pendentes']),
+      next: () => this.router.navigate(['/reembolsos/pendentes']),
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível registrar a decisão.');

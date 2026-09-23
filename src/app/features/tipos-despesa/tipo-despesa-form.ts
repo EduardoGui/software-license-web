@@ -77,7 +77,7 @@ export class TipoDespesaForm {
       : this.tipoDespesaService.criar(payload);
 
     requisicao.subscribe({
-      next: () => this.router.navigate(['/dp/tipos-despesa']),
+      next: () => this.router.navigate(['/reembolsos/configuracoes']),
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar o tipo de despesa.');

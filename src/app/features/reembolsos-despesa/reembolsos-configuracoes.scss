@@ -1,0 +1,16 @@
+.reembolsos-configuracoes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.reembolsos-configuracoes__coluna {
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .reembolsos-configuracoes {
+    grid-template-columns: 1fr;
+  }
+}

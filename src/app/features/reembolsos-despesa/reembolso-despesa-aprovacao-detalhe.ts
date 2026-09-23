@@ -66,7 +66,7 @@ export class ReembolsoDespesaAprovacaoDetalhe {
         if (aprovado.avisoEmail) {
           alert(aprovado.avisoEmail);
         }
-        this.router.navigate(['/reembolsos-despesa/pendentes']);
+        this.router.navigate(['/reembolsos/pendentes']);
       },
       error: (err) => alert(err?.error?.message ?? 'Não foi possível aprovar o reembolso.'),
     });
@@ -77,7 +77,7 @@ export class ReembolsoDespesaAprovacaoDetalhe {
     if (!reembolso) {
       return;
     }
-    this.router.navigate(['/reembolsos-despesa', reembolso.id, 'devolver'], {
+    this.router.navigate(['/reembolsos', reembolso.id, 'devolver'], {
       state: { numero: reembolso.numero, usuarioNome: reembolso.usuarioNome },
     });
   }
@@ -87,7 +87,7 @@ export class ReembolsoDespesaAprovacaoDetalhe {
     if (!reembolso) {
       return;
     }
-    this.router.navigate(['/reembolsos-despesa', reembolso.id, 'reprovar'], {
+    this.router.navigate(['/reembolsos', reembolso.id, 'reprovar'], {
       state: { numero: reembolso.numero, usuarioNome: reembolso.usuarioNome },
     });
   }

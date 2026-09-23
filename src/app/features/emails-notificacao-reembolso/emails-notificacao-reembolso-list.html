@@ -1,7 +1,7 @@
 <section class="emails">
   <header class="topo">
     <h1>E-mails de Notificação de Reembolso</h1>
-    <a class="botao botao--primario" routerLink="/dp/emails-notificacao-reembolso/novo"><app-icon name="plus" [size]="16" /> Novo e-mail</a>
+    <a class="botao botao--primario" routerLink="/reembolsos/configuracoes/emails-notificacao/novo"><app-icon name="plus" [size]="16" /> Novo e-mail</a>
   </header>
 
   <p class="aviso">
@@ -52,7 +52,7 @@
                 </span>
               </td>
               <td class="acoes">
-                <a [routerLink]="['/dp/emails-notificacao-reembolso', email.id, 'editar']" title="Editar" aria-label="Editar">
+                <a [routerLink]="['/reembolsos/configuracoes/emails-notificacao', email.id, 'editar']" title="Editar" aria-label="Editar">
                   <app-icon name="pencil" [size]="18" />
                 </a>
               </td>

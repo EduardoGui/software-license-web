@@ -35,7 +35,6 @@ export class App {
   protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly grupoPatrimonioAberto = signal(false);
   protected readonly grupoContratosAberto = signal(false);
-  protected readonly grupoReembolsoAberto = signal(false);
   protected readonly grupoEntregasAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
 
@@ -51,12 +50,9 @@ export class App {
     this.grupoTiAberto.set(abrindo);
     if (abrindo) {
       this.grupoPatrimonioAberto.set(false);
-      this.grupoContratosAberto.set(false);
       this.grupoDpAberto.set(false);
-      this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
-      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -65,26 +61,9 @@ export class App {
     this.grupoPatrimonioAberto.set(abrindo);
     if (abrindo) {
       this.grupoTiAberto.set(false);
-      this.grupoContratosAberto.set(false);
       this.grupoDpAberto.set(false);
-      this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
-      this.grupoEntregasAberto.set(false);
-    }
-  }
-
-  protected alternarGrupoContratos(): void {
-    const abrindo = !this.grupoContratosAberto();
-    this.grupoContratosAberto.set(abrindo);
-    if (abrindo) {
-      this.grupoTiAberto.set(false);
-      this.grupoPatrimonioAberto.set(false);
-      this.grupoDpAberto.set(false);
-      this.grupoPlanoSaudeAberto.set(false);
-      this.grupoSuprimentosAberto.set(false);
-      this.grupoCadastrosGeraisAberto.set(false);
-      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -94,25 +73,8 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoPatrimonioAberto.set(false);
-      this.grupoContratosAberto.set(false);
-      this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
-      this.grupoEntregasAberto.set(false);
-    }
-  }
-
-  protected alternarGrupoPlanoSaude(): void {
-    const abrindo = !this.grupoPlanoSaudeAberto();
-    this.grupoPlanoSaudeAberto.set(abrindo);
-    if (abrindo) {
-      this.grupoTiAberto.set(false);
-      this.grupoPatrimonioAberto.set(false);
-      this.grupoContratosAberto.set(false);
-      this.grupoDpAberto.set(false);
-      this.grupoSuprimentosAberto.set(false);
-      this.grupoCadastrosGeraisAberto.set(false);
-      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -122,11 +84,8 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoPatrimonioAberto.set(false);
-      this.grupoContratosAberto.set(false);
       this.grupoDpAberto.set(false);
-      this.grupoPlanoSaudeAberto.set(false);
       this.grupoCadastrosGeraisAberto.set(false);
-      this.grupoEntregasAberto.set(false);
     }
   }
 
@@ -136,25 +95,8 @@ export class App {
     if (abrindo) {
       this.grupoTiAberto.set(false);
       this.grupoPatrimonioAberto.set(false);
-      this.grupoContratosAberto.set(false);
       this.grupoDpAberto.set(false);
-      this.grupoPlanoSaudeAberto.set(false);
       this.grupoSuprimentosAberto.set(false);
-      this.grupoEntregasAberto.set(false);
-    }
-  }
-
-  protected alternarGrupoEntregas(): void {
-    const abrindo = !this.grupoEntregasAberto();
-    this.grupoEntregasAberto.set(abrindo);
-    if (abrindo) {
-      this.grupoTiAberto.set(false);
-      this.grupoPatrimonioAberto.set(false);
-      this.grupoContratosAberto.set(false);
-      this.grupoDpAberto.set(false);
-      this.grupoPlanoSaudeAberto.set(false);
-      this.grupoSuprimentosAberto.set(false);
-      this.grupoCadastrosGeraisAberto.set(false);
     }
   }
 
@@ -174,8 +116,26 @@ export class App {
     }
   }
 
-  protected alternarGrupoReembolso(): void {
-    this.grupoReembolsoAberto.update((aberto) => !aberto);
+  // Subgrupo dentro de DP - mesma lógica de fechar o irmão (Licenças/Equipamentos dentro de TI).
+  protected alternarGrupoEntregas(): void {
+    const abrindo = !this.grupoEntregasAberto();
+    this.grupoEntregasAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoPlanoSaudeAberto.set(false);
+    }
+  }
+
+  protected alternarGrupoPlanoSaude(): void {
+    const abrindo = !this.grupoPlanoSaudeAberto();
+    this.grupoPlanoSaudeAberto.set(abrindo);
+    if (abrindo) {
+      this.grupoEntregasAberto.set(false);
+    }
+  }
+
+  // Subgrupo dentro de Suprimentos - sozinho, sem irmão pra fechar.
+  protected alternarGrupoContratos(): void {
+    this.grupoContratosAberto.update((aberto) => !aberto);
   }
 
   protected alternarMenuMobile(): void {

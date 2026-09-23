@@ -153,7 +153,7 @@ export class ReembolsoDespesaForm {
       : this.reembolsoDespesaService.criar(payload);
 
     requisicao.subscribe({
-      next: () => this.router.navigate(['/reembolsos-despesa']),
+      next: () => this.router.navigate(['/reembolsos/meus']),
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar o reembolso.');

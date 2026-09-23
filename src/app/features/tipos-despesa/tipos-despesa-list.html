@@ -1,7 +1,7 @@
 <section class="tipos-despesa">
   <header class="topo">
     <h1>Tipos de Despesa</h1>
-    <a class="botao botao--primario" routerLink="/dp/tipos-despesa/novo"><app-icon name="plus" [size]="16" /> Novo tipo</a>
+    <a class="botao botao--primario" routerLink="/reembolsos/configuracoes/tipos-despesa/novo"><app-icon name="plus" [size]="16" /> Novo tipo</a>
   </header>
 
   <form class="filtros" (ngSubmit)="buscar()">
@@ -49,7 +49,7 @@
                 </span>
               </td>
               <td class="acoes">
-                <a [routerLink]="['/dp/tipos-despesa', tipo.id, 'editar']" title="Editar" aria-label="Editar">
+                <a [routerLink]="['/reembolsos/configuracoes/tipos-despesa', tipo.id, 'editar']" title="Editar" aria-label="Editar">
                   <app-icon name="pencil" [size]="18" />
                 </a>
               </td>

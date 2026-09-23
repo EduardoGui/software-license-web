@@ -51,15 +51,15 @@ import { FeriasPainel } from './features/ferias/ferias-painel';
 import { FeriasConfiguracoes } from './features/ferias/ferias-configuracoes';
 import { UnidadesOrcamentariasList } from './features/unidades-orcamentarias/unidades-orcamentarias-list';
 import { UnidadeOrcamentariaForm } from './features/unidades-orcamentarias/unidade-orcamentaria-form';
-import { TiposDespesaList } from './features/tipos-despesa/tipos-despesa-list';
 import { TipoDespesaForm } from './features/tipos-despesa/tipo-despesa-form';
+import { ReembolsosPainel } from './features/reembolsos-despesa/reembolsos-painel';
+import { ReembolsosConfiguracoes } from './features/reembolsos-despesa/reembolsos-configuracoes';
 import { ReembolsosDespesaList } from './features/reembolsos-despesa/reembolsos-despesa-list';
 import { ReembolsoDespesaForm } from './features/reembolsos-despesa/reembolso-despesa-form';
 import { ReembolsosDespesaPendentesList } from './features/reembolsos-despesa/reembolsos-despesa-pendentes-list';
 import { ReembolsosDespesaAprovadosList } from './features/reembolsos-despesa/reembolsos-despesa-aprovados-list';
 import { ReembolsoDespesaDecidir } from './features/reembolsos-despesa/reembolso-despesa-decidir';
 import { ReembolsoDespesaAprovacaoDetalhe } from './features/reembolsos-despesa/reembolso-despesa-aprovacao-detalhe';
-import { EmailsNotificacaoReembolsoList } from './features/emails-notificacao-reembolso/emails-notificacao-reembolso-list';
 import { EmailNotificacaoReembolsoForm } from './features/emails-notificacao-reembolso/email-notificacao-reembolso-form';
 import { LocaisList } from './features/locais/locais-list';
 import { LocalForm } from './features/locais/local-form';
@@ -177,16 +177,6 @@ export const routes: Routes = [
       { path: 'dp/unidades-orcamentarias', component: UnidadesOrcamentariasList, canActivate: [adminGuard] },
       { path: 'dp/unidades-orcamentarias/novo', component: UnidadeOrcamentariaForm, canActivate: [adminGuard] },
       { path: 'dp/unidades-orcamentarias/:id/editar', component: UnidadeOrcamentariaForm, canActivate: [adminGuard] },
-      { path: 'dp/tipos-despesa', component: TiposDespesaList, canActivate: [adminGuard] },
-      { path: 'dp/tipos-despesa/novo', component: TipoDespesaForm, canActivate: [adminGuard] },
-      { path: 'dp/tipos-despesa/:id/editar', component: TipoDespesaForm, canActivate: [adminGuard] },
-      { path: 'dp/emails-notificacao-reembolso', component: EmailsNotificacaoReembolsoList, canActivate: [adminGuard] },
-      { path: 'dp/emails-notificacao-reembolso/novo', component: EmailNotificacaoReembolsoForm, canActivate: [adminGuard] },
-      {
-        path: 'dp/emails-notificacao-reembolso/:id/editar',
-        component: EmailNotificacaoReembolsoForm,
-        canActivate: [adminGuard],
-      },
       { path: 'dp/logs-auditoria', component: LogsAuditoriaList, canActivate: [adminGuard] },
       { path: 'dp/locais', component: LocaisList, canActivate: [adminGuard] },
       { path: 'dp/locais/novo', component: LocalForm, canActivate: [adminGuard] },
@@ -207,14 +197,34 @@ export const routes: Routes = [
       { path: 'dp/plano-saude/faturas/nova', component: FaturaPlanoSaudeForm, canActivate: [adminGuard] },
       { path: 'dp/plano-saude/faturas/:id/editar', component: FaturaPlanoSaudeForm, canActivate: [adminGuard] },
       { path: 'dp/plano-saude/faturas/:id', component: FaturaPlanoSaudeView, canActivate: [adminGuard] },
-      { path: 'reembolsos-despesa', component: ReembolsosDespesaList },
-      { path: 'reembolsos-despesa/novo', component: ReembolsoDespesaForm },
-      { path: 'reembolsos-despesa/pendentes', component: ReembolsosDespesaPendentesList },
-      { path: 'reembolsos-despesa/aprovados-por-mim', component: ReembolsosDespesaAprovadosList },
-      { path: 'reembolsos-despesa/:id/detalhe', component: ReembolsoDespesaAprovacaoDetalhe },
-      { path: 'reembolsos-despesa/:id/editar', component: ReembolsoDespesaForm },
-      { path: 'reembolsos-despesa/:id/devolver', component: ReembolsoDespesaDecidir, data: { acao: 'devolver' } },
-      { path: 'reembolsos-despesa/:id/reprovar', component: ReembolsoDespesaDecidir, data: { acao: 'reprovar' } },
+      {
+        path: 'reembolsos',
+        component: ReembolsosPainel,
+        children: [
+          { path: '', redirectTo: 'meus', pathMatch: 'full' },
+          { path: 'meus', component: ReembolsosDespesaList },
+          { path: 'novo', component: ReembolsoDespesaForm },
+          { path: 'pendentes', component: ReembolsosDespesaPendentesList },
+          { path: 'aprovados', component: ReembolsosDespesaAprovadosList },
+          { path: ':id/detalhe', component: ReembolsoDespesaAprovacaoDetalhe },
+          { path: ':id/editar', component: ReembolsoDespesaForm },
+          { path: ':id/devolver', component: ReembolsoDespesaDecidir, data: { acao: 'devolver' } },
+          { path: ':id/reprovar', component: ReembolsoDespesaDecidir, data: { acao: 'reprovar' } },
+          { path: 'configuracoes', component: ReembolsosConfiguracoes, canActivate: [adminGuard] },
+          { path: 'configuracoes/tipos-despesa/novo', component: TipoDespesaForm, canActivate: [adminGuard] },
+          { path: 'configuracoes/tipos-despesa/:id/editar', component: TipoDespesaForm, canActivate: [adminGuard] },
+          {
+            path: 'configuracoes/emails-notificacao/novo',
+            component: EmailNotificacaoReembolsoForm,
+            canActivate: [adminGuard],
+          },
+          {
+            path: 'configuracoes/emails-notificacao/:id/editar',
+            component: EmailNotificacaoReembolsoForm,
+            canActivate: [adminGuard],
+          },
+        ],
+      },
       { path: 'contratos', component: ContratosList, canActivate: [adminGuard] },
       { path: 'contratos/novo', component: ContratoForm, canActivate: [adminGuard] },
       { path: 'contratos/timeline', component: ContratosTimeline, canActivate: [adminGuard] },

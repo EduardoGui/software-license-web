@@ -27,6 +27,7 @@
           </a>
           <a routerLink="/agenda" routerLinkActive="menu__item--ativo" class="menu__item">Agenda</a>
           <a routerLink="/usuarios" routerLinkActive="menu__item--ativo" class="menu__item">Usuários</a>
+          <a routerLink="/dp/logs-auditoria" routerLinkActive="menu__item--ativo" class="menu__item">Log de Auditoria</a>
           <button type="button" class="menu__grupo" (click)="alternarGrupoTi()">
             <span class="menu__grupo-seta">{{ grupoTiAberto() ? '▾' : '▸' }}</span>
             TI
@@ -66,60 +67,6 @@
               Patrimônio
             </a>
           }
-          <button type="button" class="menu__grupo" (click)="alternarGrupoContratos()">
-            <span class="menu__grupo-seta">{{ grupoContratosAberto() ? '▾' : '▸' }}</span>
-            Contratos
-          </button>
-          @if (grupoContratosAberto()) {
-            <a routerLink="/contratos" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
-              Contratos
-            </a>
-            <a routerLink="/contratos/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Linha do Tempo
-            </a>
-          }
-          <button type="button" class="menu__grupo" (click)="alternarGrupoDp()">
-            <span class="menu__grupo-seta">{{ grupoDpAberto() ? '▾' : '▸' }}</span>
-            DP
-          </button>
-          @if (grupoDpAberto()) {
-            <a routerLink="/dp/tipos-despesa" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Tipos de Despesa</a>
-            <a
-              routerLink="/dp/emails-notificacao-reembolso"
-              routerLinkActive="menu__item--ativo"
-              class="menu__item menu__item--sub"
-              >E-mails de Notificação</a
-            >
-            <a routerLink="/reembolsos-despesa" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Meus Reembolsos</a>
-            <a routerLink="/reembolsos-despesa/pendentes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Aprovações Pendentes
-            </a>
-            <a routerLink="/reembolsos-despesa/aprovados-por-mim" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Reembolsos Aprovados
-            </a>
-            <a routerLink="/dp/logs-auditoria" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Log de Auditoria
-            </a>
-            <a routerLink="/ferias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Férias</a>
-          }
-          <button type="button" class="menu__grupo" (click)="alternarGrupoPlanoSaude()">
-            <span class="menu__grupo-seta">{{ grupoPlanoSaudeAberto() ? '▾' : '▸' }}</span>
-            Plano de Saúde
-          </button>
-          @if (grupoPlanoSaudeAberto()) {
-            <a routerLink="/dp/plano-saude/custos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Lançamento Mensal
-            </a>
-            <a routerLink="/dp/plano-saude/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Relatório Mensal
-            </a>
-            <a routerLink="/dp/plano-saude/faturas" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Faturas
-            </a>
-            <a routerLink="/dp/plano-saude/notas-debito" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Notas de Débito PJ
-            </a>
-          }
           <button type="button" class="menu__grupo" (click)="alternarGrupoSuprimentos()">
             <span class="menu__grupo-seta">{{ grupoSuprimentosAberto() ? '▾' : '▸' }}</span>
             Suprimentos
@@ -137,15 +84,53 @@
             <a routerLink="/dp/unidades-orcamentarias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
               Plano de UA
             </a>
+            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoContratos()">
+              <span class="menu__grupo-seta">{{ grupoContratosAberto() ? '▾' : '▸' }}</span>
+              Contratos
+            </button>
+            @if (grupoContratosAberto()) {
+              <a routerLink="/contratos" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub2">
+                Contratos
+              </a>
+              <a routerLink="/contratos/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Linha do Tempo
+              </a>
+            }
           }
-          <button type="button" class="menu__grupo" (click)="alternarGrupoEntregas()">
-            <span class="menu__grupo-seta">{{ grupoEntregasAberto() ? '▾' : '▸' }}</span>
-            Entregas
+          <button type="button" class="menu__grupo" (click)="alternarGrupoDp()">
+            <span class="menu__grupo-seta">{{ grupoDpAberto() ? '▾' : '▸' }}</span>
+            DP
           </button>
-          @if (grupoEntregasAberto()) {
-            <a routerLink="/campanhas-entrega" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
-              Campanhas de Entrega
-            </a>
+          @if (grupoDpAberto()) {
+            <a routerLink="/ferias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Férias</a>
+            <a routerLink="/reembolsos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Reembolsos</a>
+            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoEntregas()">
+              <span class="menu__grupo-seta">{{ grupoEntregasAberto() ? '▾' : '▸' }}</span>
+              Entregas
+            </button>
+            @if (grupoEntregasAberto()) {
+              <a routerLink="/campanhas-entrega" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub2">
+                Campanhas de Entrega
+              </a>
+            }
+            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoPlanoSaude()">
+              <span class="menu__grupo-seta">{{ grupoPlanoSaudeAberto() ? '▾' : '▸' }}</span>
+              Plano de Saúde
+            </button>
+            @if (grupoPlanoSaudeAberto()) {
+              <a routerLink="/dp/plano-saude/custos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Lançamento Mensal
+              </a>
+              <a routerLink="/dp/plano-saude/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Relatório Mensal
+              </a>
+              <a routerLink="/dp/plano-saude/faturas" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Faturas
+              </a>
+              <a routerLink="/dp/plano-saude/notas-debito" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
+                Notas de Débito PJ
+              </a>
+            }
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoCadastrosGerais()">
             <span class="menu__grupo-seta">{{ grupoCadastrosGeraisAberto() ? '▾' : '▸' }}</span>
@@ -168,19 +153,7 @@
           <a [routerLink]="['/usuarios', authService.obterUsuarioId()]" routerLinkActive="menu__item--ativo" class="menu__item">
             Meus dados
           </a>
-          <button type="button" class="menu__grupo" (click)="alternarGrupoReembolso()">
-            <span class="menu__grupo-seta">{{ grupoReembolsoAberto() ? '▾' : '▸' }}</span>
-            Reembolso
-          </button>
-          @if (grupoReembolsoAberto()) {
-            <a routerLink="/reembolsos-despesa" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Meus Reembolsos</a>
-            <a routerLink="/reembolsos-despesa/pendentes" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Aprovações Pendentes
-            </a>
-            <a routerLink="/reembolsos-despesa/aprovados-por-mim" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-              Reembolsos Aprovados
-            </a>
-          }
+          <a routerLink="/reembolsos" routerLinkActive="menu__item--ativo" class="menu__item">Reembolsos</a>
         }
         <div class="menu__rodape-mobile">
           <span class="usuario-logado">{{ authService.obterEmail() }}</span>
