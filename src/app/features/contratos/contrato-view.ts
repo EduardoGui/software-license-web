@@ -72,6 +72,9 @@ export class ContratoView {
   protected readonly confirmandoExclusaoMedicao = signal(false);
   protected readonly excluindoMedicao = signal(false);
   protected readonly erroExclusaoMedicao = signal<string | null>(null);
+  protected readonly confirmandoReverterAprovacaoId = signal<number | null>(null);
+  protected readonly revertendoAprovacaoId = signal<number | null>(null);
+  protected readonly erroReverterAprovacaoMedicao = signal<string | null>(null);
 
   protected readonly saldo = signal<ContratoSaldoItem[]>([]);
 
@@ -594,6 +597,34 @@ export class ContratoView {
       error: (err) => {
         this.decidindoMedicaoId.set(null);
         this.erroDecisaoMedicao.set(err?.error?.message ?? 'Não foi possível aprovar o BM.');
+      },
+    });
+  }
+
+  protected iniciarReverterAprovacaoMedicao(bmId: number): void {
+    this.confirmandoReverterAprovacaoId.set(bmId);
+  }
+
+  protected cancelarReverterAprovacaoMedicao(): void {
+    this.confirmandoReverterAprovacaoId.set(null);
+  }
+
+  protected confirmarReverterAprovacaoMedicao(bmId: number): void {
+    this.revertendoAprovacaoId.set(bmId);
+    this.erroReverterAprovacaoMedicao.set(null);
+
+    this.contratoService.reverterAprovacaoMedicaoBm(this.contratoId, bmId).subscribe({
+      next: (bm) => {
+        this.revertendoAprovacaoId.set(null);
+        this.confirmandoReverterAprovacaoId.set(null);
+        this.carregarMedicoes();
+        this.carregarSaldo();
+        this.preencherFormItensMedicao(bm);
+        this.obrigacoesExtrato()?.recarregar();
+      },
+      error: (err) => {
+        this.revertendoAprovacaoId.set(null);
+        this.erroReverterAprovacaoMedicao.set(err?.error?.message ?? 'Não foi possível reverter a aprovação do BM.');
       },
     });
   }

@@ -95,6 +95,10 @@ export class ContratoService {
     return this.http.patch<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}/reprovar`, payload);
   }
 
+  reverterAprovacaoMedicaoBm(contratoId: number, medicaoId: number): Observable<MedicaoBm> {
+    return this.http.patch<MedicaoBm>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}/reverter-aprovacao`, {});
+  }
+
   obterSaldo(contratoId: number): Observable<ContratoSaldoItem[]> {
     return this.http.get<ContratoSaldoItem[]>(`${this.baseUrl}/${contratoId}/saldo`);
   }

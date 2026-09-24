@@ -644,6 +644,29 @@
                   }
                 </div>
               }
+              @if (bm.status === 'Aprovado') {
+                @if (erroReverterAprovacaoMedicao()) {
+                  <p class="status status--erro">{{ erroReverterAprovacaoMedicao() }}</p>
+                }
+                <div class="acoes-form">
+                  @if (confirmandoReverterAprovacaoId() === bm.id) {
+                    <p>Reverter a aprovação deste BM? Ele volta a ser Rascunho e pode ser editado/excluído de novo.</p>
+                    <button type="button" class="botao botao--texto" (click)="cancelarReverterAprovacaoMedicao()">Cancelar</button>
+                    <button
+                      type="button"
+                      class="botao botao--perigo"
+                      (click)="confirmarReverterAprovacaoMedicao(bm.id)"
+                      [disabled]="revertendoAprovacaoId() === bm.id"
+                    >
+                      {{ revertendoAprovacaoId() === bm.id ? 'Revertendo...' : 'Confirmar reversão' }}
+                    </button>
+                  } @else {
+                    <button type="button" class="botao botao--perigo" (click)="iniciarReverterAprovacaoMedicao(bm.id)">
+                      Reverter aprovação
+                    </button>
+                  }
+                </div>
+              }
               </form>
 
               <h3>Anexos do BM</h3>
