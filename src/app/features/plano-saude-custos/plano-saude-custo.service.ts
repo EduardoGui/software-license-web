@@ -24,4 +24,8 @@ export class PlanoSaudeCustoService {
   remover(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }
+
+  obterUltimoMes(): Observable<{ ano: number | null; mes: number | null }> {
+    return this.http.get<{ ano: number | null; mes: number | null }>(`${this.baseUrl}/ultimo-mes`);
+  }
 }

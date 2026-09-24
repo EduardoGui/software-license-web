@@ -7,6 +7,7 @@ import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { Icon } from '../../shared/icons/icon';
 import { FaturaOperadoraSaude } from '../faturas-plano-saude/fatura-plano-saude';
 import { FaturaOperadoraSaudeService } from '../faturas-plano-saude/fatura-plano-saude.service';
+import { PlanoSaudeCustoService } from '../plano-saude-custos/plano-saude-custo.service';
 import { Usuario } from '../usuarios/usuario';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { NotaDebitoPj } from './nota-debito-pj';
@@ -23,6 +24,7 @@ export class NotaDebitoPjForm {
   private readonly notaService = inject(NotaDebitoPjService);
   private readonly usuarioService = inject(UsuarioService);
   private readonly faturaService = inject(FaturaOperadoraSaudeService);
+  private readonly planoSaudeCustoService = inject(PlanoSaudeCustoService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
@@ -70,6 +72,16 @@ export class NotaDebitoPjForm {
       const id = Number(idParam);
       this.notaId.set(id);
       this.carregar(id);
+    } else {
+      // Na criação, sugere o último mês lançado no Plano de Saúde em vez do mês corrente do
+      // calendário - os dois quase sempre divergem (lançamento é feito com antecedência ou atraso
+      // em relação ao mês em que a nota é gerada), e usar o mês errado aqui faz a nota falhar
+      // silenciosamente com "Não há coparticipação lançada para este usuário neste mês".
+      this.planoSaudeCustoService.obterUltimoMes().subscribe((ultimo) => {
+        if (ultimo.ano && ultimo.mes) {
+          this.form.patchValue({ ano: ultimo.ano, mes: ultimo.mes });
+        }
+      });
     }
   }
 
