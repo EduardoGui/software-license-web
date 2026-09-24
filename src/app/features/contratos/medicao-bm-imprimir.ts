@@ -30,15 +30,22 @@ export class MedicaoBmImprimir {
   protected readonly contrato = signal<ContratoDetalhe | null>(null);
   protected readonly fornecedor = signal<Fornecedor | null>(null);
   protected readonly bm = signal<MedicaoBm | null>(null);
+  protected readonly medicoesAnteriores = signal<MedicaoBm[]>([]);
 
   constructor() {
     forkJoin({
       contrato: this.contratoService.obter(this.contratoId),
       bm: this.contratoService.obterMedicao(this.contratoId, this.medicaoId),
+      medicoes: this.contratoService.listarMedicoes(this.contratoId),
     }).subscribe({
-      next: ({ contrato, bm }) => {
+      next: ({ contrato, bm, medicoes }) => {
         this.contrato.set(contrato);
         this.bm.set(bm);
+        this.medicoesAnteriores.set(
+          medicoes
+            .filter((m) => m.numero < bm.numero && m.status === 'Aprovado')
+            .sort((a, b) => a.numero - b.numero),
+        );
         this.fornecedorService.obter(contrato.fornecedorId).subscribe({
           next: (fornecedor) => {
             this.fornecedor.set(fornecedor);
