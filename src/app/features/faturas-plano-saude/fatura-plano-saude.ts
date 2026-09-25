@@ -25,7 +25,7 @@ export interface CreateFaturaOperadoraSaudePayload {
   observacao: string | null;
 }
 
-export type UpdateFaturaOperadoraSaudePayload = Omit<CreateFaturaOperadoraSaudePayload, 'operadoraSaude' | 'ano' | 'mes'>;
+export type UpdateFaturaOperadoraSaudePayload = Omit<CreateFaturaOperadoraSaudePayload, 'operadoraSaude'>;
 
 export interface FaturaOperadoraSaudeFiltro {
   ano?: number;

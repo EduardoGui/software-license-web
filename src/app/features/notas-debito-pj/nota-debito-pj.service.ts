@@ -38,6 +38,10 @@ export class NotaDebitoPjService {
     return this.http.put<NotaDebitoPj>(`${this.baseUrl}/${id}`, payload);
   }
 
+  corrigirCompetencia(id: number, ano: number, mes: number): Observable<NotaDebitoPj> {
+    return this.http.patch<NotaDebitoPj>(`${this.baseUrl}/${id}/corrigir-competencia`, { ano, mes });
+  }
+
   excluir(id: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${id}`);
   }

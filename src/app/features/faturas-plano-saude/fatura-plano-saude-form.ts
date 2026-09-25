@@ -90,6 +90,8 @@ export class FaturaPlanoSaudeForm {
 
     const camposComuns = {
       numeroFatura: valor.numeroFatura,
+      ano: valor.ano,
+      mes: valor.mes,
       dataEmissao: valor.dataEmissao || null,
       dataVencimento: valor.dataVencimento || null,
       valorTotal: valor.valorTotal,
@@ -98,7 +100,7 @@ export class FaturaPlanoSaudeForm {
 
     const requisicao = this.editando
       ? this.faturaService.atualizar(this.faturaId()!, camposComuns)
-      : this.faturaService.criar({ operadoraSaude: valor.operadoraSaude, ano: valor.ano, mes: valor.mes, ...camposComuns });
+      : this.faturaService.criar({ operadoraSaude: valor.operadoraSaude, ...camposComuns });
 
     requisicao.subscribe({
       next: (fatura) => this.router.navigate(['/dp/plano-saude/faturas', fatura.id]),

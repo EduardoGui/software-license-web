@@ -119,6 +119,12 @@
             <app-icon name="check-circle" [size]="16" /> Marcar como Recebido
           </button>
         }
+
+        @if (!corrigindoCompetencia()) {
+          <button type="button" class="botao" (click)="iniciarCorrigirCompetencia()">
+            <app-icon name="calendar" [size]="16" /> Corrigir Competência
+          </button>
+        }
       </div>
 
       @if (mostrarFormPagamento()) {
@@ -131,6 +137,26 @@
             <app-icon name="check" [size]="16" /> Confirmar
           </button>
           <button type="button" class="botao botao--texto" (click)="mostrarFormPagamento.set(false)">Cancelar</button>
+        </div>
+      }
+
+      @if (corrigindoCompetencia()) {
+        <div class="form-pagamento">
+          @if (erroCompetencia()) {
+            <p class="status status--erro">{{ erroCompetencia() }}</p>
+          }
+          <label>
+            Ano
+            <input type="number" [(ngModel)]="competenciaAno" />
+          </label>
+          <label>
+            Mês
+            <input type="number" min="1" max="12" [(ngModel)]="competenciaMes" />
+          </label>
+          <button type="button" class="botao botao--primario" [disabled]="processando()" (click)="confirmarCorrigirCompetencia()">
+            <app-icon name="check" [size]="16" /> Confirmar
+          </button>
+          <button type="button" class="botao botao--texto" (click)="cancelarCorrigirCompetencia()">Cancelar</button>
         </div>
       }
     </div>

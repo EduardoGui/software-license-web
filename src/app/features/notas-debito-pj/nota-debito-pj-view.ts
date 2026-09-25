@@ -27,6 +27,11 @@ export class NotaDebitoPjView {
   protected readonly mostrarFormPagamento = signal(false);
   protected dataPagamento = new Date().toISOString().slice(0, 10);
 
+  protected readonly corrigindoCompetencia = signal(false);
+  protected readonly erroCompetencia = signal<string | null>(null);
+  protected competenciaAno = 0;
+  protected competenciaMes = 0;
+
   private readonly notaId = Number(this.route.snapshot.paramMap.get('id'));
 
   private static readonly NOMES_MESES = [
@@ -98,6 +103,36 @@ export class NotaDebitoPjView {
       error: (err) => {
         this.processando.set(false);
         alert(err?.error?.message ?? 'Não foi possível marcar como enviada.');
+      },
+    });
+  }
+
+  protected iniciarCorrigirCompetencia(): void {
+    const nota = this.nota();
+    if (!nota) return;
+    this.competenciaAno = nota.ano;
+    this.competenciaMes = nota.mes;
+    this.erroCompetencia.set(null);
+    this.corrigindoCompetencia.set(true);
+  }
+
+  protected cancelarCorrigirCompetencia(): void {
+    this.corrigindoCompetencia.set(false);
+    this.erroCompetencia.set(null);
+  }
+
+  protected confirmarCorrigirCompetencia(): void {
+    this.processando.set(true);
+    this.erroCompetencia.set(null);
+    this.notaService.corrigirCompetencia(this.notaId, this.competenciaAno, this.competenciaMes).subscribe({
+      next: (nota) => {
+        this.nota.set(nota);
+        this.processando.set(false);
+        this.corrigindoCompetencia.set(false);
+      },
+      error: (err) => {
+        this.processando.set(false);
+        this.erroCompetencia.set(err?.error?.message ?? 'Não foi possível corrigir a competência.');
       },
     });
   }

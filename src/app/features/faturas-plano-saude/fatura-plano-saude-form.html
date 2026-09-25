@@ -17,20 +17,28 @@
           Operadora de Saúde *
           <input type="text" formControlName="operadoraSaude" placeholder="Ex.: AMIL" />
         </label>
-
-        <div class="linha">
-          <label>
-            Ano *
-            <input type="number" formControlName="ano" />
-          </label>
-          <label>
-            Mês *
-            <input type="number" min="1" max="12" formControlName="mes" />
-          </label>
-        </div>
       } @else {
         <p class="campo-fixo">
-          <strong>{{ fatura()?.operadoraSaude }}</strong> — referência {{ fatura()?.mes?.toString()?.padStart(2, '0') }}/{{ fatura()?.ano }}
+          <strong>{{ fatura()?.operadoraSaude }}</strong>
+        </p>
+      }
+
+      <div class="linha">
+        <label>
+          Ano *
+          <input type="number" formControlName="ano" />
+        </label>
+        <label>
+          Mês *
+          <input type="number" min="1" max="12" formControlName="mes" />
+        </label>
+      </div>
+
+      @if (editando) {
+        <p class="dica">
+          Referência de competência: use estes campos só para corrigir um cadastro errado (ex.: fatura
+          emitida no mês seguinte à competência real). Mudar aqui atualiza também as Notas de Débito já
+          vinculadas a esta fatura.
         </p>
       }
 
