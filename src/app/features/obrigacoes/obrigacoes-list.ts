@@ -328,6 +328,7 @@ export class ObrigacoesList {
       .criar({
         nome: valor.nome.trim(),
         cnpj: valor.cnpj.trim(),
+        cpf: null,
         contato: null,
         telefone: null,
         endereco: null,

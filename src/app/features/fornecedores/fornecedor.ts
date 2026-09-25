@@ -2,6 +2,7 @@ export interface Fornecedor {
   id: number;
   nome: string;
   cnpj: string | null;
+  cpf: string | null;
   contato: string | null;
   telefone: string | null;
   endereco: string | null;
@@ -16,7 +17,8 @@ export interface Fornecedor {
 
 export interface CreateFornecedorPayload {
   nome: string;
-  cnpj: string;
+  cnpj: string | null;
+  cpf: string | null;
   contato: string | null;
   telefone: string | null;
   endereco: string | null;
@@ -30,6 +32,7 @@ export interface CreateFornecedorPayload {
 export interface UpdateFornecedorPayload {
   nome: string;
   cnpj: string | null;
+  cpf: string | null;
   contato: string | null;
   telefone: string | null;
   endereco: string | null;

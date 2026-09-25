@@ -30,7 +30,8 @@ export class FornecedorForm {
 
   protected readonly form = this.fb.nonNullable.group({
     nome: ['', Validators.required],
-    cnpj: ['', [Validators.required, cnpjValidator]],
+    cnpj: ['', cnpjValidator],
+    cpf: [''],
     contato: [''],
     telefone: [''],
     endereco: [''],
@@ -54,11 +55,6 @@ export class FornecedorForm {
     if (idParam) {
       const id = Number(idParam);
       this.fornecedorId.set(id);
-      // CNPJ nunca foi capturado em fornecedores migrados de notas fiscais antigas —
-      // só é exigido ao cadastrar um fornecedor novo, não ao editar um já existente.
-      // Continua validando o formato caso algo seja digitado.
-      this.form.controls.cnpj.setValidators(cnpjValidator);
-      this.form.controls.cnpj.updateValueAndValidity();
       this.carregar(id);
     }
   }
@@ -70,6 +66,7 @@ export class FornecedorForm {
         this.form.patchValue({
           nome: fornecedor.nome,
           cnpj: fornecedor.cnpj ?? '',
+          cpf: fornecedor.cpf ?? '',
           contato: fornecedor.contato ?? '',
           telefone: fornecedor.telefone ?? '',
           endereco: fornecedor.endereco ?? '',
@@ -95,10 +92,17 @@ export class FornecedorForm {
     }
 
     const valor = this.form.getRawValue();
+
+    if (!valor.cnpj.trim() && !valor.cpf.trim()) {
+      this.erro.set('Informe o CNPJ (pessoa jurídica) ou o CPF (pessoa física) do fornecedor.');
+      return;
+    }
+
     this.salvando.set(true);
     this.erro.set(null);
 
     const camposComuns = {
+      cpf: valor.cpf || null,
       contato: valor.contato || null,
       telefone: valor.telefone || null,
       endereco: valor.endereco || null,
@@ -117,7 +121,7 @@ export class FornecedorForm {
         })
       : this.fornecedorService.criar({
           nome: valor.nome,
-          cnpj: valor.cnpj,
+          cnpj: valor.cnpj || null,
           ativo: valor.ativo,
           ...camposComuns,
         });

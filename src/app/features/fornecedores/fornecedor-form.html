@@ -25,16 +25,22 @@
         }
       </label>
 
-      <label>
-        CNPJ @if (!editando) { * }
-        <input type="text" formControlName="cnpj" placeholder="00.000.000/0000-00" />
-        @if (form.controls.cnpj.errors?.['required'] && form.controls.cnpj.touched) {
-          <span class="campo-erro">CNPJ é obrigatório.</span>
-        }
-        @if (form.controls.cnpj.errors?.['cnpjInvalido'] && form.controls.cnpj.touched) {
-          <span class="campo-erro">CNPJ inválido.</span>
-        }
-      </label>
+      <p class="dica">Informe o CNPJ (pessoa jurídica) ou o CPF (pessoa física, ex.: estagiária sem PJ) — pelo menos um dos dois é obrigatório.</p>
+
+      <div class="linha">
+        <label>
+          CNPJ
+          <input type="text" formControlName="cnpj" placeholder="00.000.000/0000-00" />
+          @if (form.controls.cnpj.errors?.['cnpjInvalido'] && form.controls.cnpj.touched) {
+            <span class="campo-erro">CNPJ inválido.</span>
+          }
+        </label>
+
+        <label>
+          CPF
+          <input type="text" formControlName="cpf" placeholder="000.000.000-00" />
+        </label>
+      </div>
 
       <label>
         Contato
