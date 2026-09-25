@@ -59,22 +59,6 @@
           </ul>
         }
       </div>
-      <div class="card card--lista">
-        <span class="card__rotulo">Equipamentos locados ativos</span>
-        @if (dados()!.equipamentosLocadosAtivosPorTipo.length === 0) {
-          <span class="card__vazio">Nenhum</span>
-        } @else {
-          <ul class="card__lista">
-            @for (item of dados()!.equipamentosLocadosAtivosPorTipo; track item.tipoEquipamentoNome) {
-              <li><span>{{ item.tipoEquipamentoNome }}</span><span>{{ item.quantidade }}</span></li>
-            }
-          </ul>
-        }
-      </div>
-      <div class="card">
-        <span class="card__valor">{{ dados()!.custoMensalLocacaoAtual | number: '1.2-2' }}</span>
-        <span class="card__rotulo">Custo mensal de locação (mês atual)</span>
-      </div>
     </div>
 
     <div class="vencimentos">

@@ -1,4 +1,3 @@
-import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -12,7 +11,7 @@ import { DashboardService } from './dashboard.service';
 
 @Component({
   selector: 'app-dashboard-page',
-  imports: [RouterLink, DataBrPipe, DecimalPipe, ReactiveFormsModule, Icon],
+  imports: [RouterLink, DataBrPipe, ReactiveFormsModule, Icon],
   templateUrl: './dashboard-page.html',
   styleUrl: './dashboard-page.scss',
 })
