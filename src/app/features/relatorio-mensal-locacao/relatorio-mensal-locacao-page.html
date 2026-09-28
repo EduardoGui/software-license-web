@@ -61,6 +61,8 @@
             <th>Patrimônio</th>
             <th>Nº Série</th>
             <th>Fornecedor</th>
+            <th>Usuário responsável</th>
+            <th>E-mail</th>
             <th>Valor mensal</th>
             <th>Dias ativos</th>
             <th>Valor no mês</th>
@@ -73,6 +75,8 @@
               <td>{{ item.patrimonio || '-' }}</td>
               <td>{{ item.numeroSerie || '-' }}</td>
               <td>{{ item.fornecedorNome || '-' }}</td>
+              <td>{{ item.usuarioResponsavelNome || '-' }}</td>
+              <td>{{ item.usuarioResponsavelEmail || '-' }}</td>
               <td>{{ item.valorMensal | number: '1.2-2' }}</td>
               <td>{{ item.diasAtivos }}/{{ item.diasNoMes }}</td>
               <td>{{ item.valorNoMes | number: '1.2-2' }}</td>
@@ -81,7 +85,7 @@
         </tbody>
         <tfoot>
           <tr>
-            <td colspan="6"><strong>Total geral</strong></td>
+            <td colspan="8"><strong>Total geral</strong></td>
             <td><strong>{{ relatorio()!.totalGeral | number: '1.2-2' }}</strong></td>
           </tr>
         </tfoot>

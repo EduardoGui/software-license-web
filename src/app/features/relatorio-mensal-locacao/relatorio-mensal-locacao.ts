@@ -4,6 +4,8 @@ export interface RelatorioMensalLocacaoItem {
   patrimonio: string | null;
   numeroSerie: string | null;
   fornecedorNome: string | null;
+  usuarioResponsavelNome: string | null;
+  usuarioResponsavelEmail: string | null;
   valorMensal: number;
   diasAtivos: number;
   diasNoMes: number;
