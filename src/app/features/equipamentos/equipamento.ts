@@ -14,6 +14,7 @@ export interface Equipamento {
   patrimonio: string | null;
   origem: EquipamentoOrigem;
   fornecedorNome: string | null;
+  dataChegada: string | null;
   valorMensal: number | null;
   dataInicioContrato: string | null;
   dataFimContrato: string | null;
@@ -45,4 +46,6 @@ export interface EquipamentoFiltro {
   status?: string;
   usuarioId?: number;
   notaFiscalEntradaId?: number;
+  dataChegadaInicio?: string;
+  dataChegadaFim?: string;
 }

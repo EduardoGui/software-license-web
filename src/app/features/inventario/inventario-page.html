@@ -3,6 +3,19 @@
     <h1>Inventário</h1>
   </header>
 
+  <div class="filtros">
+    <label>
+      Chegou de
+      <input type="date" [(ngModel)]="dataChegadaInicio" />
+    </label>
+    <label>
+      até
+      <input type="date" [(ngModel)]="dataChegadaFim" />
+    </label>
+    <button type="button" class="botao" (click)="carregar()">Filtrar</button>
+    <button type="button" class="botao botao--texto" (click)="limparFiltro()">Limpar</button>
+  </div>
+
   @if (carregando()) {
     <p class="status">Carregando...</p>
   } @else if (erro() || !inventario()) {
@@ -32,6 +45,7 @@
                 <th>Nº Série</th>
                 <th>Patrimônio</th>
                 <th>Origem</th>
+                <th>Chegada</th>
                 <th>Status</th>
                 <th>Usuário atual</th>
               </tr>
@@ -43,6 +57,7 @@
                   <td>{{ item.numeroSerie || '-' }}</td>
                   <td>{{ item.patrimonio || '-' }}</td>
                   <td>{{ item.origem }}</td>
+                  <td>{{ item.dataChegada ? (item.dataChegada | dataBr) : '-' }}</td>
                   <td><span class="badge" [class]="'badge--' + item.status.toLowerCase()">{{ item.status }}</span></td>
                   <td>{{ item.usuarioAtualNome || '-' }}</td>
                 </tr>

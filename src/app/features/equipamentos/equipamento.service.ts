@@ -18,6 +18,8 @@ export class EquipamentoService {
     if (filtro.status) params = params.set('status', filtro.status);
     if (filtro.usuarioId) params = params.set('usuarioId', filtro.usuarioId);
     if (filtro.notaFiscalEntradaId) params = params.set('notaFiscalEntradaId', filtro.notaFiscalEntradaId);
+    if (filtro.dataChegadaInicio) params = params.set('dataChegadaInicio', filtro.dataChegadaInicio);
+    if (filtro.dataChegadaFim) params = params.set('dataChegadaFim', filtro.dataChegadaFim);
 
     return this.http.get<Equipamento[]>(this.baseUrl, { params });
   }
@@ -34,7 +36,14 @@ export class EquipamentoService {
     return this.http.patch<Equipamento>(`${this.baseUrl}/${id}/baixar`, { numeroNotaSaida });
   }
 
-  inventario(): Observable<Inventario> {
-    return this.http.get<Inventario>(`${this.baseUrl}/inventario`);
+  inventario(filtro: EquipamentoFiltro = {}): Observable<Inventario> {
+    let params = new HttpParams();
+    if (filtro.tipoEquipamentoId) params = params.set('tipoEquipamentoId', filtro.tipoEquipamentoId);
+    if (filtro.origem) params = params.set('origem', filtro.origem);
+    if (filtro.status) params = params.set('status', filtro.status);
+    if (filtro.dataChegadaInicio) params = params.set('dataChegadaInicio', filtro.dataChegadaInicio);
+    if (filtro.dataChegadaFim) params = params.set('dataChegadaFim', filtro.dataChegadaFim);
+
+    return this.http.get<Inventario>(`${this.baseUrl}/inventario`, { params });
   }
 }
