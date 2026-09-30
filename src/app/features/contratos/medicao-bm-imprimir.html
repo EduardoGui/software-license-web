@@ -90,21 +90,19 @@
 
     @if (medicoesAnteriores().length > 0) {
       <table class="tabela-doc">
-        <tr class="linha-escura"><th colspan="5">EXTRATO DE MEDIÇÕES ANTERIORES</th></tr>
+        <tr class="linha-escura"><th colspan="4">EXTRATO DE MEDIÇÕES ANTERIORES</th></tr>
         <tr class="linha-escura">
           <th>Nº DO BM</th>
           <th>PERÍODO</th>
-          <th>DATA DA APROVAÇÃO</th>
           <th>VALOR BRUTO MEDIDO</th>
-          <th>VALOR LÍQUIDO RECEBIDO</th>
+          <th>SALDO</th>
         </tr>
         @for (anterior of medicoesAnteriores(); track anterior.id) {
           <tr>
             <td>{{ numeroBmExibicao(anterior) }}</td>
             <td>{{ anterior.periodoInicio | dataBr }} a {{ anterior.periodoFim | dataBr }}</td>
-            <td>{{ anterior.dataDecisao ? (anterior.dataDecisao | dataBr) : '—' }}</td>
             <td>{{ anterior.valorTotalMedido | number: '1.2-2' }}</td>
-            <td>{{ anterior.valorLiquido | number: '1.2-2' }}</td>
+            <td>{{ somaSaldoValor(anterior.itens) | number: '1.2-2' }}</td>
           </tr>
         }
       </table>
