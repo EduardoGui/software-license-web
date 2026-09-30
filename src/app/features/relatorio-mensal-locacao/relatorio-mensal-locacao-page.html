@@ -59,7 +59,7 @@
           <tr>
             <th>Tipo</th>
             <th>Patrimônio</th>
-            <th>Nº Série</th>
+            <th>Chegada</th>
             <th>Fornecedor</th>
             <th>Usuário responsável</th>
             <th>E-mail</th>
@@ -73,7 +73,7 @@
             <tr>
               <td>{{ item.tipoEquipamentoNome }}</td>
               <td>{{ item.patrimonio || '-' }}</td>
-              <td>{{ item.numeroSerie || '-' }}</td>
+              <td>{{ item.dataChegada ? (item.dataChegada | dataBr) : '-' }}</td>
               <td>{{ item.fornecedorNome || '-' }}</td>
               <td>{{ item.usuarioResponsavelNome || '-' }}</td>
               <td>{{ item.usuarioResponsavelEmail || '-' }}</td>

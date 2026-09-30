@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { Icon } from '../../shared/icons/icon';
+import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { TipoEquipamento } from '../tipos-equipamento/tipo-equipamento';
 import { TipoEquipamentoService } from '../tipos-equipamento/tipo-equipamento.service';
 import { RelatorioMensalLocacao, RelatorioMensalLocacaoFiltro } from './relatorio-mensal-locacao';
@@ -15,7 +16,7 @@ const NOMES_MESES = [
 
 @Component({
   selector: 'app-relatorio-mensal-locacao-page',
-  imports: [FormsModule, Icon, DecimalPipe],
+  imports: [FormsModule, Icon, DecimalPipe, DataBrPipe],
   templateUrl: './relatorio-mensal-locacao-page.html',
   styleUrl: './relatorio-mensal-locacao-page.scss',
 })
