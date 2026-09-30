@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { AuthService } from '../auth/auth.service';
+import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { EquipamentoAlocacao } from '../equipamento-alocacoes/equipamento-alocacao';
@@ -14,7 +15,7 @@ import { UsuarioService } from './usuario.service';
 
 @Component({
   selector: 'app-usuario-view',
-  imports: [RouterLink, Icon, DataBrPipe],
+  imports: [RouterLink, Icon, DataBrPipe, AnexosSecao],
   templateUrl: './usuario-view.html',
   styleUrl: './usuario-view.scss',
 })

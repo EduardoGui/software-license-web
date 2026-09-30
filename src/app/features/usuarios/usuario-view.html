@@ -109,6 +109,12 @@
       }
     </section>
 
+    <section class="relacionados">
+      <h2>Anexos</h2>
+      <p class="dica">Ex.: Termo de Responsabilidade (versão assinada) dos equipamentos em uso.</p>
+      <app-anexos-secao recurso="usuarios" [entidadeId]="usuario()!.id" />
+    </section>
+
     <section class="relacionados relacionados--historico">
       <h2>Histórico de equipamentos</h2>
       @if (carregandoHistoricoEquipamentos()) {
