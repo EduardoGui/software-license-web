@@ -49,11 +49,31 @@ export class AuthService {
   }
 
   ehAdministrador(): boolean {
-    return this.obterClaims()?.['role'] === 'Administrador';
+    return this.obterPapeis().includes('Administrador');
+  }
+
+  ehAdministrativo(): boolean {
+    return this.obterPapeis().includes('Administrativo');
   }
 
   ehColaborador(): boolean {
-    return this.obterClaims()?.['role'] === 'Colaborador';
+    return this.obterPapeis().includes('Colaborador');
+  }
+
+  // Administrativo tem o mesmo nível de operação de um Administrador nas telas liberadas pra
+  // ele (DP, Patrimônio, Locais/Empresas PJ/Notas Fiscais) - ver core/admin-guard.ts e app.html.
+  podeAcessarAdministrativo(): boolean {
+    return this.ehAdministrador() || this.ehAdministrativo();
+  }
+
+  // Uma conta pode ter mais de um papel (ex.: colaborador que também é Administrativo) - o claim
+  // "role" no token vem como string quando só tem um papel, ou array quando tem mais de um.
+  private obterPapeis(): string[] {
+    const valor = this.obterClaims()?.['role'];
+    if (Array.isArray(valor)) {
+      return valor;
+    }
+    return typeof valor === 'string' ? [valor] : [];
   }
 
   obterUsuarioId(): number | null {

@@ -7,7 +7,7 @@ export const usuarioViewGuard: CanActivateFn = (route: ActivatedRouteSnapshot) =
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  if (authService.ehAdministrador()) {
+  if (authService.podeAcessarAdministrativo()) {
     return true;
   }
 
