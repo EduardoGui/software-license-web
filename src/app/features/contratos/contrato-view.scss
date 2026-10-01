@@ -304,6 +304,10 @@ input:disabled {
   overflow-y: auto;
 }
 
+.modal--medio {
+  max-width: 560px;
+}
+
 .modal__cabecalho {
   display: flex;
   align-items: center;

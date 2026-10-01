@@ -724,7 +724,7 @@
 
       @if (itemRateioUaEmEdicao(); as itemUa) {
         <div class="modal-fundo" (click)="fecharRateioUa()">
-          <div class="modal" role="dialog" aria-modal="true" aria-label="Rateio de UA" (click)="$event.stopPropagation()">
+          <div class="modal modal--medio" role="dialog" aria-modal="true" aria-label="Rateio de UA" (click)="$event.stopPropagation()">
             <div class="modal__cabecalho">
               <h2>Rateio de UA — {{ itemUa.descricaoNoMomento }}</h2>
               <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fecharRateioUa()">×</button>
