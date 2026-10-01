@@ -45,7 +45,7 @@ export class ObrigacoesList {
     competenciaAteMes: this.mesAtual,
     incluirCanceladas: false,
     pago: false,
-    todosOsPeriodos: false,
+    todosOsPeriodos: true,
   };
 
   // Linha expansível (acompanhamento)
@@ -123,7 +123,7 @@ export class ObrigacoesList {
       competenciaAteMes: this.mesAtual,
       incluirCanceladas: false,
       pago: false,
-      todosOsPeriodos: false,
+      todosOsPeriodos: true,
     };
     this.buscar();
   }
