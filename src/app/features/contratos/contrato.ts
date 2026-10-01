@@ -176,6 +176,24 @@ export interface MedicaoBmItem {
   percentualProRata: number | null;
   ajusteManual: number | null;
   justificativaAjuste: string | null;
+  metodoRateioUa: string | null;
+  rateioUa: MedicaoBmItemRateioUa[];
+}
+
+export interface MedicaoBmItemRateioUa {
+  unidadeOrcamentariaId: number;
+  unidadeOrcamentariaCodigo: string;
+  unidadeOrcamentariaDescricao: string;
+  quantidade: number;
+}
+
+export interface ItemRateioUaInputPayload {
+  unidadeOrcamentariaId: number;
+  quantidade: number;
+}
+
+export interface DefinirRateioUaPayload {
+  itens: ItemRateioUaInputPayload[];
 }
 
 export interface MedicaoBmAcerto {

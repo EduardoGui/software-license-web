@@ -14,7 +14,9 @@ import {
   CreateAditivoPayload,
   CreateContratoPayload,
   CreateMedicaoBmPayload,
+  DefinirRateioUaPayload,
   MedicaoBm,
+  MedicaoBmItem,
   ReprovarMedicaoBmPayload,
   UpdateContratoPayload,
   UpdateMedicaoBmPayload,
@@ -85,6 +87,10 @@ export class ContratoService {
 
   excluirMedicaoBm(contratoId: number, medicaoId: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}`);
+  }
+
+  definirRateioUa(contratoId: number, medicaoId: number, itemId: number, payload: DefinirRateioUaPayload): Observable<MedicaoBmItem> {
+    return this.http.put<MedicaoBmItem>(`${this.baseUrl}/${contratoId}/medicoes/${medicaoId}/itens/${itemId}/rateio-ua`, payload);
   }
 
   aprovarMedicaoBm(contratoId: number, medicaoId: number): Observable<MedicaoBm> {

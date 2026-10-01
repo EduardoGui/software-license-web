@@ -386,6 +386,7 @@
                       <th rowspan="2">Início/Fim efetivo</th>
                       <th rowspan="2">% Pró-rata</th>
                       <th rowspan="2">Ajuste manual</th>
+                      <th rowspan="2">UA</th>
                     </tr>
                     <tr>
                       <th class="divisor-grupo">Contrato</th>
@@ -450,6 +451,19 @@
                             placeholder="Justificativa"
                           />
                         </td>
+                        <td>
+                          @if (bm.itens[i].rateioUa.length > 0) {
+                            <button type="button" class="botao botao--texto" (click)="abrirRateioUa(bm.itens[i])">
+                              {{ bm.itens[i].rateioUa.length }} UA(s)
+                            </button>
+                          } @else if (bm.itens[i].quantidadeMedidaNestaBm > 0) {
+                            <button type="button" class="botao botao--texto badge badge--previsto" (click)="abrirRateioUa(bm.itens[i])">
+                              Definir UA
+                            </button>
+                          } @else {
+                            <span class="texto-muted">—</span>
+                          }
+                        </td>
                       </tr>
                     }
                   </tbody>
@@ -457,7 +471,7 @@
                     <tr class="linha-total">
                       <td colspan="5">TOTAL BRUTO:</td>
                       <td>R$ {{ bm.valorTotalMedido | number: '1.2-2' }}</td>
-                      <td colspan="5"></td>
+                      <td colspan="6"></td>
                     </tr>
                   </tfoot>
                 </table>
@@ -707,6 +721,95 @@
         </div>
       </form>
       </details>
+
+      @if (itemRateioUaEmEdicao(); as itemUa) {
+        <div class="modal-fundo" (click)="fecharRateioUa()">
+          <div class="modal" role="dialog" aria-modal="true" aria-label="Rateio de UA" (click)="$event.stopPropagation()">
+            <div class="modal__cabecalho">
+              <h2>Rateio de UA — {{ itemUa.descricaoNoMomento }}</h2>
+              <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fecharRateioUa()">×</button>
+            </div>
+
+            <p>Quantidade medida do item: <strong>{{ itemUa.quantidadeMedidaNestaBm }}</strong></p>
+
+            <form [formGroup]="formRateioUa" (ngSubmit)="salvarRateioUa()">
+              <div class="tabela-scroll tabela-scroll--sub" formArrayName="itens">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Unidade Orçamentária</th>
+                      <th>Quantidade</th>
+                      <th></th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (linha of itensRateioUa.controls; track linha; let i = $index) {
+                      <tr [formGroupName]="i">
+                        <td>
+                          <select formControlName="unidadeOrcamentariaId" [disabled]="medicaoSelecionada()?.status !== 'Rascunho'">
+                            <option [ngValue]="null">Selecione</option>
+                            @for (ua of unidadesOrcamentarias(); track ua.id) {
+                              <option [ngValue]="ua.id">{{ ua.codigo }} — {{ ua.descricao }}</option>
+                            }
+                          </select>
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            step="0.000001"
+                            min="0"
+                            formControlName="quantidade"
+                            [readonly]="medicaoSelecionada()?.status !== 'Rascunho'"
+                          />
+                        </td>
+                        <td>
+                          @if (medicaoSelecionada()?.status === 'Rascunho' && itensRateioUa.length > 1) {
+                            <button type="button" class="botao botao--texto" (click)="removerLinhaRateioUa(i)" title="Remover">
+                              <app-icon name="trash" [size]="16" />
+                            </button>
+                          }
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                  <tfoot>
+                    <tr class="linha-total">
+                      <td>TOTAL RATEADO:</td>
+                      <td [class.status--erro]="totalRateioUa() !== itemUa.quantidadeMedidaNestaBm">
+                        {{ totalRateioUa() }} / {{ itemUa.quantidadeMedidaNestaBm }}
+                      </td>
+                      <td></td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              @if (medicaoSelecionada()?.status === 'Rascunho') {
+                <button type="button" class="botao" (click)="adicionarLinhaRateioUa()">+ Adicionar UA</button>
+              }
+
+              @if (erroRateioUa()) {
+                <p class="status status--erro">{{ erroRateioUa() }}</p>
+              }
+
+              <div class="acoes-form">
+                <button type="button" class="botao botao--texto" (click)="fecharRateioUa()">
+                  {{ medicaoSelecionada()?.status === 'Rascunho' ? 'Cancelar' : 'Fechar' }}
+                </button>
+                @if (medicaoSelecionada()?.status === 'Rascunho') {
+                  <button
+                    type="submit"
+                    class="botao botao--primario"
+                    [disabled]="salvandoRateioUa() || totalRateioUa() !== itemUa.quantidadeMedidaNestaBm"
+                  >
+                    {{ salvandoRateioUa() ? 'Salvando...' : 'Salvar rateio' }}
+                  </button>
+                }
+              </div>
+            </form>
+          </div>
+        </div>
+      }
     </section>
 
     <section class="painel">

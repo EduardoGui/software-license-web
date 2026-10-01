@@ -114,6 +114,10 @@ details {
   color: #b91c1c;
 }
 
+.texto-muted {
+  color: var(--color-text-muted);
+}
+
 .grid-info {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

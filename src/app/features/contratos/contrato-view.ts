@@ -8,6 +8,8 @@ import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { ObrigacoesExtrato } from '../obrigacoes/obrigacoes-extrato';
 import { adicionarMeses, diasEntre, hojeIso, inicioDoMes, paraData } from '../timeline/timeline-datas';
+import { UnidadeOrcamentaria } from '../unidades-orcamentarias/unidade-orcamentaria';
+import { UnidadeOrcamentariaService } from '../unidades-orcamentarias/unidade-orcamentaria.service';
 import {
   Aditivo,
   ContratoDetalhe,
@@ -17,6 +19,7 @@ import {
   MedicaoBmAcerto,
   MedicaoBmImposto,
   MedicaoBmItem,
+  MedicaoBmItemRateioUa,
   MetodoProRata,
   TipoMedicao,
 } from './contrato';
@@ -38,6 +41,7 @@ const PX_POR_DIA = 6;
 export class ContratoView {
   private readonly fb = inject(FormBuilder);
   private readonly contratoService = inject(ContratoService);
+  private readonly unidadeOrcamentariaService = inject(UnidadeOrcamentariaService);
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
 
@@ -75,6 +79,11 @@ export class ContratoView {
   protected readonly confirmandoReverterAprovacaoId = signal<number | null>(null);
   protected readonly revertendoAprovacaoId = signal<number | null>(null);
   protected readonly erroReverterAprovacaoMedicao = signal<string | null>(null);
+
+  protected readonly unidadesOrcamentarias = signal<UnidadeOrcamentaria[]>([]);
+  protected readonly itemRateioUaEmEdicao = signal<MedicaoBmItem | null>(null);
+  protected readonly salvandoRateioUa = signal(false);
+  protected readonly erroRateioUa = signal<string | null>(null);
 
   protected readonly saldo = signal<ContratoSaldoItem[]>([]);
 
@@ -153,11 +162,20 @@ export class ContratoView {
     return this.formItensMedicao.controls.impostos;
   }
 
+  protected readonly formRateioUa = this.fb.nonNullable.group({
+    itens: this.fb.array<ReturnType<typeof this.criarLinhaRateioUa>>([]),
+  });
+
+  protected get itensRateioUa(): FormArray {
+    return this.formRateioUa.controls.itens;
+  }
+
   constructor() {
     this.carregar();
     this.carregarAditivos();
     this.carregarMedicoes();
     this.carregarSaldo();
+    this.unidadeOrcamentariaService.listar({ ativa: true }).subscribe((unidades) => this.unidadesOrcamentarias.set(unidades));
   }
 
   private carregarSaldo(): void {
@@ -525,6 +543,73 @@ export class ContratoView {
 
   protected removerImposto(index: number): void {
     this.impostosMedicao.removeAt(index);
+  }
+
+  private criarLinhaRateioUa(rateio?: MedicaoBmItemRateioUa) {
+    return this.fb.nonNullable.group({
+      unidadeOrcamentariaId: this.fb.control<number | null>(rateio?.unidadeOrcamentariaId ?? null, Validators.required),
+      quantidade: this.fb.control<number | null>(rateio?.quantidade ?? null, [Validators.required, Validators.min(0.000001)]),
+    });
+  }
+
+  protected abrirRateioUa(item: MedicaoBmItem): void {
+    this.itemRateioUaEmEdicao.set(item);
+    this.erroRateioUa.set(null);
+    this.itensRateioUa.clear();
+    if (item.rateioUa.length > 0) {
+      for (const rateio of item.rateioUa) {
+        this.itensRateioUa.push(this.criarLinhaRateioUa(rateio));
+      }
+    } else {
+      this.itensRateioUa.push(this.criarLinhaRateioUa());
+    }
+  }
+
+  protected fecharRateioUa(): void {
+    this.itemRateioUaEmEdicao.set(null);
+  }
+
+  protected adicionarLinhaRateioUa(): void {
+    this.itensRateioUa.push(this.criarLinhaRateioUa());
+  }
+
+  protected removerLinhaRateioUa(index: number): void {
+    this.itensRateioUa.removeAt(index);
+  }
+
+  protected totalRateioUa(): number {
+    return this.itensRateioUa.controls.reduce((total, linha) => total + (Number(linha.value.quantidade) || 0), 0);
+  }
+
+  protected salvarRateioUa(): void {
+    const item = this.itemRateioUaEmEdicao();
+    const medicaoId = this.medicaoExpandidaId();
+    if (!item || medicaoId === null || this.formRateioUa.invalid) {
+      this.formRateioUa.markAllAsTouched();
+      return;
+    }
+
+    this.salvandoRateioUa.set(true);
+    this.erroRateioUa.set(null);
+
+    this.contratoService
+      .definirRateioUa(this.contratoId, medicaoId, item.id, {
+        itens: this.itensRateioUa.getRawValue().map((linha) => ({
+          unidadeOrcamentariaId: linha.unidadeOrcamentariaId!,
+          quantidade: linha.quantidade!,
+        })),
+      })
+      .subscribe({
+        next: () => {
+          this.salvandoRateioUa.set(false);
+          this.itemRateioUaEmEdicao.set(null);
+          this.carregarMedicoes();
+        },
+        error: (err) => {
+          this.salvandoRateioUa.set(false);
+          this.erroRateioUa.set(err?.error?.message ?? 'Não foi possível salvar o rateio de UA.');
+        },
+      });
   }
 
   protected salvarItensMedicao(): void {
