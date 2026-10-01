@@ -8,7 +8,7 @@ export interface LicencaContagemPorNome {
   quantidade: number;
 }
 
-export type PendenciaOrigem = 'Tarefa' | 'Licença' | 'Equipamento' | 'Medição' | 'Férias';
+export type PendenciaOrigem = 'Tarefa' | 'Licença' | 'Equipamento' | 'Férias';
 
 export interface Pendencia {
   origem: PendenciaOrigem;
