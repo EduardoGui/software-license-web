@@ -456,6 +456,8 @@
                             <button type="button" class="botao botao--texto" (click)="abrirRateioUa(bm.itens[i])">
                               {{ bm.itens[i].rateioUa.length }} UA(s)
                             </button>
+                          } @else if (item.value.quantidadeMedidaNestaBm !== bm.itens[i].quantidadeMedidaNestaBm) {
+                            <span class="texto-muted" title="Salve a medição pra poder definir o rateio de UA">Salve p/ definir UA</span>
                           } @else if (bm.itens[i].quantidadeMedidaNestaBm > 0) {
                             <button type="button" class="botao botao--texto badge badge--previsto" (click)="abrirRateioUa(bm.itens[i])">
                               Definir UA
@@ -731,6 +733,10 @@
             </div>
 
             <p>Quantidade medida do item: <strong>{{ itemUa.quantidadeMedidaNestaBm }}</strong></p>
+
+            @if (medicaoSelecionada()?.status !== 'Rascunho') {
+              <p class="status">Este BM já foi {{ medicaoSelecionada()?.status === 'Aprovado' ? 'aprovado' : 'decidido' }} — rateio somente leitura.</p>
+            }
 
             <form [formGroup]="formRateioUa" (ngSubmit)="salvarRateioUa()">
               <div class="tabela-scroll tabela-scroll--sub" formArrayName="itens">
