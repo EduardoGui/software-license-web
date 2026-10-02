@@ -30,8 +30,9 @@
     <section class="painel-itens-campanha">
       <h2>Itens da campanha</h2>
       <p class="dica">
-        Esta é a lista aplicada automaticamente a quem for adicionado à campanha. Alterar aqui não muda quem já foi adicionado
-        — para isso, ajuste os itens da pessoa individualmente.
+        Catálogo da campanha, com o estoque de cada item. Itens marcados <strong>"Vai pra todos"</strong> entram sozinhos em quem for
+        adicionado; os demais (ex.: camisas por tamanho) você escolhe por colaborador, expandindo a linha dele na lista abaixo.
+        Alterar aqui não muda os itens de quem já foi adicionado.
       </p>
 
       <form [formGroup]="formItensCampanha">
@@ -43,12 +44,16 @@
               <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
               <input type="date" formControlName="validade" title="Validade (opcional)" />
               <input type="number" min="0" formControlName="quantidadeDisponivel" placeholder="Estoque (opcional)" title="Estoque disponível (opcional)" />
+              <label class="item-linha__todos" title="Marcado: o item entra sozinho em toda entrega. Desmarcado: você escolhe por colaborador.">
+                <input type="checkbox" formControlName="vaiParaTodos" /> Vai pra todos
+              </label>
               <button type="button" class="botao-remover" (click)="removerLinhaItemCampanha(i)" aria-label="Remover item">×</button>
             </div>
           }
         </div>
         <div class="acoes-linha">
           <button type="button" class="botao botao--texto" (click)="adicionarLinhaItemCampanha()">+ Adicionar item</button>
+          <button type="button" class="botao botao--texto" (click)="abrirColarLista()">Colar lista</button>
           <button type="button" class="botao botao--primario" [disabled]="salvandoItensCampanha()" (click)="salvarItensCampanha()">
             {{ salvandoItensCampanha() ? 'Salvando...' : 'Salvar itens da campanha' }}
           </button>
@@ -67,8 +72,9 @@
                 <th>Item</th>
                 <th>Tamanho</th>
                 <th>Estoque</th>
-                <th>Entregue</th>
+                <th title="Reservado em entregas não canceladas (inclusive pendentes)">Atribuído</th>
                 <th>Saldo</th>
+                <th>Entra</th>
               </tr>
             </thead>
             <tbody>
@@ -88,6 +94,7 @@
                       -
                     }
                   </td>
+                  <td>{{ item.vaiParaTodos ? 'Todos' : 'Sob escolha' }}</td>
                 </tr>
               }
             </tbody>
@@ -229,15 +236,24 @@
                       <form [formGroup]="formItensLinha">
                         <div formArrayName="itens" class="itens-linha">
                           @for (item of itensLinha.controls; track $index; let i = $index) {
-                            <div [formGroupName]="i" class="item-linha">
-                              <input type="text" formControlName="descricao" placeholder="Descrição" [readonly]="e.status !== 'Pendente'" />
-                              <input type="text" formControlName="tamanho" placeholder="Tamanho" [readonly]="e.status !== 'Pendente'" />
-                              <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." [readonly]="e.status !== 'Pendente'" />
-                              <input type="date" formControlName="validade" title="Validade (opcional)" [readonly]="e.status !== 'Pendente'" />
+                            <div [formGroupName]="i" class="item-linha item-linha--escolha">
+                              <select formControlName="campanhaEntregaItemId" [attr.aria-label]="'Item ' + (i + 1)">
+                                <option [ngValue]="null" disabled>Escolha o item...</option>
+                                @for (grupo of gruposDeItens(e); track grupo.descricao) {
+                                  <optgroup [label]="grupo.descricao">
+                                    @for (opcao of grupo.opcoes; track opcao.id) {
+                                      <option [ngValue]="opcao.id" [disabled]="opcao.desabilitada">{{ opcao.rotulo }}</option>
+                                    }
+                                  </optgroup>
+                                }
+                              </select>
+                              <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
                               @if (e.status === 'Pendente') {
                                 <button type="button" class="botao-remover" (click)="removerLinhaItem(i)" aria-label="Remover item">×</button>
                               }
                             </div>
+                          } @empty {
+                            <p class="dica">Nenhum item escolhido ainda — adicione abaixo.</p>
                           }
                         </div>
                         @if (e.status === 'Pendente') {
@@ -346,6 +362,62 @@
         </table>
       </div>
     }
+  }
+
+  @if (modalColarAberto()) {
+    <div class="overlay" (click)="fecharColarLista()">
+      <div class="modal modal--colar" (click)="$event.stopPropagation()">
+        <header>
+          <h2>Colar lista de itens</h2>
+          <button type="button" class="botao-fechar" (click)="fecharColarLista()" aria-label="Fechar">×</button>
+        </header>
+
+        <div class="modal__corpo">
+          <p class="dica">
+            Cole as linhas do Excel no formato <strong>DESCRIÇÃO TAMANHO ESTOQUE</strong>, uma por linha (ex.:
+            <em>CAMISA POLO FEM P 14</em>). Os itens entram como "sob escolha" e só são gravados ao clicar em "Salvar itens da campanha".
+          </p>
+          <textarea rows="8" [(ngModel)]="textoColar" name="textoColar" placeholder="CAMISA POLO FEM P&#9;14"></textarea>
+
+          @if (linhasColadas().length > 0) {
+            <p class="dica">
+              {{ quantidadeColadaValida() }} item(ns) serão adicionados.
+              @if (linhasColadas().includes(null)) {
+                Linhas não reconhecidas serão ignoradas.
+              }
+            </p>
+            <div class="tabela-scroll">
+              <table class="tabela-estoque">
+                <thead>
+                  <tr><th>Descrição</th><th>Tamanho</th><th>Estoque</th><th></th></tr>
+                </thead>
+                <tbody>
+                  @for (linha of linhasColadas(); track $index) {
+                    <tr>
+                      @if (linha) {
+                        <td>{{ linha.descricao }}</td>
+                        <td>{{ linha.tamanho }}</td>
+                        <td>{{ linha.estoque }}</td>
+                        <td>{{ linha.duplicada ? 'já existe — será ignorado' : '' }}</td>
+                      } @else {
+                        <td colspan="4" class="status--erro">Linha não reconhecida</td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        </div>
+
+        <footer>
+          <button type="button" class="botao botao--texto" (click)="fecharColarLista()">Cancelar</button>
+          <button type="button" class="botao botao--primario" [disabled]="quantidadeColadaValida() === 0" (click)="confirmarColarLista()">
+            Adicionar à lista
+          </button>
+        </footer>
+      </div>
+    </div>
   }
 
   @if (modalColaboradoresAberto()) {

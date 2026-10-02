@@ -21,11 +21,14 @@ export interface CampanhaEntregaItem {
   quantidade: number;
   validade: string | null;
   quantidadeDisponivel: number | null;
+  vaiParaTodos: boolean;
   quantidadeEntregue: number;
   saldoDisponivel: number | null;
 }
 
 export interface CampanhaEntregaItemPayload {
+  id: number | null;
+  vaiParaTodos: boolean;
   descricao: string;
   tamanho: string | null;
   quantidade: number;
@@ -63,17 +66,16 @@ export interface CampanhaEntregaResumo {
 
 export interface EntregaItem {
   id: number;
+  campanhaEntregaItemId: number | null;
   descricao: string;
   tamanho: string | null;
   quantidade: number;
   validade: string | null;
 }
 
-export interface CreateEntregaItemPayload {
-  descricao: string;
-  tamanho: string | null;
+export interface EscolhaItemEntregaPayload {
+  campanhaEntregaItemId: number;
   quantidade: number;
-  validade: string | null;
 }
 
 export interface Entrega {
@@ -124,7 +126,7 @@ export interface CreateEntregaLotePayload {
 }
 
 export interface UpdateEntregaItensPayload {
-  itens: CreateEntregaItemPayload[];
+  itens: EscolhaItemEntregaPayload[];
 }
 
 export interface RegistrarEntregaFisicaPayload {

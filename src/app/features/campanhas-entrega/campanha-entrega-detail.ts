@@ -153,6 +153,9 @@ export class CampanhaEntregaDetail {
   }
 
   protected resumoItens(entrega: Entrega): string {
+    if (entrega.itens.length === 0) {
+      return '— sem itens escolhidos';
+    }
     return entrega.itens.map((i) => `${i.quantidade}× ${i.descricao}${i.tamanho ? ' (' + i.tamanho + ')' : ''}`).join(', ');
   }
 
@@ -205,6 +208,8 @@ export class CampanhaEntregaDetail {
 
   private criarLinhaItemCampanha(item?: CampanhaEntregaItem) {
     return this.fb.group({
+      id: this.fb.control<number | null>(item?.id ?? null),
+      vaiParaTodos: this.fb.nonNullable.control(item?.vaiParaTodos ?? true),
       descricao: this.fb.nonNullable.control(item?.descricao ?? '', Validators.required),
       tamanho: this.fb.nonNullable.control(item?.tamanho ?? ''),
       quantidade: this.fb.nonNullable.control(item?.quantidade ?? 1, [Validators.required, Validators.min(1)]),
@@ -231,6 +236,8 @@ export class CampanhaEntregaDetail {
     this.erroItensCampanha.set(null);
 
     const itens = this.itensCampanha.getRawValue().map((i) => ({
+      id: i.id,
+      vaiParaTodos: i.vaiParaTodos,
       descricao: i.descricao,
       tamanho: i.tamanho || null,
       quantidade: i.quantidade,
@@ -249,6 +256,70 @@ export class CampanhaEntregaDetail {
         this.erroItensCampanha.set(err?.error?.message ?? 'Não foi possível salvar os itens da campanha.');
       },
     });
+  }
+
+  // --- Colar lista (importar itens do Excel) ---
+
+  protected readonly modalColarAberto = signal(false);
+  protected textoColar = '';
+
+  protected abrirColarLista(): void {
+    this.textoColar = '';
+    this.modalColarAberto.set(true);
+  }
+
+  protected fecharColarLista(): void {
+    this.modalColarAberto.set(false);
+  }
+
+  // Cada linha: DESCRIÇÃO ... TAMANHO ESTOQUE (o que o Excel cola, separado por tab ou espaços).
+  // Último termo = estoque (inteiro), penúltimo = tamanho, o resto = descrição.
+  protected linhasColadas(): ({ descricao: string; tamanho: string; estoque: number; duplicada: boolean } | null)[] {
+    const existentes = new Set(
+      this.itensCampanha.getRawValue().map((i) => `${i.descricao.trim().toUpperCase()}|${(i.tamanho ?? '').trim().toUpperCase()}`),
+    );
+    const vistas = new Set<string>();
+
+    return this.textoColar
+      .split(/\r?\n/)
+      .map((linha) => linha.trim())
+      .filter((linha) => linha.length > 0)
+      .map((linha) => {
+        const termos = linha.split(/\s+/);
+        const estoque = Number(termos[termos.length - 1]);
+        if (termos.length < 3 || !Number.isInteger(estoque) || estoque < 0) {
+          return null;
+        }
+
+        const tamanho = termos[termos.length - 2];
+        const descricao = termos.slice(0, -2).join(' ');
+        const chave = `${descricao.toUpperCase()}|${tamanho.toUpperCase()}`;
+        const duplicada = existentes.has(chave) || vistas.has(chave);
+        vistas.add(chave);
+        return { descricao, tamanho, estoque, duplicada };
+      });
+  }
+
+  protected quantidadeColadaValida(): number {
+    return this.linhasColadas().filter((l) => l !== null && !l.duplicada).length;
+  }
+
+  protected confirmarColarLista(): void {
+    for (const linha of this.linhasColadas()) {
+      if (linha === null || linha.duplicada) {
+        continue;
+      }
+      const nova = this.criarLinhaItemCampanha();
+      nova.patchValue({
+        descricao: linha.descricao,
+        tamanho: linha.tamanho,
+        quantidade: 1,
+        quantidadeDisponivel: linha.estoque,
+        vaiParaTodos: false,
+      });
+      this.itensCampanha.push(nova);
+    }
+    this.modalColarAberto.set(false);
   }
 
   // --- Linha expansível ---
@@ -274,6 +345,11 @@ export class CampanhaEntregaDetail {
     for (const item of entrega.itens) {
       this.itensLinha.push(this.criarLinhaItem(item));
     }
+    if (entrega.status === 'Pendente') {
+      this.formItensLinha.enable();
+    } else {
+      this.formItensLinha.disable();
+    }
 
     this.formEntregaFisica.reset({
       dataEntregaFisica: entrega.dataEntregaFisica ?? '',
@@ -281,13 +357,31 @@ export class CampanhaEntregaDetail {
     });
   }
 
-  private criarLinhaItem(item?: { descricao: string; tamanho: string | null; quantidade: number; validade: string | null }) {
+  private criarLinhaItem(item?: { campanhaEntregaItemId: number | null; quantidade: number }) {
     return this.fb.group({
-      descricao: this.fb.nonNullable.control(item?.descricao ?? '', Validators.required),
-      tamanho: this.fb.nonNullable.control(item?.tamanho ?? ''),
+      campanhaEntregaItemId: this.fb.control<number | null>(item?.campanhaEntregaItemId ?? null, Validators.required),
       quantidade: this.fb.nonNullable.control(item?.quantidade ?? 1, [Validators.required, Validators.min(1)]),
-      validade: this.fb.nonNullable.control(item?.validade ?? ''),
     });
+  }
+
+  // Itens do catálogo agrupados por descrição (ex.: CAMISA POLO FEM -> P, M, G, GG), com o saldo de cada tamanho.
+  // Opção sem saldo fica desabilitada, a não ser que já seja a escolhida nesta própria entrega.
+  protected gruposDeItens(entrega: Entrega): { descricao: string; opcoes: { id: number; rotulo: string; desabilitada: boolean }[] }[] {
+    const jaEscolhidos = new Set(entrega.itens.map((i) => i.campanhaEntregaItemId));
+    const grupos = new Map<string, { id: number; rotulo: string; desabilitada: boolean }[]>();
+
+    for (const item of this.campanha()?.itens ?? []) {
+      const saldo = item.saldoDisponivel;
+      const rotuloSaldo = saldo === null ? 'sem controle de estoque' : `saldo ${saldo}`;
+      const opcao = {
+        id: item.id,
+        rotulo: `${item.tamanho ?? 'único'} — ${rotuloSaldo}`,
+        desabilitada: saldo !== null && saldo <= 0 && !jaEscolhidos.has(item.id),
+      };
+      grupos.set(item.descricao, [...(grupos.get(item.descricao) ?? []), opcao]);
+    }
+
+    return [...grupos.entries()].map(([descricao, opcoes]) => ({ descricao, opcoes }));
   }
 
   protected adicionarLinhaItem(): void {
@@ -299,7 +393,7 @@ export class CampanhaEntregaDetail {
   }
 
   protected salvarItens(entrega: Entrega): void {
-    if (this.itensLinha.invalid || this.itensLinha.length === 0) {
+    if (this.itensLinha.invalid) {
       this.itensLinha.markAllAsTouched();
       return;
     }
@@ -308,10 +402,8 @@ export class CampanhaEntregaDetail {
     this.erroLinha.set(null);
 
     const itens = this.itensLinha.getRawValue().map((i) => ({
-      descricao: i.descricao,
-      tamanho: i.tamanho || null,
+      campanhaEntregaItemId: i.campanhaEntregaItemId!,
       quantidade: i.quantidade,
-      validade: i.validade || null,
     }));
 
     this.campanhaEntregaService.atualizarItensEntrega(this.campanhaId, entrega.id, { itens }).subscribe({
@@ -459,6 +551,8 @@ export class CampanhaEntregaDetail {
   private substituirEntrega(atualizada: Entrega): void {
     this.entregas.set(this.entregas().map((e) => (e.id === atualizada.id ? atualizada : e)));
     this.campanhaEntregaService.obterResumo(this.campanhaId).subscribe((resumo) => this.resumo.set(resumo));
+    // O saldo do catálogo muda a cada item atribuído/cancelado, então a campanha também é recarregada.
+    this.campanhaEntregaService.obter(this.campanhaId).subscribe((campanha) => this.campanha.set(campanha));
   }
 
   // --- Modal de adicionar colaboradores ---
