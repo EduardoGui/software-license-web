@@ -332,7 +332,7 @@ th {
 }
 
 .item-linha--campanha {
-  grid-template-columns: 2fr 1fr 0.8fr 1fr 1fr auto auto;
+  grid-template-columns: 2fr 1fr 0.8fr 1fr 1fr auto;
 }
 
 .item-linha--escolha {
@@ -534,4 +534,21 @@ th {
   bottom: 0;
   background: var(--color-bg-card);
   border-top: 1px solid var(--color-border-light);
+}
+
+.modal--item-a-item {
+  max-width: 680px;
+}
+
+.modal--item-a-item select {
+  width: 100%;
+  padding: 0.4rem 0.6rem;
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  font-size: 0.85rem;
+  background: #fff;
+}
+
+.modal--item-a-item .item-linha select {
+  width: auto;
 }

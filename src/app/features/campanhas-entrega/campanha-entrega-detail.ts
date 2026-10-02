@@ -16,6 +16,7 @@ import {
   ColaboradorDisponivel,
   Entrega,
   EntregaFiltro,
+  EntregaItem,
   ROTULOS_STATUS_ENTREGA,
   ROTULOS_TIPO_DIVERGENCIA,
 } from './campanha-entrega';
@@ -209,7 +210,6 @@ export class CampanhaEntregaDetail {
   private criarLinhaItemCampanha(item?: CampanhaEntregaItem) {
     return this.fb.group({
       id: this.fb.control<number | null>(item?.id ?? null),
-      vaiParaTodos: this.fb.nonNullable.control(item?.vaiParaTodos ?? true),
       descricao: this.fb.nonNullable.control(item?.descricao ?? '', Validators.required),
       tamanho: this.fb.nonNullable.control(item?.tamanho ?? ''),
       quantidade: this.fb.nonNullable.control(item?.quantidade ?? 1, [Validators.required, Validators.min(1)]),
@@ -237,7 +237,6 @@ export class CampanhaEntregaDetail {
 
     const itens = this.itensCampanha.getRawValue().map((i) => ({
       id: i.id,
-      vaiParaTodos: i.vaiParaTodos,
       descricao: i.descricao,
       tamanho: i.tamanho || null,
       quantidade: i.quantidade,
@@ -256,6 +255,90 @@ export class CampanhaEntregaDetail {
         this.erroItensCampanha.set(err?.error?.message ?? 'Não foi possível salvar os itens da campanha.');
       },
     });
+  }
+
+  // --- Item a item: adicionar um colaborador escolhendo os itens do catálogo ---
+
+  protected readonly modalItemAItemAberto = signal(false);
+  protected readonly salvandoItemAItem = signal(false);
+  protected readonly erroItemAItem = signal<string | null>(null);
+  protected filtroNomeColaborador = '';
+
+  protected readonly formItemAItem = this.fb.group({
+    usuarioId: this.fb.control<number | null>(null, Validators.required),
+    observacao: this.fb.nonNullable.control(''),
+    itens: this.fb.array<ReturnType<typeof this.criarLinhaEscolha>>([]),
+  });
+
+  protected get itensItemAItem(): FormArray {
+    return this.formItemAItem.get('itens') as FormArray;
+  }
+
+  private criarLinhaEscolha() {
+    return this.fb.group({
+      campanhaEntregaItemId: this.fb.control<number | null>(null, Validators.required),
+      quantidade: this.fb.nonNullable.control(1, [Validators.required, Validators.min(1)]),
+    });
+  }
+
+  protected abrirModalItemAItem(usuarioId: number | null = null): void {
+    this.erroItemAItem.set(null);
+    this.filtroNomeColaborador = '';
+    this.formItemAItem.reset({ usuarioId, observacao: '' });
+    this.itensItemAItem.clear();
+    this.itensItemAItem.push(this.criarLinhaEscolha());
+    this.modalItemAItemAberto.set(true);
+  }
+
+  protected fecharModalItemAItem(): void {
+    this.modalItemAItemAberto.set(false);
+  }
+
+  protected adicionarLinhaEscolha(): void {
+    this.itensItemAItem.push(this.criarLinhaEscolha());
+  }
+
+  protected removerLinhaEscolha(index: number): void {
+    this.itensItemAItem.removeAt(index);
+  }
+
+  protected usuariosFiltrados(): Usuario[] {
+    const termo = this.filtroNomeColaborador.trim().toLowerCase();
+    return this.usuarios()
+      .filter((u) => u.status !== 'Inativo')
+      .filter((u) => !termo || u.nome.toLowerCase().includes(termo))
+      .sort((a, b) => a.nome.localeCompare(b.nome));
+  }
+
+  protected salvarItemAItem(): void {
+    if (this.formItemAItem.invalid || this.itensItemAItem.length === 0) {
+      this.formItemAItem.markAllAsTouched();
+      this.erroItemAItem.set('Escolha o colaborador e ao menos um item com quantidade.');
+      return;
+    }
+
+    const valor = this.formItemAItem.getRawValue();
+    this.salvandoItemAItem.set(true);
+    this.erroItemAItem.set(null);
+
+    this.campanhaEntregaService
+      .adicionarEntrega(this.campanhaId, {
+        usuarioId: valor.usuarioId!,
+        observacao: valor.observacao || null,
+        itens: valor.itens.map((i) => ({ campanhaEntregaItemId: i.campanhaEntregaItemId, quantidade: i.quantidade })),
+      })
+      .subscribe({
+        next: () => {
+          this.salvandoItemAItem.set(false);
+          this.modalItemAItemAberto.set(false);
+          this.expandidoId.set(null);
+          this.atualizarTudo();
+        },
+        error: (err) => {
+          this.salvandoItemAItem.set(false);
+          this.erroItemAItem.set(err?.error?.message ?? 'Não foi possível adicionar o colaborador.');
+        },
+      });
   }
 
   // --- Colar lista (importar itens do Excel) ---
@@ -315,7 +398,6 @@ export class CampanhaEntregaDetail {
         tamanho: linha.tamanho,
         quantidade: 1,
         quantidadeDisponivel: linha.estoque,
-        vaiParaTodos: false,
       });
       this.itensCampanha.push(nova);
     }
@@ -357,17 +439,25 @@ export class CampanhaEntregaDetail {
     });
   }
 
-  private criarLinhaItem(item?: { campanhaEntregaItemId: number | null; quantidade: number }) {
+  protected ehItemAItem(): boolean {
+    return this.campanha()?.tipo === 'ItemAItem';
+  }
+
+  private criarLinhaItem(item?: Partial<EntregaItem>) {
+    const itemAItem = this.ehItemAItem();
     return this.fb.group({
-      campanhaEntregaItemId: this.fb.control<number | null>(item?.campanhaEntregaItemId ?? null, Validators.required),
+      campanhaEntregaItemId: this.fb.control<number | null>(item?.campanhaEntregaItemId ?? null, itemAItem ? Validators.required : []),
+      descricao: this.fb.nonNullable.control(item?.descricao ?? '', itemAItem ? [] : Validators.required),
+      tamanho: this.fb.nonNullable.control(item?.tamanho ?? ''),
       quantidade: this.fb.nonNullable.control(item?.quantidade ?? 1, [Validators.required, Validators.min(1)]),
+      validade: this.fb.nonNullable.control(item?.validade ?? ''),
     });
   }
 
   // Itens do catálogo agrupados por descrição (ex.: CAMISA POLO FEM -> P, M, G, GG), com o saldo de cada tamanho.
   // Opção sem saldo fica desabilitada, a não ser que já seja a escolhida nesta própria entrega.
-  protected gruposDeItens(entrega: Entrega): { descricao: string; opcoes: { id: number; rotulo: string; desabilitada: boolean }[] }[] {
-    const jaEscolhidos = new Set(entrega.itens.map((i) => i.campanhaEntregaItemId));
+  protected gruposDeItens(entrega?: Entrega): { descricao: string; opcoes: { id: number; rotulo: string; desabilitada: boolean }[] }[] {
+    const jaEscolhidos = new Set(entrega?.itens.map((i) => i.campanhaEntregaItemId) ?? []);
     const grupos = new Map<string, { id: number; rotulo: string; desabilitada: boolean }[]>();
 
     for (const item of this.campanha()?.itens ?? []) {
@@ -398,13 +488,19 @@ export class CampanhaEntregaDetail {
       return;
     }
 
+    if (this.itensLinha.length === 0) {
+      this.erroLinha.set('Inclua ao menos um item.');
+      return;
+    }
+
     this.salvandoLinha.set(true);
     this.erroLinha.set(null);
 
-    const itens = this.itensLinha.getRawValue().map((i) => ({
-      campanhaEntregaItemId: i.campanhaEntregaItemId!,
-      quantidade: i.quantidade,
-    }));
+    const itens = this.itensLinha.getRawValue().map((i) =>
+      this.ehItemAItem()
+        ? { campanhaEntregaItemId: i.campanhaEntregaItemId, quantidade: i.quantidade }
+        : { descricao: i.descricao, tamanho: i.tamanho || null, quantidade: i.quantidade, validade: i.validade || null },
+    );
 
     this.campanhaEntregaService.atualizarItensEntrega(this.campanhaId, entrega.id, { itens }).subscribe({
       next: (atualizada) => {

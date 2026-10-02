@@ -29,11 +29,17 @@
 
     <section class="painel-itens-campanha">
       <h2>Itens da campanha</h2>
-      <p class="dica">
-        Catálogo da campanha, com o estoque de cada item. Itens marcados <strong>"Vai pra todos"</strong> entram sozinhos em quem for
-        adicionado; os demais (ex.: camisas por tamanho) você escolhe por colaborador, expandindo a linha dele na lista abaixo.
-        Alterar aqui não muda os itens de quem já foi adicionado.
-      </p>
+      @if (c.tipo === 'ItemAItem') {
+        <p class="dica">
+          Catálogo da campanha, com o estoque de cada item. Aqui você só cadastra o que existe; os itens de cada colaborador são
+          escolhidos ao clicar em <strong>"+ Adicionar colaborador"</strong> (só entram itens com saldo).
+        </p>
+      } @else {
+        <p class="dica">
+          Esta é a lista aplicada automaticamente a quem for adicionado à campanha. Alterar aqui não muda quem já foi adicionado
+          — para isso, ajuste os itens da pessoa individualmente.
+        </p>
+      }
 
       <form [formGroup]="formItensCampanha">
         <div formArrayName="itens" class="itens-linha">
@@ -44,9 +50,6 @@
               <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
               <input type="date" formControlName="validade" title="Validade (opcional)" />
               <input type="number" min="0" formControlName="quantidadeDisponivel" placeholder="Estoque (opcional)" title="Estoque disponível (opcional)" />
-              <label class="item-linha__todos" title="Marcado: o item entra sozinho em toda entrega. Desmarcado: você escolhe por colaborador.">
-                <input type="checkbox" formControlName="vaiParaTodos" /> Vai pra todos
-              </label>
               <button type="button" class="botao-remover" (click)="removerLinhaItemCampanha(i)" aria-label="Remover item">×</button>
             </div>
           }
@@ -74,7 +77,6 @@
                 <th>Estoque</th>
                 <th title="Reservado em entregas não canceladas (inclusive pendentes)">Atribuído</th>
                 <th>Saldo</th>
-                <th>Entra</th>
               </tr>
             </thead>
             <tbody>
@@ -94,7 +96,6 @@
                       -
                     }
                   </td>
-                  <td>{{ item.vaiParaTodos ? 'Todos' : 'Sob escolha' }}</td>
                 </tr>
               }
             </tbody>
@@ -138,15 +139,27 @@
         <button type="button" class="botao" [disabled]="reenviando()" (click)="reenviarPendentes()">
           {{ reenviando() ? 'Reenviando...' : 'Reenviar aos pendentes' }}
         </button>
-        <button
-          type="button"
-          class="botao botao--primario"
-          [disabled]="c.itens.length === 0"
-          [title]="c.itens.length === 0 ? 'Defina os itens da campanha antes de adicionar colaboradores' : ''"
-          (click)="abrirModalColaboradores()"
-        >
-          + Adicionar colaboradores
-        </button>
+        @if (c.tipo === 'ItemAItem') {
+          <button
+            type="button"
+            class="botao botao--primario"
+            [disabled]="c.itens.length === 0"
+            [title]="c.itens.length === 0 ? 'Cadastre os itens da campanha antes de adicionar colaboradores' : ''"
+            (click)="abrirModalItemAItem()"
+          >
+            + Adicionar colaborador
+          </button>
+        } @else {
+          <button
+            type="button"
+            class="botao botao--primario"
+            [disabled]="c.itens.length === 0"
+            [title]="c.itens.length === 0 ? 'Defina os itens da campanha antes de adicionar colaboradores' : ''"
+            (click)="abrirModalColaboradores()"
+          >
+            + Adicionar colaboradores
+          </button>
+        }
       </div>
     </div>
 
@@ -236,22 +249,34 @@
                       <form [formGroup]="formItensLinha">
                         <div formArrayName="itens" class="itens-linha">
                           @for (item of itensLinha.controls; track $index; let i = $index) {
-                            <div [formGroupName]="i" class="item-linha item-linha--escolha">
-                              <select formControlName="campanhaEntregaItemId" [attr.aria-label]="'Item ' + (i + 1)">
-                                <option [ngValue]="null" disabled>Escolha o item...</option>
-                                @for (grupo of gruposDeItens(e); track grupo.descricao) {
-                                  <optgroup [label]="grupo.descricao">
-                                    @for (opcao of grupo.opcoes; track opcao.id) {
-                                      <option [ngValue]="opcao.id" [disabled]="opcao.desabilitada">{{ opcao.rotulo }}</option>
-                                    }
-                                  </optgroup>
+                            @if (c.tipo === 'ItemAItem') {
+                              <div [formGroupName]="i" class="item-linha item-linha--escolha">
+                                <select formControlName="campanhaEntregaItemId" [attr.aria-label]="'Item ' + (i + 1)">
+                                  <option [ngValue]="null" disabled>Escolha o item...</option>
+                                  @for (grupo of gruposDeItens(e); track grupo.descricao) {
+                                    <optgroup [label]="grupo.descricao">
+                                      @for (opcao of grupo.opcoes; track opcao.id) {
+                                        <option [ngValue]="opcao.id" [disabled]="opcao.desabilitada">{{ opcao.rotulo }}</option>
+                                      }
+                                    </optgroup>
+                                  }
+                                </select>
+                                <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
+                                @if (e.status === 'Pendente') {
+                                  <button type="button" class="botao-remover" (click)="removerLinhaItem(i)" aria-label="Remover item">×</button>
                                 }
-                              </select>
-                              <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
-                              @if (e.status === 'Pendente') {
-                                <button type="button" class="botao-remover" (click)="removerLinhaItem(i)" aria-label="Remover item">×</button>
-                              }
-                            </div>
+                              </div>
+                            } @else {
+                              <div [formGroupName]="i" class="item-linha">
+                                <input type="text" formControlName="descricao" placeholder="Descrição" />
+                                <input type="text" formControlName="tamanho" placeholder="Tamanho" />
+                                <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
+                                <input type="date" formControlName="validade" title="Validade (opcional)" />
+                                @if (e.status === 'Pendente') {
+                                  <button type="button" class="botao-remover" (click)="removerLinhaItem(i)" aria-label="Remover item">×</button>
+                                }
+                              </div>
+                            }
                           } @empty {
                             <p class="dica">Nenhum item escolhido ainda — adicione abaixo.</p>
                           }
@@ -323,7 +348,11 @@
                       <p class="dica">
                         Use quando esta pessoa retirar itens extras (ex.: para repassar a terceiros) além do que já recebeu aqui.
                       </p>
-                      @if (!novaEntregaAberta()) {
+                      @if (c.tipo === 'ItemAItem') {
+                        <button type="button" class="botao botao--texto" (click)="abrirModalItemAItem(e.usuarioId)">
+                          + Nova entrega pra essa pessoa
+                        </button>
+                      } @else if (!novaEntregaAberta()) {
                         <button type="button" class="botao botao--texto" (click)="abrirNovaEntrega()">
                           + Nova entrega pra essa pessoa
                         </button>
@@ -362,6 +391,71 @@
         </table>
       </div>
     }
+  }
+
+  @if (modalItemAItemAberto()) {
+    <div class="overlay" (click)="fecharModalItemAItem()">
+      <div class="modal modal--item-a-item" (click)="$event.stopPropagation()">
+        <header>
+          <h2>Adicionar colaborador</h2>
+          <button type="button" class="botao-fechar" (click)="fecharModalItemAItem()" aria-label="Fechar">×</button>
+        </header>
+
+        <form [formGroup]="formItemAItem" (ngSubmit)="salvarItemAItem()">
+          <div class="modal__corpo">
+            <label>
+              Colaborador*
+              <input type="text" [(ngModel)]="filtroNomeColaborador" [ngModelOptions]="{ standalone: true }" placeholder="Buscar pelo nome..." />
+            </label>
+            <select formControlName="usuarioId" aria-label="Colaborador">
+              <option [ngValue]="null" disabled>Selecione o colaborador...</option>
+              @for (u of usuariosFiltrados(); track u.id) {
+                <option [ngValue]="u.id">{{ u.nome }}</option>
+              }
+            </select>
+
+            <h4>Itens para este colaborador</h4>
+            <div formArrayName="itens" class="itens-linha">
+              @for (linha of itensItemAItem.controls; track $index; let i = $index) {
+                <div [formGroupName]="i" class="item-linha item-linha--escolha">
+                  <select formControlName="campanhaEntregaItemId" [attr.aria-label]="'Item ' + (i + 1)">
+                    <option [ngValue]="null" disabled>Escolha o item...</option>
+                    @for (grupo of gruposDeItens(); track grupo.descricao) {
+                      <optgroup [label]="grupo.descricao">
+                        @for (opcao of grupo.opcoes; track opcao.id) {
+                          <option [ngValue]="opcao.id" [disabled]="opcao.desabilitada">{{ opcao.rotulo }}</option>
+                        }
+                      </optgroup>
+                    }
+                  </select>
+                  <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
+                  @if (itensItemAItem.length > 1) {
+                    <button type="button" class="botao-remover" (click)="removerLinhaEscolha(i)" aria-label="Remover item">×</button>
+                  }
+                </div>
+              }
+            </div>
+            <button type="button" class="botao botao--texto" (click)="adicionarLinhaEscolha()">+ Inserir mais um item</button>
+
+            <label>
+              Observação
+              <input type="text" formControlName="observacao" placeholder="opcional" />
+            </label>
+
+            @if (erroItemAItem()) {
+              <p class="status status--erro">{{ erroItemAItem() }}</p>
+            }
+          </div>
+
+          <footer>
+            <button type="button" class="botao botao--texto" (click)="fecharModalItemAItem()">Cancelar</button>
+            <button type="submit" class="botao botao--primario" [disabled]="salvandoItemAItem()">
+              {{ salvandoItemAItem() ? 'Salvando...' : 'Adicionar colaborador' }}
+            </button>
+          </footer>
+        </form>
+      </div>
+    </div>
   }
 
   @if (modalColarAberto()) {

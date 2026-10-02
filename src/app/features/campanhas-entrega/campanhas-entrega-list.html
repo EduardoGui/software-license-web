@@ -38,6 +38,7 @@
           <tr>
             <th>Nome</th>
             <th>Descrição</th>
+            <th>Tipo</th>
             <th>Status</th>
             <th>Criada em</th>
             <th></th>
@@ -48,6 +49,7 @@
             <tr>
               <td>{{ c.nome }}</td>
               <td>{{ c.descricao || '-' }}</td>
+              <td>{{ rotulosTipo[c.tipo] }}</td>
               <td><span class="badge" [class]="classeStatus(c.status)">{{ c.status }}</span></td>
               <td>{{ c.dataCriacao | dataBr }}</td>
               <td class="acoes">
@@ -78,6 +80,17 @@
               Descrição
               <textarea rows="2" formControlName="descricao"></textarea>
             </label>
+            <fieldset class="tipo-campanha">
+              <legend>Tipo da campanha (não muda depois)</legend>
+              <label class="tipo-campanha__opcao">
+                <input type="radio" formControlName="tipo" value="Kit" />
+                <span><strong>Kit</strong> — todos os colaboradores recebem o mesmo conjunto de itens (dá pra ajustar por pessoa depois).</span>
+              </label>
+              <label class="tipo-campanha__opcao">
+                <input type="radio" formControlName="tipo" value="ItemAItem" />
+                <span><strong>Item a item</strong> — você adiciona um colaborador por vez e escolhe quais itens do estoque ele recebe (ex.: camisas por tamanho).</span>
+              </label>
+            </fieldset>
 
             @if (erroSalvar()) {
               <p class="status status--erro">{{ erroSalvar() }}</p>

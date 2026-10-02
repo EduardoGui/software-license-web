@@ -1,5 +1,7 @@
 export type CampanhaEntregaStatus = 'Rascunho' | 'EmAndamento' | 'Encerrada' | 'Cancelada';
 
+export type CampanhaEntregaTipo = 'Kit' | 'ItemAItem';
+
 export type EntregaStatus = 'Pendente' | 'EmailEnviado' | 'Confirmado' | 'Divergencia' | 'Cancelado';
 
 export type TipoDivergenciaEntrega = 'NaoRecebi' | 'QuantidadeIncorreta' | 'ItemDiferente' | 'ItemDanificado' | 'Outro';
@@ -9,6 +11,7 @@ export interface CampanhaEntrega {
   nome: string;
   descricao: string | null;
   status: CampanhaEntregaStatus;
+  tipo: CampanhaEntregaTipo;
   itens: CampanhaEntregaItem[];
   dataCriacao: string;
   dataAtualizacao: string;
@@ -21,14 +24,12 @@ export interface CampanhaEntregaItem {
   quantidade: number;
   validade: string | null;
   quantidadeDisponivel: number | null;
-  vaiParaTodos: boolean;
   quantidadeEntregue: number;
   saldoDisponivel: number | null;
 }
 
 export interface CampanhaEntregaItemPayload {
   id: number | null;
-  vaiParaTodos: boolean;
   descricao: string;
   tamanho: string | null;
   quantidade: number;
@@ -43,6 +44,7 @@ export interface UpdateCampanhaEntregaItensPayload {
 export interface CreateCampanhaEntregaPayload {
   nome: string;
   descricao: string | null;
+  tipo: CampanhaEntregaTipo;
 }
 
 export interface UpdateCampanhaEntregaPayload {
@@ -73,9 +75,13 @@ export interface EntregaItem {
   validade: string | null;
 }
 
-export interface EscolhaItemEntregaPayload {
-  campanhaEntregaItemId: number;
+// Item a item: sempre campanhaEntregaItemId. Kit: texto livre (descricao/tamanho/validade).
+export interface ItemEntregaPayload {
+  campanhaEntregaItemId?: number | null;
+  descricao?: string | null;
+  tamanho?: string | null;
   quantidade: number;
+  validade?: string | null;
 }
 
 export interface Entrega {
@@ -117,6 +123,7 @@ export interface CreateEntregaPayload {
   usuarioId: number;
   quantidadeKits?: number;
   observacao?: string | null;
+  itens?: ItemEntregaPayload[];
 }
 
 export interface CreateEntregaLotePayload {
@@ -126,7 +133,7 @@ export interface CreateEntregaLotePayload {
 }
 
 export interface UpdateEntregaItensPayload {
-  itens: EscolhaItemEntregaPayload[];
+  itens: ItemEntregaPayload[];
 }
 
 export interface RegistrarEntregaFisicaPayload {
@@ -152,6 +159,11 @@ export interface ColaboradorDisponivelFiltro {
   nome?: string;
   setorId?: number;
 }
+
+export const ROTULOS_TIPO_CAMPANHA: Record<CampanhaEntregaTipo, string> = {
+  Kit: 'Kit',
+  ItemAItem: 'Item a item',
+};
 
 export const ROTULOS_STATUS_ENTREGA: Record<EntregaStatus, string> = {
   Pendente: 'Pendente',

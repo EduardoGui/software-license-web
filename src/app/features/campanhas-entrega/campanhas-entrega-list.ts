@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
-import { CampanhaEntrega, CampanhaEntregaFiltro } from './campanha-entrega';
+import { CampanhaEntrega, CampanhaEntregaFiltro, CampanhaEntregaTipo, ROTULOS_TIPO_CAMPANHA } from './campanha-entrega';
 import { CampanhaEntregaService } from './campanha-entrega.service';
 
 @Component({
@@ -31,7 +31,10 @@ export class CampanhasEntregaList {
   protected readonly formNovaCampanha = this.fb.nonNullable.group({
     nome: ['', Validators.required],
     descricao: [''],
+    tipo: ['Kit' as CampanhaEntregaTipo],
   });
+
+  protected readonly rotulosTipo = ROTULOS_TIPO_CAMPANHA;
 
   constructor() {
     this.buscar();
@@ -64,7 +67,7 @@ export class CampanhasEntregaList {
 
   protected abrirModal(): void {
     this.erroSalvar.set(null);
-    this.formNovaCampanha.reset({ nome: '', descricao: '' });
+    this.formNovaCampanha.reset({ nome: '', descricao: '', tipo: 'Kit' });
     this.modalAberto.set(true);
   }
 
@@ -83,7 +86,7 @@ export class CampanhasEntregaList {
     this.erroSalvar.set(null);
 
     this.campanhaEntregaService
-      .criar({ nome: valor.nome.trim(), descricao: valor.descricao?.trim() || null })
+      .criar({ nome: valor.nome.trim(), descricao: valor.descricao?.trim() || null, tipo: valor.tipo })
       .subscribe({
         next: (campanha) => {
           this.salvando.set(false);
