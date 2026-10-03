@@ -171,7 +171,7 @@
       <label>
         Setor
         <select name="setorId" [(ngModel)]="filtro.setorId">
-          <option [ngValue]="undefined">Todos</option>
+          <option [ngValue]="undefined">Todos (sem canceladas)</option>
           @for (setor of setores(); track setor.id) {
             <option [ngValue]="setor.id">{{ setor.nome }}</option>
           }
