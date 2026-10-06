@@ -152,14 +152,19 @@
 
       <div class="form-item__ua">
         <button type="button" class="botao" (click)="abrirRateioNovo()">
-          {{ rateioNovoCompleto() ? 'Alterar UA (' + rateioNovoItem().length + ' UA(s))' : 'Definir UA *' }}
+          {{ rateioNovoCompleto() ? 'Alterar UA (' + rateioNovoItem().length + ' UA(s))' : 'Definir UA' }}
         </button>
-        @if (!rateioNovoCompleto()) {
-          <span class="ajuda">A UA é obrigatória: o rateio por quantidade deve somar a quantidade do item.</span>
+        @if (rateioNovoItem().length > 0) {
+          <button type="button" class="botao botao--texto" (click)="limparRateioNovo()">Limpar UA</button>
+        }
+        @if (rateioNovoItem().length === 0) {
+          <span class="ajuda">Opcional: dá para definir depois, pelo botão "Definir UA" do item.</span>
+        } @else if (!rateioNovoCompleto()) {
+          <span class="ajuda">A quantidade mudou: o rateio precisa somar a nova quantidade.</span>
         }
       </div>
 
-      <button type="submit" class="botao botao--primario" [disabled]="salvandoItem() || !rateioNovoCompleto()">
+      <button type="submit" class="botao botao--primario" [disabled]="salvandoItem()">
         <app-icon name="plus" [size]="16" /> {{ salvandoItem() ? 'Adicionando...' : 'Adicionar item' }}
       </button>
     </form>

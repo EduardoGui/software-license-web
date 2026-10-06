@@ -102,6 +102,10 @@ export class NotaFiscalEntradaView {
     return linhas.length > 0 && linhas.reduce((soma, linha) => soma + linha.quantidade, 0) === quantidade;
   }
 
+  protected limparRateioNovo(): void {
+    this.rateioNovoItem.set([]);
+  }
+
   protected linhasIniciaisRateioNovo(): RateioUaLinha[] {
     return this.rateioNovoCompleto() ? this.rateioNovoItem() : [];
   }
@@ -158,8 +162,9 @@ export class NotaFiscalEntradaView {
       return;
     }
 
-    if (!this.rateioNovoCompleto()) {
-      this.erroItem.set('Defina a UA do item (a soma do rateio deve ser igual à quantidade).');
+    // UA é opcional; mas se começou a definir, o rateio precisa fechar com a quantidade.
+    if (this.rateioNovoItem().length > 0 && !this.rateioNovoCompleto()) {
+      this.erroItem.set('A soma do rateio de UA deve ser igual à quantidade do item (ou limpe a UA).');
       return;
     }
 
