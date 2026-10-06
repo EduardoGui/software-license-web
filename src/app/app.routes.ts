@@ -77,6 +77,7 @@ import { ContratosList } from './features/contratos/contratos-list';
 import { ContratoForm } from './features/contratos/contrato-form';
 import { ContratoView } from './features/contratos/contrato-view';
 import { ContratosTimeline } from './features/contratos/contratos-timeline';
+import { BaseDadosEngenhariaPage } from './features/contratos/base-dados-engenharia-page';
 import { MedicaoBmImprimir } from './features/contratos/medicao-bm-imprimir';
 import { PlanoSaudeCustosPage } from './features/plano-saude-custos/plano-saude-custos-page';
 import { PlanoSaudeRelatorioPage } from './features/plano-saude-relatorio/plano-saude-relatorio-page';
@@ -257,6 +258,7 @@ export const routes: Routes = [
       { path: 'contratos', component: ContratosList, canActivate: [adminGuard] },
       { path: 'contratos/novo', component: ContratoForm, canActivate: [adminGuard] },
       { path: 'contratos/timeline', component: ContratosTimeline, canActivate: [adminGuard] },
+      { path: 'contratos/base-dados', component: BaseDadosEngenhariaPage, canActivate: [adminGuard] },
       { path: 'contratos/:id', component: ContratoView, canActivate: [adminGuard] },
       { path: 'ordens-compra', component: OrdensCompraList, canActivate: [adminGuard] },
       { path: 'ordens-compra/novo', component: OrdemCompraForm, canActivate: [adminGuard] },
