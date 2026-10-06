@@ -45,6 +45,42 @@
     </section>
 
     <section class="painel">
+      <div class="cabecalho">
+        <h2>Unidade Orçamentária (UA)</h2>
+        <button type="button" class="botao" (click)="abrirRateio()">
+          {{ d.rateioUa.length > 0 ? 'Alterar rateio' : 'Definir UA' }}
+        </button>
+      </div>
+      @if (d.rateioUa.length === 0) {
+        <p class="status">UA pendente — defina o rateio por valor (a soma deve ser igual ao valor da despesa).</p>
+      } @else {
+        <ul class="lista-ua">
+          @for (r of d.rateioUa; track r.unidadeOrcamentariaId) {
+            <li>
+              <strong>{{ r.unidadeOrcamentariaCodigo }}</strong> — {{ r.unidadeOrcamentariaDescricao }}:
+              R$ {{ r.valor | number: '1.2-2' }}
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    @if (rateioAberto()) {
+      <app-rateio-ua-modal
+        [titulo]="d.descricao"
+        rotuloQuantidade="Valor da despesa (R$)"
+        modo="valor"
+        [quantidadeTotal]="d.valor"
+        [linhasIniciais]="linhasDoRateio(d)"
+        [unidades]="unidadesOrcamentarias()"
+        [salvando]="salvandoRateio()"
+        [erro]="erroRateio()"
+        (salvar)="salvarRateio($event)"
+        (fechar)="fecharRateio()"
+      />
+    }
+
+    <section class="painel">
       <h2>Anexos</h2>
       <app-anexos-secao recurso="despesas-avulsas" [entidadeId]="despesaId" />
     </section>

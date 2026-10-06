@@ -6,18 +6,21 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { RateioUaLinha, RateioUaModal } from '../../shared/rateio-ua/rateio-ua-modal';
+import { UnidadeOrcamentaria } from '../unidades-orcamentarias/unidade-orcamentaria';
+import { UnidadeOrcamentariaService } from '../unidades-orcamentarias/unidade-orcamentaria.service';
 import { Local } from '../locais/local';
 import { LocalService } from '../locais/local.service';
 import { TipoEquipamento } from '../tipos-equipamento/tipo-equipamento';
 import { TipoEquipamentoService } from '../tipos-equipamento/tipo-equipamento.service';
 import { TipoPatrimonio } from '../tipos-patrimonio/tipo-patrimonio';
 import { TipoPatrimonioService } from '../tipos-patrimonio/tipo-patrimonio.service';
-import { NotaFiscalEntradaDetalhe } from './nota-fiscal-entrada';
+import { NotaFiscalEntradaDetalhe, NotaFiscalItem } from './nota-fiscal-entrada';
 import { NotaFiscalEntradaService } from './nota-fiscal-entrada.service';
 
 @Component({
   selector: 'app-nota-fiscal-entrada-view',
-  imports: [ReactiveFormsModule, Icon, DataBrPipe, DecimalPipe, RouterLink, AnexosSecao],
+  imports: [ReactiveFormsModule, Icon, DataBrPipe, DecimalPipe, RouterLink, AnexosSecao, RateioUaModal],
   templateUrl: './nota-fiscal-entrada-view.html',
   styleUrl: './nota-fiscal-entrada-view.scss',
 })
@@ -27,6 +30,7 @@ export class NotaFiscalEntradaView {
   private readonly tipoEquipamentoService = inject(TipoEquipamentoService);
   private readonly tipoPatrimonioService = inject(TipoPatrimonioService);
   private readonly localService = inject(LocalService);
+  private readonly unidadeOrcamentariaService = inject(UnidadeOrcamentariaService);
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
 
@@ -55,7 +59,17 @@ export class NotaFiscalEntradaView {
     origem: ['Comprado' as 'Locado' | 'Comprado', Validators.required],
   });
 
+  protected readonly unidadesOrcamentarias = signal<UnidadeOrcamentaria[]>([]);
+  // Rateio do item que está sendo adicionado (UA obrigatória: soma == quantidade do formulário).
+  protected readonly rateioNovoItem = signal<RateioUaLinha[]>([]);
+  protected readonly modalRateioNovoAberto = signal(false);
+  // Rateio de um item já salvo (itens antigos / correção).
+  protected readonly itemRateioEmEdicao = signal<NotaFiscalItem | null>(null);
+  protected readonly salvandoRateio = signal(false);
+  protected readonly erroRateio = signal<string | null>(null);
+
   constructor() {
+    this.unidadeOrcamentariaService.listar({ ativa: true }).subscribe((unidades) => this.unidadesOrcamentarias.set(unidades));
     this.tipoEquipamentoService.listar({ ativo: true }).subscribe((tipos) => this.tipos.set(tipos));
     this.tipoPatrimonioService.listar({ ativo: true }).subscribe((tipos) => this.tiposPatrimonio.set(tipos));
     this.localService.listar({ ativo: true }).subscribe((locais) => this.locais.set(locais));
@@ -82,9 +96,70 @@ export class NotaFiscalEntradaView {
     });
   }
 
+  protected rateioNovoCompleto(): boolean {
+    const linhas = this.rateioNovoItem();
+    const quantidade = Number(this.formItem.value.quantidade) || 0;
+    return linhas.length > 0 && linhas.reduce((soma, linha) => soma + linha.quantidade, 0) === quantidade;
+  }
+
+  protected linhasIniciaisRateioNovo(): RateioUaLinha[] {
+    return this.rateioNovoCompleto() ? this.rateioNovoItem() : [];
+  }
+
+  protected abrirRateioNovo(): void {
+    if (!(Number(this.formItem.value.quantidade) >= 1)) {
+      this.erroItem.set('Informe a quantidade antes de definir a UA.');
+      return;
+    }
+
+    this.erroItem.set(null);
+    this.modalRateioNovoAberto.set(true);
+  }
+
+  protected confirmarRateioNovo(linhas: RateioUaLinha[]): void {
+    this.rateioNovoItem.set(linhas);
+    this.modalRateioNovoAberto.set(false);
+  }
+
+  protected abrirRateioItem(item: NotaFiscalItem): void {
+    this.erroRateio.set(null);
+    this.itemRateioEmEdicao.set(item);
+  }
+
+  protected fecharRateioItem(): void {
+    this.itemRateioEmEdicao.set(null);
+  }
+
+  protected salvarRateioItem(linhas: RateioUaLinha[]): void {
+    const item = this.itemRateioEmEdicao();
+    if (!item) {
+      return;
+    }
+
+    this.salvandoRateio.set(true);
+    this.erroRateio.set(null);
+
+    this.notaFiscalEntradaService.definirRateioUa(this.notaId, item.id, linhas).subscribe({
+      next: () => {
+        this.salvandoRateio.set(false);
+        this.itemRateioEmEdicao.set(null);
+        this.carregar();
+      },
+      error: (err) => {
+        this.salvandoRateio.set(false);
+        this.erroRateio.set(err?.error?.message ?? 'Não foi possível salvar o rateio de UA.');
+      },
+    });
+  }
+
   protected adicionarItem(): void {
     if (this.formItem.invalid) {
       this.formItem.markAllAsTouched();
+      return;
+    }
+
+    if (!this.rateioNovoCompleto()) {
+      this.erroItem.set('Defina a UA do item (a soma do rateio deve ser igual à quantidade).');
       return;
     }
 
@@ -109,6 +184,7 @@ export class NotaFiscalEntradaView {
       quantidade: valor.quantidade,
       valorUnitario: valor.valorUnitario,
       origem: valor.destino === 'Equipamento' ? valor.origem : null,
+      rateioUa: this.rateioNovoItem(),
     };
 
     this.salvandoItem.set(true);
@@ -117,6 +193,7 @@ export class NotaFiscalEntradaView {
     this.notaFiscalEntradaService.adicionarItem(this.notaId, payload).subscribe({
       next: () => {
         this.salvandoItem.set(false);
+        this.rateioNovoItem.set([]);
         this.formItem.reset({
           destino: 'Equipamento',
           tipoEquipamentoId: 0,

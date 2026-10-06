@@ -18,11 +18,16 @@ const ROTULOS_STATUS: Record<string, string> = {
   Emitida: 'Emitida',
   Assinada: 'Assinada',
   Cancelada: 'Cancelada',
+  Registrada: 'Registrada',
+  Paga: 'Paga',
+  Recebida: 'Recebida',
 };
 
 const ROTULOS_ORIGEM: Record<string, string> = {
   Medicao: 'Medição',
   OrdemCompra: 'Ordem de Compra',
+  DespesaAvulsa: 'Despesa Avulsa',
+  NotaFiscalEntrada: 'NF de Entrada',
 };
 
 @Component({

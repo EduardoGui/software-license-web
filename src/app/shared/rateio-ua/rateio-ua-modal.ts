@@ -23,6 +23,8 @@ export class RateioUaModal implements OnInit {
   readonly titulo = input.required<string>();
   readonly rotuloQuantidade = input('Quantidade do item');
   readonly quantidadeTotal = input.required<number>();
+  // 'valor' = rateio monetário (2 casas, R$); 'quantidade' = rateio por quantidade (até 6 casas).
+  readonly modo = input<'quantidade' | 'valor'>('quantidade');
   readonly linhasIniciais = input<RateioUaLinha[]>([]);
   readonly unidades = input<UnidadeOrcamentaria[]>([]);
   readonly somenteLeitura = input(false);
@@ -68,7 +70,12 @@ export class RateioUaModal implements OnInit {
   }
 
   protected total(): number {
-    return this.itens.controls.reduce((soma, linha) => soma + (Number(linha.value.quantidade) || 0), 0);
+    const soma = this.itens.controls.reduce((acumulado, linha) => acumulado + (Number(linha.value.quantidade) || 0), 0);
+    return Number(soma.toFixed(this.modo() === 'valor' ? 2 : 6));
+  }
+
+  protected fechado(): boolean {
+    return this.total() === Number(this.quantidadeTotal().toFixed(this.modo() === 'valor' ? 2 : 6));
   }
 
   protected confirmar(): void {

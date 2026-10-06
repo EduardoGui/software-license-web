@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+import { RateioUaLinha } from '../../shared/rateio-ua/rateio-ua-modal';
 import {
   CreateDespesaAvulsaPayload,
   DespesaAvulsa,
@@ -36,6 +37,11 @@ export class DespesaAvulsaService {
 
   atualizar(id: number, payload: UpdateDespesaAvulsaPayload): Observable<DespesaAvulsa> {
     return this.http.put<DespesaAvulsa>(`${this.baseUrl}/${id}`, payload);
+  }
+
+  definirRateioUa(id: number, linhas: RateioUaLinha[]): Observable<DespesaAvulsa> {
+    const itens = linhas.map((linha) => ({ unidadeOrcamentariaId: linha.unidadeOrcamentariaId, valor: linha.quantidade }));
+    return this.http.put<DespesaAvulsa>(`${this.baseUrl}/${id}/rateio-ua`, { itens });
   }
 
   excluir(id: number): Observable<void> {

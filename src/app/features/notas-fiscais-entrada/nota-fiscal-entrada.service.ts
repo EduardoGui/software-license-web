@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+import { RateioUaLinha } from '../../shared/rateio-ua/rateio-ua-modal';
 import {
   NotaFiscalEntrada,
   NotaFiscalEntradaDetalhe,
@@ -31,6 +32,10 @@ export class NotaFiscalEntradaService {
 
   criar(payload: NotaFiscalEntradaPayload): Observable<NotaFiscalEntrada> {
     return this.http.post<NotaFiscalEntrada>(this.baseUrl, payload);
+  }
+
+  definirRateioUa(notaFiscalEntradaId: number, itemId: number, itens: RateioUaLinha[]): Observable<NotaFiscalItem> {
+    return this.http.put<NotaFiscalItem>(`${this.baseUrl}/${notaFiscalEntradaId}/itens/${itemId}/rateio-ua`, { itens });
   }
 
   adicionarItem(notaFiscalEntradaId: number, payload: NotaFiscalItemPayload): Observable<NotaFiscalItem> {

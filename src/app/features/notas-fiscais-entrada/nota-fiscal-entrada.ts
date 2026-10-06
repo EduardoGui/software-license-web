@@ -9,6 +9,13 @@ export interface NotaFiscalEntrada {
   dataAtualizacao: string;
 }
 
+export interface NotaFiscalItemRateioUa {
+  unidadeOrcamentariaId: number;
+  unidadeOrcamentariaCodigo: string;
+  unidadeOrcamentariaDescricao: string;
+  quantidade: number;
+}
+
 export interface NotaFiscalItem {
   id: number;
   notaFiscalEntradaId: number;
@@ -24,6 +31,7 @@ export interface NotaFiscalItem {
   valorUnitario: number | null;
   origem: 'Locado' | 'Comprado' | null;
   dataCriacao: string;
+  rateioUa: NotaFiscalItemRateioUa[];
 }
 
 export interface NotaFiscalEntradaDetalhe {
@@ -53,6 +61,7 @@ export interface NotaFiscalItemPayload {
   quantidade: number;
   valorUnitario: number | null;
   origem: 'Locado' | 'Comprado' | null;
+  rateioUa: { unidadeOrcamentariaId: number; quantidade: number }[];
 }
 
 export interface NotaFiscalEntradaFiltro {

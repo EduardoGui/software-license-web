@@ -4,12 +4,15 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { RateioUaLinha, RateioUaModal } from '../../shared/rateio-ua/rateio-ua-modal';
+import { UnidadeOrcamentaria } from '../unidades-orcamentarias/unidade-orcamentaria';
+import { UnidadeOrcamentariaService } from '../unidades-orcamentarias/unidade-orcamentaria.service';
 import { DespesaAvulsa } from './despesa-avulsa';
 import { DespesaAvulsaService } from './despesa-avulsa.service';
 
 @Component({
   selector: 'app-despesa-avulsa-view',
-  imports: [RouterLink, DataBrPipe, DecimalPipe, AnexosSecao],
+  imports: [RouterLink, DataBrPipe, DecimalPipe, AnexosSecao, RateioUaModal],
   templateUrl: './despesa-avulsa-view.html',
   styleUrl: './despesa-avulsa-view.scss',
 })
@@ -18,6 +21,7 @@ export class DespesaAvulsaView {
   private readonly route = inject(ActivatedRoute);
   private readonly location = inject(Location);
   private readonly router = inject(Router);
+  private readonly unidadeOrcamentariaService = inject(UnidadeOrcamentariaService);
 
   protected readonly despesaId = Number(this.route.snapshot.paramMap.get('id'));
 
@@ -28,8 +32,45 @@ export class DespesaAvulsaView {
   protected readonly excluindo = signal(false);
   protected readonly erroExclusao = signal<string | null>(null);
 
+  protected readonly unidadesOrcamentarias = signal<UnidadeOrcamentaria[]>([]);
+  protected readonly rateioAberto = signal(false);
+  protected readonly salvandoRateio = signal(false);
+  protected readonly erroRateio = signal<string | null>(null);
+
   constructor() {
     this.carregar();
+    this.unidadeOrcamentariaService.listar({ ativa: true }).subscribe((unidades) => this.unidadesOrcamentarias.set(unidades));
+  }
+
+  // O rateio da despesa é por valor; o modal compartilhado trabalha com "quantidade", então mapeia valor -> quantidade.
+  protected linhasDoRateio(d: DespesaAvulsa): RateioUaLinha[] {
+    return d.rateioUa.map((r) => ({ unidadeOrcamentariaId: r.unidadeOrcamentariaId, quantidade: r.valor }));
+  }
+
+  protected abrirRateio(): void {
+    this.erroRateio.set(null);
+    this.rateioAberto.set(true);
+  }
+
+  protected fecharRateio(): void {
+    this.rateioAberto.set(false);
+  }
+
+  protected salvarRateio(linhas: RateioUaLinha[]): void {
+    this.salvandoRateio.set(true);
+    this.erroRateio.set(null);
+
+    this.despesaAvulsaService.definirRateioUa(this.despesaId, linhas).subscribe({
+      next: (despesa) => {
+        this.salvandoRateio.set(false);
+        this.rateioAberto.set(false);
+        this.despesa.set(despesa);
+      },
+      error: (err) => {
+        this.salvandoRateio.set(false);
+        this.erroRateio.set(err?.error?.message ?? 'Não foi possível salvar o rateio de UA.');
+      },
+    });
   }
 
   protected voltar(): void {

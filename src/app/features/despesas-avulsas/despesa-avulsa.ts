@@ -9,6 +9,13 @@ export type DespesaAvulsaCategoria =
   | 'Estacionamento'
   | 'Outros';
 
+export interface DespesaAvulsaRateioUa {
+  unidadeOrcamentariaId: number;
+  unidadeOrcamentariaCodigo: string;
+  unidadeOrcamentariaDescricao: string;
+  valor: number;
+}
+
 export interface DespesaAvulsa {
   id: number;
   fornecedorId: number;
@@ -23,6 +30,7 @@ export interface DespesaAvulsa {
   observacoes: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
+  rateioUa: DespesaAvulsaRateioUa[];
 }
 
 export interface CreateDespesaAvulsaPayload {

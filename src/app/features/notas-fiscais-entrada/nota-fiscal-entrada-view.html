@@ -47,6 +47,7 @@
               <th>Quantidade</th>
               <th>Valor unitário</th>
               <th>Origem/Local</th>
+              <th>UA</th>
             </tr>
           </thead>
           <tbody>
@@ -58,6 +59,13 @@
                 <td>{{ item.quantidade }}</td>
                 <td>{{ item.valorUnitario !== null ? (item.valorUnitario | number: '1.2-2') : '-' }}</td>
                 <td>{{ item.destino === 'Patrimonio' ? (item.localNome || '-') : item.origem }}</td>
+                <td>
+                  @if (item.rateioUa.length > 0) {
+                    <button type="button" class="botao botao--texto" (click)="abrirRateioItem(item)">{{ item.rateioUa.length }} UA(s)</button>
+                  } @else {
+                    <button type="button" class="botao botao--texto badge badge--pendente" (click)="abrirRateioItem(item)">Definir UA</button>
+                  }
+                </td>
               </tr>
             }
           </tbody>
@@ -142,10 +150,45 @@
         </label>
       </div>
 
-      <button type="submit" class="botao botao--primario" [disabled]="salvandoItem()">
+      <div class="form-item__ua">
+        <button type="button" class="botao" (click)="abrirRateioNovo()">
+          {{ rateioNovoCompleto() ? 'Alterar UA (' + rateioNovoItem().length + ' UA(s))' : 'Definir UA *' }}
+        </button>
+        @if (!rateioNovoCompleto()) {
+          <span class="ajuda">A UA é obrigatória: o rateio por quantidade deve somar a quantidade do item.</span>
+        }
+      </div>
+
+      <button type="submit" class="botao botao--primario" [disabled]="salvandoItem() || !rateioNovoCompleto()">
         <app-icon name="plus" [size]="16" /> {{ salvandoItem() ? 'Adicionando...' : 'Adicionar item' }}
       </button>
     </form>
+
+    @if (modalRateioNovoAberto()) {
+      <app-rateio-ua-modal
+        [titulo]="formItem.value.descricao || 'Novo item'"
+        rotuloQuantidade="Quantidade do item"
+        [quantidadeTotal]="formItem.value.quantidade || 0"
+        [linhasIniciais]="linhasIniciaisRateioNovo()"
+        [unidades]="unidadesOrcamentarias()"
+        (salvar)="confirmarRateioNovo($event)"
+        (fechar)="modalRateioNovoAberto.set(false)"
+      />
+    }
+
+    @if (itemRateioEmEdicao(); as itemUa) {
+      <app-rateio-ua-modal
+        [titulo]="itemUa.descricao || itemUa.tipoEquipamentoNome || itemUa.tipoPatrimonioNome || 'Item'"
+        rotuloQuantidade="Quantidade do item"
+        [quantidadeTotal]="itemUa.quantidade"
+        [linhasIniciais]="itemUa.rateioUa"
+        [unidades]="unidadesOrcamentarias()"
+        [salvando]="salvandoRateio()"
+        [erro]="erroRateio()"
+        (salvar)="salvarRateioItem($event)"
+        (fechar)="fecharRateioItem()"
+      />
+    }
 
     <app-anexos-secao recurso="notas-fiscais-entrada" [entidadeId]="notaId" />
   }
