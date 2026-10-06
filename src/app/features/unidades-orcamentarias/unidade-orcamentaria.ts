@@ -22,5 +22,6 @@ export interface UnidadeOrcamentariaFiltro {
   setorId?: number;
   codigo?: string;
   descricao?: string;
+  apropriacao?: string;
   ativa?: boolean;
 }

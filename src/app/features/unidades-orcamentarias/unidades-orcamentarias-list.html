@@ -5,7 +5,7 @@
   </header>
 
   <form class="filtros" (ngSubmit)="buscar()">
-    <label>
+    <label class="filtros__setor">
       Setor
       <select name="setorId" [(ngModel)]="filtro.setorId">
         <option [ngValue]="undefined">Todos</option>
@@ -20,7 +20,11 @@
     </label>
     <label>
       Descrição
-      <input type="text" name="descricao" [(ngModel)]="filtro.descricao" placeholder="Parte da descrição (ex.: salário)" />
+      <input type="text" name="descricao" [(ngModel)]="filtro.descricao" placeholder="Parte da descrição" />
+    </label>
+    <label>
+      Apropriação
+      <input type="text" name="apropriacao" [(ngModel)]="filtro.apropriacao" placeholder="Parte da apropriação (ex.: salário)" />
     </label>
     <label>
       Status

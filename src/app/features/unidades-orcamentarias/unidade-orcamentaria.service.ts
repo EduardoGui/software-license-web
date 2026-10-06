@@ -15,6 +15,7 @@ export class UnidadeOrcamentariaService {
     if (filtro.setorId) params = params.set('setorId', filtro.setorId);
     if (filtro.codigo) params = params.set('codigo', filtro.codigo);
     if (filtro.descricao) params = params.set('descricao', filtro.descricao);
+    if (filtro.apropriacao) params = params.set('apropriacao', filtro.apropriacao);
     if (filtro.ativa !== undefined) params = params.set('ativa', filtro.ativa);
 
     return this.http.get<UnidadeOrcamentaria[]>(this.baseUrl, { params });
