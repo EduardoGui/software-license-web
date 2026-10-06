@@ -17,6 +17,13 @@ export interface OrdemCompra {
   dataAtualizacao: string;
 }
 
+export interface OrdemCompraItemRateioUa {
+  unidadeOrcamentariaId: number;
+  unidadeOrcamentariaCodigo: string;
+  unidadeOrcamentariaDescricao: string;
+  quantidade: number;
+}
+
 export interface OrdemCompraItem {
   id: number;
   ordemCompraId: number;
@@ -27,6 +34,8 @@ export interface OrdemCompraItem {
   quantidade: number;
   valorUnitario: number;
   valorTotal: number;
+  metodoRateioUa: string | null;
+  rateioUa: OrdemCompraItemRateioUa[];
 }
 
 export interface OrdemCompraDetalhe {
@@ -55,6 +64,8 @@ export interface OrdemCompraDetalhe {
 }
 
 export interface CreateOrdemCompraItemPayload {
+  // Só na edição: item existente (preserva o rateio de UA, que é zerado se a quantidade mudar).
+  id?: number | null;
   codigo: string | null;
   descricao: string;
   unidade: string;

@@ -5,6 +5,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
+import { RateioUaLinha, RateioUaModal } from '../../shared/rateio-ua/rateio-ua-modal';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { ObrigacoesExtrato } from '../obrigacoes/obrigacoes-extrato';
 import { adicionarMeses, diasEntre, hojeIso, inicioDoMes, paraData } from '../timeline/timeline-datas';
@@ -19,7 +20,6 @@ import {
   MedicaoBmAcerto,
   MedicaoBmImposto,
   MedicaoBmItem,
-  MedicaoBmItemRateioUa,
   MetodoProRata,
   TipoMedicao,
 } from './contrato';
@@ -34,7 +34,7 @@ const PX_POR_DIA = 6;
 
 @Component({
   selector: 'app-contrato-view',
-  imports: [ReactiveFormsModule, DataBrPipe, DecimalPipe, AnexosSecao, Icon, RouterLink, ObrigacoesExtrato],
+  imports: [ReactiveFormsModule, DataBrPipe, DecimalPipe, AnexosSecao, Icon, RouterLink, ObrigacoesExtrato, RateioUaModal],
   templateUrl: './contrato-view.html',
   styleUrl: './contrato-view.scss',
 })
@@ -160,14 +160,6 @@ export class ContratoView {
 
   protected get impostosMedicao(): FormArray {
     return this.formItensMedicao.controls.impostos;
-  }
-
-  protected readonly formRateioUa = this.fb.nonNullable.group({
-    itens: this.fb.array<ReturnType<typeof this.criarLinhaRateioUa>>([]),
-  });
-
-  protected get itensRateioUa(): FormArray {
-    return this.formRateioUa.controls.itens;
   }
 
   constructor() {
@@ -545,47 +537,19 @@ export class ContratoView {
     this.impostosMedicao.removeAt(index);
   }
 
-  private criarLinhaRateioUa(rateio?: MedicaoBmItemRateioUa) {
-    return this.fb.nonNullable.group({
-      unidadeOrcamentariaId: this.fb.control<number | null>(rateio?.unidadeOrcamentariaId ?? null, Validators.required),
-      quantidade: this.fb.control<number | null>(rateio?.quantidade ?? null, [Validators.required, Validators.min(0.000001)]),
-    });
-  }
-
   protected abrirRateioUa(item: MedicaoBmItem): void {
     this.itemRateioUaEmEdicao.set(item);
     this.erroRateioUa.set(null);
-    this.itensRateioUa.clear();
-    if (item.rateioUa.length > 0) {
-      for (const rateio of item.rateioUa) {
-        this.itensRateioUa.push(this.criarLinhaRateioUa(rateio));
-      }
-    } else {
-      this.itensRateioUa.push(this.criarLinhaRateioUa());
-    }
   }
 
   protected fecharRateioUa(): void {
     this.itemRateioUaEmEdicao.set(null);
   }
 
-  protected adicionarLinhaRateioUa(): void {
-    this.itensRateioUa.push(this.criarLinhaRateioUa());
-  }
-
-  protected removerLinhaRateioUa(index: number): void {
-    this.itensRateioUa.removeAt(index);
-  }
-
-  protected totalRateioUa(): number {
-    return this.itensRateioUa.controls.reduce((total, linha) => total + (Number(linha.value.quantidade) || 0), 0);
-  }
-
-  protected salvarRateioUa(): void {
+  protected salvarRateioUa(linhas: RateioUaLinha[]): void {
     const item = this.itemRateioUaEmEdicao();
     const medicaoId = this.medicaoExpandidaId();
-    if (!item || medicaoId === null || this.formRateioUa.invalid) {
-      this.formRateioUa.markAllAsTouched();
+    if (!item || medicaoId === null) {
       return;
     }
 
@@ -593,12 +557,7 @@ export class ContratoView {
     this.erroRateioUa.set(null);
 
     this.contratoService
-      .definirRateioUa(this.contratoId, medicaoId, item.id, {
-        itens: this.itensRateioUa.getRawValue().map((linha) => ({
-          unidadeOrcamentariaId: linha.unidadeOrcamentariaId!,
-          quantidade: linha.quantidade!,
-        })),
-      })
+      .definirRateioUa(this.contratoId, medicaoId, item.id, { itens: linhas })
       .subscribe({
         next: () => {
           this.salvandoRateioUa.set(false);

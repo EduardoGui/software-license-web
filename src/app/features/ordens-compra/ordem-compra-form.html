@@ -122,6 +122,9 @@
                       [class.invalido]="item.get('quantidade')?.invalid && item.get('quantidade')?.touched"
                       title="Quantidade precisa ser maior que zero."
                     />
+                    @if (rateioSeraZerado($index)) {
+                      <small class="campo-aviso">Alterar a quantidade zera o rateio de UA deste item.</small>
+                    }
                   </td>
                   <td>
                     <input

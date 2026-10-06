@@ -97,16 +97,7 @@ export class OrdemCompraForm {
       const dados = JSON.parse(rascunho);
       this.itens.clear();
       for (const item of dados.itens ?? []) {
-        this.itens.push(
-          this.fb.nonNullable.group({
-            codigo: [item.codigo ?? ''],
-            descricao: [item.descricao ?? '', Validators.required],
-            unidade: [item.unidade ?? '', Validators.required],
-            marcaReferencia: [item.marcaReferencia ?? ''],
-            quantidade: [item.quantidade ?? 0, [Validators.required, Validators.min(0.000001)]],
-            valorUnitario: [item.valorUnitario ?? 0, [Validators.required, Validators.min(0)]],
-          }),
-        );
+        this.itens.push(this.criarLinhaItem(item));
       }
       if (this.itens.length === 0) {
         this.adicionarItem();
@@ -125,15 +116,35 @@ export class OrdemCompraForm {
     }
   }
 
-  private criarLinhaItem() {
+  private criarLinhaItem(item?: Partial<{
+    id: number | null;
+    codigo: string | null;
+    descricao: string;
+    unidade: string;
+    marcaReferencia: string | null;
+    quantidade: number;
+    valorUnitario: number;
+  }>) {
     return this.fb.nonNullable.group({
-      codigo: [''],
-      descricao: ['', Validators.required],
-      unidade: ['', Validators.required],
-      marcaReferencia: [''],
-      quantidade: [0, [Validators.required, Validators.min(0.000001)]],
-      valorUnitario: [0, [Validators.required, Validators.min(0)]],
+      id: this.fb.control<number | null>(item?.id ?? null),
+      codigo: [item?.codigo ?? ''],
+      descricao: [item?.descricao ?? '', Validators.required],
+      unidade: [item?.unidade ?? '', Validators.required],
+      marcaReferencia: [item?.marcaReferencia ?? ''],
+      quantidade: [item?.quantidade ?? 0, [Validators.required, Validators.min(0.000001)]],
+      valorUnitario: [item?.valorUnitario ?? 0, [Validators.required, Validators.min(0)]],
     });
+  }
+
+  // Itens que já têm rateio de UA gravado (id -> quantidade): mudar a quantidade zera o rateio.
+  protected readonly quantidadeComRateio = new Map<number, number>();
+
+  protected rateioSeraZerado(index: number): boolean {
+    const linha = this.itens.at(index);
+    const id = linha.get('id')?.value as number | null;
+    if (id === null) return false;
+    const original = this.quantidadeComRateio.get(id);
+    return original !== undefined && Number(linha.get('quantidade')?.value) !== original;
   }
 
   protected adicionarItem(): void {
@@ -166,16 +177,10 @@ export class OrdemCompraForm {
 
         this.itens.clear();
         for (const item of oc.itens) {
-          this.itens.push(
-            this.fb.nonNullable.group({
-              codigo: [item.codigo ?? ''],
-              descricao: [item.descricao, Validators.required],
-              unidade: [item.unidade, Validators.required],
-              marcaReferencia: [item.marcaReferencia ?? ''],
-              quantidade: [item.quantidade, [Validators.required, Validators.min(0.000001)]],
-              valorUnitario: [item.valorUnitario, [Validators.required, Validators.min(0)]],
-            }),
-          );
+          this.itens.push(this.criarLinhaItem({ ...item, id: item.id }));
+          if (item.rateioUa.length > 0) {
+            this.quantidadeComRateio.set(item.id, item.quantidade);
+          }
         }
 
         this.carregando.set(false);
@@ -211,6 +216,7 @@ export class OrdemCompraForm {
       contatoAprovacaoNome: valor.contatoAprovacaoNome || null,
       contatoAprovacaoEmail: valor.contatoAprovacaoEmail || null,
       itens: valor.itens.map((item) => ({
+        id: item.id,
         codigo: item.codigo || null,
         descricao: item.descricao,
         unidade: item.unidade,

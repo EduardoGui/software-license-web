@@ -56,7 +56,13 @@
       <div class="acoes-oc">
         @if (oc.status === 'Rascunho') {
           <a class="botao" [routerLink]="['/ordens-compra', oc.id, 'editar']"><app-icon name="pencil" [size]="16" /> Editar</a>
-          <button type="button" class="botao botao--primario" [disabled]="processando()" (click)="emitir()">
+          <button
+            type="button"
+            class="botao botao--primario"
+            [disabled]="processando() || itensSemUa(oc) > 0"
+            [title]="itensSemUa(oc) > 0 ? 'Defina a UA de todos os itens antes de emitir' : ''"
+            (click)="emitir()"
+          >
             {{ processando() ? 'Emitindo...' : 'Emitir' }}
           </button>
         }
@@ -87,6 +93,7 @@
               <th>Quantidade</th>
               <th>Valor unitário (R$)</th>
               <th>Total (R$)</th>
+              <th>UA</th>
             </tr>
           </thead>
           <tbody>
@@ -99,12 +106,37 @@
                 <td>{{ item.quantidade | number: '1.2-6' }}</td>
                 <td>{{ item.valorUnitario | number: '1.2-2' }}</td>
                 <td>{{ item.valorTotal | number: '1.2-2' }}</td>
+                <td>
+                  @if (item.rateioUa.length > 0) {
+                    <button type="button" class="botao botao--texto" (click)="abrirRateioUa(item)">{{ item.rateioUa.length }} UA(s)</button>
+                  } @else if (oc.status !== 'Cancelada') {
+                    <button type="button" class="botao botao--texto badge badge--rascunho" (click)="abrirRateioUa(item)">Definir UA</button>
+                  } @else {
+                    <span class="texto-muted">—</span>
+                  }
+                </td>
               </tr>
             }
           </tbody>
         </table>
       </div>
     </section>
+
+    @if (itemRateioUaEmEdicao(); as itemUa) {
+      <app-rateio-ua-modal
+        [titulo]="itemUa.descricao"
+        rotuloQuantidade="Quantidade do item"
+        [quantidadeTotal]="itemUa.quantidade"
+        [linhasIniciais]="itemUa.rateioUa"
+        [unidades]="unidadesOrcamentarias()"
+        [somenteLeitura]="oc.status === 'Cancelada'"
+        mensagemSomenteLeitura="Esta ordem de compra foi cancelada — rateio somente leitura."
+        [salvando]="salvandoRateioUa()"
+        [erro]="erroRateioUa()"
+        (salvar)="salvarRateioUa($event)"
+        (fechar)="fecharRateioUa()"
+      />
+    }
 
     <section class="painel">
       <h2>Anexos</h2>

@@ -3,10 +3,12 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
+import { RateioUaLinha } from '../../shared/rateio-ua/rateio-ua-modal';
 import {
   CreateOrdemCompraPayload,
   OrdemCompra,
   OrdemCompraDetalhe,
+  OrdemCompraItem,
   OrdemCompraFiltro,
   UpdateOrdemCompraPayload,
 } from './ordem-compra';
@@ -48,6 +50,10 @@ export class OrdemCompraService {
 
   cancelar(id: number): Observable<OrdemCompra> {
     return this.http.patch<OrdemCompra>(`${this.baseUrl}/${id}/cancelar`, {});
+  }
+
+  definirRateioUa(id: number, itemId: number, itens: RateioUaLinha[]): Observable<OrdemCompraItem> {
+    return this.http.put<OrdemCompraItem>(`${this.baseUrl}/${id}/itens/${itemId}/rateio-ua`, { itens });
   }
 
   baixarPdf(id: number): Observable<Blob> {
