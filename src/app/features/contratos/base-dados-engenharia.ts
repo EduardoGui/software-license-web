@@ -8,20 +8,22 @@ export interface BaseDadosEngenhariaFiltro {
   de?: string;
   ate?: string;
   status?: string;
+  origem?: string;
 }
 
 export interface BaseDadosEngenhariaLinha {
-  medicaoBmId: number;
-  contratoNumero: string;
-  numeroBm: number;
+  origem: string;
+  documentoId: number;
+  contratoNumero: string | null;
+  numeroDocumento: number;
   numeroReferencia: string | null;
   periodoInicio: string;
-  periodoFim: string;
+  periodoFim: string | null;
   status: string;
   fornecedorNome: string;
   fornecedorDocumento: string | null;
   valorTotalBm: number;
-  valorLiquidoBm: number;
+  valorLiquidoBm: number | null;
   itemDescricao: string | null;
   itemUnidade: string | null;
   valorUnitario: number | null;
@@ -56,6 +58,7 @@ export class BaseDadosEngenhariaService {
     if (filtro.de) params = params.set('de', filtro.de);
     if (filtro.ate) params = params.set('ate', filtro.ate);
     if (filtro.status) params = params.set('status', filtro.status);
+    if (filtro.origem) params = params.set('origem', filtro.origem);
     return params;
   }
 }

@@ -1,17 +1,26 @@
 <section class="relatorio">
   <header class="topo">
     <h1>Base de dados — Engenharia</h1>
-    <p class="subtitulo">Boletins de medição por item e UA, com a nota fiscal quando houver.</p>
+    <p class="subtitulo">Boletins de medição e ordens de compra por item e UA, com a nota fiscal quando houver.</p>
   </header>
 
   <form class="filtros" (ngSubmit)="buscar()">
     <label>
-      Competência de
+      Data / competência de
       <input type="date" name="de" [(ngModel)]="filtro.de" />
     </label>
     <label>
       até
       <input type="date" name="ate" [(ngModel)]="filtro.ate" />
+    </label>
+    <label>
+      Origem
+      <select name="origem" [(ngModel)]="filtro.origem">
+        <option [ngValue]="undefined">Todas</option>
+        @for (opcao of origemOpcoes; track opcao[0]) {
+          <option [ngValue]="opcao[0]">{{ opcao[1] }}</option>
+        }
+      </select>
     </label>
     <label>
       Status
@@ -33,7 +42,7 @@
   } @else if (erro() || !relatorio()) {
     <p class="status status--erro">Não foi possível carregar a base de dados. Verifique se a API está em execução.</p>
   } @else if (relatorio()!.linhas.length === 0) {
-    <p class="status">Nenhum boletim de medição no período selecionado.</p>
+    <p class="status">Nenhum documento no período selecionado.</p>
   } @else {
     <div class="resumo">
       <span>{{ relatorio()!.linhas.length }} linha(s)</span>
@@ -46,14 +55,15 @@
       <table>
         <thead>
           <tr>
+            <th>Origem</th>
             <th>Contrato</th>
-            <th>BM</th>
-            <th>Competência</th>
+            <th>Nº doc.</th>
+            <th>Data / competência</th>
             <th>Status</th>
             <th>Fornecedor</th>
             <th>CNPJ/CPF</th>
-            <th class="num">Valor total BM</th>
-            <th class="num">Valor líquido BM</th>
+            <th class="num">Valor total</th>
+            <th class="num">Valor líquido</th>
             <th>Item</th>
             <th>Un.</th>
             <th class="num">Valor unit.</th>
@@ -68,14 +78,15 @@
         <tbody>
           @for (l of relatorio()!.linhas; track $index) {
             <tr>
-              <td>{{ l.contratoNumero }}</td>
-              <td>{{ l.numeroBm }}</td>
-              <td>{{ l.periodoInicio | dataBr }} – {{ l.periodoFim | dataBr }}</td>
+              <td>{{ rotuloOrigem(l.origem) }}</td>
+              <td>{{ l.contratoNumero || '—' }}</td>
+              <td>{{ l.numeroDocumento }}</td>
+              <td>{{ l.periodoInicio | dataBr }}@if (l.periodoFim) { – {{ l.periodoFim | dataBr }} }</td>
               <td>{{ rotuloStatus(l.status) }}</td>
               <td>{{ l.fornecedorNome }}</td>
               <td>{{ l.fornecedorDocumento || '—' }}</td>
               <td class="num">{{ l.valorTotalBm | number: '1.2-2' }}</td>
-              <td class="num">{{ l.valorLiquidoBm | number: '1.2-2' }}</td>
+              <td class="num">{{ l.valorLiquidoBm === null ? '—' : (l.valorLiquidoBm | number: '1.2-2') }}</td>
               <td>{{ l.itemDescricao || '—' }}</td>
               <td>{{ l.itemUnidade || '—' }}</td>
               <td class="num">{{ l.valorUnitario === null ? '—' : (l.valorUnitario | number: '1.2-2') }}</td>

@@ -15,6 +15,14 @@ const ROTULOS_STATUS: Record<string, string> = {
   AguardandoAprovacao: 'Aguardando aprovação',
   Aprovado: 'Aprovado',
   Reprovado: 'Reprovado',
+  Emitida: 'Emitida',
+  Assinada: 'Assinada',
+  Cancelada: 'Cancelada',
+};
+
+const ROTULOS_ORIGEM: Record<string, string> = {
+  Medicao: 'Medição',
+  OrdemCompra: 'Ordem de Compra',
 };
 
 @Component({
@@ -27,6 +35,7 @@ export class BaseDadosEngenhariaPage {
   private readonly baseDadosService = inject(BaseDadosEngenhariaService);
 
   protected readonly statusOpcoes = Object.entries(ROTULOS_STATUS);
+  protected readonly origemOpcoes = Object.entries(ROTULOS_ORIGEM);
   protected readonly relatorio = signal<BaseDadosEngenharia | null>(null);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
@@ -36,6 +45,10 @@ export class BaseDadosEngenhariaPage {
 
   constructor() {
     this.buscar();
+  }
+
+  protected rotuloOrigem(origem: string): string {
+    return ROTULOS_ORIGEM[origem] ?? origem;
   }
 
   protected rotuloStatus(status: string): string {
