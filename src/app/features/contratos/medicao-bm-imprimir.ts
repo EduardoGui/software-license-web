@@ -72,6 +72,13 @@ export class MedicaoBmImprimir {
     return m.numeroReferencia || m.numero.toString().padStart(3, '0');
   }
 
+  // Soma dos valores brutos medidos desde o primeiro BM aprovado até o BM informado (inclusive).
+  protected medidoAcumulado(ate: MedicaoBm): number {
+    return this.medicoesAnteriores()
+      .filter((m) => m.numero <= ate.numero)
+      .reduce((acumulado, m) => acumulado + m.valorTotalMedido, 0);
+  }
+
   protected somaSaldoValor(itens: MedicaoBmItem[]): number {
     return itens.reduce((acumulado, item) => acumulado + item.saldoValorDepois, 0);
   }

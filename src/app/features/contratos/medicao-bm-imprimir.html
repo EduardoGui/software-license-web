@@ -48,15 +48,15 @@
           <th rowspan="2">ITEM</th>
           <th rowspan="2">DESCRIÇÃO</th>
           <th rowspan="2">UN.</th>
+          <th rowspan="2">UNIT.</th>
           <th colspan="3">QUANTIDADES</th>
-          <th colspan="2">VALOR DA MEDIÇÃO</th>
+          <th>VALOR DA MEDIÇÃO</th>
           <th colspan="2">SALDO CONTRATUAL</th>
         </tr>
         <tr class="linha-subcabecalho">
           <th>CONTRATO</th>
           <th>MEDIDA</th>
           <th>BM ATUAL</th>
-          <th>UNIT.</th>
           <th>TOTAL</th>
           <th>QTDE.</th>
           <th>VALOR</th>
@@ -68,10 +68,10 @@
             <td>{{ i + 1 }}</td>
             <td class="celula-descricao">{{ item.descricaoNoMomento }}</td>
             <td>{{ item.unidadeNoMomento }}</td>
+            <td>{{ item.valorUnitarioNoMomento | number: '1.2-2' }}</td>
             <td>{{ item.quantidadeContratadaNoMomento | number: '1.2-2' }}</td>
             <td>{{ item.quantidadeJaMedidaAntes | number: '1.2-2' }}</td>
             <td>{{ item.quantidadeMedidaNestaBm | number: '1.2-2' }}</td>
-            <td>{{ item.valorUnitarioNoMomento | number: '1.2-2' }}</td>
             <td>{{ item.valorTotalItem | number: '1.2-2' }}</td>
             <td>{{ item.saldoDepois | number: '1.2-2' }}</td>
             <td>{{ item.saldoValorDepois | number: '1.2-2' }}</td>
@@ -95,14 +95,14 @@
           <th>Nº DO BM</th>
           <th>PERÍODO</th>
           <th>VALOR BRUTO MEDIDO</th>
-          <th>SALDO</th>
+          <th>MEDIDO</th>
         </tr>
         @for (anterior of medicoesAnteriores(); track anterior.id) {
           <tr>
             <td>{{ numeroBmExibicao(anterior) }}</td>
             <td>{{ anterior.periodoInicio | dataBr }} a {{ anterior.periodoFim | dataBr }}</td>
             <td>{{ anterior.valorTotalMedido | number: '1.2-2' }}</td>
-            <td>{{ somaSaldoValor(anterior.itens) | number: '1.2-2' }}</td>
+            <td>{{ medidoAcumulado(anterior) | number: '1.2-2' }}</td>
           </tr>
         }
       </table>
