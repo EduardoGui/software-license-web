@@ -424,8 +424,12 @@ export class CampanhaEntregaDetail {
     this.formNovaEntrega.reset({ quantidadeKits: 1, observacao: '' });
 
     this.itensLinha.clear();
-    for (const item of entrega.itens) {
-      this.itensLinha.push(this.criarLinhaItem(item));
+    if (!this.ehItemAItem() && entrega.status === 'Pendente') {
+      this.preencherItensKitComCatalogo(entrega);
+    } else {
+      for (const item of entrega.itens) {
+        this.itensLinha.push(this.criarLinhaItem(item));
+      }
     }
     if (entrega.status === 'Pendente') {
       this.formItensLinha.enable();
@@ -443,13 +447,51 @@ export class CampanhaEntregaDetail {
     return this.campanha()?.tipo === 'ItemAItem';
   }
 
-  private criarLinhaItem(item?: Partial<EntregaItem>) {
+  // Kit pendente: mostra TODOS os itens do catálogo (quantidade 0 para os que a pessoa não tem) e, ao final, os
+  // itens da entrega que não estão no catálogo. Ao salvar só vão os itens com quantidade maior que zero.
+  private preencherItensKitComCatalogo(entrega: Entrega): void {
+    const chave = (descricao: string, tamanho: string | null) => `${descricao.trim().toLowerCase()}|${(tamanho ?? '').trim().toLowerCase()}`;
+    const restantes = [...entrega.itens];
+
+    for (const catalogo of this.campanha()?.itens ?? []) {
+      const indice = restantes.findIndex(
+        (i) => i.campanhaEntregaItemId === catalogo.id || chave(i.descricao, i.tamanho) === chave(catalogo.descricao, catalogo.tamanho),
+      );
+      const existente = indice >= 0 ? restantes.splice(indice, 1)[0] : null;
+
+      this.itensLinha.push(
+        this.criarLinhaItem(
+          {
+            descricao: catalogo.descricao,
+            tamanho: catalogo.tamanho,
+            validade: existente?.validade ?? catalogo.validade,
+            quantidade: existente?.quantidade ?? 0,
+          },
+          { permitirZero: true, doCatalogo: true },
+        ),
+      );
+    }
+
+    for (const extra of restantes) {
+      this.itensLinha.push(this.criarLinhaItem(extra, { permitirZero: true, doCatalogo: false }));
+    }
+  }
+
+  protected zerarQuantidadesLinha(): void {
+    for (const linha of this.itensLinha.controls) {
+      linha.patchValue({ quantidade: 0 });
+    }
+  }
+
+  private criarLinhaItem(item?: Partial<EntregaItem>, opcoes?: { permitirZero?: boolean; doCatalogo?: boolean }) {
     const itemAItem = this.ehItemAItem();
+    const minimo = opcoes?.permitirZero ? 0 : 1;
     return this.fb.group({
+      doCatalogo: this.fb.nonNullable.control(opcoes?.doCatalogo ?? false),
       campanhaEntregaItemId: this.fb.control<number | null>(item?.campanhaEntregaItemId ?? null, itemAItem ? Validators.required : []),
       descricao: this.fb.nonNullable.control(item?.descricao ?? '', itemAItem ? [] : Validators.required),
       tamanho: this.fb.nonNullable.control(item?.tamanho ?? ''),
-      quantidade: this.fb.nonNullable.control(item?.quantidade ?? 1, [Validators.required, Validators.min(1)]),
+      quantidade: this.fb.nonNullable.control(item?.quantidade ?? 1, [Validators.required, Validators.min(minimo)]),
       validade: this.fb.nonNullable.control(item?.validade ?? ''),
     });
   }
@@ -475,7 +517,7 @@ export class CampanhaEntregaDetail {
   }
 
   protected adicionarLinhaItem(): void {
-    this.itensLinha.push(this.criarLinhaItem());
+    this.itensLinha.push(this.criarLinhaItem(undefined, this.ehItemAItem() ? undefined : { permitirZero: true, doCatalogo: false }));
   }
 
   protected removerLinhaItem(index: number): void {
@@ -488,15 +530,16 @@ export class CampanhaEntregaDetail {
       return;
     }
 
-    if (this.itensLinha.length === 0) {
-      this.erroLinha.set('Inclua ao menos um item.');
+    const linhasParaSalvar = this.itensLinha.getRawValue().filter((i) => this.ehItemAItem() || Number(i.quantidade) > 0);
+    if (linhasParaSalvar.length === 0) {
+      this.erroLinha.set(this.ehItemAItem() ? 'Inclua ao menos um item.' : 'Informe a quantidade (maior que zero) de ao menos um item.');
       return;
     }
 
     this.salvandoLinha.set(true);
     this.erroLinha.set(null);
 
-    const itens = this.itensLinha.getRawValue().map((i) =>
+    const itens = linhasParaSalvar.map((i) =>
       this.ehItemAItem()
         ? { campanhaEntregaItemId: i.campanhaEntregaItemId, quantidade: i.quantidade }
         : { descricao: i.descricao, tamanho: i.tamanho || null, quantidade: i.quantidade, validade: i.validade || null },

@@ -43,8 +43,8 @@
 
       <form [formGroup]="formItensCampanha">
         <div formArrayName="itens" class="itens-linha">
-          @for (item of itensCampanha.controls; track $index; let i = $index) {
-            <div [formGroupName]="i" class="item-linha item-linha--campanha">
+          @for (item of itensCampanha.controls; track item; let i = $index) {
+            <div [formGroup]="$any(item)" class="item-linha item-linha--campanha">
               <input type="text" formControlName="descricao" placeholder="Descrição" />
               <input type="text" formControlName="tamanho" placeholder="Tamanho" />
               <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
@@ -248,9 +248,9 @@
                       <h4>Itens</h4>
                       <form [formGroup]="formItensLinha">
                         <div formArrayName="itens" class="itens-linha">
-                          @for (item of itensLinha.controls; track $index; let i = $index) {
+                          @for (item of itensLinha.controls; track item; let i = $index) {
                             @if (c.tipo === 'ItemAItem') {
-                              <div [formGroupName]="i" class="item-linha item-linha--escolha">
+                              <div [formGroup]="$any(item)" class="item-linha item-linha--escolha">
                                 <select formControlName="campanhaEntregaItemId" [attr.aria-label]="'Item ' + (i + 1)">
                                   <option [ngValue]="null" disabled>Escolha o item...</option>
                                   @for (grupo of gruposDeItens(e); track grupo.descricao) {
@@ -267,12 +267,12 @@
                                 }
                               </div>
                             } @else {
-                              <div [formGroupName]="i" class="item-linha">
-                                <input type="text" formControlName="descricao" placeholder="Descrição" />
-                                <input type="text" formControlName="tamanho" placeholder="Tamanho" />
-                                <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
+                              <div [formGroup]="$any(item)" class="item-linha" [class.item-linha--zerado]="e.status === 'Pendente' && !(item.value.quantidade > 0)">
+                                <input type="text" formControlName="descricao" placeholder="Descrição" [readonly]="item.value.doCatalogo" />
+                                <input type="text" formControlName="tamanho" placeholder="Tamanho" [readonly]="item.value.doCatalogo" />
+                                <input type="number" [min]="e.status === 'Pendente' ? 0 : 1" formControlName="quantidade" placeholder="Qtde." />
                                 <input type="date" formControlName="validade" title="Validade (opcional)" />
-                                @if (e.status === 'Pendente') {
+                                @if (e.status === 'Pendente' && !item.value.doCatalogo) {
                                   <button type="button" class="botao-remover" (click)="removerLinhaItem(i)" aria-label="Remover item">×</button>
                                 }
                               </div>
@@ -282,7 +282,13 @@
                           }
                         </div>
                         @if (e.status === 'Pendente') {
+                          @if (c.tipo !== 'ItemAItem') {
+                            <p class="dica">Informe a quantidade dos itens que esta pessoa vai receber. Itens com 0 não são gravados.</p>
+                          }
                           <button type="button" class="botao botao--texto" (click)="adicionarLinhaItem()">+ Adicionar item</button>
+                          @if (c.tipo !== 'ItemAItem') {
+                            <button type="button" class="botao botao--texto" (click)="zerarQuantidadesLinha()">Zerar tudo</button>
+                          }
                         }
                       </form>
 
@@ -416,8 +422,8 @@
 
             <h4>Itens para este colaborador</h4>
             <div formArrayName="itens" class="itens-linha">
-              @for (linha of itensItemAItem.controls; track $index; let i = $index) {
-                <div [formGroupName]="i" class="item-linha item-linha--escolha">
+              @for (linha of itensItemAItem.controls; track linha; let i = $index) {
+                <div [formGroup]="$any(linha)" class="item-linha item-linha--escolha">
                   <select formControlName="campanhaEntregaItemId" [attr.aria-label]="'Item ' + (i + 1)">
                     <option [ngValue]="null" disabled>Escolha o item...</option>
                     @for (grupo of gruposDeItens(); track grupo.descricao) {
