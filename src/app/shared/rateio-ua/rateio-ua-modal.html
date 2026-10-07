@@ -11,6 +11,25 @@
       <p class="status">{{ mensagemSomenteLeitura() }}</p>
     }
 
+    @if (!somenteLeitura() && sugestoes().length > 0) {
+      <div class="sugestoes">
+        <span class="sugestoes__titulo">UAs já usadas com este fornecedor:</span>
+        <div class="sugestoes__lista">
+          @for (sugestao of sugestoes(); track sugestao.id) {
+            <button
+              type="button"
+              class="sugestao"
+              [disabled]="jaNaLista(sugestao.id)"
+              [title]="sugestao.descricao + ' — usada ' + sugestao.usos + 'x'"
+              (click)="usarSugestao(sugestao)"
+            >
+              {{ sugestao.codigo }} <small>{{ sugestao.usos }}x</small>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
     <form [formGroup]="form" (ngSubmit)="confirmar()">
       <div class="tabela-scroll" formArrayName="itens">
         <table>

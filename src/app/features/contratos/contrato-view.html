@@ -731,6 +731,7 @@
           [quantidadeTotal]="itemUa.quantidadeMedidaNestaBm"
           [linhasIniciais]="itemUa.rateioUa"
           [unidades]="unidadesOrcamentarias()"
+          [sugestoes]="sugestoesUa()"
           [somenteLeitura]="medicaoSelecionada()?.status !== 'Rascunho'"
           [mensagemSomenteLeitura]="medicaoSelecionada()?.status === 'Aprovado' ? 'Este BM já foi aprovado — rateio somente leitura.' : 'Este BM já foi decidido — rateio somente leitura.'"
           [salvando]="salvandoRateioUa()"

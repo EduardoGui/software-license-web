@@ -5,7 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { RateioUaLinha, RateioUaModal } from '../../shared/rateio-ua/rateio-ua-modal';
-import { UnidadeOrcamentaria } from '../unidades-orcamentarias/unidade-orcamentaria';
+import { UnidadeOrcamentaria, UnidadeOrcamentariaUsada } from '../unidades-orcamentarias/unidade-orcamentaria';
 import { UnidadeOrcamentariaService } from '../unidades-orcamentarias/unidade-orcamentaria.service';
 import { DespesaAvulsa } from './despesa-avulsa';
 import { DespesaAvulsaService } from './despesa-avulsa.service';
@@ -33,6 +33,7 @@ export class DespesaAvulsaView {
   protected readonly erroExclusao = signal<string | null>(null);
 
   protected readonly unidadesOrcamentarias = signal<UnidadeOrcamentaria[]>([]);
+  protected readonly sugestoesUa = signal<UnidadeOrcamentariaUsada[]>([]);
   protected readonly rateioAberto = signal(false);
   protected readonly salvandoRateio = signal(false);
   protected readonly erroRateio = signal<string | null>(null);
@@ -50,6 +51,10 @@ export class DespesaAvulsaView {
   protected abrirRateio(): void {
     this.erroRateio.set(null);
     this.rateioAberto.set(true);
+    const fornecedorId = this.despesa()?.fornecedorId;
+    if (fornecedorId) {
+      this.unidadeOrcamentariaService.usadasPorFornecedor(fornecedorId).subscribe((usadas) => this.sugestoesUa.set(usadas));
+    }
   }
 
   protected fecharRateio(): void {

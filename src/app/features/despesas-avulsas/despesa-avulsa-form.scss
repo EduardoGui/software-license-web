@@ -203,3 +203,22 @@ textarea {
   justify-content: flex-end;
   gap: 0.5rem;
 }
+
+.ua-bloco {
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0 0 1rem;
+
+  legend {
+    font-size: 0.85rem;
+    color: var(--color-text);
+    padding: 0 0.35rem;
+  }
+}
+
+.ua-bloco__linha {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}

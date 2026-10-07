@@ -43,6 +43,8 @@ export interface CreateDespesaAvulsaPayload {
   valor: number;
   recorrente: boolean;
   observacoes: string | null;
+  // Só na criação (obrigatório): rateio de UA por valor.
+  rateioUa?: { unidadeOrcamentariaId: number; valor: number }[];
 }
 
 export type UpdateDespesaAvulsaPayload = CreateDespesaAvulsaPayload;

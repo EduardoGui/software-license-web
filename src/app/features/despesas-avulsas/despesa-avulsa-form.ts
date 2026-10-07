@@ -5,12 +5,15 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { Fornecedor } from '../fornecedores/fornecedor';
 import { FornecedorService } from '../fornecedores/fornecedor.service';
+import { RateioUaLinha, RateioUaModal } from '../../shared/rateio-ua/rateio-ua-modal';
+import { UnidadeOrcamentaria, UnidadeOrcamentariaUsada } from '../unidades-orcamentarias/unidade-orcamentaria';
+import { UnidadeOrcamentariaService } from '../unidades-orcamentarias/unidade-orcamentaria.service';
 import { DespesaAvulsaCategoria } from './despesa-avulsa';
 import { DespesaAvulsaService } from './despesa-avulsa.service';
 
 @Component({
   selector: 'app-despesa-avulsa-form',
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, RateioUaModal],
   templateUrl: './despesa-avulsa-form.html',
   styleUrl: './despesa-avulsa-form.scss',
 })
@@ -18,6 +21,7 @@ export class DespesaAvulsaForm {
   private readonly fb = inject(FormBuilder);
   private readonly despesaAvulsaService = inject(DespesaAvulsaService);
   private readonly fornecedorService = inject(FornecedorService);
+  private readonly unidadeOrcamentariaService = inject(UnidadeOrcamentariaService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
@@ -40,6 +44,12 @@ export class DespesaAvulsaForm {
     observacoes: [''],
   });
 
+  // UA (rateio por valor): obrigatória ao criar a despesa; soma == valor do formulário.
+  protected readonly unidadesOrcamentarias = signal<UnidadeOrcamentaria[]>([]);
+  protected readonly sugestoesUa = signal<UnidadeOrcamentariaUsada[]>([]);
+  protected readonly rateioUa = signal<RateioUaLinha[]>([]);
+  protected readonly modalRateioAberto = signal(false);
+
   // Modal de cadastro rápido de fornecedor
   protected readonly modalFornecedorAberto = signal(false);
   protected readonly salvandoFornecedor = signal(false);
@@ -60,6 +70,14 @@ export class DespesaAvulsaForm {
 
   constructor() {
     this.fornecedorService.listar({ ativo: true }).subscribe((fornecedores) => this.fornecedores.set(fornecedores));
+    this.unidadeOrcamentariaService.listar({ ativa: true }).subscribe((unidades) => this.unidadesOrcamentarias.set(unidades));
+    // Histórico de UAs do fornecedor escolhido, para sugerir no rateio.
+    this.form.controls.fornecedorId.valueChanges.subscribe((fornecedorId) => {
+      this.sugestoesUa.set([]);
+      if (fornecedorId) {
+        this.unidadeOrcamentariaService.usadasPorFornecedor(fornecedorId).subscribe((usadas) => this.sugestoesUa.set(usadas));
+      }
+    });
 
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
@@ -93,9 +111,40 @@ export class DespesaAvulsaForm {
     });
   }
 
+  protected rateioCompleto(): boolean {
+    const linhas = this.rateioUa();
+    const soma = linhas.reduce((acumulado, linha) => acumulado + linha.quantidade, 0);
+    return linhas.length > 0 && Math.round(soma * 100) === Math.round((Number(this.form.value.valor) || 0) * 100);
+  }
+
+  protected linhasIniciaisRateio(): RateioUaLinha[] {
+    return this.rateioCompleto() ? this.rateioUa() : [];
+  }
+
+  protected abrirRateio(): void {
+    if (!(Number(this.form.value.valor) > 0)) {
+      this.erro.set('Informe o valor antes de definir a UA.');
+      return;
+    }
+
+    this.erro.set(null);
+    this.modalRateioAberto.set(true);
+  }
+
+  protected confirmarRateio(linhas: RateioUaLinha[]): void {
+    this.rateioUa.set(linhas);
+    this.modalRateioAberto.set(false);
+  }
+
   protected salvar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      return;
+    }
+
+    // Despesa nova exige a UA (rateio por valor fechando com o valor); na edição o rateio é mantido/zerado pela API.
+    if (!this.editando && !this.rateioCompleto()) {
+      this.erro.set('Defina a UA da despesa (a soma do rateio deve ser igual ao valor).');
       return;
     }
 
@@ -110,6 +159,7 @@ export class DespesaAvulsaForm {
       valor: valor.valor,
       recorrente: valor.recorrente,
       observacoes: valor.observacoes || null,
+      rateioUa: this.rateioUa().map((linha) => ({ unidadeOrcamentariaId: linha.unidadeOrcamentariaId, valor: linha.quantidade })),
     };
 
     this.salvando.set(true);

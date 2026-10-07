@@ -1,7 +1,7 @@
 import { Component, OnInit, inject, input, output } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 
-import { UnidadeOrcamentaria } from '../../features/unidades-orcamentarias/unidade-orcamentaria';
+import { UnidadeOrcamentaria, UnidadeOrcamentariaUsada } from '../../features/unidades-orcamentarias/unidade-orcamentaria';
 import { Icon } from '../icons/icon';
 
 export interface RateioUaLinha {
@@ -27,6 +27,8 @@ export class RateioUaModal implements OnInit {
   readonly modo = input<'quantidade' | 'valor'>('quantidade');
   readonly linhasIniciais = input<RateioUaLinha[]>([]);
   readonly unidades = input<UnidadeOrcamentaria[]>([]);
+  // UAs já usadas com o fornecedor do lançamento (histórico), para facilitar a escolha.
+  readonly sugestoes = input<UnidadeOrcamentariaUsada[]>([]);
   readonly somenteLeitura = input(false);
   readonly mensagemSomenteLeitura = input<string | null>(null);
   readonly salvando = input(false);
@@ -59,6 +61,26 @@ export class RateioUaModal implements OnInit {
       unidadeOrcamentariaId: this.fb.control<number | null>(linha?.unidadeOrcamentariaId ?? null, Validators.required),
       quantidade: this.fb.control<number | null>(linha?.quantidade ?? null, [Validators.required, Validators.min(0.000001)]),
     });
+  }
+
+  protected jaNaLista(uaId: number): boolean {
+    return this.itens.controls.some((linha) => linha.value.unidadeOrcamentariaId === uaId);
+  }
+
+  // Usa a sugestão na primeira linha ainda sem UA; se não houver, abre uma nova linha.
+  protected usarSugestao(sugestao: UnidadeOrcamentariaUsada): void {
+    if (this.jaNaLista(sugestao.id)) {
+      return;
+    }
+
+    const vazia = this.itens.controls.find((linha) => linha.value.unidadeOrcamentariaId == null);
+    if (vazia) {
+      vazia.patchValue({ unidadeOrcamentariaId: sugestao.id });
+    } else {
+      const nova = this.criarLinha();
+      nova.patchValue({ unidadeOrcamentariaId: sugestao.id });
+      this.itens.push(nova);
+    }
   }
 
   protected adicionarLinha(): void {

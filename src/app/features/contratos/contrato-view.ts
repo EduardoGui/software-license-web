@@ -9,7 +9,7 @@ import { RateioUaLinha, RateioUaModal } from '../../shared/rateio-ua/rateio-ua-m
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { ObrigacoesExtrato } from '../obrigacoes/obrigacoes-extrato';
 import { adicionarMeses, diasEntre, hojeIso, inicioDoMes, paraData } from '../timeline/timeline-datas';
-import { UnidadeOrcamentaria } from '../unidades-orcamentarias/unidade-orcamentaria';
+import { UnidadeOrcamentaria, UnidadeOrcamentariaUsada } from '../unidades-orcamentarias/unidade-orcamentaria';
 import { UnidadeOrcamentariaService } from '../unidades-orcamentarias/unidade-orcamentaria.service';
 import {
   Aditivo,
@@ -81,6 +81,7 @@ export class ContratoView {
   protected readonly erroReverterAprovacaoMedicao = signal<string | null>(null);
 
   protected readonly unidadesOrcamentarias = signal<UnidadeOrcamentaria[]>([]);
+  protected readonly sugestoesUa = signal<UnidadeOrcamentariaUsada[]>([]);
   protected readonly itemRateioUaEmEdicao = signal<MedicaoBmItem | null>(null);
   protected readonly salvandoRateioUa = signal(false);
   protected readonly erroRateioUa = signal<string | null>(null);
@@ -540,6 +541,10 @@ export class ContratoView {
   protected abrirRateioUa(item: MedicaoBmItem): void {
     this.itemRateioUaEmEdicao.set(item);
     this.erroRateioUa.set(null);
+    const fornecedorId = this.contrato()?.fornecedorId;
+    if (fornecedorId) {
+      this.unidadeOrcamentariaService.usadasPorFornecedor(fornecedorId).subscribe((usadas) => this.sugestoesUa.set(usadas));
+    }
   }
 
   protected fecharRateioUa(): void {

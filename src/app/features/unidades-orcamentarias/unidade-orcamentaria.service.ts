@@ -3,7 +3,12 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { UnidadeOrcamentaria, UnidadeOrcamentariaFiltro, UnidadeOrcamentariaPayload } from './unidade-orcamentaria';
+import {
+  UnidadeOrcamentaria,
+  UnidadeOrcamentariaFiltro,
+  UnidadeOrcamentariaPayload,
+  UnidadeOrcamentariaUsada,
+} from './unidade-orcamentaria';
 
 @Injectable({ providedIn: 'root' })
 export class UnidadeOrcamentariaService {
@@ -19,6 +24,10 @@ export class UnidadeOrcamentariaService {
     if (filtro.ativa !== undefined) params = params.set('ativa', filtro.ativa);
 
     return this.http.get<UnidadeOrcamentaria[]>(this.baseUrl, { params });
+  }
+
+  usadasPorFornecedor(fornecedorId: number): Observable<UnidadeOrcamentariaUsada[]> {
+    return this.http.get<UnidadeOrcamentariaUsada[]>(`${this.baseUrl}/usadas-por-fornecedor/${fornecedorId}`);
   }
 
   obter(id: number): Observable<UnidadeOrcamentaria> {

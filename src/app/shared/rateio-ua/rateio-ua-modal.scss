@@ -138,3 +138,40 @@ select:disabled {
   gap: 0.5rem;
   margin-top: 0.75rem;
 }
+
+.sugestoes {
+  margin-bottom: 0.75rem;
+}
+
+.sugestoes__titulo {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.sugestoes__lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.sugestao {
+  border: 1px solid var(--color-primary-tint-border);
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+  border-radius: 999px;
+  padding: 0.2rem 0.65rem;
+  font-size: 0.8rem;
+  cursor: pointer;
+
+  small {
+    color: var(--color-secondary);
+    margin-left: 0.25rem;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: default;
+  }
+}

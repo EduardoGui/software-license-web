@@ -69,6 +69,22 @@
         </div>
       </fieldset>
 
+      @if (!editando) {
+        <fieldset class="ua-bloco">
+          <legend>Unidade Orçamentária (UA) *</legend>
+          <div class="ua-bloco__linha">
+            <button type="button" class="botao" (click)="abrirRateio()">
+              {{ rateioCompleto() ? 'Alterar UA (' + rateioUa().length + ' UA(s))' : 'Definir UA' }}
+            </button>
+            @if (rateioCompleto()) {
+              <span class="ajuda">Rateio por valor definido.</span>
+            } @else {
+              <span class="ajuda">Obrigatório: o rateio por valor deve somar o valor da despesa.</span>
+            }
+          </div>
+        </fieldset>
+      }
+
       @if (erro()) {
         <p class="status status--erro">{{ erro() }}</p>
       }
@@ -79,6 +95,20 @@
         </button>
       </div>
     </form>
+  }
+
+  @if (modalRateioAberto()) {
+    <app-rateio-ua-modal
+      [titulo]="form.value.descricao || 'Nova despesa'"
+      rotuloQuantidade="Valor da despesa (R$)"
+      modo="valor"
+      [quantidadeTotal]="form.value.valor || 0"
+      [linhasIniciais]="linhasIniciaisRateio()"
+      [unidades]="unidadesOrcamentarias()"
+      [sugestoes]="sugestoesUa()"
+      (salvar)="confirmarRateio($event)"
+      (fechar)="modalRateioAberto.set(false)"
+    />
   }
 
   @if (modalFornecedorAberto()) {
