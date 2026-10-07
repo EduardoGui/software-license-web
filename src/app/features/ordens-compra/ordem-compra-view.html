@@ -70,7 +70,13 @@
           <button type="button" class="botao" [disabled]="processando()" (click)="reabrir()">
             <app-icon name="pencil" [size]="16" /> Reabrir para edição
           </button>
-          <button type="button" class="botao botao--primario" [disabled]="processando()" (click)="marcarAssinada()">
+          <button
+            type="button"
+            class="botao botao--primario"
+            [disabled]="processando() || itensSemUa(oc) > 0"
+            [title]="itensSemUa(oc) > 0 ? 'Defina a UA de todos os itens antes de marcar como assinada' : ''"
+            (click)="marcarAssinada()"
+          >
             {{ processando() ? 'Salvando...' : 'Marcar como assinada' }}
           </button>
         }
