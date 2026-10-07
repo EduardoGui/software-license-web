@@ -115,6 +115,26 @@ export class OrdemCompraView {
     });
   }
 
+  protected reabrir(): void {
+    if (!confirm('Reabrir esta ordem de compra para edição? Ela volta a Rascunho e precisará ser emitida de novo.')) {
+      return;
+    }
+
+    this.processando.set(true);
+    this.erroAcao.set(null);
+
+    this.ordemCompraService.reabrir(this.ordemCompraId).subscribe({
+      next: () => {
+        this.processando.set(false);
+        this.carregar();
+      },
+      error: (err) => {
+        this.processando.set(false);
+        this.erroAcao.set(err?.error?.message ?? 'Não foi possível reabrir a ordem de compra.');
+      },
+    });
+  }
+
   protected marcarAssinada(): void {
     this.processando.set(true);
     this.erroAcao.set(null);

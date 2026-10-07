@@ -44,6 +44,10 @@ export class OrdemCompraService {
     return this.http.patch<OrdemCompra>(`${this.baseUrl}/${id}/emitir`, {});
   }
 
+  reabrir(id: number): Observable<OrdemCompra> {
+    return this.http.patch<OrdemCompra>(`${this.baseUrl}/${id}/reabrir`, {});
+  }
+
   marcarAssinada(id: number): Observable<OrdemCompra> {
     return this.http.patch<OrdemCompra>(`${this.baseUrl}/${id}/marcar-assinada`, {});
   }
