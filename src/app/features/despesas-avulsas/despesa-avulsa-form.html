@@ -85,12 +85,46 @@
         </fieldset>
       }
 
+      @if (!editando) {
+        <fieldset class="ua-bloco">
+          <legend>Anexos (opcional)</legend>
+          <div class="ua-bloco__linha">
+            <input
+              #inputAnexos
+              type="file"
+              multiple
+              accept="application/pdf,image/jpeg,image/png"
+              class="anexos-oculto"
+              (change)="aoSelecionarArquivos($event)"
+            />
+            <button type="button" class="botao" [disabled]="salvando()" (click)="inputAnexos.click()">Adicionar anexos</button>
+            <span class="ajuda">PDF, JPG ou PNG, até 10 MB cada. Enviados ao salvar a despesa.</span>
+          </div>
+          @if (erroArquivos()) {
+            <p class="status status--erro">{{ erroArquivos() }}</p>
+          }
+          @if (arquivosPendentes().length > 0) {
+            <ul class="lista-anexos">
+              @for (arquivo of arquivosPendentes(); track $index) {
+                <li>
+                  <span>{{ arquivo.name }} <small>({{ tamanhoLegivel(arquivo) }})</small></span>
+                  <button type="button" class="botao botao--texto" [disabled]="salvando()" (click)="removerArquivo($index)">Remover</button>
+                </li>
+              }
+            </ul>
+          }
+        </fieldset>
+      }
+
       @if (erro()) {
         <p class="status status--erro">{{ erro() }}</p>
+        @if (despesaCriadaId() !== null) {
+          <button type="button" class="botao" (click)="irParaDespesaCriada()">Abrir a despesa criada</button>
+        }
       }
 
       <div class="acoes-form">
-        <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+        <button type="submit" class="botao botao--primario" [disabled]="salvando() || despesaCriadaId() !== null">
           {{ salvando() ? 'Salvando...' : 'Salvar despesa avulsa' }}
         </button>
       </div>

@@ -1,0 +1,96 @@
+<div class="overlay" (click)="fechar.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header>
+      <h2>Solicitação de Pagamento — e-mail ao financeiro</h2>
+      <button type="button" class="botao-fechar" (click)="fechar.emit()" aria-label="Fechar">×</button>
+    </header>
+
+    <div class="modal__corpo">
+      @if (carregando()) {
+        <p>Gerando rascunho...</p>
+      } @else if (solicitacao(); as s) {
+        <p class="nota">
+          Este e-mail <strong>não é enviado pelo sistema</strong>: copie o texto, baixe os anexos ou baixe o rascunho (.eml) e envie pelo seu e-mail.
+        </p>
+
+        @if (s.avisos.length > 0) {
+          <ul class="avisos">
+            @for (aviso of s.avisos; track aviso) {
+              <li>{{ aviso }}</li>
+            }
+          </ul>
+        }
+
+        @if (erro()) {
+          <p class="aviso-erro">{{ erro() }}</p>
+        }
+
+        <div class="campo">
+          <span class="campo__rotulo">Para</span>
+          <span class="campo__valor">{{ s.para.length > 0 ? s.para.join('; ') : '—' }}</span>
+          <button type="button" class="botao" [disabled]="s.para.length === 0" (click)="copiar('para')">
+            {{ copiado() === 'para' ? 'Copiado!' : 'Copiar' }}
+          </button>
+        </div>
+
+        <div class="campo">
+          <span class="campo__rotulo">Cc</span>
+          <span class="campo__valor">{{ s.cc.length > 0 ? s.cc.join('; ') : '—' }}</span>
+          <button type="button" class="botao" [disabled]="s.cc.length === 0" (click)="copiar('cc')">
+            {{ copiado() === 'cc' ? 'Copiado!' : 'Copiar' }}
+          </button>
+        </div>
+
+        <div class="campo">
+          <span class="campo__rotulo">Assunto</span>
+          <span class="campo__valor">{{ s.assunto }}</span>
+          <button type="button" class="botao" (click)="copiar('assunto')">
+            {{ copiado() === 'assunto' ? 'Copiado!' : 'Copiar' }}
+          </button>
+        </div>
+
+        <div class="corpo">
+          <div class="corpo__cabecalho">
+            <span class="campo__rotulo">Corpo do e-mail</span>
+            <button type="button" class="botao botao--primario" (click)="copiar('corpo')">
+              {{ copiado() === 'corpo' ? 'Copiado!' : 'Copiar texto' }}
+            </button>
+          </div>
+          <div class="corpo__previa" [innerHTML]="s.corpoHtml"></div>
+        </div>
+
+        <div class="anexos">
+          <span class="campo__rotulo">Anexos ({{ s.anexos.length }})</span>
+          @if (s.anexos.length === 0) {
+            <p class="aviso-vermelho">Sem anexo.</p>
+          } @else {
+            <ul>
+              @for (anexo of s.anexos; track anexo.id) {
+                <li>
+                  <span>{{ anexo.nomeArquivo }} <small>({{ tamanhoLegivel(anexo) }})</small></span>
+                  <button type="button" class="botao" (click)="baixarAnexo(anexo)">
+                    <app-icon name="download" [size]="14" /> Baixar
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+        </div>
+      } @else if (erro()) {
+        <p class="aviso-erro">{{ erro() }}</p>
+      }
+    </div>
+
+    <footer>
+      <button type="button" class="botao botao--texto" (click)="fechar.emit()">Fechar</button>
+      @if (solicitacao()) {
+        <button type="button" class="botao" [disabled]="baixando()" (click)="baixarEml()">
+          <app-icon name="download" [size]="14" /> {{ baixando() ? 'Gerando...' : 'Baixar rascunho (.eml)' }}
+        </button>
+        <button type="button" class="botao botao--primario" [disabled]="marcando()" (click)="marcarEnviado()">
+          {{ marcando() ? 'Salvando...' : 'Marcar como enviado' }}
+        </button>
+      }
+    </footer>
+  </div>
+</div>

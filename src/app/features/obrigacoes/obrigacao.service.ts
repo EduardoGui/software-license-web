@@ -33,6 +33,10 @@ export class ObrigacaoService {
     return this.http.put<Obrigacao>(`${this.baseUrl}/${id}`, payload);
   }
 
+  marcarEnviadaFinanceiro(id: number, dataPrevistaPagamento: string | null): Observable<Obrigacao> {
+    return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/marcar-enviada-financeiro`, { dataPrevistaPagamento });
+  }
+
   marcarPaga(id: number): Observable<Obrigacao> {
     return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/marcar-paga`, {});
   }

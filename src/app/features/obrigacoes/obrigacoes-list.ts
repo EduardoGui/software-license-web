@@ -8,8 +8,10 @@ import { FornecedorService } from '../fornecedores/fornecedor.service';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { hojeIso, inicioDoMes } from '../timeline/timeline-datas';
+import { DestinatariosFinanceiroModal } from './destinatarios-financeiro-modal';
 import { Obrigacao, ObrigacaoFiltro } from './obrigacao';
 import { ObrigacaoService } from './obrigacao.service';
+import { SolicitacaoPagamentoModal } from './solicitacao-pagamento-modal';
 
 interface FiltroObrigacoes {
   competenciaDeMes: string;
@@ -24,7 +26,7 @@ interface FiltroObrigacoes {
 
 @Component({
   selector: 'app-obrigacoes-list',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal],
   templateUrl: './obrigacoes-list.html',
   styleUrl: './obrigacoes-list.scss',
 })
@@ -68,6 +70,10 @@ export class ObrigacoesList {
   });
 
   // Modal de cadastro rápido de fornecedor
+  // E-mail de solicitação de pagamento ao financeiro (rascunho) e lista de destinatários.
+  protected readonly solicitacaoObrigacaoId = signal<number | null>(null);
+  protected readonly destinatariosAberto = signal(false);
+
   protected readonly modalFornecedorAberto = signal(false);
   protected readonly salvandoFornecedor = signal(false);
   protected readonly erroFornecedor = signal<string | null>(null);
@@ -228,6 +234,14 @@ export class ObrigacoesList {
           this.erroLinha.set(err?.error?.message ?? 'Não foi possível salvar.');
         },
       });
+  }
+
+  protected abrirSolicitacaoPagamento(o: Obrigacao): void {
+    this.solicitacaoObrigacaoId.set(o.id);
+  }
+
+  protected solicitacaoEnviada(atualizada: Obrigacao): void {
+    this.substituir(atualizada);
   }
 
   protected marcarPaga(o: Obrigacao): void {

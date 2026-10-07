@@ -2,7 +2,10 @@ import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { catchError, concatMap, from, map, of, toArray } from 'rxjs';
 
+import { AnexoService } from '../../shared/anexos/anexo.service';
+import { comprimirImagemSeNecessario } from '../../shared/anexos/comprimir-imagem';
 import { Fornecedor } from '../fornecedores/fornecedor';
 import { FornecedorService } from '../fornecedores/fornecedor.service';
 import { RateioUaLinha, RateioUaModal } from '../../shared/rateio-ua/rateio-ua-modal';
@@ -22,6 +25,7 @@ export class DespesaAvulsaForm {
   private readonly despesaAvulsaService = inject(DespesaAvulsaService);
   private readonly fornecedorService = inject(FornecedorService);
   private readonly unidadeOrcamentariaService = inject(UnidadeOrcamentariaService);
+  private readonly anexoService = inject(AnexoService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly location = inject(Location);
@@ -49,6 +53,13 @@ export class DespesaAvulsaForm {
   protected readonly sugestoesUa = signal<UnidadeOrcamentariaUsada[]>([]);
   protected readonly rateioUa = signal<RateioUaLinha[]>([]);
   protected readonly modalRateioAberto = signal(false);
+
+  // Anexos da despesa nova: escolhidos aqui e enviados logo depois que a despesa é criada (opcionais).
+  protected readonly arquivosPendentes = signal<File[]>([]);
+  protected readonly erroArquivos = signal<string | null>(null);
+  protected readonly despesaCriadaId = signal<number | null>(null);
+  private static readonly TiposAceitos = ['application/pdf', 'image/jpeg', 'image/png'];
+  private static readonly TamanhoMaximo = 10 * 1024 * 1024;
 
   // Modal de cadastro rápido de fornecedor
   protected readonly modalFornecedorAberto = signal(false);
@@ -111,6 +122,50 @@ export class DespesaAvulsaForm {
     });
   }
 
+  protected async aoSelecionarArquivos(event: Event): Promise<void> {
+    const input = event.target as HTMLInputElement;
+    const selecionados = Array.from(input.files ?? []);
+    input.value = '';
+    this.erroArquivos.set(null);
+
+    const rejeitados: string[] = [];
+    for (const original of selecionados) {
+      if (!DespesaAvulsaForm.TiposAceitos.includes(original.type)) {
+        rejeitados.push(`${original.name} (use PDF, JPG ou PNG)`);
+        continue;
+      }
+
+      const arquivo = await comprimirImagemSeNecessario(original);
+      if (arquivo.size > DespesaAvulsaForm.TamanhoMaximo) {
+        rejeitados.push(`${original.name} (acima de 10 MB)`);
+        continue;
+      }
+
+      this.arquivosPendentes.update((lista) => [...lista, arquivo]);
+    }
+
+    if (rejeitados.length > 0) {
+      this.erroArquivos.set(`Arquivo(s) não adicionado(s): ${rejeitados.join('; ')}.`);
+    }
+  }
+
+  protected removerArquivo(index: number): void {
+    this.arquivosPendentes.update((lista) => lista.filter((_, i) => i !== index));
+  }
+
+  protected tamanhoLegivel(arquivo: File): string {
+    return arquivo.size >= 1024 * 1024
+      ? `${(arquivo.size / (1024 * 1024)).toFixed(1)} MB`
+      : `${Math.max(1, Math.round(arquivo.size / 1024))} KB`;
+  }
+
+  protected irParaDespesaCriada(): void {
+    const id = this.despesaCriadaId();
+    if (id !== null) {
+      this.router.navigate(['/despesas-avulsas', id]);
+    }
+  }
+
   protected rateioCompleto(): boolean {
     const linhas = this.rateioUa();
     const soma = linhas.reduce((acumulado, linha) => acumulado + linha.quantidade, 0);
@@ -170,12 +225,47 @@ export class DespesaAvulsaForm {
       : this.despesaAvulsaService.criar(payload);
 
     requisicao.subscribe({
-      next: (d) => this.router.navigate(['/despesas-avulsas', d.id]),
+      next: (d) => {
+        if (this.editando || this.arquivosPendentes().length === 0) {
+          this.router.navigate(['/despesas-avulsas', d.id]);
+          return;
+        }
+
+        this.enviarAnexos(d.id);
+      },
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar a despesa avulsa.');
       },
     });
+  }
+
+  // Envia os anexos escolhidos, um a um; a despesa já foi criada, então uma falha não a desfaz.
+  private enviarAnexos(despesaId: number): void {
+    this.despesaCriadaId.set(despesaId);
+
+    from(this.arquivosPendentes())
+      .pipe(
+        concatMap((arquivo) =>
+          this.anexoService.enviar('despesas-avulsas', despesaId, arquivo).pipe(
+            map(() => null as string | null),
+            catchError(() => of(arquivo.name as string | null)),
+          ),
+        ),
+        toArray(),
+      )
+      .subscribe((resultados) => {
+        const falhas = resultados.filter((nome): nome is string => nome !== null);
+        if (falhas.length === 0) {
+          this.router.navigate(['/despesas-avulsas', despesaId]);
+          return;
+        }
+
+        this.salvando.set(false);
+        this.erro.set(
+          `Despesa criada, mas ${falhas.length} anexo(s) não foram enviados: ${falhas.join(', ')}. Abra a despesa para reenviar.`,
+        );
+      });
   }
 
   // --- Modal de cadastro rápido de fornecedor ---

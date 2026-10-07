@@ -2,6 +2,7 @@
   <header class="topo">
     <h1>Controle de Obrigações</h1>
     <div class="topo__acoes">
+      <button type="button" class="botao" (click)="destinatariosAberto.set(true)">Destinatários do financeiro</button>
       <a class="botao botao--texto" routerLink="/despesas-avulsas">Ver lista de despesas</a>
       <a class="botao botao--primario" routerLink="/despesas-avulsas/novo"><app-icon name="plus" [size]="16" /> Nova despesa avulsa</a>
     </div>
@@ -162,6 +163,9 @@
 
                       <div class="acoes-linha">
                         <div class="acoes-linha__pagamento">
+                          @if (!o.cancelada) {
+                            <button type="button" class="botao" (click)="abrirSolicitacaoPagamento(o)">E-mail ao financeiro</button>
+                          }
                           @if (!o.cancelada && !o.pago) {
                             <button type="button" class="botao botao--primario" [disabled]="processandoAcao()" (click)="marcarPaga(o)">
                               Marcar como paga
@@ -231,5 +235,17 @@
         </form>
       </div>
     </div>
+  }
+
+  @if (solicitacaoObrigacaoId(); as solicitacaoId) {
+    <app-solicitacao-pagamento-modal
+      [obrigacaoId]="solicitacaoId"
+      (fechar)="solicitacaoObrigacaoId.set(null)"
+      (enviada)="solicitacaoEnviada($event)"
+    />
+  }
+
+  @if (destinatariosAberto()) {
+    <app-destinatarios-financeiro-modal (fechar)="destinatariosAberto.set(false)" />
   }
 </section>

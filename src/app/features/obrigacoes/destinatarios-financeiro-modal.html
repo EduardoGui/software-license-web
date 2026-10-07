@@ -1,0 +1,60 @@
+<div class="overlay" (click)="fechar.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header>
+      <h2>Destinatários do financeiro</h2>
+      <button type="button" class="botao-fechar" (click)="fechar.emit()" aria-label="Fechar">×</button>
+    </header>
+
+    <div class="modal__corpo">
+      <p class="nota">E-mails usados no rascunho de "Solicitação de Pagamento". Só os ativos entram no e-mail.</p>
+
+      @if (erro()) {
+        <p class="aviso-erro">{{ erro() }}</p>
+      }
+
+      <form class="novo" [formGroup]="form" (ngSubmit)="adicionar()">
+        <label>
+          E-mail
+          <input type="email" formControlName="email" placeholder="financeiro@empresa.com.br" />
+        </label>
+        <label>
+          Tipo
+          <select formControlName="tipoDestinatario">
+            @for (tipo of tipos; track tipo) {
+              <option [value]="tipo">{{ tipo }}</option>
+            }
+          </select>
+        </label>
+        <button type="submit" class="botao botao--primario" [disabled]="salvando()">Adicionar</button>
+      </form>
+
+      @if (carregando()) {
+        <p>Carregando...</p>
+      } @else {
+        @for (tipo of tipos; track tipo) {
+          <div class="grupo">
+            <h3>{{ tipo === 'Para' ? 'Para' : 'Cc (com cópia)' }}</h3>
+            @if (porTipo(tipo).length === 0) {
+              <p class="vazio">Nenhum e-mail cadastrado.</p>
+            } @else {
+              <ul>
+                @for (email of porTipo(tipo); track email.id) {
+                  <li [class.inativo]="!email.ativo">
+                    <span>{{ email.email }}</span>
+                    <button type="button" class="botao" (click)="alternarAtivo(email)">
+                      {{ email.ativo ? 'Inativar' : 'Reativar' }}
+                    </button>
+                  </li>
+                }
+              </ul>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <footer>
+      <button type="button" class="botao botao--texto" (click)="fechar.emit()">Fechar</button>
+    </footer>
+  </div>
+</div>
