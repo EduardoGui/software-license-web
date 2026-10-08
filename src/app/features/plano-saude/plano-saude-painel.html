@@ -1,0 +1,16 @@
+<section class="plano-saude-painel">
+  <header class="plano-saude-painel__topo">
+    <h1>Plano de Saúde</h1>
+  </header>
+
+  <nav class="plano-saude-painel__abas">
+    <a routerLink="lancamento-mensal" routerLinkActive="aba--ativa" class="aba">Lançamento Mensal</a>
+    <a routerLink="relatorio-mensal" routerLinkActive="aba--ativa" class="aba">Relatório Mensal</a>
+    <a routerLink="faturas" routerLinkActive="aba--ativa" class="aba">Faturas</a>
+    <a routerLink="notas-debito" routerLinkActive="aba--ativa" class="aba">Notas de Débito PJ</a>
+  </nav>
+
+  <div class="plano-saude-painel__conteudo">
+    <router-outlet></router-outlet>
+  </div>
+</section>

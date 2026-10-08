@@ -111,24 +111,7 @@
             <a routerLink="/campanhas-entrega" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
               Campanhas de Entrega
             </a>
-            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoPlanoSaude()">
-              <span class="menu__grupo-seta">{{ grupoPlanoSaudeAberto() ? '▾' : '▸' }}</span>
-              Plano de Saúde
-            </button>
-            @if (grupoPlanoSaudeAberto()) {
-              <a routerLink="/dp/plano-saude/custos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Lançamento Mensal
-              </a>
-              <a routerLink="/dp/plano-saude/relatorio-mensal" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Relatório Mensal
-              </a>
-              <a routerLink="/dp/plano-saude/faturas" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Faturas
-              </a>
-              <a routerLink="/dp/plano-saude/notas-debito" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                Notas de Débito PJ
-              </a>
-            }
+            <a routerLink="/plano-saude" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Plano de Saúde</a>
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoCadastrosGerais()">
             <span class="menu__grupo-seta">{{ grupoCadastrosGeraisAberto() ? '▾' : '▸' }}</span>

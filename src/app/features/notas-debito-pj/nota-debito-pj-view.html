@@ -1,7 +1,7 @@
 <section class="detalhe">
   <header class="topo">
     <h1>Nota de Débito</h1>
-    <a class="botao-voltar" routerLink="/dp/plano-saude/notas-debito"><app-icon name="arrow-left" [size]="16" /> Voltar</a>
+    <a class="botao-voltar" routerLink="/plano-saude/notas-debito"><app-icon name="arrow-left" [size]="16" /> Voltar</a>
   </header>
 
   @if (carregando()) {
@@ -28,7 +28,7 @@
           @if (nota()!.faturaOperadoraSaudeId) {
             <div class="dl-full">
               <dt>Fatura</dt>
-              <dd><a [routerLink]="['/dp/plano-saude/faturas', nota()!.faturaOperadoraSaudeId]">Ver fatura vinculada</a></dd>
+              <dd><a [routerLink]="['/plano-saude/faturas', nota()!.faturaOperadoraSaudeId]">Ver fatura vinculada</a></dd>
             </div>
           }
         </dl>
@@ -103,7 +103,7 @@
         <button type="button" class="botao" (click)="baixarPdf()"><app-icon name="download" [size]="16" /> Baixar PDF</button>
 
         @if (nota()!.status === 'Rascunho') {
-          <a class="botao" [routerLink]="['/dp/plano-saude/notas-debito', nota()!.id, 'editar']">
+          <a class="botao" [routerLink]="['/plano-saude/notas-debito', nota()!.id, 'editar']">
             <app-icon name="pencil" [size]="16" /> Editar
           </a>
           <button type="button" class="botao" [disabled]="processando()" (click)="enviar()">

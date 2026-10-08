@@ -1,7 +1,7 @@
 <section class="notas">
   <header class="topo">
     <h1>Faturas de Plano de Saúde</h1>
-    <a class="botao botao--primario" routerLink="/dp/plano-saude/faturas/nova">
+    <a class="botao botao--primario" routerLink="/plano-saude/faturas/nova">
       <app-icon name="plus" [size]="16" /> Nova fatura
     </a>
   </header>
@@ -55,10 +55,10 @@
               <td>{{ fatura.valorTotal !== null ? (fatura.valorTotal | number: '1.2-2') : '-' }}</td>
               <td>{{ fatura.quantidadeNotasDebito }}</td>
               <td class="acoes">
-                <a [routerLink]="['/dp/plano-saude/faturas', fatura.id]" title="Ver" aria-label="Ver">
+                <a [routerLink]="['/plano-saude/faturas', fatura.id]" title="Ver" aria-label="Ver">
                   <app-icon name="eye" [size]="18" />
                 </a>
-                <a [routerLink]="['/dp/plano-saude/faturas', fatura.id, 'editar']" title="Editar" aria-label="Editar">
+                <a [routerLink]="['/plano-saude/faturas', fatura.id, 'editar']" title="Editar" aria-label="Editar">
                   <app-icon name="pencil" [size]="18" />
                 </a>
               </td>

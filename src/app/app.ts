@@ -28,7 +28,6 @@ export class App {
   );
   protected readonly grupoTiAberto = signal(false);
   protected readonly grupoDpAberto = signal(false);
-  protected readonly grupoPlanoSaudeAberto = signal(false);
   protected readonly grupoSuprimentosAberto = signal(false);
   protected readonly grupoCadastrosGeraisAberto = signal(false);
   protected readonly grupoLicencasAberto = signal(false);
@@ -113,11 +112,6 @@ export class App {
     if (abrindo) {
       this.grupoLicencasAberto.set(false);
     }
-  }
-
-  // Subgrupo dentro de DP (sozinho, sem irmão pra fechar).
-  protected alternarGrupoPlanoSaude(): void {
-    this.grupoPlanoSaudeAberto.set(!this.grupoPlanoSaudeAberto());
   }
 
   // Subgrupo dentro de Suprimentos - sozinho, sem irmão pra fechar.

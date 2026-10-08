@@ -81,7 +81,7 @@ export class NotaDebitoPjView {
     }
 
     this.notaService.excluir(this.notaId).subscribe({
-      next: () => this.router.navigate(['/dp/plano-saude/notas-debito']),
+      next: () => this.router.navigate(['/plano-saude/notas-debito']),
       error: () => alert('Não foi possível excluir a nota de débito.'),
     });
   }

@@ -103,7 +103,7 @@ export class FaturaPlanoSaudeForm {
       : this.faturaService.criar({ operadoraSaude: valor.operadoraSaude, ...camposComuns });
 
     requisicao.subscribe({
-      next: (fatura) => this.router.navigate(['/dp/plano-saude/faturas', fatura.id]),
+      next: (fatura) => this.router.navigate(['/plano-saude/faturas', fatura.id]),
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar a fatura.');

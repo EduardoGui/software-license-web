@@ -193,7 +193,7 @@ export class NotaDebitoPjForm {
         });
 
     requisicao.subscribe({
-      next: (nota) => this.router.navigate(['/dp/plano-saude/notas-debito', nota.id]),
+      next: (nota) => this.router.navigate(['/plano-saude/notas-debito', nota.id]),
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar a nota de débito.');

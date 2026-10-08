@@ -79,6 +79,7 @@ import { ContratoView } from './features/contratos/contrato-view';
 import { ContratosTimeline } from './features/contratos/contratos-timeline';
 import { BaseDadosEngenhariaPage } from './features/contratos/base-dados-engenharia-page';
 import { MedicaoBmImprimir } from './features/contratos/medicao-bm-imprimir';
+import { PlanoSaudePainel } from './features/plano-saude/plano-saude-painel';
 import { PlanoSaudeCustosPage } from './features/plano-saude-custos/plano-saude-custos-page';
 import { PlanoSaudeRelatorioPage } from './features/plano-saude-relatorio/plano-saude-relatorio-page';
 import { NotasDebitoPjList } from './features/notas-debito-pj/notas-debito-pj-list';
@@ -201,28 +202,29 @@ export const routes: Routes = [
       { path: 'dp/fornecedores', component: FornecedoresList, canActivate: [adminGuard] },
       { path: 'dp/fornecedores/novo', component: FornecedorForm, canActivate: [adminGuard] },
       { path: 'dp/fornecedores/:id/editar', component: FornecedorForm, canActivate: [adminGuard] },
-      { path: 'dp/plano-saude/custos', component: PlanoSaudeCustosPage, canActivate: [administrativoGuard] },
       {
-        path: 'dp/plano-saude/relatorio-mensal',
-        component: PlanoSaudeRelatorioPage,
+        path: 'plano-saude',
+        component: PlanoSaudePainel,
         canActivate: [administrativoGuard],
+        children: [
+          { path: '', redirectTo: 'lancamento-mensal', pathMatch: 'full' },
+          { path: 'lancamento-mensal', component: PlanoSaudeCustosPage },
+          { path: 'relatorio-mensal', component: PlanoSaudeRelatorioPage },
+          { path: 'faturas', component: FaturasPlanoSaudeList },
+          { path: 'faturas/nova', component: FaturaPlanoSaudeForm },
+          { path: 'faturas/:id/editar', component: FaturaPlanoSaudeForm },
+          { path: 'faturas/:id', component: FaturaPlanoSaudeView },
+          { path: 'notas-debito', component: NotasDebitoPjList },
+          { path: 'notas-debito/nova', component: NotaDebitoPjForm },
+          { path: 'notas-debito/:id/editar', component: NotaDebitoPjForm },
+          { path: 'notas-debito/:id', component: NotaDebitoPjView },
+        ],
       },
-      { path: 'dp/plano-saude/notas-debito', component: NotasDebitoPjList, canActivate: [administrativoGuard] },
-      { path: 'dp/plano-saude/notas-debito/nova', component: NotaDebitoPjForm, canActivate: [administrativoGuard] },
-      {
-        path: 'dp/plano-saude/notas-debito/:id/editar',
-        component: NotaDebitoPjForm,
-        canActivate: [administrativoGuard],
-      },
-      { path: 'dp/plano-saude/notas-debito/:id', component: NotaDebitoPjView, canActivate: [administrativoGuard] },
-      { path: 'dp/plano-saude/faturas', component: FaturasPlanoSaudeList, canActivate: [administrativoGuard] },
-      { path: 'dp/plano-saude/faturas/nova', component: FaturaPlanoSaudeForm, canActivate: [administrativoGuard] },
-      {
-        path: 'dp/plano-saude/faturas/:id/editar',
-        component: FaturaPlanoSaudeForm,
-        canActivate: [administrativoGuard],
-      },
-      { path: 'dp/plano-saude/faturas/:id', component: FaturaPlanoSaudeView, canActivate: [administrativoGuard] },
+      // Endereços antigos (favoritos) continuam funcionando.
+      { path: 'dp/plano-saude/custos', redirectTo: 'plano-saude/lancamento-mensal', pathMatch: 'full' },
+      { path: 'dp/plano-saude/relatorio-mensal', redirectTo: 'plano-saude/relatorio-mensal', pathMatch: 'full' },
+      { path: 'dp/plano-saude/faturas', redirectTo: 'plano-saude/faturas', pathMatch: 'full' },
+      { path: 'dp/plano-saude/notas-debito', redirectTo: 'plano-saude/notas-debito', pathMatch: 'full' },
       {
         path: 'reembolsos',
         component: ReembolsosPainel,
