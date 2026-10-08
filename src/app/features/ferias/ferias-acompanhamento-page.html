@@ -1,0 +1,134 @@
+<section class="acompanhamento">
+  <header class="topo">
+    <div>
+      <h1>Acompanhamento de Férias</h1>
+      @if (dados(); as d) {
+        <p class="dica">
+          Meta: ninguém passa mais de {{ d.mesesMeta }} meses sem tirar nem marcar férias. A coluna "A marcar" é o que ainda falta
+          programar (direito − tirou − marcado − recesso).
+        </p>
+      }
+    </div>
+    <button type="button" class="botao" [disabled]="exportando() || carregando()" (click)="exportar()">
+      {{ exportando() ? 'Exportando...' : 'Exportar Excel' }}
+    </button>
+  </header>
+
+  @if (dados(); as d) {
+    <div class="cartoes">
+      @for (cartao of cartoes(d.resumo); track cartao.rotulo) {
+        <button
+          type="button"
+          class="cartao"
+          [class.cartao--ativo]="(filtro.situacao ?? '') === cartao.filtro"
+          [class.cartao--urgente]="cartao.urgente"
+          (click)="selecionarCartao(cartao.filtro)"
+        >
+          <span class="cartao__valor">{{ cartao.valor }}</span>
+          <span class="cartao__rotulo">{{ cartao.rotulo }}</span>
+        </button>
+      }
+    </div>
+  }
+
+  <div class="filtros">
+    <input
+      type="search"
+      placeholder="Buscar colaborador"
+      aria-label="Buscar colaborador"
+      [(ngModel)]="filtro.nome"
+      (ngModelChange)="buscarComAtraso()"
+    />
+    <select aria-label="Setor" [(ngModel)]="filtro.setorId" (ngModelChange)="buscar()">
+      <option [ngValue]="null">Todos os setores</option>
+      @for (setor of setores(); track setor.id) {
+        <option [ngValue]="setor.id">{{ setor.nome }}</option>
+      }
+    </select>
+    @if (temFiltro()) {
+      <button type="button" class="botao botao--texto" (click)="limpar()">Limpar filtros</button>
+    }
+  </div>
+
+  @if (erroGeracao()) {
+    <p class="status status--erro">{{ erroGeracao() }}</p>
+  }
+
+  @if (erro()) {
+    <p class="status status--erro">Não foi possível carregar o acompanhamento de férias. Verifique se a API está em execução.</p>
+  } @else if (!dados()) {
+    <p class="status">Carregando...</p>
+  } @else if (dados(); as d) {
+    @if (d.linhas.length === 0) {
+      <p class="status">Nenhum colaborador encontrado com esses filtros.</p>
+    } @else {
+      <div class="tabela-scroll" [class.carregando]="carregando()">
+        <table>
+          <thead>
+            <tr>
+              <th>Colaborador</th>
+              <th>Situação</th>
+              <th class="num" title="Dias de direito do período">Direito</th>
+              <th class="num" title="Férias já gozadas (inclui o que está em curso)">Tirou</th>
+              <th class="num" title="Férias aprovadas que ainda vão começar">Marcado</th>
+              <th class="num" title="Dias descontados pelo recesso de fim de ano">Recesso</th>
+              <th class="num" title="Dias que ainda faltam programar">A marcar</th>
+              <th>Prazo p/ tirar</th>
+              <th>Férias</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (linha of d.linhas; track linha.usuarioId) {
+              <tr>
+                <td>
+                  <strong>{{ linha.usuarioNome }}</strong>
+                  <span class="sub">{{ linha.setorNome ?? 'Sem setor' }} · {{ linha.tipo }}</span>
+                </td>
+                <td class="celula-situacao">
+                  <span [class]="'selo ' + classe(linha)">{{ rotulo(linha) }}</span>
+                  <span class="sub">{{ linha.situacaoDetalhe }}</span>
+                </td>
+                @if (linha.periodoFeriasId) {
+                  <td class="num">{{ linha.direito }}</td>
+                  <td class="num">{{ linha.tirou }}</td>
+                  <td class="num">{{ linha.marcado }}</td>
+                  <td class="num">{{ linha.recesso }}</td>
+                  <td class="num num--destaque" [class.num--negativo]="linha.aSaldo < 0">{{ linha.aSaldo }}</td>
+                  <td>{{ linha.fimConcessivo | date: 'dd/MM/yyyy' }}</td>
+                } @else {
+                  <td class="num" colspan="5">-</td>
+                  <td>-</td>
+                }
+                <td>
+                  @if (linha.feriasInicio) {
+                    {{ linha.feriasInicio | date: 'dd/MM' }} a {{ linha.feriasFim | date: 'dd/MM/yyyy' }}
+                    @if (linha.aguardandoAprovacao && !linha.emFeriasAgora) {
+                      <span class="sub">pedido</span>
+                    }
+                  } @else {
+                    -
+                  }
+                </td>
+                <td class="acoes">
+                  @if (linha.periodoFeriasId) {
+                    <a [routerLink]="['/ferias/colaboradores', linha.periodoFeriasId]" class="botao botao--texto">Ver extrato</a>
+                  } @else {
+                    <button
+                      type="button"
+                      class="botao botao--primario"
+                      [disabled]="gerandoUsuarioId() === linha.usuarioId"
+                      (click)="gerarPeriodo(linha.usuarioId)"
+                    >
+                      {{ gerandoUsuarioId() === linha.usuarioId ? 'Gerando...' : 'Gerar período' }}
+                    </button>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+</section>

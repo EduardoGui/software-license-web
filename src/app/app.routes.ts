@@ -46,6 +46,7 @@ import { SaldoFeriasList } from './features/ferias/saldo-ferias-list';
 import { PeriodoFeriasDetalhe } from './features/ferias/periodo-ferias-detalhe';
 import { RecessosList } from './features/ferias/recessos-list';
 import { RecessoDetalhe } from './features/ferias/recesso-detalhe';
+import { FeriasAcompanhamentoPage } from './features/ferias/ferias-acompanhamento-page';
 import { FeriasDashboardPage } from './features/ferias/ferias-dashboard-page';
 import { FeriasCalendarioPage } from './features/ferias/ferias-calendario-page';
 import { FeriasPainel } from './features/ferias/ferias-painel';
@@ -178,7 +179,8 @@ export const routes: Routes = [
         component: FeriasPainel,
         canActivate: [administrativoGuard],
         children: [
-          { path: '', redirectTo: 'visao-geral', pathMatch: 'full' },
+          { path: '', redirectTo: 'acompanhamento', pathMatch: 'full' },
+          { path: 'acompanhamento', component: FeriasAcompanhamentoPage },
           { path: 'visao-geral', component: FeriasDashboardPage },
           { path: 'colaboradores', component: SaldoFeriasList },
           { path: 'colaboradores/:id', component: PeriodoFeriasDetalhe },
