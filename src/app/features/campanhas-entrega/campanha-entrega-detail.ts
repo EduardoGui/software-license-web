@@ -215,7 +215,7 @@ export class CampanhaEntregaDetail {
       id: this.fb.control<number | null>(item?.id ?? null),
       descricao: this.fb.nonNullable.control(item?.descricao ?? '', Validators.required),
       tamanho: this.fb.nonNullable.control(item?.tamanho ?? ''),
-      quantidade: this.fb.nonNullable.control(item?.quantidade ?? 1, [Validators.required, Validators.min(1)]),
+      quantidade: this.fb.nonNullable.control(item?.quantidade ?? 0, [Validators.required, Validators.min(0)]),
       validade: this.fb.nonNullable.control(item?.validade ?? ''),
       quantidadeDisponivel: this.fb.control<number | null>(item?.quantidadeDisponivel ?? null, Validators.min(0)),
     });
@@ -223,6 +223,13 @@ export class CampanhaEntregaDetail {
 
   protected adicionarLinhaItemCampanha(): void {
     this.itensCampanha.push(this.criarLinhaItemCampanha());
+  }
+
+  // Quantidade padrão 0 em tudo: nenhum item vem pronto no kit; a quantidade é preenchida por colaborador.
+  protected zerarQuantidadesPadrao(): void {
+    for (const linha of this.itensCampanha.controls) {
+      linha.patchValue({ quantidade: 0 });
+    }
   }
 
   protected removerLinhaItemCampanha(index: number): void {
@@ -399,7 +406,7 @@ export class CampanhaEntregaDetail {
       nova.patchValue({
         descricao: linha.descricao,
         tamanho: linha.tamanho,
-        quantidade: 1,
+        quantidade: 0,
         quantidadeDisponivel: linha.estoque,
       });
       this.itensCampanha.push(nova);

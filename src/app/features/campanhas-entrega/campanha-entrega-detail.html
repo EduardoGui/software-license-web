@@ -59,7 +59,7 @@
             <div [formGroup]="$any(item)" class="item-linha item-linha--campanha">
               <input type="text" formControlName="descricao" placeholder="Descrição" />
               <input type="text" formControlName="tamanho" placeholder="Tamanho" />
-              <input type="number" min="1" formControlName="quantidade" placeholder="Qtde." />
+              <input type="number" min="0" formControlName="quantidade" placeholder="Qtde." title="Quantidade padrão por pessoa (0 = preencher por colaborador)" />
               <input type="date" formControlName="validade" title="Validade (opcional)" />
               <input type="number" min="0" formControlName="quantidadeDisponivel" placeholder="Estoque (opcional)" title="Estoque disponível (opcional)" />
               <button type="button" class="botao-remover" (click)="removerLinhaItemCampanha(i)" aria-label="Remover item">×</button>
@@ -69,6 +69,9 @@
         <div class="acoes-linha">
           <button type="button" class="botao botao--texto" (click)="adicionarLinhaItemCampanha()">+ Adicionar item</button>
           <button type="button" class="botao botao--texto" (click)="abrirColarLista()">Colar lista</button>
+          @if (c.tipo !== 'ItemAItem') {
+            <button type="button" class="botao botao--texto" (click)="zerarQuantidadesPadrao()">Zerar quantidades padrão</button>
+          }
           <button type="button" class="botao botao--primario" [disabled]="salvandoItensCampanha()" (click)="salvarItensCampanha()">
             {{ salvandoItensCampanha() ? 'Salvando...' : 'Salvar itens da campanha' }}
           </button>
