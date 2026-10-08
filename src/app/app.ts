@@ -35,7 +35,6 @@ export class App {
   protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly grupoPatrimonioAberto = signal(false);
   protected readonly grupoContratosAberto = signal(false);
-  protected readonly grupoEntregasAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
 
   constructor() {
@@ -116,21 +115,9 @@ export class App {
     }
   }
 
-  // Subgrupo dentro de DP - mesma lógica de fechar o irmão (Licenças/Equipamentos dentro de TI).
-  protected alternarGrupoEntregas(): void {
-    const abrindo = !this.grupoEntregasAberto();
-    this.grupoEntregasAberto.set(abrindo);
-    if (abrindo) {
-      this.grupoPlanoSaudeAberto.set(false);
-    }
-  }
-
+  // Subgrupo dentro de DP (sozinho, sem irmão pra fechar).
   protected alternarGrupoPlanoSaude(): void {
-    const abrindo = !this.grupoPlanoSaudeAberto();
-    this.grupoPlanoSaudeAberto.set(abrindo);
-    if (abrindo) {
-      this.grupoEntregasAberto.set(false);
-    }
+    this.grupoPlanoSaudeAberto.set(!this.grupoPlanoSaudeAberto());
   }
 
   // Subgrupo dentro de Suprimentos - sozinho, sem irmão pra fechar.

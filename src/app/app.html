@@ -108,15 +108,9 @@
           @if (grupoDpAberto()) {
             <a routerLink="/ferias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Férias</a>
             <a routerLink="/reembolsos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Reembolsos</a>
-            <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoEntregas()">
-              <span class="menu__grupo-seta">{{ grupoEntregasAberto() ? '▾' : '▸' }}</span>
-              Entregas
-            </button>
-            @if (grupoEntregasAberto()) {
-              <a routerLink="/campanhas-entrega" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub2">
-                Campanhas de Entrega
-              </a>
-            }
+            <a routerLink="/campanhas-entrega" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
+              Campanhas de Entrega
+            </a>
             <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoPlanoSaude()">
               <span class="menu__grupo-seta">{{ grupoPlanoSaudeAberto() ? '▾' : '▸' }}</span>
               Plano de Saúde
