@@ -427,14 +427,14 @@ export class CampanhaEntregaDetail {
     this.formNovaEntrega.reset({ quantidadeKits: 1, observacao: '' });
 
     this.itensLinha.clear();
-    if (!this.ehItemAItem() && entrega.status === 'Pendente') {
+    if (!this.ehItemAItem() && this.podeEditarItens(entrega)) {
       this.preencherItensKitComCatalogo(entrega);
     } else {
       for (const item of entrega.itens) {
         this.itensLinha.push(this.criarLinhaItem(item));
       }
     }
-    if (entrega.status === 'Pendente') {
+    if (this.podeEditarItens(entrega)) {
       this.formItensLinha.enable();
     } else {
       this.formItensLinha.disable();
@@ -444,6 +444,11 @@ export class CampanhaEntregaDetail {
       dataEntregaFisica: entrega.dataEntregaFisica ?? '',
       responsavelEntregaId: entrega.responsavelEntregaId,
     });
+  }
+
+  // Pendente (antes do e-mail) ou com divergência a tratar: ajustar os itens resolve a divergência e volta a Pendente.
+  protected podeEditarItens(entrega: Entrega): boolean {
+    return entrega.status === 'Pendente' || entrega.status === 'Divergencia';
   }
 
   protected ehItemAItem(): boolean {
