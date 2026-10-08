@@ -28,7 +28,19 @@
     </div>
 
     <section class="painel-itens-campanha">
-      <h2>Itens da campanha</h2>
+      <h2 class="painel-itens-campanha__titulo">
+        <button
+          type="button"
+          class="painel-itens-campanha__alternar"
+          [attr.aria-expanded]="itensCampanhaAberto() || c.itens.length === 0"
+          (click)="itensCampanhaAberto.set(!itensCampanhaAberto())"
+        >
+          <span class="painel-itens-campanha__seta">{{ itensCampanhaAberto() || c.itens.length === 0 ? '▾' : '▸' }}</span>
+          Itens da campanha
+          <span class="painel-itens-campanha__contagem">({{ c.itens.length }} {{ c.itens.length === 1 ? 'item' : 'itens' }})</span>
+        </button>
+      </h2>
+      @if (itensCampanhaAberto() || c.itens.length === 0) {
       @if (c.tipo === 'ItemAItem') {
         <p class="dica">
           Catálogo da campanha, com o estoque de cada item. Aqui você só cadastra o que existe; os itens de cada colaborador são
@@ -101,6 +113,7 @@
             </tbody>
           </table>
         </div>
+      }
       }
     </section>
 

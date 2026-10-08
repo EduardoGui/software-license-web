@@ -556,3 +556,30 @@ th {
 .item-linha--zerado {
   opacity: 0.55;
 }
+
+.painel-itens-campanha__titulo {
+  margin: 0;
+}
+
+.painel-itens-campanha__alternar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+  border: none;
+  background: none;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.painel-itens-campanha__seta {
+  color: var(--color-secondary);
+}
+
+.painel-itens-campanha__contagem {
+  font-size: 0.85rem;
+  font-weight: normal;
+  color: var(--color-secondary);
+}

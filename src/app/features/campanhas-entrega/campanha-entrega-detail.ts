@@ -74,6 +74,9 @@ export class CampanhaEntregaDetail {
     itens: this.fb.array<ReturnType<typeof this.criarLinhaItem>>([]),
   });
 
+  // Lista de itens da campanha (catálogo + estoque): começa recolhida para não ocupar a tela.
+  protected readonly itensCampanhaAberto = signal(false);
+
   protected readonly salvandoItensCampanha = signal(false);
   protected readonly erroItensCampanha = signal<string | null>(null);
 
