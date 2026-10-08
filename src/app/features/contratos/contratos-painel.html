@@ -1,0 +1,15 @@
+<section class="contratos-painel">
+  <header class="contratos-painel__topo">
+    <h1>Contratos</h1>
+  </header>
+
+  <nav class="contratos-painel__abas">
+    <a routerLink="/contratos" class="aba" [class.aba--ativa]="abaContratosAtiva()">Contratos</a>
+    <a routerLink="/contratos/timeline" routerLinkActive="aba--ativa" class="aba">Linha do Tempo</a>
+    <a routerLink="/contratos/base-dados" routerLinkActive="aba--ativa" class="aba">Base de dados</a>
+  </nav>
+
+  <div class="contratos-painel__conteudo">
+    <router-outlet></router-outlet>
+  </div>
+</section>

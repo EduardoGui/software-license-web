@@ -33,7 +33,6 @@ export class App {
   protected readonly grupoLicencasAberto = signal(false);
   protected readonly grupoEquipamentosAberto = signal(false);
   protected readonly grupoPatrimonioAberto = signal(false);
-  protected readonly grupoContratosAberto = signal(false);
   protected readonly menuMobileAberto = signal(false);
 
   constructor() {
@@ -112,11 +111,6 @@ export class App {
     if (abrindo) {
       this.grupoLicencasAberto.set(false);
     }
-  }
-
-  // Subgrupo dentro de Suprimentos - sozinho, sem irmão pra fechar.
-  protected alternarGrupoContratos(): void {
-    this.grupoContratosAberto.update((aberto) => !aberto);
   }
 
   protected alternarMenuMobile(): void {

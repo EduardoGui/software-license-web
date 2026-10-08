@@ -84,21 +84,7 @@
               <a routerLink="/dp/unidades-orcamentarias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
                 Plano de UA
               </a>
-              <button type="button" class="menu__grupo menu__grupo--sub" (click)="alternarGrupoContratos()">
-                <span class="menu__grupo-seta">{{ grupoContratosAberto() ? '▾' : '▸' }}</span>
-                Contratos
-              </button>
-              @if (grupoContratosAberto()) {
-                <a routerLink="/contratos" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub2">
-                  Contratos
-                </a>
-                <a routerLink="/contratos/timeline" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                  Linha do Tempo
-                </a>
-                <a routerLink="/contratos/base-dados" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub2">
-                  Base de dados
-                </a>
-              }
+              <a routerLink="/contratos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Contratos</a>
             }
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoDp()">

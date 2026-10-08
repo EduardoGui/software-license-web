@@ -73,6 +73,7 @@ import { EmpresasPjList } from './features/empresas-pj/empresas-pj-list';
 import { EmpresaPjForm } from './features/empresas-pj/empresa-pj-form';
 import { FornecedoresList } from './features/fornecedores/fornecedores-list';
 import { FornecedorForm } from './features/fornecedores/fornecedor-form';
+import { ContratosPainel } from './features/contratos/contratos-painel';
 import { ContratosList } from './features/contratos/contratos-list';
 import { ContratoForm } from './features/contratos/contrato-form';
 import { ContratoView } from './features/contratos/contrato-view';
@@ -257,11 +258,18 @@ export const routes: Routes = [
           },
         ],
       },
-      { path: 'contratos', component: ContratosList, canActivate: [adminGuard] },
-      { path: 'contratos/novo', component: ContratoForm, canActivate: [adminGuard] },
-      { path: 'contratos/timeline', component: ContratosTimeline, canActivate: [adminGuard] },
-      { path: 'contratos/base-dados', component: BaseDadosEngenhariaPage, canActivate: [adminGuard] },
-      { path: 'contratos/:id', component: ContratoView, canActivate: [adminGuard] },
+      {
+        path: 'contratos',
+        component: ContratosPainel,
+        canActivate: [adminGuard],
+        children: [
+          { path: '', component: ContratosList },
+          { path: 'novo', component: ContratoForm },
+          { path: 'timeline', component: ContratosTimeline },
+          { path: 'base-dados', component: BaseDadosEngenhariaPage },
+          { path: ':id', component: ContratoView },
+        ],
+      },
       { path: 'ordens-compra', component: OrdensCompraList, canActivate: [adminGuard] },
       { path: 'ordens-compra/novo', component: OrdemCompraForm, canActivate: [adminGuard] },
       { path: 'ordens-compra/:id/editar', component: OrdemCompraForm, canActivate: [adminGuard] },
