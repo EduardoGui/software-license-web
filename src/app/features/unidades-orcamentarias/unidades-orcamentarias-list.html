@@ -65,7 +65,7 @@
               <td>{{ unidade.setorNome }}</td>
               <td>{{ unidade.codigo }}</td>
               <td>{{ unidade.descricao }}</td>
-              <td class="celula-truncada" [title]="unidade.apropriacao || ''">{{ unidade.apropriacao || '-' }}</td>
+              <td class="celula-apropriacao">{{ unidade.apropriacao || '-' }}</td>
               <td>
                 <span class="badge" [class.badge--ativa]="unidade.ativa" [class.badge--inativa]="!unidade.ativa">
                   {{ unidade.ativa ? 'Ativa' : 'Inativa' }}
