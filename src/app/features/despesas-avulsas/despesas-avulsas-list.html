@@ -50,7 +50,7 @@
   } @else if (despesas().length === 0) {
     <p class="status">Nenhuma despesa avulsa encontrada.</p>
   } @else {
-    <div class="tabela-scroll">
+    <div class="tabela-scroll" tabindex="0" role="region" aria-label="Tabela de despesas avulsas">
       <table>
         <thead>
           <tr>
@@ -85,7 +85,7 @@
                 }
               </td>
               <td class="acoes">
-                <a [routerLink]="['/despesas-avulsas', d.id]" title="Visualizar" aria-label="Visualizar">
+                <a [routerLink]="['/despesas-avulsas', d.id]" title="Visualizar" [attr.aria-label]="'Visualizar despesa de ' + d.fornecedorNome">
                   <app-icon name="eye" [size]="18" />
                 </a>
               </td>
@@ -96,7 +96,7 @@
           <tr>
             <td colspan="6"><strong>Total</strong></td>
             <td><strong>{{ totalValor() | number: '1.2-2' }}</strong></td>
-            <td colspan="2"></td>
+            <td colspan="3"></td>
           </tr>
         </tfoot>
       </table>

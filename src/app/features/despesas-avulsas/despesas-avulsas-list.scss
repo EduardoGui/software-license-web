@@ -84,15 +84,20 @@ h1 {
 }
 
 .tabela-scroll {
-  overflow-x: auto;
+  // Rolagem própria (vertical e horizontal): a barra horizontal fica sempre visível na base da área,
+  // sem precisar descer a página, e o cabeçalho, o total, o fornecedor e o botão de visualizar ficam fixos.
+  overflow: auto;
+  max-height: calc(100vh - 20rem);
+  min-height: 240px;
   border: 1px solid var(--color-border-light);
   border-radius: 8px;
 }
 
 table {
   width: 100%;
-  min-width: 1000px;
-  border-collapse: collapse;
+  min-width: 1100px;
+  border-collapse: separate;
+  border-spacing: 0;
   background: #fff;
 }
 
@@ -104,14 +109,77 @@ td {
 }
 
 th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
   background: var(--color-bg-page);
   color: var(--color-text);
   font-size: 0.85rem;
   text-transform: uppercase;
 }
 
-tfoot td {
+// Fornecedor (esquerda) e Ações (direita) acompanham a rolagem horizontal; os textos longos quebram linha.
+th:first-child,
+td:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  min-width: 200px;
+  max-width: 260px;
+  background: #fff;
+  box-shadow: 1px 0 0 var(--color-border-light);
+}
+
+th:last-child,
+td:last-child {
+  position: sticky;
+  right: 0;
+  z-index: 1;
+  background: #fff;
+  box-shadow: -1px 0 0 var(--color-border-light);
+}
+
+th:first-child,
+th:last-child {
+  z-index: 3;
+  background: var(--color-bg-page);
+}
+
+// Valor (coluna 7) e seu total alinhados à direita.
+th:nth-child(7),
+td:nth-child(7),
+tfoot td:nth-child(2) {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+td:nth-child(3) {
+  min-width: 220px;
+  max-width: 320px;
+  overflow-wrap: anywhere;
+}
+
+tfoot td,
+tfoot td:first-child,
+tfoot td:last-child {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
   border-bottom: none;
+  background: var(--color-bg-subtle);
+  box-shadow: 0 -1px 0 var(--color-border-light);
+}
+
+tfoot td:first-child {
+  left: auto;
+  max-width: none;
+}
+
+tfoot td:last-child {
+  right: auto;
+}
+
+tbody tr:hover td {
   background: var(--color-bg-subtle);
 }
 
@@ -126,9 +194,7 @@ tfoot td {
 }
 
 .acoes {
-  display: flex;
-  gap: 0.35rem;
-  align-items: center;
+  white-space: nowrap;
 }
 
 .acoes a {
