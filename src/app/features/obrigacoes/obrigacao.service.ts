@@ -33,6 +33,11 @@ export class ObrigacaoService {
     return this.http.put<Obrigacao>(`${this.baseUrl}/${id}`, payload);
   }
 
+  /** Ordem de Compra paga em várias vezes: cria mais uma obrigação (parcela) ligada à mesma OC, copiando a NF. */
+  adicionarParcela(id: number, valor: number): Observable<Obrigacao> {
+    return this.http.post<Obrigacao>(`${this.baseUrl}/${id}/parcelas`, { valor });
+  }
+
   marcarEnviadaFinanceiro(id: number, dataPrevistaPagamento: string | null): Observable<Obrigacao> {
     return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/marcar-enviada-financeiro`, { dataPrevistaPagamento });
   }

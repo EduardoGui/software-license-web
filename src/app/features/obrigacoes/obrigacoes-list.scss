@@ -376,3 +376,44 @@ tfoot td {
   justify-content: flex-end;
   gap: 0.5rem;
 }
+
+.parcelas-info {
+  margin: 0 0 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: var(--color-tertiary-tint);
+  color: var(--color-tertiary);
+  font-size: 0.85rem;
+}
+
+.parcelas-info--alerta {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.nova-parcela {
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  background: var(--color-bg-subtle);
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    max-width: 220px;
+    font-size: 0.85rem;
+  }
+
+  .dica {
+    margin: 0.5rem 0;
+    font-size: 0.8rem;
+    color: var(--color-secondary);
+  }
+}
+
+.nova-parcela__acoes {
+  display: flex;
+  gap: 0.5rem;
+}

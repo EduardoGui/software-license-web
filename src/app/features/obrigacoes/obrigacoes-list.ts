@@ -57,7 +57,13 @@ export class ObrigacoesList {
   protected readonly erroLinha = signal<string | null>(null);
   protected readonly processandoAcao = signal(false);
 
+  // Nova parcela (OC paga em várias vezes): painel dentro da linha expandida.
+  protected readonly parcelaEmCriacaoId = signal<number | null>(null);
+  protected readonly criandoParcela = signal(false);
+  protected readonly valorNovaParcela = this.fb.control<number | null>(null);
+
   protected readonly formLinha = this.fb.nonNullable.group({
+    valorPrevisto: this.fb.control<number | null>(null),
     dataNf: [''],
     numeroNf: [''],
     valorNota: this.fb.control<number | null>(null),
@@ -166,7 +172,8 @@ export class ObrigacoesList {
     const primeiraPalavra = o.fornecedorNome.split(' ')[0];
 
     if (o.tipoMovimento === 'OC') {
-      return `OC-${String(o.ordemCompraNumero).padStart(3, '0')} · ${primeiraPalavra}`;
+      const parcela = o.totalParcelas > 1 ? ` · ${o.numeroParcela}/${o.totalParcelas}` : '';
+      return `OC-${String(o.ordemCompraNumero).padStart(3, '0')} · ${primeiraPalavra}${parcela}`;
     }
 
     if (o.tipoMovimento === 'Medição') {
@@ -193,7 +200,9 @@ export class ObrigacoesList {
 
     this.expandidoId.set(o.id);
     this.erroLinha.set(null);
+    this.parcelaEmCriacaoId.set(null);
     this.formLinha.reset({
+      valorPrevisto: o.valorPrevisto,
       dataNf: o.dataNf ?? '',
       numeroNf: o.numeroNf ?? '',
       valorNota: o.valorNota,
@@ -213,6 +222,7 @@ export class ObrigacoesList {
 
     this.obrigacaoService
       .atualizar(o.id, {
+        valorPrevisto: this.valorPrevistoEditavel(o) ? valor.valorPrevisto : undefined,
         dataNf: valor.dataNf || null,
         numeroNf: valor.numeroNf || null,
         valorNota: valor.valorNota,
@@ -225,8 +235,14 @@ export class ObrigacoesList {
       })
       .subscribe({
         next: (atualizada) => {
-          this.substituir(atualizada);
           this.salvandoLinha.set(false);
+          if (o.totalParcelas > 1) {
+            // A NF e a competência são copiadas para as outras parcelas: recarrega a lista inteira.
+            this.buscar();
+            return;
+          }
+
+          this.substituir(atualizada);
           this.expandidoId.set(null);
         },
         error: (err) => {
@@ -234,6 +250,53 @@ export class ObrigacoesList {
           this.erroLinha.set(err?.error?.message ?? 'Não foi possível salvar.');
         },
       });
+  }
+
+  // --- Parcelas (OC paga em várias vezes: uma NF, vários boletos) ---
+
+  protected valorPrevistoEditavel(o: Obrigacao): boolean {
+    return o.tipoMovimento === 'OC' && o.totalParcelas > 1 && !o.pago && !o.cancelada;
+  }
+
+  protected podeAdicionarParcela(o: Obrigacao): boolean {
+    return o.tipoMovimento === 'OC' && !o.cancelada;
+  }
+
+  protected somaDivergente(o: Obrigacao): boolean {
+    return o.somaParcelas !== null && o.valorReferenciaParcelas !== null && Math.abs(o.somaParcelas - o.valorReferenciaParcelas) >= 0.005;
+  }
+
+  protected rotuloReferencia(o: Obrigacao): string {
+    return o.valorNota !== null ? 'valor da NF' : 'total da OC';
+  }
+
+  protected abrirNovaParcela(o: Obrigacao): void {
+    this.erroLinha.set(null);
+    this.valorNovaParcela.setValue(Math.round((o.valorPrevisto / 2) * 100) / 100);
+    this.parcelaEmCriacaoId.set(o.id);
+  }
+
+  protected criarParcela(o: Obrigacao): void {
+    const valor = this.valorNovaParcela.value;
+    if (valor === null || !(valor > 0)) {
+      this.erroLinha.set('Informe o valor da nova parcela.');
+      return;
+    }
+
+    this.criandoParcela.set(true);
+    this.erroLinha.set(null);
+
+    this.obrigacaoService.adicionarParcela(o.id, valor).subscribe({
+      next: () => {
+        this.criandoParcela.set(false);
+        this.parcelaEmCriacaoId.set(null);
+        this.buscar();
+      },
+      error: (err) => {
+        this.criandoParcela.set(false);
+        this.erroLinha.set(err?.error?.message ?? 'Não foi possível adicionar a parcela.');
+      },
+    });
   }
 
   protected abrirSolicitacaoPagamento(o: Obrigacao): void {

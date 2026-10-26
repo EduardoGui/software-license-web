@@ -117,8 +117,25 @@
               <tr class="linha-expandida">
                 <td colspan="6">
                   <div class="acompanhamento" (click)="$event.stopPropagation()">
+                    @if (o.tipoMovimento === 'OC' && o.totalParcelas > 1) {
+                      <p class="parcelas-info" [class.parcelas-info--alerta]="somaDivergente(o)">
+                        Parcela {{ o.numeroParcela }} de {{ o.totalParcelas }} — parcelas somam R$ {{ o.somaParcelas | number: '1.2-2' }}, {{ rotuloReferencia(o) }}
+                        R$ {{ o.valorReferenciaParcelas | number: '1.2-2' }}
+                        @if (somaDivergente(o)) {
+                          <strong>(diferença de R$ {{ o.somaParcelas! - o.valorReferenciaParcelas! | number: '1.2-2' }}: ajuste o valor das parcelas)</strong>
+                        } @else {
+                          (confere)
+                        }
+                      </p>
+                    }
                     <form [formGroup]="formLinha" (ngSubmit)="salvarLinha(o)">
                       <div class="grid">
+                        @if (valorPrevistoEditavel(o)) {
+                          <label>
+                            Valor desta parcela (R$)
+                            <input type="number" step="0.01" min="0.01" formControlName="valorPrevisto" />
+                          </label>
+                        }
                         <label>
                           Data da NF
                           <input type="date" formControlName="dataNf" />
@@ -166,6 +183,9 @@
                           @if (!o.cancelada) {
                             <button type="button" class="botao" (click)="abrirSolicitacaoPagamento(o)">E-mail ao financeiro</button>
                           }
+                          @if (podeAdicionarParcela(o)) {
+                            <button type="button" class="botao" [disabled]="processandoAcao()" (click)="abrirNovaParcela(o)">Adicionar parcela</button>
+                          }
                           @if (!o.cancelada && !o.pago) {
                             <button type="button" class="botao botao--primario" [disabled]="processandoAcao()" (click)="marcarPaga(o)">
                               Marcar como paga
@@ -192,6 +212,24 @@
                         </button>
                       </div>
                     </form>
+
+                    @if (parcelaEmCriacaoId() === o.id) {
+                      <div class="nova-parcela">
+                        <label>
+                          Valor da nova parcela (R$)
+                          <input type="number" step="0.01" min="0.01" [formControl]="valorNovaParcela" (keydown.enter)="$event.preventDefault(); criarParcela(o)" />
+                        </label>
+                        <p class="dica">
+                          A NF é copiada para a nova parcela e o valor sai da parcela atual (se ainda não estiver paga). Vencimento e demais datas ficam em branco.
+                        </p>
+                        <div class="nova-parcela__acoes">
+                          <button type="button" class="botao botao--primario" [disabled]="criandoParcela()" (click)="criarParcela(o)">
+                            {{ criandoParcela() ? 'Criando...' : 'Criar parcela' }}
+                          </button>
+                          <button type="button" class="botao botao--texto" (click)="parcelaEmCriacaoId.set(null)">Cancelar</button>
+                        </div>
+                      </div>
+                    }
                   </div>
                 </td>
               </tr>

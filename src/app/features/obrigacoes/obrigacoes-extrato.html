@@ -18,6 +18,7 @@
       <table>
         <thead>
           <tr>
+            <th>Parcela</th>
             <th>Competência</th>
             <th>Vencimento</th>
             <th>Valor previsto</th>
@@ -29,6 +30,7 @@
         <tbody>
           @for (o of obrigacoes(); track o.id) {
             <tr [class.linha--cancelada]="o.cancelada">
+              <td>{{ o.totalParcelas > 1 ? o.numeroParcela + '/' + o.totalParcelas : '-' }}</td>
               <td>{{ competenciaBr(o.competencia) }}</td>
               <td>{{ o.vencimento ? (o.vencimento | dataBr) : '-' }}</td>
               <td>{{ o.valorPrevisto | number: '1.2-2' }}</td>
@@ -42,5 +44,16 @@
         </tbody>
       </table>
     </div>
+
+    @if (resumoParcelas(); as r) {
+      <p class="resumo-parcelas" [class.resumo-parcelas--alerta]="r.divergente">
+        Parcelas somam R$ {{ r.soma | number: '1.2-2' }}; {{ r.rotulo }} R$ {{ r.referencia | number: '1.2-2' }}
+        @if (r.divergente) {
+          <strong>(diferença de R$ {{ r.soma - r.referencia | number: '1.2-2' }}: ajuste o valor das parcelas)</strong>
+        } @else {
+          (confere)
+        }
+      </p>
+    }
   }
 </section>

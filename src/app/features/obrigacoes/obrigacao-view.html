@@ -19,6 +19,9 @@
       <div class="grid-info">
         <div><span>Competência</span><strong>{{ competenciaBr(o.competencia) }}</strong></div>
         <div><span>Valor previsto</span><strong>R$ {{ o.valorPrevisto | number: '1.2-2' }}</strong></div>
+        @if (o.totalParcelas > 1) {
+          <div><span>Parcela</span><strong>{{ o.numeroParcela }} de {{ o.totalParcelas }}</strong></div>
+        }
         @if (o.contratoNumero) {
           <div>
             <span>Contrato</span>
