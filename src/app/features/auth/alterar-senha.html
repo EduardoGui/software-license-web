@@ -1,0 +1,42 @@
+<section class="form-page">
+  <header class="topo">
+    <h1>Alterar minha senha</h1>
+  </header>
+
+  <form [formGroup]="form" (ngSubmit)="salvar()">
+    @if (sucesso()) {
+      <p class="mensagem" role="status">Senha alterada com sucesso.</p>
+    }
+    @if (erro()) {
+      <p class="mensagem mensagem--erro" role="alert">{{ erro() }}</p>
+    }
+
+    <label>
+      Senha atual
+      <input type="password" formControlName="senhaAtual" autocomplete="current-password" />
+      @if (form.controls.senhaAtual.invalid && form.controls.senhaAtual.touched) {
+        <span class="campo-erro">Informe a senha atual.</span>
+      }
+    </label>
+
+    <label>
+      Nova senha
+      <input type="password" formControlName="novaSenha" autocomplete="new-password" />
+      @if (form.controls.novaSenha.invalid && form.controls.novaSenha.touched) {
+        <span class="campo-erro">Mínimo de 6 caracteres.</span>
+      }
+    </label>
+
+    <label>
+      Confirmar nova senha
+      <input type="password" formControlName="confirmarSenha" autocomplete="new-password" />
+      @if (form.controls.confirmarSenha.invalid && form.controls.confirmarSenha.touched) {
+        <span class="campo-erro">Confirmação é obrigatória.</span>
+      }
+    </label>
+
+    <button type="submit" class="botao botao--primario" [disabled]="salvando()">
+      {{ salvando() ? 'Salvando...' : 'Alterar senha' }}
+    </button>
+  </form>
+</section>

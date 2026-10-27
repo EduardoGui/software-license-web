@@ -3,13 +3,14 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
+import { DatePipe } from '@angular/common';
 import { UsuarioService } from '../usuarios/usuario.service';
 import { AcessoConta } from './acesso';
 import { AcessoService } from './acesso.service';
 
 @Component({
   selector: 'app-acesso-page',
-  imports: [FormsModule, RouterLink, Icon],
+  imports: [FormsModule, RouterLink, Icon, DatePipe],
   templateUrl: './acesso-page.html',
   styleUrl: './acesso-page.scss',
 })
@@ -25,7 +26,7 @@ export class AcessoPage {
   protected readonly mensagem = signal<{ tipo: 'ok' | 'erro'; texto: string } | null>(null);
 
   protected busca = '';
-  protected filtroSituacao: 'todos' | 'semConta' | 'bloqueados' | 'administradores' | 'administrativos' = 'todos';
+  protected filtroSituacao: 'todos' | 'semConta' | 'bloqueados' | 'administradores' | 'administrativos' | 'nuncaEntrou' = 'todos';
   protected mostrarDesligados = false;
 
   protected readonly resumo = computed(() => {
@@ -35,6 +36,7 @@ export class AcessoPage {
       semConta: contas.filter((c) => !c.temConta && c.statusUsuario !== 'Inativo').length,
       bloqueadas: contas.filter((c) => c.bloqueada).length,
       administradores: contas.filter((c) => c.papeis.includes('Administrador')).length,
+      nuncaEntraram: contas.filter((c) => c.temConta && !c.ultimoAcessoEm && c.statusUsuario !== 'Inativo').length,
     };
   });
 
@@ -75,6 +77,8 @@ export class AcessoPage {
           return c.papeis.includes('Administrador');
         case 'administrativos':
           return c.papeis.includes('Administrativo');
+        case 'nuncaEntrou':
+          return c.temConta && !c.ultimoAcessoEm && c.statusUsuario !== 'Inativo';
         default:
           return true;
       }
@@ -119,7 +123,7 @@ export class AcessoPage {
       return;
     }
 
-    if (!confirm(`Bloquear o acesso de "${conta.nome}"? Ela não consegue mais entrar no sistema (em até 30 segundos) até você liberar.`)) {
+    if (!confirm(`Bloquear o acesso de "${conta.nome}"? A pessoa não consegue mais entrar no sistema (em até 30 segundos) até você liberar.`)) {
       return;
     }
     this.executar(conta, this.acessoService.bloquear(conta.contaId), `Acesso de ${conta.nome} bloqueado.`);

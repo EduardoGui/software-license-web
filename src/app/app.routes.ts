@@ -6,6 +6,8 @@ import { administrativoGuard } from './core/administrativo-guard';
 import { usuarioViewGuard } from './core/usuario-view-guard';
 import { Login } from './features/auth/login';
 import { DefinirSenha } from './features/auth/definir-senha';
+import { EsqueciSenha } from './features/auth/esqueci-senha';
+import { AlterarSenha } from './features/auth/alterar-senha';
 import { RecebimentoPage } from './features/recebimento/recebimento-page';
 import { DashboardPage } from './features/dashboard/dashboard-page';
 import { AgendaPage } from './features/agenda/agenda-page';
@@ -105,6 +107,7 @@ import { ObrigacaoView } from './features/obrigacoes/obrigacao-view';
 export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'definir-senha', component: DefinirSenha },
+  { path: 'esqueci-senha', component: EsqueciSenha },
   { path: 'recebimento/:token', component: RecebimentoPage },
   {
     path: 'contratos/:id/medicoes/:medicaoId/imprimir',
@@ -121,6 +124,7 @@ export const routes: Routes = [
       { path: 'agenda/tarefas/novo', component: TarefaRecorrenteForm, canActivate: [adminGuard] },
       { path: 'agenda/tarefas/:id/editar', component: TarefaRecorrenteForm, canActivate: [adminGuard] },
       { path: 'usuarios', component: UsuariosList, canActivate: [adminGuard] },
+      { path: 'minha-conta/senha', component: AlterarSenha },
       { path: 'usuarios/acesso', component: AcessoPage, canActivate: [adminGuard] },
       { path: 'usuarios/novo', component: UsuarioForm, canActivate: [adminGuard] },
       { path: 'usuarios/:id/editar', component: UsuarioForm, canActivate: [adminGuard] },

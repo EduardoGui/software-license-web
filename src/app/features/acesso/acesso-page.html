@@ -12,6 +12,7 @@
     <div class="resumo__item" [class.resumo__item--alerta]="resumo().semConta > 0"><strong>{{ resumo().semConta }}</strong> sem conta</div>
     <div class="resumo__item" [class.resumo__item--alerta]="resumo().bloqueadas > 0"><strong>{{ resumo().bloqueadas }}</strong> bloqueadas</div>
     <div class="resumo__item"><strong>{{ resumo().administradores }}</strong> administradores</div>
+    <div class="resumo__item" [class.resumo__item--alerta]="resumo().nuncaEntraram > 0" title="Têm conta mas nunca fizeram login (convite não aceito)"><strong>{{ resumo().nuncaEntraram }}</strong> nunca entraram</div>
   </div>
 
   <form class="filtros" (submit)="$event.preventDefault()">
@@ -27,6 +28,7 @@
         <option value="bloqueados">Bloqueados</option>
         <option value="administradores">Administradores</option>
         <option value="administrativos">Administrativos</option>
+        <option value="nuncaEntrou">Nunca entraram</option>
       </select>
     </label>
     <label class="filtros__check">
@@ -53,6 +55,7 @@
             <th>Colaborador</th>
             <th>Situação</th>
             <th>Conta</th>
+            <th>Último acesso</th>
             <th title="Todo colaborador tem acesso a 'Meus dados' e Reembolsos">Administrativo</th>
             <th>Administrador</th>
             <th>Ações</th>
@@ -78,12 +81,23 @@
               <td>
                 @if (!conta.temConta) {
                   <span class="badge badge--sem-conta">Sem conta</span>
+                } @else if (conta.bloqueioTemporario) {
+                  <span class="badge badge--bloqueada" title="Bloqueada automaticamente por senhas erradas; libera sozinha em até 15 minutos">Bloqueada (tentativas)</span>
                 } @else if (conta.bloqueada) {
                   <span class="badge badge--bloqueada">Bloqueada</span>
                 } @else if (conta.statusUsuario === 'Inativo') {
                   <span class="badge badge--bloqueada" title="Colaborador desligado: o login é recusado automaticamente">Desligado</span>
                 } @else {
                   <span class="badge badge--ativo">Ativa</span>
+                }
+              </td>
+              <td>
+                @if (!conta.temConta) {
+                  <span class="email">—</span>
+                } @else if (conta.ultimoAcessoEm) {
+                  {{ conta.ultimoAcessoEm | date: 'dd/MM/yyyy HH:mm' }}
+                } @else {
+                  <span class="email">Nunca entrou</span>
                 }
               </td>
               <td class="centro">

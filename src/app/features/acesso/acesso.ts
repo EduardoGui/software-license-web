@@ -9,5 +9,7 @@ export interface AcessoConta {
   temConta: boolean;
   papeis: string[];
   bloqueada: boolean;
+  bloqueioTemporario: boolean;
+  ultimoAcessoEm: string | null;
   ehVoce: boolean;
 }

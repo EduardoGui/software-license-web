@@ -26,6 +26,14 @@ export class AuthService {
     return this.http.post<void>(`${this.baseUrl}/definir-senha`, payload);
   }
 
+  esqueciSenha(email: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/esqueci-senha`, { email });
+  }
+
+  alterarSenha(senhaAtual: string, novaSenha: string): Observable<void> {
+    return this.http.post<void>(`${environment.apiUrl}/conta/alterar-senha`, { senhaAtual, novaSenha });
+  }
+
   logout(): void {
     localStorage.removeItem(CHAVE_TOKEN);
     localStorage.removeItem(CHAVE_EMAIL);

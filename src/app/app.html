@@ -128,6 +128,7 @@
         }
         <div class="menu__rodape-mobile">
           <span class="usuario-logado">{{ authService.obterEmail() }}</span>
+          <a routerLink="/minha-conta/senha" class="botao-sair">Alterar minha senha</a>
           <button type="button" class="botao-sair" (click)="sair()">
             <app-icon name="log-out" [size]="16" /> Sair
           </button>
@@ -135,6 +136,7 @@
       </nav>
       <div class="rodape">
         <span class="usuario-logado">{{ authService.obterEmail() }}</span>
+        <a routerLink="/minha-conta/senha" class="botao-sair">Alterar minha senha</a>
         <button type="button" class="botao-sair" (click)="sair()">
           <app-icon name="log-out" [size]="16" /> Sair
         </button>
