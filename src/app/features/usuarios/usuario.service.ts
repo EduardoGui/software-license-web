@@ -37,6 +37,14 @@ export class UsuarioService {
     return this.http.patch<Usuario>(`${this.baseUrl}/${id}/desativar`, { dataFim });
   }
 
+  reativar(id: number): Observable<Usuario> {
+    return this.http.patch<Usuario>(`${this.baseUrl}/${id}/reativar`, {});
+  }
+
+  criarContaAcesso(id: number): Observable<{ conviteEnviado: boolean }> {
+    return this.http.post<{ conviteEnviado: boolean }>(`${this.baseUrl}/${id}/conta-acesso`, {});
+  }
+
   atualizarPerfil(id: number, payload: PerfilPayload): Observable<Usuario> {
     return this.http.patch<Usuario>(`${this.baseUrl}/${id}/perfil`, payload);
   }

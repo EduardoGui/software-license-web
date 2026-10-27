@@ -62,6 +62,17 @@ h1 {
   display: inline-block;
 }
 
+.topo__acoes {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.botao--pequeno {
+  padding: 0.2rem 0.6rem;
+  font-size: 0.78rem;
+}
+
 .botao--primario {
   background: var(--color-primary);
   color: #fff;

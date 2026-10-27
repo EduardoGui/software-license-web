@@ -145,7 +145,15 @@ export class UsuarioForm {
       : this.usuarioService.criar(payload);
 
     requisicao.subscribe({
-      next: () => this.router.navigate(['/usuarios']),
+      next: (usuario) => {
+        if (usuario.conviteEnviado === false) {
+          alert(
+            `Usuário criado, mas o e-mail de convite para ${usuario.email} NÃO foi enviado. ` +
+              `Use "Reenviar convite" (ícone de e-mail na lista) para tentar de novo.`,
+          );
+        }
+        this.router.navigate(['/usuarios']);
+      },
       error: (err) => {
         this.salvando.set(false);
         this.erro.set(err?.error?.message ?? 'Não foi possível salvar o usuário.');

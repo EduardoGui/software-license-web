@@ -21,6 +21,7 @@ export class UsuariosList {
   protected readonly erro = signal(false);
   protected readonly desativandoId = signal<number | null>(null);
   protected readonly reenviandoConviteId = signal<number | null>(null);
+  protected readonly reativandoId = signal<number | null>(null);
 
   protected filtro: UsuarioFiltro = { status: 'Ativo' };
 
@@ -64,6 +65,28 @@ export class UsuariosList {
       error: () => {
         this.desativandoId.set(null);
         alert('Não foi possível desativar o usuário.');
+      },
+    });
+  }
+
+  protected reativar(usuario: Usuario): void {
+    const confirmado = confirm(
+      `Reativar "${usuario.nome}"? A data de fim será removida e o acesso volta a funcionar. ` +
+        `As licenças e equipamentos encerrados na desativação não voltam sozinhos.`,
+    );
+    if (!confirmado) {
+      return;
+    }
+
+    this.reativandoId.set(usuario.id);
+    this.usuarioService.reativar(usuario.id).subscribe({
+      next: () => {
+        this.reativandoId.set(null);
+        this.buscar();
+      },
+      error: (err) => {
+        this.reativandoId.set(null);
+        alert(err?.error?.message ?? 'Não foi possível reativar o usuário.');
       },
     });
   }

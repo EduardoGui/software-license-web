@@ -1,0 +1,142 @@
+<section class="acesso">
+  <header class="topo">
+    <div>
+      <h1>Gerenciar acessos</h1>
+      <p class="subtitulo">Quem tem conta no sistema, com qual perfil, e quem está bloqueado.</p>
+    </div>
+    <a class="botao" routerLink="/usuarios"><app-icon name="arrow-left" [size]="16" /> Usuários</a>
+  </header>
+
+  <div class="resumo">
+    <div class="resumo__item"><strong>{{ resumo().comConta }}</strong> com conta</div>
+    <div class="resumo__item" [class.resumo__item--alerta]="resumo().semConta > 0"><strong>{{ resumo().semConta }}</strong> sem conta</div>
+    <div class="resumo__item" [class.resumo__item--alerta]="resumo().bloqueadas > 0"><strong>{{ resumo().bloqueadas }}</strong> bloqueadas</div>
+    <div class="resumo__item"><strong>{{ resumo().administradores }}</strong> administradores</div>
+  </div>
+
+  <form class="filtros" (submit)="$event.preventDefault()">
+    <label>
+      Buscar
+      <input type="text" name="busca" [(ngModel)]="busca" placeholder="Nome ou e-mail" />
+    </label>
+    <label>
+      Mostrar
+      <select name="situacao" [(ngModel)]="filtroSituacao">
+        <option value="todos">Todos</option>
+        <option value="semConta">Sem conta de acesso</option>
+        <option value="bloqueados">Bloqueados</option>
+        <option value="administradores">Administradores</option>
+        <option value="administrativos">Administrativos</option>
+      </select>
+    </label>
+    <label class="filtros__check">
+      <input type="checkbox" name="desligados" [(ngModel)]="mostrarDesligados" />
+      Incluir desligados
+    </label>
+  </form>
+
+  @if (mensagem(); as msg) {
+    <p class="mensagem" [class.mensagem--erro]="msg.tipo === 'erro'" role="status">{{ msg.texto }}</p>
+  }
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os acessos.</p>
+  } @else if (contasFiltradas.length === 0) {
+    <p class="status">Nenhum resultado.</p>
+  } @else {
+    <div class="tabela-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th>Colaborador</th>
+            <th>Situação</th>
+            <th>Conta</th>
+            <th title="Todo colaborador tem acesso a 'Meus dados' e Reembolsos">Administrativo</th>
+            <th>Administrador</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (conta of contasFiltradas; track chave(conta)) {
+            <tr [class.linha--inativa]="conta.statusUsuario === 'Inativo'">
+              <td>
+                {{ conta.nome }}
+                @if (conta.ehVoce) {
+                  <span class="voce">você</span>
+                }
+                <div class="email">{{ conta.email }}</div>
+              </td>
+              <td>
+                @if (conta.statusUsuario) {
+                  <span class="badge" [class]="'badge--' + conta.statusUsuario.toLowerCase()">{{ conta.statusUsuario }}</span>
+                } @else {
+                  <span class="email">Sem colaborador</span>
+                }
+              </td>
+              <td>
+                @if (!conta.temConta) {
+                  <span class="badge badge--sem-conta">Sem conta</span>
+                } @else if (conta.bloqueada) {
+                  <span class="badge badge--bloqueada">Bloqueada</span>
+                } @else if (conta.statusUsuario === 'Inativo') {
+                  <span class="badge badge--bloqueada" title="Colaborador desligado: o login é recusado automaticamente">Desligado</span>
+                } @else {
+                  <span class="badge badge--ativo">Ativa</span>
+                }
+              </td>
+              <td class="centro">
+                @if (conta.temConta) {
+                  <input
+                    type="checkbox"
+                    [checked]="tem(conta, 'Administrativo')"
+                    [disabled]="ocupada() === chave(conta)"
+                    [attr.aria-label]="'Administrativo para ' + conta.nome"
+                    (change)="alternarPapel(conta, 'Administrativo', $any($event.target).checked)"
+                  />
+                }
+              </td>
+              <td class="centro">
+                @if (conta.temConta) {
+                  <input
+                    type="checkbox"
+                    [checked]="tem(conta, 'Administrador')"
+                    [disabled]="ocupada() === chave(conta) || conta.ehVoce"
+                    [attr.aria-label]="'Administrador para ' + conta.nome"
+                    [title]="conta.ehVoce ? 'Você não pode alterar o seu próprio papel de Administrador' : ''"
+                    (change)="alternarPapel(conta, 'Administrador', $any($event.target).checked)"
+                  />
+                }
+              </td>
+              <td class="acoes">
+                @if (!conta.temConta) {
+                  <button type="button" class="botao botao--pequeno" [disabled]="ocupada() === chave(conta)" (click)="criarConta(conta)">Criar conta</button>
+                } @else {
+                  @if (conta.usuarioId !== null && conta.statusUsuario !== 'Inativo') {
+                    <button type="button" class="botao botao--pequeno" [disabled]="ocupada() === chave(conta)" (click)="reenviarConvite(conta)">Reenviar convite</button>
+                  }
+                  @if (!conta.ehVoce) {
+                    <button
+                      type="button"
+                      class="botao botao--pequeno"
+                      [class.botao--perigo]="!conta.bloqueada"
+                      [disabled]="ocupada() === chave(conta)"
+                      (click)="alternarBloqueio(conta)"
+                    >
+                      {{ conta.bloqueada ? 'Liberar' : 'Bloquear' }}
+                    </button>
+                  }
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+    <p class="nota">
+      Todo colaborador mantém o perfil <strong>Colaborador</strong> (Meus dados e Reembolsos). Administrativo e
+      Administrador são camadas extras. Quem teve o perfil alterado precisa sair e entrar de novo.
+    </p>
+  }
+</section>

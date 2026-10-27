@@ -29,6 +29,7 @@ export interface Usuario {
   gestorImediatoId: number | null;
   gestorImediatoNome: string | null;
   dependentes: Dependente[];
+  conviteEnviado?: boolean | null;
   dataCriacao: string;
   dataAtualizacao: string;
 }

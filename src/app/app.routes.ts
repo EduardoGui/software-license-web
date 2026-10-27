@@ -14,6 +14,7 @@ import { TarefaRecorrenteForm } from './features/tarefas-recorrentes/tarefa-reco
 import { UsuariosList } from './features/usuarios/usuarios-list';
 import { UsuarioForm } from './features/usuarios/usuario-form';
 import { UsuarioView } from './features/usuarios/usuario-view';
+import { AcessoPage } from './features/acesso/acesso-page';
 import { UsuarioPerfilForm } from './features/usuarios/usuario-perfil-form';
 import { LicencasList } from './features/licencas/licencas-list';
 import { LicencaForm } from './features/licencas/licenca-form';
@@ -120,6 +121,7 @@ export const routes: Routes = [
       { path: 'agenda/tarefas/novo', component: TarefaRecorrenteForm, canActivate: [adminGuard] },
       { path: 'agenda/tarefas/:id/editar', component: TarefaRecorrenteForm, canActivate: [adminGuard] },
       { path: 'usuarios', component: UsuariosList, canActivate: [adminGuard] },
+      { path: 'usuarios/acesso', component: AcessoPage, canActivate: [adminGuard] },
       { path: 'usuarios/novo', component: UsuarioForm, canActivate: [adminGuard] },
       { path: 'usuarios/:id/editar', component: UsuarioForm, canActivate: [adminGuard] },
       { path: 'usuarios/:id/perfil', component: UsuarioPerfilForm, canActivate: [usuarioViewGuard] },
