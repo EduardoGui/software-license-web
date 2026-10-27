@@ -76,6 +76,10 @@ h2 {
   background: #fffbeb;
 }
 
+.so-impressao {
+  display: none;
+}
+
 .botao {
   border: 1px solid var(--color-primary);
   background: #fff;
@@ -327,4 +331,46 @@ $altura-conector: 22px;
 
 .avulso:hover {
   border-style: solid;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 10mm;
+  }
+
+  .organograma {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .topo .botao,
+  .resumo,
+  .barra,
+  h2,
+  .nota,
+  .avulsos {
+    display: none;
+  }
+
+  .so-impressao {
+    display: block;
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    color: var(--color-secondary);
+  }
+
+  .grafico {
+    overflow: visible;
+    border: 0;
+    padding: 0.5rem 0 0;
+  }
+
+  .arvore {
+    min-width: 0;
+    justify-content: center;
+  }
 }

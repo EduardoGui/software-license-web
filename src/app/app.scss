@@ -216,3 +216,23 @@
     overflow-y: visible;
   }
 }
+
+@media print {
+  :host {
+    height: auto;
+  }
+
+  .shell {
+    display: block;
+    height: auto;
+    background: #fff;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .conteudo {
+    overflow: visible;
+  }
+}

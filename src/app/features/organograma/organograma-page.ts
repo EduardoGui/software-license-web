@@ -1,5 +1,5 @@
 import { Component, ElementRef, computed, effect, inject, signal, viewChild } from '@angular/core';
-import { DecimalPipe, NgTemplateOutlet } from '@angular/common';
+import { DatePipe, DecimalPipe, NgTemplateOutlet } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
@@ -14,9 +14,13 @@ interface NoOrganograma {
   total: number;
 }
 
+// Área útil de uma página A4 paisagem com margem de 10 mm (96 dpi), já descontando o cabeçalho do PDF.
+const LARGURA_UTIL_PX = 1000;
+const ALTURA_UTIL_PX = 620;
+
 @Component({
   selector: 'app-organograma-page',
-  imports: [RouterLink, Icon, NgTemplateOutlet, DecimalPipe],
+  imports: [RouterLink, Icon, NgTemplateOutlet, DecimalPipe, DatePipe],
   templateUrl: './organograma-page.html',
   styleUrl: './organograma-page.scss',
 })
@@ -30,6 +34,7 @@ export class OrganogramaPage {
   protected readonly mostrarDesligados = signal(false);
   protected readonly recolhidos = signal<ReadonlySet<number>>(new Set());
   protected readonly zoom = signal(1);
+  protected readonly hoje = new Date();
   private readonly grafico = viewChild<ElementRef<HTMLElement>>('grafico');
 
   private readonly visiveis = computed(() =>
@@ -158,6 +163,38 @@ export class OrganogramaPage {
     // scrollWidth já inclui o zoom atual; volta ao tamanho real antes de calcular o encaixe.
     const larguraReal = el.scrollWidth / this.zoom();
     this.zoom.set(Math.min(1, Math.max(0.3, Math.floor((el.clientWidth / larguraReal) * 10) / 10)));
+  }
+
+  // Imprime só o diagrama (o resto da tela some no CSS de impressão): ajusta o zoom para caber numa
+  // página A4 paisagem e deixa o navegador oferecer "Salvar como PDF". Restaura tudo depois.
+  protected exportarPdf(): void {
+    const ul = this.grafico()?.nativeElement.querySelector<HTMLElement>('.arvore');
+    if (!ul || ul.children.length === 0) {
+      return;
+    }
+
+    ul.style.zoom = '1';
+    const primeira = ul.firstElementChild as HTMLElement;
+    const ultima = ul.lastElementChild as HTMLElement;
+    const largura = ultima.offsetLeft + ultima.offsetWidth - primeira.offsetLeft;
+    const altura = ul.offsetHeight;
+    ul.style.removeProperty('zoom');
+
+    const zoomAnterior = this.zoom();
+    const tituloAnterior = document.title;
+    this.zoom.set(Math.floor(Math.min(1, LARGURA_UTIL_PX / largura, ALTURA_UTIL_PX / altura) * 100) / 100);
+    document.title = `Hierarquia - ${new Date().toLocaleDateString('pt-BR').replaceAll('/', '-')}`;
+
+    window.addEventListener(
+      'afterprint',
+      () => {
+        this.zoom.set(zoomAnterior);
+        document.title = tituloAnterior;
+      },
+      { once: true },
+    );
+    // Dá um tempo para o Angular aplicar o zoom antes de abrir a impressão.
+    setTimeout(() => window.print(), 150);
   }
 
   protected expandirTudo(): void {

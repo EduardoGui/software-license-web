@@ -3,6 +3,7 @@
     <div>
       <h1>Hierarquia</h1>
       <p class="subtitulo">Cada pessoa ligada ao seu gestor imediato.</p>
+      <p class="so-impressao">Gerado em {{ hoje | date: 'dd/MM/yyyy' }}</p>
     </div>
     <a class="botao" routerLink="/usuarios"><app-icon name="arrow-left" [size]="16" /> Usuários</a>
   </header>
@@ -28,6 +29,7 @@
           <button type="button" class="botao botao--pequeno" (click)="mudarZoom(0.1)" aria-label="Aumentar">+</button>
           <button type="button" class="botao botao--pequeno" (click)="ajustarATela()">Ajustar à tela</button>
         </span>
+        <button type="button" class="botao botao--pequeno" (click)="exportarPdf()" [disabled]="raizes().length === 0">Exportar PDF</button>
         <label class="check">
           <input type="checkbox" [checked]="mostrarDesligados()" (change)="mostrarDesligados.set(!mostrarDesligados())" />
           Mostrar desligados
