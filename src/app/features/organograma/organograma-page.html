@@ -1,0 +1,94 @@
+<section class="organograma">
+  <header class="topo">
+    <div>
+      <h1>Hierarquia</h1>
+      <p class="subtitulo">Cada pessoa ligada ao seu gestor imediato.</p>
+    </div>
+    <a class="botao" routerLink="/usuarios"><app-icon name="arrow-left" [size]="16" /> Usuários</a>
+  </header>
+
+  @if (carregando()) {
+    <p class="status">Carregando...</p>
+  } @else if (erro()) {
+    <p class="status status--erro">Não foi possível carregar os dados. Verifique se a API está em execução.</p>
+  } @else {
+    <div class="resumo">
+      <div class="resumo__item"><strong>{{ resumo().total }}</strong> pessoas</div>
+      <div class="resumo__item"><strong>{{ resumo().comGestor }}</strong> com gestor definido</div>
+      <div class="resumo__item" [class.resumo__item--alerta]="resumo().semGestor > 0"><strong>{{ resumo().semGestor }}</strong> sem gestor</div>
+    </div>
+
+    <div class="barra">
+      <div class="barra__acoes">
+        <button type="button" class="botao botao--pequeno" (click)="expandirTudo()">Expandir tudo</button>
+        <button type="button" class="botao botao--pequeno" (click)="recolherTudo()">Recolher tudo</button>
+        <span class="zoom">
+          <button type="button" class="botao botao--pequeno" (click)="mudarZoom(-0.1)" aria-label="Diminuir">−</button>
+          <span class="zoom__valor">{{ zoom() * 100 | number: '1.0-0' }}%</span>
+          <button type="button" class="botao botao--pequeno" (click)="mudarZoom(0.1)" aria-label="Aumentar">+</button>
+          <button type="button" class="botao botao--pequeno" (click)="ajustarATela()">Ajustar à tela</button>
+        </span>
+        <label class="check">
+          <input type="checkbox" [checked]="mostrarDesligados()" (change)="mostrarDesligados.set(!mostrarDesligados())" />
+          Mostrar desligados
+        </label>
+      </div>
+    </div>
+
+    @if (raizes().length === 0) {
+      <p class="status">Nenhum gestor imediato foi definido ainda. Defina em Usuários → Editar → "Gestor imediato".</p>
+    } @else {
+      <div class="grafico" #grafico>
+        <ul class="arvore" [style.zoom]="zoom()">
+          @for (raiz of raizes(); track raiz.usuario.id) {
+            <ng-container [ngTemplateOutlet]="noTpl" [ngTemplateOutletContext]="{ $implicit: raiz }" />
+          }
+        </ul>
+      </div>
+    }
+
+    @if (semRelacao().length > 0) {
+      <h2>Sem relação definida <span class="contagem">{{ semRelacao().length }}</span></h2>
+      <p class="nota">Não têm gestor imediato e ninguém responde a eles. Clique para definir o gestor.</p>
+      <div class="avulsos">
+        @for (u of semRelacao(); track u.id) {
+          <a class="avulso" [routerLink]="['/usuarios', u.id, 'editar']">
+            <strong>{{ u.nome }}</strong>
+            @if (u.setorNome) {
+              <span>{{ u.setorNome }}</span>
+            }
+          </a>
+        }
+      </div>
+    }
+  }
+</section>
+
+<ng-template #noTpl let-item>
+  <li>
+    <div class="cartao" [class.cartao--inativo]="item.usuario.status === 'Inativo'">
+      <a class="cartao__nome" [routerLink]="['/usuarios', item.usuario.id]">{{ item.usuario.nome }}</a>
+      @if (item.usuario.setorNome) {
+        <span class="cartao__linha">{{ item.usuario.setorNome }}</span>
+      }
+      @if (item.gestorOculto) {
+        <span class="selo selo--alerta" title="O gestor cadastrado não aparece nesta visão">Gestor: {{ item.gestorOculto }}</span>
+      }
+      @if (item.usuario.status === 'Inativo') {
+        <span class="selo">Desligado</span>
+      }
+      @if (item.filhos.length > 0) {
+        <button type="button" class="cartao__toggle" (click)="alternarNo(item.usuario.id)">
+          {{ recolhidos().has(item.usuario.id) ? '▸' : '▾' }} {{ item.filhos.length }} {{ item.filhos.length === 1 ? 'pessoa' : 'pessoas' }}
+        </button>
+      }
+    </div>
+    @if (item.filhos.length > 0 && !recolhidos().has(item.usuario.id)) {
+      <ul>
+        @for (filho of item.filhos; track filho.usuario.id) {
+          <ng-container [ngTemplateOutlet]="noTpl" [ngTemplateOutletContext]="{ $implicit: filho }" />
+        }
+      </ul>
+    }
+  </li>
+</ng-template>

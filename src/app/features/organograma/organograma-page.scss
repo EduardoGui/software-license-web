@@ -1,0 +1,330 @@
+.organograma {
+  max-width: 1280px;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+}
+
+.topo {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+h1 {
+  color: var(--color-primary);
+  margin: 0;
+}
+
+h2 {
+  color: var(--color-primary);
+  font-size: 1.05rem;
+  margin: 2rem 0 0.25rem;
+}
+
+.subtitulo,
+.nota {
+  margin: 0.25rem 0 0;
+  color: var(--color-secondary);
+  font-size: 0.9rem;
+}
+
+.contagem {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-secondary);
+  background: var(--color-bg-subtle);
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  margin-left: 0.35rem;
+}
+
+.status {
+  color: var(--color-secondary);
+}
+
+.status--erro {
+  color: #b91c1c;
+}
+
+.resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.resumo__item {
+  background: #fff;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 0.5rem 0.9rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+.resumo__item strong {
+  font-size: 1.1rem;
+  color: var(--color-primary);
+  margin-right: 0.2rem;
+}
+
+.resumo__item--alerta {
+  border-color: #fcd34d;
+  background: #fffbeb;
+}
+
+.botao {
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.botao--pequeno {
+  padding: 0.25rem 0.65rem;
+  font-size: 0.8rem;
+}
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.barra__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.zoom {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.zoom__valor {
+  min-width: 2.6rem;
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--color-text);
+}
+
+.check {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  color: var(--color-text);
+}
+
+// --- Gráfico em árvore (linhas feitas só com CSS) ---
+.grafico {
+  overflow-x: auto;
+  background: #fff;
+  border: 1px solid var(--color-border-light);
+  border-radius: 8px;
+  padding: 1.5rem 1rem 2rem;
+}
+
+$linha: 1px solid var(--color-border);
+$altura-conector: 22px;
+
+.arvore {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin: 0;
+  padding: 0;
+  width: max-content;
+  min-width: 100%;
+  list-style: none;
+
+  ul {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+    padding: $altura-conector 0 0;
+    list-style: none;
+  }
+
+  // Linha vertical que desce do cartão do gestor até a barra horizontal dos filhos.
+  ul::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 50%;
+    height: $altura-conector;
+    border-left: $linha;
+  }
+
+  li {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $altura-conector 0.4rem 0;
+    list-style: none;
+  }
+
+  li::before,
+  li::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 50%;
+    width: 50%;
+    height: $altura-conector;
+    border-top: $linha;
+  }
+
+  li::after {
+    right: auto;
+    left: 50%;
+    border-left: $linha;
+  }
+
+  li:only-child::before,
+  li:only-child::after {
+    display: none;
+  }
+
+  li:only-child {
+    padding-top: 0;
+  }
+
+  li:first-child::before,
+  li:last-child::after {
+    border: 0 none;
+  }
+
+  li:last-child::before {
+    border-right: $linha;
+    border-radius: 0 6px 0 0;
+  }
+
+  li:first-child::after {
+    border-radius: 6px 0 0 0;
+  }
+
+  // Raízes: cada uma é uma árvore separada, sem conector entre elas.
+  > li {
+    padding-top: 0;
+  }
+
+  > li::before,
+  > li::after {
+    display: none;
+  }
+}
+
+.cartao {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  width: 190px;
+  padding: 0.6rem 0.7rem;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-top: 3px solid var(--color-primary);
+  border-radius: 8px;
+  text-align: center;
+}
+
+.cartao--inativo {
+  background: var(--color-bg-subtle);
+  border-top-color: var(--color-border);
+  color: var(--color-text-muted);
+}
+
+.cartao__nome {
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: 0.88rem;
+  text-decoration: none;
+}
+
+.cartao__nome:hover {
+  text-decoration: underline;
+}
+
+.cartao__linha {
+  font-size: 0.76rem;
+  color: var(--color-secondary);
+}
+
+.selo {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: var(--color-bg-subtle);
+  color: var(--color-secondary);
+}
+
+.selo--alerta {
+  background: #fef9c3;
+  color: #a16207;
+}
+
+.cartao__toggle {
+  margin-top: 0.25rem;
+  border: 0;
+  background: none;
+  color: var(--color-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.cartao__toggle:hover {
+  color: var(--color-primary);
+}
+
+// --- Sem relação definida ---
+.avulsos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.avulso {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  background: #fff;
+  border: 1px dashed var(--color-border);
+  border-radius: 8px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.82rem;
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+.avulso span {
+  font-size: 0.74rem;
+  color: var(--color-secondary);
+}
+
+.avulso:hover {
+  border-style: solid;
+}

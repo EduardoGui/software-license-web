@@ -17,6 +17,7 @@ import { UsuariosList } from './features/usuarios/usuarios-list';
 import { UsuarioForm } from './features/usuarios/usuario-form';
 import { UsuarioView } from './features/usuarios/usuario-view';
 import { AcessoPage } from './features/acesso/acesso-page';
+import { OrganogramaPage } from './features/organograma/organograma-page';
 import { UsuarioPerfilForm } from './features/usuarios/usuario-perfil-form';
 import { LicencasList } from './features/licencas/licencas-list';
 import { LicencaForm } from './features/licencas/licenca-form';
@@ -126,6 +127,7 @@ export const routes: Routes = [
       { path: 'usuarios', component: UsuariosList, canActivate: [adminGuard] },
       { path: 'minha-conta/senha', component: AlterarSenha },
       { path: 'usuarios/acesso', component: AcessoPage, canActivate: [adminGuard] },
+      { path: 'usuarios/hierarquia', component: OrganogramaPage, canActivate: [adminGuard] },
       { path: 'usuarios/novo', component: UsuarioForm, canActivate: [adminGuard] },
       { path: 'usuarios/:id/editar', component: UsuarioForm, canActivate: [adminGuard] },
       { path: 'usuarios/:id/perfil', component: UsuarioPerfilForm, canActivate: [usuarioViewGuard] },
