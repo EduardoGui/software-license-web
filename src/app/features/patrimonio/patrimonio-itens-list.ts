@@ -4,6 +4,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Local } from '../locais/local';
 import { LocalService } from '../locais/local.service';
+import { EntradaPorNota } from '../../shared/entrada-por-nota/entrada-por-nota';
 import { Icon } from '../../shared/icons/icon';
 import { TipoPatrimonio } from '../tipos-patrimonio/tipo-patrimonio';
 import { TipoPatrimonioService } from '../tipos-patrimonio/tipo-patrimonio.service';
@@ -12,7 +13,7 @@ import { PatrimonioItemService } from './patrimonio-item.service';
 
 @Component({
   selector: 'app-patrimonio-itens-list',
-  imports: [FormsModule, RouterLink, Icon],
+  imports: [FormsModule, RouterLink, Icon, EntradaPorNota],
   templateUrl: './patrimonio-itens-list.html',
   styleUrl: './patrimonio-itens-list.scss',
 })
@@ -31,6 +32,12 @@ export class PatrimonioItensList {
   protected readonly exportando = signal(false);
 
   protected filtro: PatrimonioItemFiltro = { status: 'Ativo' };
+
+  // O filtro padrão (só ativos) não conta: lista vazia nele significa que ainda não há itens.
+  protected filtroAplicado(): boolean {
+    const f = this.filtro;
+    return f.tipoPatrimonioId != null || f.localId != null || f.notaFiscalEntradaId != null || f.status === 'Baixado';
+  }
 
   constructor() {
     this.tipoPatrimonioService.listar({ ativo: true }).subscribe((tipos) => this.tipos.set(tipos));

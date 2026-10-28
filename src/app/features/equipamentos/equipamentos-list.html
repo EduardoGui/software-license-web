@@ -1,7 +1,10 @@
 <section class="equipamentos">
   <header class="topo">
     <h1>Equipamentos</h1>
+    <a class="botao botao--primario" routerLink="/equipamentos/notas-fiscais/novo"><app-icon name="plus" [size]="16" /> Registrar entrada por nota fiscal</a>
   </header>
+
+  <app-entrada-por-nota chave="equipamentos">Equipamentos de TI, <strong>comprados ou locados</strong>, não são cadastrados direto: eles entram por uma <strong>nota fiscal de entrada</strong> (Cadastros Gerais → Notas Fiscais). Na nota, adicione um item com destino <strong>Equipamento</strong> e escolha a origem (Comprado ou Locado); cada unidade da quantidade vira um equipamento aqui. Depois, edite cada um para completar marca, modelo, nº de série, patrimônio, fornecedor e, nos locados, valor mensal e fim do contrato.</app-entrada-por-nota>
 
   @if (filtro.notaFiscalEntradaId) {
     <p class="filtro-ativo">
@@ -57,6 +60,8 @@
     <p class="status">Carregando...</p>
   } @else if (erro()) {
     <p class="status status--erro">Não foi possível carregar os equipamentos. Verifique se a API está em execução.</p>
+  } @else if (equipamentos().length === 0 && !filtroAplicado()) {
+    <app-entrada-por-nota chave="equipamentos" variante="vazio">Ainda não há equipamentos. Os comprados e os locados entram pelo registro de uma nota fiscal de entrada.</app-entrada-por-nota>
   } @else if (equipamentos().length === 0) {
     <p class="status">Nenhum equipamento encontrado.</p>
   } @else {

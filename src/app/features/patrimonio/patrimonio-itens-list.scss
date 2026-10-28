@@ -50,6 +50,12 @@ h1 {
   gap: 0.5rem;
 }
 
+.topo__acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
 .botao {
   border: 1px solid var(--color-primary);
   background: #fff;

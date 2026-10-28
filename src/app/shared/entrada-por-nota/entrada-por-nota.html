@@ -1,0 +1,26 @@
+<ng-template #texto><ng-content /></ng-template>
+
+@if (variante() === 'vazio') {
+  <div class="vazio">
+    <p class="vazio__texto"><ng-container [ngTemplateOutlet]="texto" /></p>
+    <a class="botao botao--primario" routerLink="/equipamentos/notas-fiscais/novo">
+      <app-icon name="plus" [size]="16" /> Registrar entrada por nota fiscal
+    </a>
+  </div>
+} @else if (!dispensada()) {
+  <aside class="faixa" role="note">
+    <svg class="faixa__icone" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <circle cx="12" cy="12" r="10" />
+      <line x1="12" y1="16" x2="12" y2="12" />
+      <line x1="12" y1="8" x2="12.01" y2="8" />
+    </svg>
+    <div class="faixa__corpo">
+      <strong>Como os itens entram</strong>
+      <p><ng-container [ngTemplateOutlet]="texto" /></p>
+      <a class="faixa__link" routerLink="/equipamentos/notas-fiscais">Ver notas fiscais</a>
+    </div>
+    <button type="button" class="faixa__fechar" aria-label="Dispensar este aviso" title="Dispensar" (click)="dispensar()">
+      <app-icon name="x" [size]="16" />
+    </button>
+  </aside>
+}

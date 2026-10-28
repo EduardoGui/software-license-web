@@ -3,6 +3,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
+import { EntradaPorNota } from '../../shared/entrada-por-nota/entrada-por-nota';
 import { Icon } from '../../shared/icons/icon';
 import { TipoEquipamento } from '../tipos-equipamento/tipo-equipamento';
 import { TipoEquipamentoService } from '../tipos-equipamento/tipo-equipamento.service';
@@ -13,7 +14,7 @@ import { EquipamentoService } from './equipamento.service';
 
 @Component({
   selector: 'app-equipamentos-list',
-  imports: [FormsModule, RouterLink, Icon, DecimalPipe],
+  imports: [FormsModule, RouterLink, Icon, DecimalPipe, EntradaPorNota],
   templateUrl: './equipamentos-list.html',
   styleUrl: './equipamentos-list.scss',
 })
@@ -30,6 +31,10 @@ export class EquipamentosList {
   protected readonly erro = signal(false);
 
   protected filtro: EquipamentoFiltro = {};
+
+  protected filtroAplicado(): boolean {
+    return Object.values(this.filtro).some((v) => v !== undefined && v !== null && v !== '');
+  }
 
   constructor() {
     this.tipoEquipamentoService.listar({ ativo: true }).subscribe((tipos) => this.tipos.set(tipos));

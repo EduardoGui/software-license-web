@@ -75,6 +75,14 @@ h1 {
   display: inline-block;
 }
 
+.botao--primario {
+  background: var(--color-primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
 .botao--texto {
   border: none;
   background: none;

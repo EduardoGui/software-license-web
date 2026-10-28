@@ -1,10 +1,15 @@
 <section class="patrimonio">
   <header class="topo">
     <h1>Patrimônio</h1>
-    <button type="button" class="botao botao--primario" [disabled]="exportando()" (click)="exportar()">
-      <app-icon name="check" [size]="16" /> {{ exportando() ? 'Exportando...' : 'Exportar Excel' }}
-    </button>
+    <div class="topo__acoes">
+      <button type="button" class="botao" [disabled]="exportando()" (click)="exportar()">
+        {{ exportando() ? 'Exportando...' : 'Exportar Excel' }}
+      </button>
+      <a class="botao botao--primario" routerLink="/equipamentos/notas-fiscais/novo"><app-icon name="plus" [size]="16" /> Registrar entrada por nota fiscal</a>
+    </div>
   </header>
+
+  <app-entrada-por-nota chave="patrimonio">Itens de patrimônio não são cadastrados direto: eles entram por uma <strong>nota fiscal de entrada</strong> (Cadastros Gerais → Notas Fiscais). Na nota, adicione um item com destino <strong>Patrimônio</strong>; cada unidade da quantidade vira um item aqui. Depois, edite cada item para completar número de patrimônio, local e observações.</app-entrada-por-nota>
 
   <form class="filtros" (ngSubmit)="buscar()">
     <label>
@@ -43,6 +48,8 @@
     <p class="status">Carregando...</p>
   } @else if (erro()) {
     <p class="status status--erro">Não foi possível carregar os itens de patrimônio. Verifique se a API está em execução.</p>
+  } @else if (itens().length === 0 && !filtroAplicado()) {
+    <app-entrada-por-nota chave="patrimonio" variante="vazio">Ainda não há itens de patrimônio. Eles entram pelo registro de uma nota fiscal de entrada.</app-entrada-por-nota>
   } @else if (itens().length === 0) {
     <p class="status">Nenhum item de patrimônio encontrado.</p>
   } @else {
