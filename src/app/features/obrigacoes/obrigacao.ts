@@ -50,6 +50,7 @@ export interface Obrigacao {
   dataLiberacaoNf: string | null;
   exigeAssinatura: boolean;
   ordemCompraAssinada: boolean;
+  criadoPorNome: string | null;
   observacoes: string | null;
   dataCriacao: string;
   dataAtualizacao: string;

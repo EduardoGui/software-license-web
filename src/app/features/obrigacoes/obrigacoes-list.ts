@@ -1,3 +1,4 @@
+import { AuthService } from '../auth/auth.service';
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -39,6 +40,7 @@ interface FiltroObrigacoes {
   styleUrl: './obrigacoes-list.scss',
 })
 export class ObrigacoesList {
+  protected readonly authService = inject(AuthService);
   private readonly fb = inject(FormBuilder);
   private readonly obrigacaoService = inject(ObrigacaoService);
   private readonly fornecedorService = inject(FornecedorService);

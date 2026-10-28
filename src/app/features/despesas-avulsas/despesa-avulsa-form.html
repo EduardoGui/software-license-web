@@ -20,7 +20,9 @@
                   <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
                 }
               </select>
+@if (authService.ehAdministrador()) {
               <button type="button" class="botao-add" title="Novo fornecedor" (click)="abrirModalFornecedor()">+</button>
+}
             </div>
           </label>
           <label>

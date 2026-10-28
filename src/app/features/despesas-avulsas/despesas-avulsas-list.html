@@ -63,6 +63,9 @@
             <th>Valor</th>
             <th>Recorrente</th>
             <th>UA</th>
+            @if (authService.ehAdministrador()) {
+              <th>Criada por</th>
+            }
             <th>Ações</th>
           </tr>
         </thead>
@@ -84,6 +87,9 @@
                   <span class="badge badge--pendente">UA pendente</span>
                 }
               </td>
+              @if (authService.ehAdministrador()) {
+                <td>{{ d.criadoPorNome || '-' }}</td>
+              }
               <td class="acoes">
                 <a [routerLink]="['/despesas-avulsas', d.id]" title="Visualizar" [attr.aria-label]="'Visualizar despesa de ' + d.fornecedorNome">
                   <app-icon name="eye" [size]="18" />

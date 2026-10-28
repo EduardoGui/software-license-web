@@ -1,3 +1,4 @@
+import { AuthService } from '../auth/auth.service';
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -19,6 +20,7 @@ import { OrdemCompraService } from './ordem-compra.service';
   styleUrl: './ordens-compra-list.scss',
 })
 export class OrdensCompraList {
+  protected readonly authService = inject(AuthService);
   private readonly ordemCompraService = inject(OrdemCompraService);
   private readonly fornecedorService = inject(FornecedorService);
   private readonly localService = inject(LocalService);

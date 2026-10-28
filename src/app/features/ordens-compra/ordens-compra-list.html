@@ -60,6 +60,9 @@
             <th>Obra</th>
             <th>Valor total</th>
             <th>Status</th>
+            @if (authService.ehAdministrador()) {
+              <th>Criada por</th>
+            }
             <th>Ações</th>
           </tr>
         </thead>
@@ -74,6 +77,9 @@
               <td>
                 <span class="badge" [class]="'badge--' + oc.status.toLowerCase()">{{ oc.status }}</span>
               </td>
+              @if (authService.ehAdministrador()) {
+                <td>{{ oc.criadoPorNome || '-' }}</td>
+              }
               <td class="acoes">
                 <a [routerLink]="['/ordens-compra', oc.id]" title="Visualizar" aria-label="Visualizar">
                   <app-icon name="eye" [size]="18" />

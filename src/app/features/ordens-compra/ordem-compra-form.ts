@@ -1,3 +1,4 @@
+import { AuthService } from '../auth/auth.service';
 import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -17,6 +18,7 @@ import { OrdemCompraService } from './ordem-compra.service';
   styleUrl: './ordem-compra-form.scss',
 })
 export class OrdemCompraForm {
+  protected readonly authService = inject(AuthService);
   private readonly fb = inject(FormBuilder);
   private readonly ordemCompraService = inject(OrdemCompraService);
   private readonly fornecedorService = inject(FornecedorService);

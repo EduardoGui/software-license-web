@@ -69,7 +69,7 @@
               Patrimônio
             </a>
           }
-          @if (authService.ehAdministrador()) {
+          @if (authService.podeAcessarAdministrativo()) {
             <button type="button" class="menu__grupo" (click)="alternarGrupoSuprimentos()">
               <span class="menu__grupo-seta">{{ grupoSuprimentosAberto() ? '▾' : '▸' }}</span>
               Suprimentos
@@ -81,10 +81,12 @@
               <a routerLink="/obrigacoes" routerLinkActive="menu__item--ativo" [routerLinkActiveOptions]="{ exact: true }" class="menu__item menu__item--sub">
                 Controle de Obrigações
               </a>
-              <a routerLink="/dp/unidades-orcamentarias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
-                Plano de UA
-              </a>
-              <a routerLink="/contratos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Contratos</a>
+              @if (authService.ehAdministrador()) {
+                <a routerLink="/dp/unidades-orcamentarias" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">
+                  Plano de UA
+                </a>
+                <a routerLink="/contratos" routerLinkActive="menu__item--ativo" class="menu__item menu__item--sub">Contratos</a>
+              }
             }
           }
           <button type="button" class="menu__grupo" (click)="alternarGrupoDp()">

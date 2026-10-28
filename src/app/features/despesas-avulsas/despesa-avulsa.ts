@@ -28,6 +28,7 @@ export interface DespesaAvulsa {
   valor: number;
   recorrente: boolean;
   observacoes: string | null;
+  criadoPorNome: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
   rateioUa: DespesaAvulsaRateioUa[];

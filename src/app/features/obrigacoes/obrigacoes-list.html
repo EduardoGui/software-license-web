@@ -2,7 +2,9 @@
   <header class="topo">
     <h1>Controle de Obrigações</h1>
     <div class="topo__acoes">
+@if (authService.ehAdministrador()) {
       <button type="button" class="botao" (click)="destinatariosAberto.set(true)">Destinatários do financeiro</button>
+}
       <a class="botao botao--texto" routerLink="/despesas-avulsas">Ver lista de despesas</a>
       <a class="botao botao--primario" routerLink="/despesas-avulsas/novo"><app-icon name="plus" [size]="16" /> Nova despesa avulsa</a>
     </div>
@@ -44,7 +46,9 @@
             <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
           }
         </select>
+@if (authService.ehAdministrador()) {
         <button type="button" class="botao-add" title="Cadastrar novo fornecedor" (click)="abrirModalFornecedor()">+</button>
+}
       </span>
     </label>
     <label>
@@ -122,6 +126,9 @@
               <tr class="linha-expandida">
                 <td colspan="6">
                   <div class="acompanhamento" (click)="$event.stopPropagation()">
+                    @if (o.criadoPorNome && authService.ehAdministrador()) {
+                      <p class="parcelas-info">Criada por {{ o.criadoPorNome }}</p>
+                    }
                     @if (o.tipoMovimento === 'OC' && o.totalParcelas > 1) {
                       <p class="parcelas-info" [class.parcelas-info--alerta]="somaDivergente(o)">
                         Parcela {{ o.numeroParcela }} de {{ o.totalParcelas }} — parcelas somam R$ {{ o.somaParcelas | number: '1.2-2' }}, {{ rotuloReferencia(o) }}

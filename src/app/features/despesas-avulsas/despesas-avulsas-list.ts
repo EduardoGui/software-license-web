@@ -1,3 +1,4 @@
+import { AuthService } from '../auth/auth.service';
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -17,6 +18,7 @@ import { DespesaAvulsaService } from './despesa-avulsa.service';
   styleUrl: './despesas-avulsas-list.scss',
 })
 export class DespesasAvulsasList {
+  protected readonly authService = inject(AuthService);
   private readonly despesaAvulsaService = inject(DespesaAvulsaService);
   private readonly fornecedorService = inject(FornecedorService);
 

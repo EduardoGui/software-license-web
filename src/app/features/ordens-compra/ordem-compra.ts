@@ -13,6 +13,7 @@ export interface OrdemCompra {
   status: OrdemCompraStatus;
   valorTotal: number;
   quantidadeItens: number;
+  criadoPorNome: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
 }
@@ -58,6 +59,7 @@ export interface OrdemCompraDetalhe {
   contatoAprovacaoEmail: string | null;
   status: OrdemCompraStatus;
   valorTotal: number;
+  criadoPorNome: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
   itens: OrdemCompraItem[];
