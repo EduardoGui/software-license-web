@@ -42,6 +42,14 @@ export interface Obrigacao {
   pago: boolean;
   cancelada: boolean;
   etapa: ObrigacaoEtapa;
+  // Andamento documental da origem (OC ou BM); parcelas da mesma OC compartilham as datas.
+  dataSolicitacaoEspelho: string | null;
+  dataEnvioAssinatura: string | null;
+  dataEnvioFornecedor: string | null;
+  dataChegadaMaterial: string | null;
+  dataLiberacaoNf: string | null;
+  exigeAssinatura: boolean;
+  ordemCompraAssinada: boolean;
   observacoes: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
@@ -72,3 +80,12 @@ export interface ObrigacaoFiltro {
   pago?: boolean;
   cancelada?: boolean;
 }
+
+export type CampoAndamento =
+  | 'dataSolicitacaoEspelho'
+  | 'dataEnvioAssinatura'
+  | 'dataEnvioFornecedor'
+  | 'dataChegadaMaterial'
+  | 'dataLiberacaoNf';
+
+export type AtualizarAndamentoPayload = Record<CampoAndamento, string | null>;

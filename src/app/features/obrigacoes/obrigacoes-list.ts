@@ -7,11 +7,19 @@ import { Fornecedor } from '../fornecedores/fornecedor';
 import { FornecedorService } from '../fornecedores/fornecedor.service';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
-import { hojeIso, inicioDoMes } from '../timeline/timeline-datas';
+import { diasEntre, hojeIso, inicioDoMes } from '../timeline/timeline-datas';
 import { DestinatariosFinanceiroModal } from './destinatarios-financeiro-modal';
-import { Obrigacao, ObrigacaoFiltro } from './obrigacao';
+import { CampoAndamento, Obrigacao, ObrigacaoFiltro } from './obrigacao';
 import { ObrigacaoService } from './obrigacao.service';
 import { SolicitacaoPagamentoModal } from './solicitacao-pagamento-modal';
+
+interface PassoAndamento {
+  chave: CampoAndamento | 'assinada';
+  rotulo: string;
+}
+
+// A partir de quantos dias sem avançar o andamento vira alerta.
+const DIAS_ALERTA_ANDAMENTO = 7;
 
 interface FiltroObrigacoes {
   competenciaDeMes: string;
@@ -61,6 +69,17 @@ export class ObrigacoesList {
   protected readonly parcelaEmCriacaoId = signal<number | null>(null);
   protected readonly criandoParcela = signal(false);
   protected readonly valorNovaParcela = this.fb.control<number | null>(null);
+
+  // Andamento documental (datas da OC/BM de origem), salvo à parte do formulário de pagamento.
+  protected readonly salvandoAndamento = signal(false);
+  protected readonly erroAndamento = signal<string | null>(null);
+  protected readonly formAndamento = this.fb.nonNullable.group({
+    dataSolicitacaoEspelho: [''],
+    dataEnvioAssinatura: [''],
+    dataEnvioFornecedor: [''],
+    dataChegadaMaterial: [''],
+    dataLiberacaoNf: [''],
+  });
 
   protected readonly formLinha = this.fb.nonNullable.group({
     valorPrevisto: this.fb.control<number | null>(null),
@@ -201,6 +220,18 @@ export class ObrigacoesList {
     this.expandidoId.set(o.id);
     this.erroLinha.set(null);
     this.parcelaEmCriacaoId.set(null);
+    this.erroAndamento.set(null);
+    this.formAndamento.enable();
+    this.formAndamento.reset({
+      dataSolicitacaoEspelho: o.dataSolicitacaoEspelho ?? '',
+      dataEnvioAssinatura: o.dataEnvioAssinatura ?? '',
+      dataEnvioFornecedor: o.dataEnvioFornecedor ?? '',
+      dataChegadaMaterial: o.dataChegadaMaterial ?? '',
+      dataLiberacaoNf: o.dataLiberacaoNf ?? '',
+    });
+    if (o.pago || o.cancelada) {
+      this.formAndamento.disable();
+    }
     this.formLinha.reset({
       valorPrevisto: o.valorPrevisto,
       dataNf: o.dataNf ?? '',
@@ -213,6 +244,122 @@ export class ObrigacoesList {
       dataPrevistaPagamento: o.dataPrevistaPagamento ?? '',
       observacoes: o.observacoes ?? '',
     });
+  }
+
+  // --- Andamento documental ---
+
+  protected passosAndamento(o: Obrigacao): PassoAndamento[] {
+    if (o.tipoMovimento === 'OC') {
+      return [
+        { chave: 'dataEnvioAssinatura', rotulo: 'Enviada para assinatura (Docusign)' },
+        { chave: 'assinada', rotulo: 'Assinada' },
+        { chave: 'dataEnvioFornecedor', rotulo: 'Enviada ao fornecedor' },
+        { chave: 'dataChegadaMaterial', rotulo: 'Material chegou' },
+      ];
+    }
+
+    if (o.tipoMovimento === 'Medição') {
+      return [
+        { chave: 'dataSolicitacaoEspelho', rotulo: 'Espelho de medição solicitado' },
+        ...(o.exigeAssinatura ? [{ chave: 'dataEnvioAssinatura', rotulo: 'Enviada para assinatura (Docusign)' } as PassoAndamento] : []),
+        { chave: 'dataLiberacaoNf', rotulo: 'Liberada para emissão da NF' },
+      ];
+    }
+
+    return [];
+  }
+
+  private dataDoPasso(o: Obrigacao, passo: PassoAndamento): string | null {
+    return passo.chave === 'assinada' ? null : o[passo.chave];
+  }
+
+  protected passoFeito(o: Obrigacao, passo: PassoAndamento): boolean {
+    return passo.chave === 'assinada' ? o.ordemCompraAssinada : this.dataDoPasso(o, passo) !== null;
+  }
+
+  // Obrigações pagas/canceladas só mostram o andamento (em leitura) se alguma data foi registrada.
+  protected mostraAndamento(o: Obrigacao): boolean {
+    const passos = this.passosAndamento(o);
+    if (passos.length === 0) {
+      return false;
+    }
+
+    return !(o.pago || o.cancelada) || passos.some((p) => this.dataDoPasso(o, p) !== null);
+  }
+
+  // Próximo passo pendente e há quantos dias o anterior foi registrado. Só existe quando o acompanhamento já
+  // começou (alguma data registrada) - assim obrigações antigas, sem nenhuma data, não viram alerta.
+  protected andamentoParado(o: Obrigacao): { passo: PassoAndamento; dias: number } | null {
+    if (o.pago || o.cancelada) {
+      return null;
+    }
+
+    const passos = this.passosAndamento(o);
+    let ultimoFeito = -1;
+    let referencia: string | null = null;
+    passos.forEach((passo, i) => {
+      if (!this.passoFeito(o, passo)) {
+        return;
+      }
+
+      ultimoFeito = i;
+      referencia = this.dataDoPasso(o, passo) ?? referencia;
+    });
+
+    const proximo = passos[ultimoFeito + 1];
+    if (!proximo || referencia === null) {
+      return null;
+    }
+
+    return { passo: proximo, dias: diasEntre(referencia, hojeIso()) };
+  }
+
+  protected andamentoEmAlerta(o: Obrigacao): boolean {
+    const parado = this.andamentoParado(o);
+    return parado !== null && parado.dias >= DIAS_ALERTA_ANDAMENTO;
+  }
+
+  protected definirHoje(campo: CampoAndamento): void {
+    this.formAndamento.controls[campo].setValue(hojeIso());
+  }
+
+  protected salvarAndamento(o: Obrigacao): void {
+    const valor = this.formAndamento.getRawValue();
+    this.salvandoAndamento.set(true);
+    this.erroAndamento.set(null);
+
+    this.obrigacaoService
+      .atualizarAndamento(o.id, {
+        dataSolicitacaoEspelho: valor.dataSolicitacaoEspelho || null,
+        dataEnvioAssinatura: valor.dataEnvioAssinatura || null,
+        dataEnvioFornecedor: valor.dataEnvioFornecedor || null,
+        dataChegadaMaterial: valor.dataChegadaMaterial || null,
+        dataLiberacaoNf: valor.dataLiberacaoNf || null,
+      })
+      .subscribe({
+        next: (atualizada) => {
+          this.salvandoAndamento.set(false);
+          // As parcelas da mesma OC compartilham as datas: atualiza todas as linhas dela.
+          this.obrigacoes.update((lista) =>
+            lista.map((x) =>
+              x.id === atualizada.id || (atualizada.ordemCompraId !== null && x.ordemCompraId === atualizada.ordemCompraId)
+                ? {
+                    ...x,
+                    dataSolicitacaoEspelho: atualizada.dataSolicitacaoEspelho,
+                    dataEnvioAssinatura: atualizada.dataEnvioAssinatura,
+                    dataEnvioFornecedor: atualizada.dataEnvioFornecedor,
+                    dataChegadaMaterial: atualizada.dataChegadaMaterial,
+                    dataLiberacaoNf: atualizada.dataLiberacaoNf,
+                  }
+                : x,
+            ),
+          );
+        },
+        error: (err) => {
+          this.salvandoAndamento.set(false);
+          this.erroAndamento.set(err?.error?.message ?? 'Não foi possível salvar o andamento.');
+        },
+      });
   }
 
   protected salvarLinha(o: Obrigacao): void {

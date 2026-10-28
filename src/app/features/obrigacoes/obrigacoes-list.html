@@ -108,7 +108,12 @@
               <td>{{ competenciaBr(o.competencia) }}</td>
               <td>{{ o.vencimento ? (o.vencimento | dataBr) : '-' }}</td>
               <td>{{ o.valorPrevisto | number: '1.2-2' }}</td>
-              <td><span class="badge" [class]="classeEtapa(o.etapa)">{{ o.etapa }}</span></td>
+              <td>
+                <span class="badge" [class]="classeEtapa(o.etapa)">{{ o.etapa }}</span>
+                @if (andamentoEmAlerta(o)) {
+                  <span class="selo-parado" title="Andamento parado: {{ andamentoParado(o)!.passo.rotulo }}">⚠ parado há {{ andamentoParado(o)!.dias }} d</span>
+                }
+              </td>
               <td class="acoes">
                 <span class="seta">{{ linhaExpandida(o) ? '▲' : '▼' }}</span>
               </td>
@@ -127,6 +132,53 @@
                           (confere)
                         }
                       </p>
+                    }
+                    @if (mostraAndamento(o)) {
+                      <section class="andamento">
+                        <div class="andamento__cab">
+                          <h3>Andamento</h3>
+                          @if (o.tipoMovimento === 'OC' && o.totalParcelas > 1) {
+                            <span class="andamento__nota">Vale para todas as parcelas desta OC</span>
+                          }
+                        </div>
+                        <form [formGroup]="formAndamento" (ngSubmit)="salvarAndamento(o)">
+                          <div class="andamento__passos">
+                            @for (p of passosAndamento(o); track p.chave) {
+                              <div class="passo" [class.passo--feito]="passoFeito(o, p)">
+                                <span class="passo__rotulo">
+                                  <span class="passo__marca">{{ passoFeito(o, p) ? '✓' : '○' }}</span> {{ p.rotulo }}
+                                </span>
+                                @if (p.chave === 'assinada') {
+                                  <span class="passo__info">
+                                    {{ o.ordemCompraAssinada ? 'Assinada' : 'Ainda não assinada' }} ·
+                                    <a [routerLink]="['/ordens-compra', o.ordemCompraId]">abrir a OC</a>
+                                  </span>
+                                } @else {
+                                  <div class="passo__data">
+                                    <input type="date" [formControlName]="p.chave" />
+                                    @if (formAndamento.enabled) {
+                                      <button type="button" class="botao botao--texto botao--pequeno" (click)="definirHoje(p.chave)">Hoje</button>
+                                    }
+                                  </div>
+                                }
+                              </div>
+                            }
+                          </div>
+                          @if (andamentoParado(o); as parado) {
+                            <p class="andamento__alerta" [class.andamento__alerta--vermelho]="parado.dias >= 7">
+                              Próximo passo: {{ parado.passo.rotulo }} — {{ parado.dias }} dia(s) desde o passo anterior.
+                            </p>
+                          }
+                          @if (erroAndamento()) {
+                            <p class="status status--erro">{{ erroAndamento() }}</p>
+                          }
+                          @if (formAndamento.enabled) {
+                            <button type="submit" class="botao" [disabled]="salvandoAndamento()">
+                              {{ salvandoAndamento() ? 'Salvando...' : 'Salvar andamento' }}
+                            </button>
+                          }
+                        </form>
+                      </section>
                     }
                     <form [formGroup]="formLinha" (ngSubmit)="salvarLinha(o)">
                       <div class="grid">

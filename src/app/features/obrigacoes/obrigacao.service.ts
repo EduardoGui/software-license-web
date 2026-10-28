@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { Obrigacao, ObrigacaoFiltro, UpdateObrigacaoPayload } from './obrigacao';
+import { AtualizarAndamentoPayload, Obrigacao, ObrigacaoFiltro, UpdateObrigacaoPayload } from './obrigacao';
 
 @Injectable({ providedIn: 'root' })
 export class ObrigacaoService {
@@ -31,6 +31,11 @@ export class ObrigacaoService {
 
   atualizar(id: number, payload: UpdateObrigacaoPayload): Observable<Obrigacao> {
     return this.http.put<Obrigacao>(`${this.baseUrl}/${id}`, payload);
+  }
+
+  /** Andamento documental (datas gravadas na OC ou na BM de origem). Envio completo: data nula limpa o campo. */
+  atualizarAndamento(id: number, payload: AtualizarAndamentoPayload): Observable<Obrigacao> {
+    return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/andamento`, payload);
   }
 
   /** Ordem de Compra paga em várias vezes: cria mais uma obrigação (parcela) ligada à mesma OC, copiando a NF. */
