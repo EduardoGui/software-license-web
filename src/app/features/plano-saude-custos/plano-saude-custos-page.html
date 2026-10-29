@@ -1,7 +1,22 @@
 <section class="custos">
   <header class="topo">
     <h1>Plano de Saúde — Lançamento Mensal</h1>
+    <button type="button" class="botao" (click)="abrirImportacao()">Importar fatura Amil</button>
   </header>
+
+  @if (resultadoImportacao(); as r) {
+    <p class="status status--sucesso">
+      Importação concluída: {{ r.titularesImportados }} titulares e {{ r.dependentesImportados }} dependentes
+      ({{ r.lancamentosCriados }} lançamentos criados, {{ r.lancamentosAtualizados }} atualizados
+      @if (r.dependentesCriados > 0) {
+        , {{ r.dependentesCriados }} dependentes cadastrados
+      }
+      @if (r.dependentesReativados > 0) {
+        , {{ r.dependentesReativados }} reativados
+      }
+      ).
+    </p>
+  }
 
   <form class="filtros" (ngSubmit)="buscar()">
     <label>
@@ -183,6 +198,10 @@
         </tbody>
       </table>
     </div>
+  }
+
+  @if (importarAberto()) {
+    <app-importar-fatura-modal [ano]="filtro.ano" [mes]="filtro.mes" (fechar)="importarAberto.set(false)" (importado)="aposImportar($event)" />
   }
 
   @if (criandoNdPara(); as alvo) {

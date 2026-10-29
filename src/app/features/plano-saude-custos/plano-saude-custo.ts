@@ -48,3 +48,76 @@ export interface SalvarPlanoSaudeMes {
   mes: number;
   itens: SalvarPlanoSaudeMesItem[];
 }
+
+// --- Importação do demonstrativo analítico da operadora (xlsx) ---
+
+export interface ImportacaoTotais {
+  titulares: number;
+  dependentes: number;
+  valorMensal: number;
+  coparticipacao: number;
+}
+
+export interface ImportacaoFatura {
+  numero: string;
+  emissao: string | null;
+  vencimento: string | null;
+  valorTotal: number;
+  cadastradaNoSistema: boolean;
+}
+
+export interface ImportacaoPessoa {
+  nome: string;
+  cpfFinal: string;
+  detalhe: string | null;
+  valorMensal: number;
+  coparticipacao: number;
+}
+
+export interface ImportacaoAjuste {
+  descricao: string;
+  fatura: string;
+  valorMensal: number;
+  coparticipacao: number;
+}
+
+export interface ImportacaoDependenteNovo {
+  titular: string;
+  nome: string;
+}
+
+export interface ImportacaoSobrescrita {
+  nome: string;
+  valorMensalAtual: number;
+  coparticipacaoAtual: number;
+  valorMensalNovo: number;
+  coparticipacaoNova: number;
+}
+
+export interface ImportacaoPlanoSaudePrevia {
+  ano: number;
+  mes: number;
+  arquivo: ImportacaoTotais;
+  importavel: ImportacaoTotais;
+  faturas: ImportacaoFatura[];
+  titularesNaoEncontrados: ImportacaoPessoa[];
+  titularesAmbiguos: ImportacaoPessoa[];
+  titularesForaDoPeriodo: ImportacaoPessoa[];
+  dependentesSemTitular: ImportacaoPessoa[];
+  ajustesSemBeneficiario: ImportacaoAjuste[];
+  dependentesACriar: ImportacaoDependenteNovo[];
+  dependentesAReativar: ImportacaoDependenteNovo[];
+  sobrescritas: ImportacaoSobrescrita[];
+  avisos: string[];
+  assinatura: string;
+  podeConfirmar: boolean;
+}
+
+export interface ImportacaoPlanoSaudeResultado {
+  titularesImportados: number;
+  dependentesImportados: number;
+  dependentesCriados: number;
+  dependentesReativados: number;
+  lancamentosCriados: number;
+  lancamentosAtualizados: number;
+}

@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { PlanoSaudeMes, PlanoSaudeMesFiltro, SalvarPlanoSaudeMes } from './plano-saude-custo';
+import { ImportacaoPlanoSaudePrevia, ImportacaoPlanoSaudeResultado, PlanoSaudeMes, PlanoSaudeMesFiltro, SalvarPlanoSaudeMes } from './plano-saude-custo';
 
 @Injectable({ providedIn: 'root' })
 export class PlanoSaudeCustoService {
@@ -19,6 +19,26 @@ export class PlanoSaudeCustoService {
 
   salvarMes(payload: SalvarPlanoSaudeMes): Observable<PlanoSaudeMes> {
     return this.http.post<PlanoSaudeMes>(`${this.baseUrl}/mes`, payload);
+  }
+
+  /** Lê o xlsx do demonstrativo da operadora e devolve a prévia de conferência. Não grava nada. */
+  previaImportacao(arquivo: File, ano: number, mes: number): Observable<ImportacaoPlanoSaudePrevia> {
+    return this.http.post<ImportacaoPlanoSaudePrevia>(`${this.baseUrl}/importar-fatura/previa`, this.formulario(arquivo, ano, mes));
+  }
+
+  /** Reenvia o arquivo com a assinatura da prévia; só grava se o resultado ainda for o mesmo. */
+  confirmarImportacao(arquivo: File, ano: number, mes: number, assinatura: string): Observable<ImportacaoPlanoSaudeResultado> {
+    const form = this.formulario(arquivo, ano, mes);
+    form.append('assinatura', assinatura);
+    return this.http.post<ImportacaoPlanoSaudeResultado>(`${this.baseUrl}/importar-fatura/confirmar`, form);
+  }
+
+  private formulario(arquivo: File, ano: number, mes: number): FormData {
+    const form = new FormData();
+    form.append('arquivo', arquivo);
+    form.append('ano', String(ano));
+    form.append('mes', String(mes));
+    return form;
   }
 
   remover(id: number): Observable<void> {

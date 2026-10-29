@@ -1,0 +1,173 @@
+<div class="overlay" (click)="fechar.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header>
+      <h2>Importar fatura Amil — {{ mes() }}/{{ ano() }}</h2>
+      <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fechar.emit()">×</button>
+    </header>
+
+    <div class="modal__corpo">
+      <label class="arquivo">
+        Demonstrativo analítico de faturamento (.xlsx)
+        <input type="file" accept=".xlsx" (change)="escolherArquivo($event)" [disabled]="importando()" />
+      </label>
+      <p class="dica">
+        Nada é gravado agora: primeiro você confere a prévia. Os valores do mês são sobrescritos só para as pessoas que constam no arquivo.
+      </p>
+
+      @if (gerandoPrevia()) {
+        <p class="status">Lendo o arquivo...</p>
+      }
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      @if (previa(); as p) {
+        <table class="resumo">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Titulares</th>
+              <th>Dependentes</th>
+              <th>Valor mensal (R$)</th>
+              <th>Coparticipação (R$)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>No arquivo</td>
+              <td>{{ p.arquivo.titulares }}</td>
+              <td>{{ p.arquivo.dependentes }}</td>
+              <td>{{ p.arquivo.valorMensal | number: '1.2-2' }}</td>
+              <td>{{ p.arquivo.coparticipacao | number: '1.2-2' }}</td>
+            </tr>
+            <tr class="resumo__importar">
+              <td>Será importado</td>
+              <td>{{ p.importavel.titulares }}</td>
+              <td>{{ p.importavel.dependentes }}</td>
+              <td>{{ p.importavel.valorMensal | number: '1.2-2' }}</td>
+              <td>{{ p.importavel.coparticipacao | number: '1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        @for (aviso of p.avisos; track aviso) {
+          <p class="aviso">⚠ {{ aviso }}</p>
+        }
+
+        @if (p.faturas.length > 0) {
+          <details>
+            <summary>Faturas no arquivo ({{ p.faturas.length }})</summary>
+            <ul>
+              @for (f of p.faturas; track f.numero) {
+                <li>
+                  Nº {{ f.numero }} — vencimento {{ f.vencimento ?? '-' }} — R$ {{ f.valorTotal | number: '1.2-2' }}
+                  <em>{{ f.cadastradaNoSistema ? '(já cadastrada)' : '(não cadastrada no sistema)' }}</em>
+                </li>
+              }
+            </ul>
+          </details>
+        }
+
+        @if (p.titularesNaoEncontrados.length > 0) {
+          <details>
+            <summary class="alerta">Titulares não encontrados no cadastro ({{ p.titularesNaoEncontrados.length }}) — não serão importados</summary>
+            <ul>
+              @for (t of p.titularesNaoEncontrados; track $index) {
+                <li>{{ t.nome }} ({{ t.cpfFinal }}) — mensal R$ {{ t.valorMensal | number: '1.2-2' }}, copart. R$ {{ t.coparticipacao | number: '1.2-2' }}</li>
+              }
+            </ul>
+          </details>
+        }
+        @if (p.titularesAmbiguos.length > 0) {
+          <details>
+            <summary class="alerta">Titulares com cadastro duplicado ({{ p.titularesAmbiguos.length }}) — não serão importados</summary>
+            <ul>
+              @for (t of p.titularesAmbiguos; track $index) {
+                <li>{{ t.nome }} ({{ t.cpfFinal }}) — {{ t.detalhe }}</li>
+              }
+            </ul>
+          </details>
+        }
+        @if (p.titularesForaDoPeriodo.length > 0) {
+          <details>
+            <summary class="alerta">Titulares não ativos no mês ({{ p.titularesForaDoPeriodo.length }}) — não serão importados</summary>
+            <ul>
+              @for (t of p.titularesForaDoPeriodo; track $index) {
+                <li>{{ t.nome }} ({{ t.cpfFinal }}) — {{ t.detalhe }}; mensal R$ {{ t.valorMensal | number: '1.2-2' }}, copart. R$ {{ t.coparticipacao | number: '1.2-2' }}</li>
+              }
+            </ul>
+          </details>
+        }
+        @if (p.dependentesSemTitular.length > 0) {
+          <details>
+            <summary class="alerta">Dependentes sem titular no arquivo ({{ p.dependentesSemTitular.length }})</summary>
+            <ul>
+              @for (d of p.dependentesSemTitular; track $index) {
+                <li>{{ d.nome }} ({{ d.cpfFinal }})</li>
+              }
+            </ul>
+          </details>
+        }
+        @if (p.ajustesSemBeneficiario.length > 0) {
+          <details>
+            <summary>Ajustes da fatura sem beneficiário ({{ p.ajustesSemBeneficiario.length }}) — não importados</summary>
+            <ul>
+              @for (a of p.ajustesSemBeneficiario; track $index) {
+                <li>{{ a.descricao }} (fatura {{ a.fatura }}) — mensal R$ {{ a.valorMensal | number: '1.2-2' }}, copart. R$ {{ a.coparticipacao | number: '1.2-2' }}</li>
+              }
+            </ul>
+          </details>
+        }
+        @if (p.dependentesACriar.length > 0) {
+          <details>
+            <summary>Dependentes que serão cadastrados ({{ p.dependentesACriar.length }})</summary>
+            <ul>
+              @for (d of p.dependentesACriar; track $index) {
+                <li>{{ d.nome }} — dependente de {{ d.titular }}</li>
+              }
+            </ul>
+          </details>
+        }
+        @if (p.dependentesAReativar.length > 0) {
+          <details>
+            <summary>Dependentes inativos que serão reativados ({{ p.dependentesAReativar.length }})</summary>
+            <ul>
+              @for (d of p.dependentesAReativar; track $index) {
+                <li>{{ d.nome }} — dependente de {{ d.titular }}</li>
+              }
+            </ul>
+          </details>
+        }
+        @if (p.sobrescritas.length > 0) {
+          <details open>
+            <summary class="alerta">Lançamentos que serão sobrescritos ({{ p.sobrescritas.length }})</summary>
+            <ul>
+              @for (s of p.sobrescritas; track $index) {
+                <li>
+                  {{ s.nome }}: mensal R$ {{ s.valorMensalAtual | number: '1.2-2' }} → R$ {{ s.valorMensalNovo | number: '1.2-2' }};
+                  copart. R$ {{ s.coparticipacaoAtual | number: '1.2-2' }} → R$ {{ s.coparticipacaoNova | number: '1.2-2' }}
+                </li>
+              }
+            </ul>
+          </details>
+        }
+      }
+    </div>
+
+    <footer>
+      <button type="button" class="botao botao--texto" [disabled]="importando()" (click)="fechar.emit()">Cancelar</button>
+      <button
+        type="button"
+        class="botao botao--primario"
+        [disabled]="!previa()?.podeConfirmar || importando()"
+        (click)="confirmar()"
+      >
+        @if (previa(); as p) {
+          {{ importando() ? 'Importando...' : 'Importar ' + p.importavel.titulares + ' titulares e ' + p.importavel.dependentes + ' dependentes' }}
+        } @else {
+          Importar
+        }
+      </button>
+    </footer>
+  </div>
+</div>

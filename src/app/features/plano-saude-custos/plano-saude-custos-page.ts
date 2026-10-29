@@ -7,7 +7,8 @@ import { Icon } from '../../shared/icons/icon';
 import { FaturaOperadoraSaude } from '../faturas-plano-saude/fatura-plano-saude';
 import { FaturaOperadoraSaudeService } from '../faturas-plano-saude/fatura-plano-saude.service';
 import { NotaDebitoPjService } from '../notas-debito-pj/nota-debito-pj.service';
-import { PlanoSaudeMes, PlanoSaudeMesFiltro, PlanoSaudeUsuarioMes, SalvarPlanoSaudeMesItem } from './plano-saude-custo';
+import { ImportacaoPlanoSaudeResultado, PlanoSaudeMes, PlanoSaudeMesFiltro, PlanoSaudeUsuarioMes, SalvarPlanoSaudeMesItem } from './plano-saude-custo';
+import { ImportarFaturaModal } from './importar-fatura-modal';
 import { PlanoSaudeCustoService } from './plano-saude-custo.service';
 
 const NOMES_MESES = [
@@ -19,7 +20,7 @@ const NOMES_TIPO: Record<string, string> = { Pj: 'PJ', Clt: 'CLT', Estagio: 'Est
 
 @Component({
   selector: 'app-plano-saude-custos-page',
-  imports: [FormsModule, RouterLink, DecimalPipe, Icon],
+  imports: [FormsModule, RouterLink, DecimalPipe, Icon, ImportarFaturaModal],
   templateUrl: './plano-saude-custos-page.html',
   styleUrl: './plano-saude-custos-page.scss',
 })
@@ -49,6 +50,10 @@ export class PlanoSaudeCustosPage {
   protected faturaNdId: number | null = null;
   protected descontoNd = 0;
   protected retencaoNd = 0;
+
+  // --- Importação da fatura da operadora ---
+  protected readonly importarAberto = signal(false);
+  protected readonly resultadoImportacao = signal<ImportacaoPlanoSaudeResultado | null>(null);
 
   // Valores gravados (mensal|coparticipação) por linha, para saber se há alteração ainda não salva.
   private readonly salvos = new Map<string, string>();
@@ -195,6 +200,21 @@ export class PlanoSaudeCustosPage {
       },
       error: () => alert('Não foi possível remover o lançamento.'),
     });
+  }
+
+  protected abrirImportacao(): void {
+    if (this.temAlteracoes() && !confirm('Há alterações não salvas neste mês. Depois da importação a tela é recarregada e elas se perdem. Continuar?')) {
+      return;
+    }
+
+    this.resultadoImportacao.set(null);
+    this.importarAberto.set(true);
+  }
+
+  protected aposImportar(resultado: ImportacaoPlanoSaudeResultado): void {
+    this.importarAberto.set(false);
+    this.resultadoImportacao.set(resultado);
+    this.buscar();
   }
 
   // --- Nota de débito ---
