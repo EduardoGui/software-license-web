@@ -91,6 +91,9 @@
         <thead>
           <tr>
             <th>Identificação</th>
+            @if (authService.ehAdministrador()) {
+              <th>Criada por</th>
+            }
             <th>Competência</th>
             <th>Vencimento</th>
             <th>Valor previsto</th>
@@ -107,6 +110,9 @@
               (click)="alternarLinha(o)"
             >
               <td>{{ identificacao(o) }}</td>
+              @if (authService.ehAdministrador()) {
+                <td>{{ o.criadoPorNome || '-' }}</td>
+              }
               <td>{{ competenciaBr(o.competencia) }}</td>
               <td>{{ o.vencimento ? (o.vencimento | dataBr) : '-' }}</td>
               <td>{{ o.valorPrevisto | number: '1.2-2' }}</td>
@@ -122,7 +128,7 @@
             </tr>
             @if (linhaExpandida(o)) {
               <tr class="linha-expandida">
-                <td colspan="6">
+                <td [attr.colspan]="authService.ehAdministrador() ? 7 : 6">
                   <div class="acompanhamento" (click)="$event.stopPropagation()">
                     @if (o.criadoPorNome && authService.ehAdministrador()) {
                       <p class="parcelas-info">Criada por {{ o.criadoPorNome }}</p>
