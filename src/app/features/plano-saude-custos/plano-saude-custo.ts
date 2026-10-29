@@ -16,6 +16,11 @@ export interface PlanoSaudeUsuarioMes {
   lancamentoId: number | null;
   valorMensal: number | null;
   valorCoparticipacao: number | null;
+  // Coparticipação total gravada (titular + dependentes) e a nota de débito do mês, se existir.
+  coparticipacaoTotal: number;
+  notaDebitoId: number | null;
+  notaDebitoStatus: 'Rascunho' | 'Enviada' | 'Recebida' | null;
+  notaDebitoValor: number | null;
   dependentes: PlanoSaudeDependenteMes[];
 }
 

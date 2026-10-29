@@ -37,6 +37,27 @@
   } @else if (mes()!.usuarios.length === 0) {
     <p class="status">Nenhum usuário ativo no período selecionado.</p>
   } @else {
+    @let alterado = temAlteracoes();
+    <div class="nd-barra">
+      @if (totalPendentesNd() > 0) {
+        <span class="nd-alerta">{{ totalPendentesNd() }} PJ com coparticipação sem nota de débito</span>
+      } @else {
+        <span class="nd-ok">Nenhum PJ pendente de nota de débito neste mês.</span>
+      }
+      <label class="check">
+        <input type="checkbox" [(ngModel)]="somentePendentesNd" [ngModelOptions]="{ standalone: true }" />
+        Só pendentes de nota de débito
+      </label>
+    </div>
+    @if (alterado) {
+      <p class="status nd-aviso">Há alterações não salvas. Salve o mês para poder criar notas de débito.</p>
+    }
+    @if (avisoNd(); as aviso) {
+      <p class="status status--sucesso">
+        Nota de débito de {{ aviso.nome }} criada como rascunho.
+        <a [routerLink]="['/plano-saude/notas-debito', aviso.notaId]">Abrir nota</a>
+      </p>
+    }
     <div class="resumo">
       @if (salvo()) {
         <span class="status status--sucesso">Lançamentos salvos.</span>
@@ -48,6 +69,9 @@
       </button>
     </div>
 
+    @if (somentePendentesNd && usuariosVisiveis().length === 0) {
+      <p class="status">Nenhum PJ pendente de nota de débito neste mês.</p>
+    }
     <div class="tabela-scroll">
       <table>
         <thead>
@@ -56,11 +80,12 @@
             <th>Tipo / Empresa</th>
             <th>Valor mensal</th>
             <th>Coparticipação</th>
+            <th>Nota de débito</th>
             <th></th>
           </tr>
         </thead>
         <tbody>
-          @for (usuario of mes()!.usuarios; track usuario.usuarioId) {
+          @for (usuario of usuariosVisiveis(); track usuario.usuarioId) {
             <tr class="linha-titular">
               <td>{{ usuario.nome }}</td>
               <td>{{ nomeTipo(usuario.tipo) }}{{ usuario.empresaPjNome ? ' — ' + usuario.empresaPjNome : '' }}</td>
@@ -69,6 +94,40 @@
               </td>
               <td>
                 <input type="number" min="0" step="0.01" [(ngModel)]="usuario.valorCoparticipacao" [ngModelOptions]="{ standalone: true }" />
+              </td>
+              <td class="col-nd">
+                @if (!ehPj(usuario)) {
+                  <span class="nd-na">—</span>
+                } @else if (usuario.notaDebitoId !== null) {
+                  <a
+                    class="nd-selo"
+                    [class.nd-selo--rascunho]="usuario.notaDebitoStatus === 'Rascunho'"
+                    [class.nd-selo--enviada]="usuario.notaDebitoStatus === 'Enviada'"
+                    [class.nd-selo--recebida]="usuario.notaDebitoStatus === 'Recebida'"
+                    [routerLink]="['/plano-saude/notas-debito', usuario.notaDebitoId]"
+                    title="Abrir a nota de débito"
+                    >{{ usuario.notaDebitoStatus }}</a
+                  >
+                  @if (ndDivergente(usuario)) {
+                    <span
+                      class="nd-selo nd-selo--divergente"
+                      title="A nota tem o valor congelado da época em que foi criada. Nota: R$ {{ usuario.notaDebitoValor | number: '1.2-2' }} · coparticipação atual: R$ {{ usuario.coparticipacaoTotal | number: '1.2-2' }}"
+                      >⚠ Divergente</span
+                    >
+                  }
+                } @else if (usuario.coparticipacaoTotal > 0) {
+                  <button
+                    type="button"
+                    class="botao botao--pequeno"
+                    [disabled]="alterado"
+                    [title]="alterado ? 'Salve o mês antes de criar a nota de débito' : 'Criar nota de débito deste mês'"
+                    (click)="abrirCriarNd(usuario)"
+                  >
+                    Criar nota de débito
+                  </button>
+                } @else {
+                  <span class="nd-na">—</span>
+                }
               </td>
               <td>
                 @if (usuario.lancamentoId !== null) {
@@ -105,6 +164,7 @@
                     [ngModelOptions]="{ standalone: true }"
                   />
                 </td>
+                <td></td>
                 <td>
                   @if (dependente.lancamentoId !== null) {
                     <button
@@ -122,6 +182,58 @@
           }
         </tbody>
       </table>
+    </div>
+  }
+
+  @if (criandoNdPara(); as alvo) {
+    <div class="overlay" (click)="fecharCriarNd()">
+      <div class="modal" (click)="$event.stopPropagation()">
+        <header>
+          <h2>Criar nota de débito</h2>
+          <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fecharCriarNd()">×</button>
+        </header>
+        <div class="modal__corpo">
+          <p class="modal__linha">
+            <strong>{{ alvo.nome }}</strong> — {{ nomesMeses[mes()!.mes - 1] }}/{{ mes()!.ano }}
+          </p>
+          <p class="modal__linha">
+            Valor bruto (coparticipação do titular + dependentes): <strong>R$ {{ alvo.coparticipacaoTotal | number: '1.2-2' }}</strong>
+          </p>
+          @if (faturasDoMes().length === 0) {
+            <p class="status status--erro">
+              Não há fatura da operadora cadastrada para este mês. Cadastre a fatura para poder criar a nota.
+              <a routerLink="/plano-saude/faturas/nova" (click)="fecharCriarNd()">Cadastrar fatura</a>
+            </p>
+          } @else {
+            <label>
+              Fatura da operadora
+              <select [(ngModel)]="faturaNdId" [ngModelOptions]="{ standalone: true }">
+                <option [ngValue]="null">Selecione</option>
+                @for (fatura of faturasDoMes(); track fatura.id) {
+                  <option [ngValue]="fatura.id">{{ fatura.operadoraSaude }} — nº {{ fatura.numeroFatura }}</option>
+                }
+              </select>
+            </label>
+            <label>
+              Desconto (R$) — opcional
+              <input type="number" min="0" step="0.01" [(ngModel)]="descontoNd" [ngModelOptions]="{ standalone: true }" />
+            </label>
+            <label>
+              Retenção tributária (R$) — opcional
+              <input type="number" min="0" step="0.01" [(ngModel)]="retencaoNd" [ngModelOptions]="{ standalone: true }" />
+            </label>
+          }
+          @if (erroNd()) {
+            <p class="status status--erro">{{ erroNd() }}</p>
+          }
+        </div>
+        <footer>
+          <button type="button" class="botao botao--texto" (click)="fecharCriarNd()">Cancelar</button>
+          <button type="button" class="botao botao--primario" [disabled]="salvandoNd() || faturasDoMes().length === 0" (click)="confirmarCriarNd()">
+            {{ salvandoNd() ? 'Criando...' : 'Criar nota (rascunho)' }}
+          </button>
+        </footer>
+      </div>
     </div>
   }
 </section>
