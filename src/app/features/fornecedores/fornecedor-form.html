@@ -39,6 +39,9 @@
         <label>
           CPF
           <input type="text" formControlName="cpf" placeholder="000.000.000-00" />
+          @if (form.controls.cpf.errors?.['cpfInvalido'] && form.controls.cpf.touched) {
+            <span class="campo-erro">CPF inválido.</span>
+          }
         </label>
       </div>
 

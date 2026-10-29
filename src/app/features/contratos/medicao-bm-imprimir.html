@@ -20,7 +20,7 @@
     <table class="tabela-doc">
       <tr class="linha-escura">
         <th colspan="3">SUBCONTRATADO</th>
-        <th>CNPJ</th>
+        <th>{{ f?.cnpj || !f?.cpf ? 'CNPJ' : 'CPF' }}</th>
         <th>Nº DO CONTRATO</th>
         <th>Nº DO BM</th>
         <th>PERÍODO</th>
@@ -28,7 +28,7 @@
       </tr>
       <tr>
         <td colspan="3">{{ f?.nome ?? c.fornecedorNome }}</td>
-        <td>{{ f?.cnpj ?? '—' }}</td>
+        <td>{{ f?.cnpj || f?.cpf || '—' }}</td>
         <td>{{ c.numero }}</td>
         <td>{{ numeroBmExibicao(m) }}</td>
         <td>{{ m.periodoInicio | dataBr }} a {{ m.periodoFim | dataBr }}</td>

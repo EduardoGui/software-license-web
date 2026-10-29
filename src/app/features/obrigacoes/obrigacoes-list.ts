@@ -8,6 +8,8 @@ import { Fornecedor } from '../fornecedores/fornecedor';
 import { FornecedorService } from '../fornecedores/fornecedor.service';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { cnpjEhValido } from '../../shared/validators/cnpj-validator';
+import { cpfEhValido } from '../../shared/validators/cpf-validator';
 import { diasEntre, hojeIso, inicioDoMes } from '../timeline/timeline-datas';
 import { DestinatariosFinanceiroModal } from './destinatarios-financeiro-modal';
 import { CampoAndamento, Obrigacao, ObrigacaoFiltro } from './obrigacao';
@@ -107,7 +109,8 @@ export class ObrigacoesList {
 
   protected readonly formFornecedor = this.fb.nonNullable.group({
     nome: ['', Validators.required],
-    cnpj: ['', Validators.required],
+    pessoa: ['PJ' as 'PJ' | 'PF'],
+    documento: ['', Validators.required],
   });
 
   constructor() {
@@ -533,7 +536,7 @@ export class ObrigacoesList {
 
   protected abrirModalFornecedor(): void {
     this.erroFornecedor.set(null);
-    this.formFornecedor.reset({ nome: '', cnpj: '' });
+    this.formFornecedor.reset({ nome: '', pessoa: 'PJ', documento: '' });
     this.modalFornecedorAberto.set(true);
   }
 
@@ -542,21 +545,28 @@ export class ObrigacoesList {
   }
 
   protected salvarFornecedor(): void {
+    const valor = this.formFornecedor.getRawValue();
+    const pessoaFisica = valor.pessoa === 'PF';
+
     if (this.formFornecedor.invalid) {
       this.formFornecedor.markAllAsTouched();
-      this.erroFornecedor.set('Informe o nome e o CNPJ do fornecedor.');
+      this.erroFornecedor.set(`Informe o nome e o ${pessoaFisica ? 'CPF' : 'CNPJ'} do fornecedor.`);
       return;
     }
 
-    const valor = this.formFornecedor.getRawValue();
+    if (pessoaFisica ? !cpfEhValido(valor.documento) : !cnpjEhValido(valor.documento)) {
+      this.erroFornecedor.set(pessoaFisica ? 'CPF inválido.' : 'CNPJ inválido.');
+      return;
+    }
+
     this.salvandoFornecedor.set(true);
     this.erroFornecedor.set(null);
 
     this.fornecedorService
       .criar({
         nome: valor.nome.trim(),
-        cnpj: valor.cnpj.trim(),
-        cpf: null,
+        cnpj: pessoaFisica ? null : valor.documento.trim(),
+        cpf: pessoaFisica ? valor.documento.trim() : null,
         contato: null,
         telefone: null,
         endereco: null,

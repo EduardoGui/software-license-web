@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
 import { cnpjValidator } from '../../shared/validators/cnpj-validator';
+import { cpfValidator } from '../../shared/validators/cpf-validator';
 import { FornecedorService } from './fornecedor.service';
 
 @Component({
@@ -31,7 +32,7 @@ export class FornecedorForm {
   protected readonly form = this.fb.nonNullable.group({
     nome: ['', Validators.required],
     cnpj: ['', cnpjValidator],
-    cpf: [''],
+    cpf: ['', cpfValidator],
     contato: [''],
     telefone: [''],
     endereco: [''],

@@ -318,8 +318,19 @@
               <input type="text" formControlName="nome" />
             </label>
             <label>
-              CNPJ*
-              <input type="text" formControlName="cnpj" placeholder="00.000.000/0000-00" />
+              Tipo de fornecedor
+              <select formControlName="pessoa">
+                <option value="PJ">Pessoa jurídica (CNPJ)</option>
+                <option value="PF">Pessoa física (CPF)</option>
+              </select>
+            </label>
+            <label>
+              {{ formFornecedor.controls.pessoa.value === 'PF' ? 'CPF*' : 'CNPJ*' }}
+              <input
+                type="text"
+                formControlName="documento"
+                [placeholder]="formFornecedor.controls.pessoa.value === 'PF' ? '000.000.000-00' : '00.000.000/0000-00'"
+              />
             </label>
 
             @if (erroFornecedor()) {
