@@ -97,6 +97,15 @@ textarea {
   justify-content: flex-end;
 }
 
+.campo-erro {
+  color: #b91c1c;
+  font-size: 0.78rem;
+}
+
+.invalido {
+  border-color: #b91c1c !important;
+}
+
 .status--erro {
   color: #b91c1c;
 }

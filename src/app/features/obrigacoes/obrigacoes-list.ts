@@ -544,6 +544,7 @@ export class ObrigacoesList {
   protected salvarFornecedor(): void {
     if (this.formFornecedor.invalid) {
       this.formFornecedor.markAllAsTouched();
+      this.erroFornecedor.set('Informe o nome e o CNPJ do fornecedor.');
       return;
     }
 

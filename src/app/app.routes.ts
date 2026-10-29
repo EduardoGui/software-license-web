@@ -211,7 +211,7 @@ export const routes: Routes = [
       { path: 'dp/empresas-pj/novo', component: EmpresaPjForm, canActivate: [administrativoGuard] },
       { path: 'dp/empresas-pj/:id/editar', component: EmpresaPjForm, canActivate: [administrativoGuard] },
       { path: 'dp/fornecedores', component: FornecedoresList, canActivate: [adminGuard] },
-      { path: 'dp/fornecedores/novo', component: FornecedorForm, canActivate: [adminGuard] },
+      { path: 'dp/fornecedores/novo', component: FornecedorForm, canActivate: [administrativoGuard] },
       { path: 'dp/fornecedores/:id/editar', component: FornecedorForm, canActivate: [adminGuard] },
       {
         path: 'plano-saude',

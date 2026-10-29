@@ -2,9 +2,9 @@
   <header class="topo">
     <h1>Controle de Obrigações</h1>
     <div class="topo__acoes">
-@if (authService.ehAdministrador()) {
-      <button type="button" class="botao" (click)="destinatariosAberto.set(true)">Destinatários do financeiro</button>
-}
+      @if (authService.ehAdministrador()) {
+        <button type="button" class="botao" (click)="destinatariosAberto.set(true)">Destinatários do financeiro</button>
+      }
       <a class="botao botao--texto" routerLink="/despesas-avulsas">Ver lista de despesas</a>
       <a class="botao botao--primario" routerLink="/despesas-avulsas/novo"><app-icon name="plus" [size]="16" /> Nova despesa avulsa</a>
     </div>
@@ -46,9 +46,7 @@
             <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
           }
         </select>
-@if (authService.ehAdministrador()) {
         <button type="button" class="botao-add" title="Cadastrar novo fornecedor" (click)="abrirModalFornecedor()">+</button>
-}
       </span>
     </label>
     <label>

@@ -14,20 +14,21 @@
           <label>
             Fornecedor
             <div class="campo-com-acao">
-              <select formControlName="fornecedorId">
+              <select formControlName="fornecedorId" [class.invalido]="form.controls.fornecedorId.invalid && form.controls.fornecedorId.touched">
                 <option [ngValue]="null">Selecione</option>
                 @for (fornecedor of fornecedores(); track fornecedor.id) {
                   <option [ngValue]="fornecedor.id">{{ fornecedor.nome }}</option>
                 }
               </select>
-@if (authService.ehAdministrador()) {
               <button type="button" class="botao-add" title="Novo fornecedor" (click)="abrirModalFornecedor()">+</button>
-}
             </div>
+            @if (form.controls.fornecedorId.invalid && form.controls.fornecedorId.touched) {
+              <span class="campo-erro">Fornecedor é obrigatório.</span>
+            }
           </label>
           <label>
             Categoria
-            <select formControlName="categoria">
+            <select formControlName="categoria" [class.invalido]="form.controls.categoria.invalid && form.controls.categoria.touched">
               <option value="">Selecione</option>
               <option value="Serviços">Serviços</option>
               <option value="Equipamentos">Equipamentos</option>
@@ -39,10 +40,16 @@
               <option value="Estacionamento">Estacionamento</option>
               <option value="Outros">Outros</option>
             </select>
+            @if (form.controls.categoria.invalid && form.controls.categoria.touched) {
+              <span class="campo-erro">Categoria é obrigatória.</span>
+            }
           </label>
           <label class="grid__full">
             Descrição
-            <input type="text" formControlName="descricao" />
+            <input type="text" formControlName="descricao" [class.invalido]="form.controls.descricao.invalid && form.controls.descricao.touched" />
+            @if (form.controls.descricao.invalid && form.controls.descricao.touched) {
+              <span class="campo-erro">Descrição é obrigatória.</span>
+            }
           </label>
           <label>
             Número da NF
@@ -50,7 +57,10 @@
           </label>
           <label>
             Valor (R$)
-            <input type="number" step="0.01" min="0" formControlName="valor" />
+            <input type="number" step="0.01" min="0" formControlName="valor" [class.invalido]="form.controls.valor.invalid && form.controls.valor.touched" />
+            @if (form.controls.valor.invalid && form.controls.valor.touched) {
+              <span class="campo-erro">Informe um valor maior que zero.</span>
+            }
           </label>
           <label>
             Data de emissão

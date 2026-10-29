@@ -1,4 +1,3 @@
-import { AuthService } from '../auth/auth.service';
 import { Location } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -22,7 +21,6 @@ import { DespesaAvulsaService } from './despesa-avulsa.service';
   styleUrl: './despesa-avulsa-form.scss',
 })
 export class DespesaAvulsaForm {
-  protected readonly authService = inject(AuthService);
   private readonly fb = inject(FormBuilder);
   private readonly despesaAvulsaService = inject(DespesaAvulsaService);
   private readonly fornecedorService = inject(FornecedorService);
@@ -196,6 +194,7 @@ export class DespesaAvulsaForm {
   protected salvar(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.erro.set('Preencha os campos obrigatórios, destacados em vermelho.');
       return;
     }
 
@@ -285,6 +284,7 @@ export class DespesaAvulsaForm {
   protected salvarFornecedor(): void {
     if (this.formFornecedor.invalid) {
       this.formFornecedor.markAllAsTouched();
+      this.erroFornecedor.set('Informe o nome e o CNPJ do fornecedor.');
       return;
     }
 
