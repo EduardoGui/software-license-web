@@ -49,6 +49,17 @@
         <button type="button" class="botao-add" title="Cadastrar novo fornecedor" (click)="abrirModalFornecedor()">+</button>
       </span>
     </label>
+    @if (authService.ehAdministrador()) {
+      <label>
+        Responsável
+        <select name="responsavelUsuarioId" [(ngModel)]="filtro.responsavelUsuarioId">
+          <option [ngValue]="undefined">Todos</option>
+          @for (responsavel of responsaveis(); track responsavel.usuarioId) {
+            <option [ngValue]="responsavel.usuarioId">{{ responsavel.nome }}</option>
+          }
+        </select>
+      </label>
+    }
     <label>
       Etapa
       <select name="etapa" [(ngModel)]="filtro.etapa">
@@ -93,6 +104,7 @@
             <th>Identificação</th>
             @if (authService.ehAdministrador()) {
               <th>Criada por</th>
+              <th>Responsável</th>
             }
             <th>Competência</th>
             <th>Vencimento</th>
@@ -112,6 +124,7 @@
               <td>{{ identificacao(o) }}</td>
               @if (authService.ehAdministrador()) {
                 <td>{{ o.criadoPorNome || '-' }}</td>
+                <td>{{ o.responsavelNome || '-' }}</td>
               }
               <td>{{ competenciaBr(o.competencia) }}</td>
               <td>{{ o.vencimento ? (o.vencimento | dataBr) : '-' }}</td>
@@ -128,10 +141,40 @@
             </tr>
             @if (linhaExpandida(o)) {
               <tr class="linha-expandida">
-                <td [attr.colspan]="authService.ehAdministrador() ? 7 : 6">
+                <td [attr.colspan]="authService.ehAdministrador() ? 8 : 6">
                   <div class="acompanhamento" (click)="$event.stopPropagation()">
                     @if (o.criadoPorNome && authService.ehAdministrador()) {
                       <p class="parcelas-info">Criada por {{ o.criadoPorNome }}</p>
+                    }
+                    @if (authService.ehAdministrador()) {
+                      <div class="responsavel">
+                        <span class="responsavel__atual">
+                          Responsável:
+                          <strong>{{ o.responsavelNome || 'ninguém' }}</strong>
+                        </span>
+                        <select name="responsavelEscolhido" [(ngModel)]="responsavelEscolhido" aria-label="Atribuir a">
+                          <option [ngValue]="null">Atribuir a...</option>
+                          @for (responsavel of responsaveis(); track responsavel.usuarioId) {
+                            <option [ngValue]="responsavel.usuarioId">{{ responsavel.nome }}</option>
+                          }
+                        </select>
+                        <button
+                          type="button"
+                          class="botao"
+                          [disabled]="atribuindoResponsavel() || responsavelEscolhido === null || responsavelEscolhido === o.responsavelUsuarioId"
+                          (click)="atribuirResponsavel(o, responsavelEscolhido)"
+                        >
+                          Atribuir
+                        </button>
+                        @if (o.responsavelUsuarioId) {
+                          <button type="button" class="botao botao--texto" [disabled]="atribuindoResponsavel()" (click)="atribuirResponsavel(o, null)">
+                            Remover responsável
+                          </button>
+                        }
+                      </div>
+                    }
+                    @if (o.responsavelUsuarioId && !authService.ehAdministrador()) {
+                      <p class="parcelas-info">Atribuída a {{ o.responsavelNome }}</p>
                     }
                     @if (o.tipoMovimento === 'OC' && o.totalParcelas > 1) {
                       <p class="parcelas-info" [class.parcelas-info--alerta]="somaDivergente(o)">
@@ -275,6 +318,11 @@
                         </button>
                       </div>
                     </form>
+
+                    <div class="anexos-linha">
+                      <h3>Anexos</h3>
+                      <app-anexos-secao recurso="obrigacoes" [entidadeId]="o.id" />
+                    </div>
 
                     @if (parcelaEmCriacaoId() === o.id) {
                       <div class="nova-parcela">

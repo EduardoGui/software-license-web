@@ -51,9 +51,18 @@ export interface Obrigacao {
   exigeAssinatura: boolean;
   ordemCompraAssinada: boolean;
   criadoPorNome: string | null;
+  /** Usuário Administrativo a quem o Administrador atribuiu a obrigação para acompanhar e agir. */
+  responsavelUsuarioId: number | null;
+  responsavelNome: string | null;
+  dataAtribuicao: string | null;
   observacoes: string | null;
   dataCriacao: string;
   dataAtualizacao: string;
+}
+
+export interface ResponsavelObrigacao {
+  usuarioId: number;
+  nome: string;
 }
 
 export interface UpdateObrigacaoPayload {
@@ -77,6 +86,7 @@ export interface ObrigacaoFiltro {
   fornecedorId?: number;
   contratoId?: number;
   ordemCompraId?: number;
+  responsavelUsuarioId?: number;
   etapa?: string;
   pago?: boolean;
   cancelada?: boolean;

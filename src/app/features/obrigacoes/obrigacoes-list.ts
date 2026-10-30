@@ -6,13 +6,14 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 
 import { Fornecedor } from '../fornecedores/fornecedor';
 import { FornecedorService } from '../fornecedores/fornecedor.service';
+import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { cnpjEhValido } from '../../shared/validators/cnpj-validator';
 import { cpfEhValido } from '../../shared/validators/cpf-validator';
 import { diasEntre, hojeIso, inicioDoMes } from '../timeline/timeline-datas';
 import { DestinatariosFinanceiroModal } from './destinatarios-financeiro-modal';
-import { CampoAndamento, Obrigacao, ObrigacaoFiltro } from './obrigacao';
+import { CampoAndamento, Obrigacao, ObrigacaoFiltro, ResponsavelObrigacao } from './obrigacao';
 import { ObrigacaoService } from './obrigacao.service';
 import { SolicitacaoPagamentoModal } from './solicitacao-pagamento-modal';
 
@@ -29,6 +30,7 @@ interface FiltroObrigacoes {
   competenciaAteMes: string;
   tipoMovimento?: string;
   fornecedorId?: number;
+  responsavelUsuarioId?: number;
   etapa?: string;
   pago?: boolean;
   incluirCanceladas: boolean;
@@ -37,7 +39,7 @@ interface FiltroObrigacoes {
 
 @Component({
   selector: 'app-obrigacoes-list',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal, AnexosSecao],
   templateUrl: './obrigacoes-list.html',
   styleUrl: './obrigacoes-list.scss',
 })
@@ -113,8 +115,16 @@ export class ObrigacoesList {
     documento: ['', Validators.required],
   });
 
+  // Responsável pela obrigação (só o Administrador atribui): usuários Administrativos disponíveis e escolha pendente por linha.
+  protected readonly responsaveis = signal<ResponsavelObrigacao[]>([]);
+  protected readonly atribuindoResponsavel = signal(false);
+  protected responsavelEscolhido: number | null = null;
+
   constructor() {
     this.fornecedorService.listar().subscribe((fornecedores) => this.fornecedores.set(fornecedores));
+    if (this.authService.ehAdministrador()) {
+      this.obrigacaoService.listarResponsaveis().subscribe((responsaveis) => this.responsaveis.set(responsaveis));
+    }
 
     const fornecedorId = Number(this.route.snapshot.queryParamMap.get('fornecedorId'));
     if (fornecedorId) {
@@ -137,6 +147,7 @@ export class ObrigacoesList {
       competenciaAte: this.filtro.todosOsPeriodos ? undefined : `${this.filtro.competenciaAteMes}-01`,
       tipoMovimento: this.filtro.tipoMovimento,
       fornecedorId: this.filtro.fornecedorId,
+      responsavelUsuarioId: this.filtro.responsavelUsuarioId,
       etapa: this.filtro.etapa,
       pago: this.filtro.pago,
       cancelada: this.filtro.incluirCanceladas ? undefined : false,
@@ -471,6 +482,24 @@ export class ObrigacoesList {
       error: (err) => {
         this.processandoAcao.set(false);
         this.erroLinha.set(err?.error?.message ?? 'Não foi possível marcar como paga.');
+      },
+    });
+  }
+
+  // Atribui (ou remove, com null) o responsável: ele passa a ver a obrigação e a agir nela.
+  protected atribuirResponsavel(o: Obrigacao, usuarioId: number | null): void {
+    this.atribuindoResponsavel.set(true);
+    this.erroLinha.set(null);
+
+    this.obrigacaoService.atribuirResponsavel(o.id, usuarioId).subscribe({
+      next: (atualizada) => {
+        this.substituir(atualizada);
+        this.atribuindoResponsavel.set(false);
+        this.responsavelEscolhido = null;
+      },
+      error: (err) => {
+        this.atribuindoResponsavel.set(false);
+        this.erroLinha.set(err?.error?.message ?? 'Não foi possível atribuir o responsável.');
       },
     });
   }

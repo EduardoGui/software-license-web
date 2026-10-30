@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AtualizarAndamentoPayload, Obrigacao, ObrigacaoFiltro, UpdateObrigacaoPayload } from './obrigacao';
+import { AtualizarAndamentoPayload, Obrigacao, ObrigacaoFiltro, ResponsavelObrigacao, UpdateObrigacaoPayload } from './obrigacao';
 
 @Injectable({ providedIn: 'root' })
 export class ObrigacaoService {
@@ -18,6 +18,7 @@ export class ObrigacaoService {
     if (filtro.fornecedorId) params = params.set('fornecedorId', filtro.fornecedorId);
     if (filtro.contratoId) params = params.set('contratoId', filtro.contratoId);
     if (filtro.ordemCompraId) params = params.set('ordemCompraId', filtro.ordemCompraId);
+    if (filtro.responsavelUsuarioId) params = params.set('responsavelUsuarioId', filtro.responsavelUsuarioId);
     if (filtro.etapa) params = params.set('etapa', filtro.etapa);
     if (filtro.pago !== undefined) params = params.set('pago', filtro.pago);
     if (filtro.cancelada !== undefined) params = params.set('cancelada', filtro.cancelada);
@@ -41,6 +42,16 @@ export class ObrigacaoService {
   /** Ordem de Compra paga em várias vezes: cria mais uma obrigação (parcela) ligada à mesma OC, copiando a NF. */
   adicionarParcela(id: number, valor: number): Observable<Obrigacao> {
     return this.http.post<Obrigacao>(`${this.baseUrl}/${id}/parcelas`, { valor });
+  }
+
+  /** Usuários Administrativos que podem receber obrigações (só Administrador). */
+  listarResponsaveis(): Observable<ResponsavelObrigacao[]> {
+    return this.http.get<ResponsavelObrigacao[]>(`${this.baseUrl}/responsaveis`);
+  }
+
+  /** Atribui a obrigação a um usuário Administrativo; null remove o responsável (só Administrador). */
+  atribuirResponsavel(id: number, usuarioId: number | null): Observable<Obrigacao> {
+    return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/responsavel`, { usuarioId });
   }
 
   marcarEnviadaFinanceiro(id: number, dataPrevistaPagamento: string | null): Observable<Obrigacao> {
