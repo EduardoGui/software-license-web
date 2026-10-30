@@ -1,0 +1,90 @@
+@if (carregando()) {
+  <p class="status">Carregando UAs...</p>
+} @else if (erro()) {
+  <p class="erro" role="alert">{{ erro() }}</p>
+} @else if (uas(); as u) {
+  @if (u.resumo.length > 0) {
+    <ul class="resumo">
+      @for (r of u.resumo; track r.unidadeOrcamentariaId) {
+        <li [title]="r.descricao">
+          <strong>{{ r.codigo }}</strong> {{ r.descricao }} <span class="valor">R$ {{ r.valor | number: '1.2-2' : 'pt-BR' }}</span>
+        </li>
+      }
+    </ul>
+  } @else {
+    <p class="status">Nenhuma UA definida.</p>
+  }
+
+  @if (u.origem === 'OrdemCompra') {
+    <p class="dica">As UAs pertencem à Ordem de Compra e valem para todas as parcelas dela.</p>
+  }
+
+  @if (!u.podeEditar && u.motivoBloqueio) {
+    <p class="dica">{{ u.motivoBloqueio }}</p>
+  }
+
+  <table class="itens">
+    <thead>
+      <tr>
+        <th>{{ u.origem === 'DespesaAvulsa' ? 'Despesa' : 'Item' }}</th>
+        <th>Rateio</th>
+        @if (u.podeEditar) {
+          <th></th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (item of u.itens; track item.itemId ?? 'despesa') {
+        <tr>
+          <td>
+            {{ rotuloItem(item, u) }}
+            <span class="qtd">
+              @if (u.modo === 'valor') {
+                R$ {{ item.total | number: '1.2-2' : 'pt-BR' }}
+              } @else {
+                {{ item.total | number: '1.0-6' : 'pt-BR' }} {{ item.unidade }}
+              }
+            </span>
+          </td>
+          <td>
+            @if (itemSemUa(item)) {
+              <span class="sem-ua">Sem UA</span>
+            } @else {
+              @for (l of item.linhas; track l.unidadeOrcamentariaId) {
+                <span class="chip" [title]="l.descricao">
+                  {{ l.codigo }}:
+                  @if (u.modo === 'valor') {
+                    R$ {{ l.quantidade | number: '1.2-2' : 'pt-BR' }}
+                  } @else {
+                    {{ l.quantidade | number: '1.0-6' : 'pt-BR' }}
+                  }
+                </span>
+              }
+            }
+          </td>
+          @if (u.podeEditar) {
+            <td class="acao">
+              <button type="button" class="botao botao--secundario" (click)="abrirEdicao(item)">Editar UA</button>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+
+  @if (itemEmEdicao(); as item) {
+    <app-rateio-ua-modal
+      [titulo]="item.descricao"
+      [rotuloQuantidade]="u.modo === 'valor' ? 'Valor da despesa (R$)' : 'Quantidade do item' + (item.unidade ? ' (' + item.unidade + ')' : '')"
+      [modo]="u.modo"
+      [quantidadeTotal]="item.total"
+      [linhasIniciais]="linhasIniciais(item)"
+      [unidades]="unidades()"
+      [sugestoes]="sugestoes()"
+      [salvando]="salvando()"
+      [erro]="erroRateio()"
+      (salvar)="salvar($event)"
+      (fechar)="fecharEdicao()"
+    />
+  }
+}

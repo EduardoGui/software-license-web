@@ -320,6 +320,11 @@
                     </form>
 
                     <div class="anexos-linha">
+                      <h3>Unidades orçamentárias (UA)</h3>
+                      <app-obrigacao-uas-secao [obrigacaoId]="o.id" [fornecedorId]="o.fornecedorId" />
+                    </div>
+
+                    <div class="anexos-linha">
                       <h3>Anexos</h3>
                       <app-anexos-secao recurso="obrigacoes" [entidadeId]="o.id" />
                     </div>

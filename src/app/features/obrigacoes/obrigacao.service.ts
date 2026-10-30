@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AtualizarAndamentoPayload, Obrigacao, ObrigacaoFiltro, ResponsavelObrigacao, UpdateObrigacaoPayload } from './obrigacao';
+import { AtualizarAndamentoPayload, Obrigacao, ObrigacaoFiltro, ObrigacaoUas, ResponsavelObrigacao, UpdateObrigacaoPayload } from './obrigacao';
 
 @Injectable({ providedIn: 'root' })
 export class ObrigacaoService {
@@ -52,6 +52,16 @@ export class ObrigacaoService {
   /** Atribui a obrigação a um usuário Administrativo; null remove o responsável (só Administrador). */
   atribuirResponsavel(id: number, usuarioId: number | null): Observable<Obrigacao> {
     return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/responsavel`, { usuarioId });
+  }
+
+  /** UAs do documento de origem (BM, OC ou despesa avulsa) e se ainda podem ser alteradas. */
+  obterUas(id: number): Observable<ObrigacaoUas> {
+    return this.http.get<ObrigacaoUas>(`${this.baseUrl}/${id}/unidades-orcamentarias`);
+  }
+
+  /** Redefine o rateio de um item (itemId nulo na despesa avulsa); a quantidade vira valor em R$ no modo 'valor'. */
+  definirUas(id: number, itemId: number | null, linhas: { unidadeOrcamentariaId: number; quantidade: number }[]): Observable<ObrigacaoUas> {
+    return this.http.put<ObrigacaoUas>(`${this.baseUrl}/${id}/unidades-orcamentarias`, { itemId, linhas });
   }
 
   marcarEnviadaFinanceiro(id: number, dataPrevistaPagamento: string | null): Observable<Obrigacao> {

@@ -13,6 +13,7 @@ import { cnpjEhValido } from '../../shared/validators/cnpj-validator';
 import { cpfEhValido } from '../../shared/validators/cpf-validator';
 import { diasEntre, hojeIso, inicioDoMes } from '../timeline/timeline-datas';
 import { DestinatariosFinanceiroModal } from './destinatarios-financeiro-modal';
+import { ObrigacaoUasSecao } from './obrigacao-uas-secao';
 import { CampoAndamento, Obrigacao, ObrigacaoFiltro, ResponsavelObrigacao } from './obrigacao';
 import { ObrigacaoService } from './obrigacao.service';
 import { SolicitacaoPagamentoModal } from './solicitacao-pagamento-modal';
@@ -39,7 +40,7 @@ interface FiltroObrigacoes {
 
 @Component({
   selector: 'app-obrigacoes-list',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal, AnexosSecao],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal, AnexosSecao, ObrigacaoUasSecao],
   templateUrl: './obrigacoes-list.html',
   styleUrl: './obrigacoes-list.scss',
 })

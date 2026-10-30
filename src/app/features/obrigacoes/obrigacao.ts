@@ -65,6 +65,41 @@ export interface ResponsavelObrigacao {
   nome: string;
 }
 
+/** UAs (rateio) do documento de origem da obrigação (BM, OC ou despesa avulsa). */
+export interface ObrigacaoUas {
+  origem: 'MedicaoBm' | 'OrdemCompra' | 'DespesaAvulsa';
+  /** 'valor' (despesa avulsa, R$) ou 'quantidade' (itens de BM/OC). */
+  modo: 'quantidade' | 'valor';
+  podeEditar: boolean;
+  motivoBloqueio: string | null;
+  resumo: ObrigacaoUaResumo[];
+  itens: ObrigacaoUaItem[];
+}
+
+export interface ObrigacaoUaResumo {
+  unidadeOrcamentariaId: number;
+  codigo: string;
+  descricao: string;
+  valor: number;
+}
+
+export interface ObrigacaoUaItem {
+  /** Nulo na despesa avulsa. */
+  itemId: number | null;
+  descricao: string;
+  unidade: string | null;
+  total: number;
+  valorTotal: number;
+  linhas: ObrigacaoUaLinha[];
+}
+
+export interface ObrigacaoUaLinha {
+  unidadeOrcamentariaId: number;
+  codigo: string;
+  descricao: string;
+  quantidade: number;
+}
+
 export interface UpdateObrigacaoPayload {
   /** Só é aceito em OC com 2+ parcelas (parcela ainda não paga). */
   valorPrevisto?: number | null;
