@@ -1,7 +1,7 @@
-<section class="anexos-secao">
+<section class="anexos-secao" tabindex="0" (paste)="aoColar($event)">
   <div class="secao-cabecalho">
     <h2><app-icon name="paperclip" [size]="16" /> Anexos</h2>
-    <div>
+    <div class="acoes-cabecalho">
       <input
         #inputArquivo
         type="file"
@@ -9,13 +9,23 @@
         accept="application/pdf,image/jpeg,image/png"
         (change)="aoSelecionarArquivo($event)"
       />
+      @if (capturaSuportada) {
+        <button type="button" class="botao" [disabled]="enviando()" title="Captura uma tela ou janela e deixa recortar o trecho" (click)="capturarTela()">
+          Capturar tela
+        </button>
+      }
+      @if (colagemSuportada) {
+        <button type="button" class="botao" [disabled]="enviando()" title="Cola como anexo a imagem copiada (ex.: Win+Shift+S)" (click)="colarImagem()">
+          Colar imagem
+        </button>
+      }
       <button type="button" class="botao botao--primario" [disabled]="enviando()" (click)="abrirSeletorArquivo()">
         <app-icon name="plus" [size]="16" /> {{ enviando() ? 'Enviando...' : 'Adicionar anexo' }}
       </button>
     </div>
   </div>
 
-  <p class="ajuda">Formatos aceitos: PDF, JPG ou PNG, até 10 MB.</p>
+  <p class="ajuda">Formatos aceitos: PDF, JPG ou PNG, até 10 MB. Também dá para clicar aqui e colar uma imagem com Ctrl+V.</p>
 
   @if (erro()) {
     <p class="status status--erro">{{ erro() }}</p>

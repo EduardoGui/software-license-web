@@ -17,6 +17,18 @@ h2 {
   margin: 0;
 }
 
+.acoes-cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.botao:disabled {
+  opacity: 0.6;
+  cursor: default;
+}
+
 .input-arquivo-oculto {
   display: none;
 }

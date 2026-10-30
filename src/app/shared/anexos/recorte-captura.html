@@ -1,0 +1,30 @@
+<div class="modal-fundo">
+  <div class="modal" role="dialog" aria-modal="true" aria-label="Recortar captura de tela">
+    <div class="modal__cabecalho">
+      <h2>Recortar captura</h2>
+      <button type="button" class="botao-fechar" aria-label="Fechar" (click)="cancelar.emit()">×</button>
+    </div>
+
+    <p class="dica">Arraste sobre a imagem para marcar o trecho que vira anexo.</p>
+
+    <div class="area-visor">
+      <div class="visor" (pointerdown)="iniciar($event)" (pointermove)="arrastar($event)" (pointerup)="soltar()" (pointercancel)="soltar()">
+        <canvas #visor></canvas>
+        @if (selecao(); as s) {
+          <div class="selecao" [style.left.px]="s.x" [style.top.px]="s.y" [style.width.px]="s.largura" [style.height.px]="s.altura"></div>
+        }
+      </div>
+    </div>
+
+    @if (erro()) {
+      <p class="erro">{{ erro() }}</p>
+    }
+
+    <div class="acoes">
+      <button type="button" class="botao" (click)="novaCaptura.emit()">Capturar de novo</button>
+      <span class="espaco"></span>
+      <button type="button" class="botao" (click)="usarImagemInteira()">Usar imagem inteira</button>
+      <button type="button" class="botao botao--primario" [disabled]="!selecaoValida()" (click)="usarRecorte()">Usar recorte</button>
+    </div>
+  </div>
+</div>
