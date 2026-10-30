@@ -86,14 +86,6 @@ import { ContratosTimeline } from './features/contratos/contratos-timeline';
 import { BaseDadosEngenhariaPage } from './features/contratos/base-dados-engenharia-page';
 import { MedicaoBmImprimir } from './features/contratos/medicao-bm-imprimir';
 import { PlanoSaudePainel } from './features/plano-saude/plano-saude-painel';
-import { PlanoSaudeCustosPage } from './features/plano-saude-custos/plano-saude-custos-page';
-import { PlanoSaudeRelatorioPage } from './features/plano-saude-relatorio/plano-saude-relatorio-page';
-import { NotasDebitoPjList } from './features/notas-debito-pj/notas-debito-pj-list';
-import { NotaDebitoPjForm } from './features/notas-debito-pj/nota-debito-pj-form';
-import { NotaDebitoPjView } from './features/notas-debito-pj/nota-debito-pj-view';
-import { FaturasPlanoSaudeList } from './features/faturas-plano-saude/faturas-plano-saude-list';
-import { FaturaPlanoSaudeForm } from './features/faturas-plano-saude/fatura-plano-saude-form';
-import { FaturaPlanoSaudeView } from './features/faturas-plano-saude/fatura-plano-saude-view';
 import { OrdensCompraList } from './features/ordens-compra/ordens-compra-list';
 import { OrdemCompraForm } from './features/ordens-compra/ordem-compra-form';
 import { OrdemCompraView } from './features/ordens-compra/ordem-compra-view';
@@ -219,16 +211,16 @@ export const routes: Routes = [
         canActivate: [administrativoGuard],
         children: [
           { path: '', redirectTo: 'lancamento-mensal', pathMatch: 'full' },
-          { path: 'lancamento-mensal', component: PlanoSaudeCustosPage },
-          { path: 'relatorio-mensal', component: PlanoSaudeRelatorioPage },
-          { path: 'faturas', component: FaturasPlanoSaudeList },
-          { path: 'faturas/nova', component: FaturaPlanoSaudeForm },
-          { path: 'faturas/:id/editar', component: FaturaPlanoSaudeForm },
-          { path: 'faturas/:id', component: FaturaPlanoSaudeView },
-          { path: 'notas-debito', component: NotasDebitoPjList },
-          { path: 'notas-debito/nova', component: NotaDebitoPjForm },
-          { path: 'notas-debito/:id/editar', component: NotaDebitoPjForm },
-          { path: 'notas-debito/:id', component: NotaDebitoPjView },
+          { path: 'lancamento-mensal', loadComponent: () => import('./features/plano-saude-custos/plano-saude-custos-page').then((m) => m.PlanoSaudeCustosPage) },
+          { path: 'relatorio-mensal', loadComponent: () => import('./features/plano-saude-relatorio/plano-saude-relatorio-page').then((m) => m.PlanoSaudeRelatorioPage) },
+          { path: 'faturas', loadComponent: () => import('./features/faturas-plano-saude/faturas-plano-saude-list').then((m) => m.FaturasPlanoSaudeList) },
+          { path: 'faturas/nova', loadComponent: () => import('./features/faturas-plano-saude/fatura-plano-saude-form').then((m) => m.FaturaPlanoSaudeForm) },
+          { path: 'faturas/:id/editar', loadComponent: () => import('./features/faturas-plano-saude/fatura-plano-saude-form').then((m) => m.FaturaPlanoSaudeForm) },
+          { path: 'faturas/:id', loadComponent: () => import('./features/faturas-plano-saude/fatura-plano-saude-view').then((m) => m.FaturaPlanoSaudeView) },
+          { path: 'notas-debito', loadComponent: () => import('./features/notas-debito-pj/notas-debito-pj-list').then((m) => m.NotasDebitoPjList) },
+          { path: 'notas-debito/nova', loadComponent: () => import('./features/notas-debito-pj/nota-debito-pj-form').then((m) => m.NotaDebitoPjForm) },
+          { path: 'notas-debito/:id/editar', loadComponent: () => import('./features/notas-debito-pj/nota-debito-pj-form').then((m) => m.NotaDebitoPjForm) },
+          { path: 'notas-debito/:id', loadComponent: () => import('./features/notas-debito-pj/nota-debito-pj-view').then((m) => m.NotaDebitoPjView) },
         ],
       },
       // Endereços antigos (favoritos) continuam funcionando.

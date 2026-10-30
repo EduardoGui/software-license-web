@@ -43,7 +43,6 @@ export interface CreateNotaDebitoPjPayload {
   usuarioId: number;
   ano: number;
   mes: number;
-  faturaOperadoraSaudeId: number | null;
   operadoraSaude: string | null;
   numeroFatura: string | null;
   descricao: string | null;
@@ -58,7 +57,7 @@ export interface CreateNotaDebitoPjPayload {
   projetoContrato: string | null;
 }
 
-export type UpdateNotaDebitoPjPayload = Omit<CreateNotaDebitoPjPayload, 'usuarioId' | 'ano' | 'mes' | 'faturaOperadoraSaudeId'>;
+export type UpdateNotaDebitoPjPayload = Omit<CreateNotaDebitoPjPayload, 'usuarioId' | 'ano' | 'mes'>;
 
 export interface NotaDebitoPjFiltro {
   ano?: number;

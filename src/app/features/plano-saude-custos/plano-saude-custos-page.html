@@ -72,6 +72,9 @@
         Nota de débito de {{ aviso.nome }} criada como rascunho.
         <a [routerLink]="['/plano-saude/notas-debito', aviso.notaId]">Abrir nota</a>
       </p>
+      @if (aviso.alerta) {
+        <p class="status status--erro">{{ aviso.alerta }}</p>
+      }
     }
     <div class="resumo">
       @if (salvo()) {
@@ -206,7 +209,7 @@
 
   @if (criandoNdPara(); as alvo) {
     <div class="overlay" (click)="fecharCriarNd()">
-      <div class="modal" (click)="$event.stopPropagation()">
+      <div class="modal" tabindex="-1" (click)="$event.stopPropagation()" (paste)="aoColarNd($event)">
         <header>
           <h2>Criar nota de débito</h2>
           <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fecharCriarNd()">×</button>
@@ -218,37 +221,54 @@
           <p class="modal__linha">
             Valor bruto (coparticipação do titular + dependentes): <strong>R$ {{ alvo.coparticipacaoTotal | number: '1.2-2' }}</strong>
           </p>
-          @if (faturasDoMes().length === 0) {
-            <p class="status status--erro">
-              Não há fatura da operadora cadastrada para este mês. Cadastre a fatura para poder criar a nota.
-              <a routerLink="/plano-saude/faturas/nova" (click)="fecharCriarNd()">Cadastrar fatura</a>
-            </p>
-          } @else {
-            <label>
-              Fatura da operadora
-              <select [(ngModel)]="faturaNdId" [ngModelOptions]="{ standalone: true }">
-                <option [ngValue]="null">Selecione</option>
-                @for (fatura of faturasDoMes(); track fatura.id) {
-                  <option [ngValue]="fatura.id">{{ fatura.operadoraSaude }} — nº {{ fatura.numeroFatura }}</option>
+          <label>
+            Operadora de saúde — opcional
+            <input type="text" [(ngModel)]="operadoraNd" [ngModelOptions]="{ standalone: true }" maxlength="100" placeholder="Ex.: AMIL" />
+          </label>
+          <label>
+            Nº da fatura — opcional
+            <input type="text" [(ngModel)]="numeroFaturaNd" [ngModelOptions]="{ standalone: true }" maxlength="50" />
+          </label>
+          <label>
+            Desconto (R$) — opcional
+            <input type="number" min="0" step="0.01" [(ngModel)]="descontoNd" [ngModelOptions]="{ standalone: true }" />
+          </label>
+          <label>
+            Retenção tributária (R$) — opcional
+            <input type="number" min="0" step="0.01" [(ngModel)]="retencaoNd" [ngModelOptions]="{ standalone: true }" />
+          </label>
+
+          <div class="recortes">
+            <p class="modal__linha"><strong>Recorte de tela</strong> — opcional; vai de anexo da nota e junto no e-mail ao colaborador</p>
+            <div class="recortes__acoes">
+              @if (capturaSuportada) {
+                <button type="button" class="botao botao--texto" (click)="capturarTelaNd()">Capturar tela</button>
+              }
+              @if (colagemSuportada) {
+                <button type="button" class="botao botao--texto" (click)="colarImagemNd()">Colar imagem</button>
+              }
+            </div>
+            @if (imagensNd().length > 0) {
+              <ul class="recortes__lista">
+                @for (imagem of imagensNd(); track imagem.url; let i = $index) {
+                  <li>
+                    <img [src]="imagem.url" [alt]="imagem.arquivo.name" />
+                    <button type="button" class="botao-fechar" aria-label="Remover recorte" (click)="removerImagemNd(i)">×</button>
+                  </li>
                 }
-              </select>
-            </label>
-            <label>
-              Desconto (R$) — opcional
-              <input type="number" min="0" step="0.01" [(ngModel)]="descontoNd" [ngModelOptions]="{ standalone: true }" />
-            </label>
-            <label>
-              Retenção tributária (R$) — opcional
-              <input type="number" min="0" step="0.01" [(ngModel)]="retencaoNd" [ngModelOptions]="{ standalone: true }" />
-            </label>
-          }
+              </ul>
+            }
+            @if (erroImagemNd()) {
+              <p class="status status--erro">{{ erroImagemNd() }}</p>
+            }
+          </div>
           @if (erroNd()) {
             <p class="status status--erro">{{ erroNd() }}</p>
           }
         </div>
         <footer>
           <button type="button" class="botao botao--texto" (click)="fecharCriarNd()">Cancelar</button>
-          <button type="button" class="botao botao--primario" [disabled]="salvandoNd() || faturasDoMes().length === 0" (click)="confirmarCriarNd()">
+          <button type="button" class="botao botao--primario" [disabled]="salvandoNd()" (click)="confirmarCriarNd()">
             {{ salvandoNd() ? 'Criando...' : 'Criar nota (rascunho)' }}
           </button>
         </footer>

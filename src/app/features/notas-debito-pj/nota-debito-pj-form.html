@@ -34,15 +34,6 @@
           </label>
         </div>
 
-        <label>
-          Fatura vinculada
-          <select formControlName="faturaOperadoraSaudeId">
-            <option [ngValue]="null">Nenhuma — preencher manualmente</option>
-            @for (fatura of faturasFiltradas(); track fatura.id) {
-              <option [ngValue]="fatura.id">{{ fatura.operadoraSaude }} — Nº {{ fatura.numeroFatura }}</option>
-            }
-          </select>
-        </label>
       } @else {
         <p class="campo-fixo">
           <strong>{{ nota()?.usuarioNome }}</strong> — referência {{ nota()?.mes?.toString()?.padStart(2, '0') }}/{{ nota()?.ano }}
@@ -51,27 +42,27 @@
 
       @if (temFaturaVinculada()) {
         <p class="campo-fixo">
-          <strong>{{ resumoFatura()?.operadoraSaude }}</strong> — Nº Fatura {{ resumoFatura()?.numeroFatura || '-' }}<br />
-          Emissão {{ resumoFatura()?.dataEmissao ? (resumoFatura()!.dataEmissao | dataBr) : '-' }} · Vencimento
-          {{ resumoFatura()?.dataVencimento ? (resumoFatura()!.dataVencimento | dataBr) : '-' }}
+          <strong>{{ nota()?.operadoraSaude }}</strong> — Nº Fatura {{ nota()?.numeroFatura || '-' }}<br />
+          Emissão {{ nota()?.dataEmissao ? (nota()!.dataEmissao | dataBr) : '-' }} · Vencimento
+          {{ nota()?.dataVencimento ? (nota()!.dataVencimento | dataBr) : '-' }} (vinculada à fatura cadastrada)
         </p>
       } @else {
         <label>
-          Operadora de Saúde *
-          <input type="text" formControlName="operadoraSaude" placeholder="Ex.: AMIL" />
+          Operadora de Saúde (opcional)
+          <input type="text" formControlName="operadoraSaude" placeholder="Ex.: AMIL — vazio vira &quot;Plano de Saúde&quot;" />
         </label>
 
         <div class="linha">
           <label>
-            Nº Fatura
+            Nº Fatura (opcional)
             <input type="text" formControlName="numeroFatura" placeholder="Nº da fatura da operadora" />
           </label>
           <label>
-            Data de Emissão
+            Data de Emissão (opcional)
             <input type="date" formControlName="dataEmissao" />
           </label>
           <label>
-            Vencimento
+            Vencimento (opcional)
             <input type="date" formControlName="dataVencimento" />
           </label>
         </div>

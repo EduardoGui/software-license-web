@@ -5,8 +5,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { Icon } from '../../shared/icons/icon';
-import { FaturaOperadoraSaude } from '../faturas-plano-saude/fatura-plano-saude';
-import { FaturaOperadoraSaudeService } from '../faturas-plano-saude/fatura-plano-saude.service';
 import { PlanoSaudeCustoService } from '../plano-saude-custos/plano-saude-custo.service';
 import { Usuario } from '../usuarios/usuario';
 import { UsuarioService } from '../usuarios/usuario.service';
@@ -23,7 +21,6 @@ export class NotaDebitoPjForm {
   private readonly fb = inject(FormBuilder);
   private readonly notaService = inject(NotaDebitoPjService);
   private readonly usuarioService = inject(UsuarioService);
-  private readonly faturaService = inject(FaturaOperadoraSaudeService);
   private readonly planoSaudeCustoService = inject(PlanoSaudeCustoService);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -32,7 +29,6 @@ export class NotaDebitoPjForm {
   protected readonly notaId = signal<number | null>(null);
   protected readonly nota = signal<NotaDebitoPj | null>(null);
   protected readonly usuariosPj = signal<Usuario[]>([]);
-  protected readonly faturas = signal<FaturaOperadoraSaude[]>([]);
   protected readonly carregando = signal(false);
   protected readonly salvando = signal(false);
   protected readonly erro = signal<string | null>(null);
@@ -41,7 +37,6 @@ export class NotaDebitoPjForm {
     usuarioId: [null as number | null, Validators.required],
     ano: [new Date().getFullYear(), Validators.required],
     mes: [new Date().getMonth() + 1, Validators.required],
-    faturaOperadoraSaudeId: [null as number | null],
     operadoraSaude: [''],
     numeroFatura: [''],
     descricao: [''],
@@ -65,8 +60,6 @@ export class NotaDebitoPjForm {
       this.usuariosPj.set(usuarios.filter((u) => u.tipo === 'Pj'));
     });
 
-    this.faturaService.listar().subscribe((faturas) => this.faturas.set(faturas));
-
     const idParam = this.route.snapshot.paramMap.get('id');
     if (idParam) {
       const id = Number(idParam);
@@ -89,29 +82,9 @@ export class NotaDebitoPjForm {
     this.location.back();
   }
 
-  protected faturasFiltradas(): FaturaOperadoraSaude[] {
-    const ano = this.form.controls.ano.value;
-    const mes = this.form.controls.mes.value;
-    return this.faturas().filter((f) => f.ano === ano && f.mes === mes);
-  }
-
+  // Notas antigas podem estar vinculadas a uma fatura: nelas os dados da fatura são só exibidos (vêm da fatura).
   protected temFaturaVinculada(): boolean {
-    return this.editando ? this.nota()?.faturaOperadoraSaudeId != null : this.form.controls.faturaOperadoraSaudeId.value != null;
-  }
-
-  protected resumoFatura(): {
-    operadoraSaude: string;
-    numeroFatura: string | null;
-    dataEmissao: string | null;
-    dataVencimento: string | null;
-  } | null {
-    if (this.editando) {
-      const nota = this.nota();
-      return nota?.faturaOperadoraSaudeId != null ? nota : null;
-    }
-
-    const faturaId = this.form.controls.faturaOperadoraSaudeId.value;
-    return this.faturas().find((f) => f.id === faturaId) ?? null;
+    return this.editando && this.nota()?.faturaOperadoraSaudeId != null;
   }
 
   private carregar(id: number): void {
@@ -123,7 +96,6 @@ export class NotaDebitoPjForm {
           usuarioId: nota.usuarioId,
           ano: nota.ano,
           mes: nota.mes,
-          faturaOperadoraSaudeId: nota.faturaOperadoraSaudeId,
           operadoraSaude: nota.operadoraSaude,
           numeroFatura: nota.numeroFatura ?? '',
           descricao: nota.descricao ?? '',
@@ -154,24 +126,15 @@ export class NotaDebitoPjForm {
 
     const valor = this.form.getRawValue();
 
-    if (!this.editando && !valor.faturaOperadoraSaudeId && !valor.operadoraSaude.trim()) {
-      this.erro.set('Informe a Operadora de Saúde ou selecione uma fatura.');
-      return;
-    }
-
     this.salvando.set(true);
     this.erro.set(null);
 
-    // Editar nunca manda null aqui - mesmo quando a nota tem fatura vinculada, esses 4 campos já
-    // estão no formulário (carregados da própria nota, que o backend já sincronizou com a fatura) e o
-    // backend simplesmente ignora essas colunas na atualização quando há fatura vinculada.
-    // Só na criação com fatura selecionada é que mandamos null pro backend derivar tudo da fatura.
-    const criandoComFatura = !this.editando && !!valor.faturaOperadoraSaudeId;
+    // Operadora, nº da fatura e datas são texto livre e opcionais (sem operadora, o backend usa "Plano de Saúde").
     const camposComuns = {
-      operadoraSaude: criandoComFatura ? null : valor.operadoraSaude,
-      numeroFatura: criandoComFatura ? null : valor.numeroFatura || null,
-      dataEmissao: criandoComFatura ? null : valor.dataEmissao || null,
-      dataVencimento: criandoComFatura ? null : valor.dataVencimento || null,
+      operadoraSaude: valor.operadoraSaude.trim() || null,
+      numeroFatura: valor.numeroFatura || null,
+      dataEmissao: valor.dataEmissao || null,
+      dataVencimento: valor.dataVencimento || null,
       descricao: valor.descricao || null,
       desconto: valor.desconto,
       retencaoTributaria: valor.retencaoTributaria,
@@ -188,7 +151,6 @@ export class NotaDebitoPjForm {
           usuarioId: valor.usuarioId!,
           ano: valor.ano,
           mes: valor.mes,
-          faturaOperadoraSaudeId: valor.faturaOperadoraSaudeId,
           ...camposComuns,
         });
 

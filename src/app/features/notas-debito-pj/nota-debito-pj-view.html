@@ -163,6 +163,9 @@
 
     <section class="anexos">
       <h3>Recibo / Anexos</h3>
+      @if (nota()!.status === 'Rascunho') {
+        <p class="dica-anexos">Os anexos adicionados antes de enviar (ex.: recorte de tela) vão junto no e-mail ao colaborador.</p>
+      }
       <app-anexos-secao recurso="notas-debito-pj" [entidadeId]="nota()!.id" />
     </section>
   }

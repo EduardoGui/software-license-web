@@ -1,11 +1,18 @@
 import { DecimalPipe } from '@angular/common';
-import { Component, inject, signal } from '@angular/core';
+import { Component, ViewContainerRef, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
-import { FaturaOperadoraSaude } from '../faturas-plano-saude/fatura-plano-saude';
-import { FaturaOperadoraSaudeService } from '../faturas-plano-saude/fatura-plano-saude.service';
+import { AnexoService } from '../../shared/anexos/anexo.service';
+import {
+  capturaTelaSuportada,
+  capturarTelaRecortada,
+  colagemSuportada,
+  imagemDaAreaDeTransferencia,
+  imagemDoEventoColar,
+  prepararImagem,
+} from '../../shared/anexos/captura-tela';
 import { NotaDebitoPjService } from '../notas-debito-pj/nota-debito-pj.service';
 import { ImportacaoPlanoSaudeResultado, PlanoSaudeMes, PlanoSaudeMesFiltro, PlanoSaudeUsuarioMes, SalvarPlanoSaudeMesItem } from './plano-saude-custo';
 import { ImportarFaturaModal } from './importar-fatura-modal';
@@ -26,8 +33,9 @@ const NOMES_TIPO: Record<string, string> = { Pj: 'PJ', Clt: 'CLT', Estagio: 'Est
 })
 export class PlanoSaudeCustosPage {
   private readonly custoService = inject(PlanoSaudeCustoService);
-  private readonly faturaService = inject(FaturaOperadoraSaudeService);
   private readonly notaDebitoService = inject(NotaDebitoPjService);
+  private readonly anexoService = inject(AnexoService);
+  private readonly contenedor = inject(ViewContainerRef);
 
   protected readonly nomesMeses = NOMES_MESES;
   protected readonly anosDisponiveis = this.calcularAnosDisponiveis();
@@ -42,14 +50,20 @@ export class PlanoSaudeCustosPage {
 
   // --- Nota de débito (só titulares PJ) ---
   protected somentePendentesNd = false;
-  protected readonly faturasDoMes = signal<FaturaOperadoraSaude[]>([]);
   protected readonly criandoNdPara = signal<PlanoSaudeUsuarioMes | null>(null);
   protected readonly salvandoNd = signal(false);
   protected readonly erroNd = signal<string | null>(null);
-  protected readonly avisoNd = signal<{ nome: string; notaId: number } | null>(null);
-  protected faturaNdId: number | null = null;
+  protected readonly avisoNd = signal<{ nome: string; notaId: number; alerta?: string } | null>(null);
   protected descontoNd = 0;
   protected retencaoNd = 0;
+  // Campos livres e opcionais: a nota não se vincula a uma fatura cadastrada.
+  protected operadoraNd = '';
+  protected numeroFaturaNd = '';
+  // Recortes de tela escolhidos antes de a nota existir: sobem como anexos logo após criá-la e vão junto no e-mail.
+  protected readonly imagensNd = signal<{ arquivo: File; url: string }[]>([]);
+  protected readonly erroImagemNd = signal<string | null>(null);
+  protected readonly capturaSuportada = capturaTelaSuportada();
+  protected readonly colagemSuportada = colagemSuportada();
 
   // --- Importação da fatura da operadora ---
   protected readonly importarAberto = signal(false);
@@ -87,7 +101,6 @@ export class PlanoSaudeCustosPage {
         this.mes.set(mes);
         this.registrarSalvos(mes);
         this.carregando.set(false);
-        this.carregarFaturasDoMes();
       },
       error: () => {
         this.erro.set(true);
@@ -284,35 +297,81 @@ export class PlanoSaudeCustosPage {
     return this.somentePendentesNd ? usuarios.filter((u) => this.ndPendente(u)) : usuarios;
   }
 
-  private carregarFaturasDoMes(): void {
-    this.faturaService.listar({ ano: this.filtro.ano, mes: this.filtro.mes }).subscribe({
-      next: (faturas) => this.faturasDoMes.set(faturas),
-      error: () => this.faturasDoMes.set([]),
-    });
-  }
-
   protected abrirCriarNd(u: PlanoSaudeUsuarioMes): void {
     this.erroNd.set(null);
     this.descontoNd = 0;
     this.retencaoNd = 0;
-    // Com uma única fatura no mês ela já vem escolhida; com várias, a pessoa escolhe.
-    this.faturaNdId = this.faturasDoMes().length === 1 ? this.faturasDoMes()[0].id : null;
+    this.operadoraNd = '';
+    this.numeroFaturaNd = '';
+    this.limparImagensNd();
     this.criandoNdPara.set(u);
   }
 
   protected fecharCriarNd(): void {
+    this.limparImagensNd();
     this.criandoNdPara.set(null);
+  }
+
+  // --- recorte de tela para acompanhar o e-mail da nota ---
+
+  private async adicionarImagemNd(imagem: File): Promise<void> {
+    const pronta = await prepararImagem(imagem);
+    this.imagensNd.update((lista) => [...lista, { arquivo: pronta, url: URL.createObjectURL(pronta) }]);
+  }
+
+  private limparImagensNd(): void {
+    this.imagensNd().forEach((i) => URL.revokeObjectURL(i.url));
+    this.imagensNd.set([]);
+    this.erroImagemNd.set(null);
+  }
+
+  protected removerImagemNd(indice: number): void {
+    const imagem = this.imagensNd()[indice];
+    if (imagem) {
+      URL.revokeObjectURL(imagem.url);
+    }
+    this.imagensNd.update((lista) => lista.filter((_, i) => i !== indice));
+  }
+
+  protected async capturarTelaNd(): Promise<void> {
+    this.erroImagemNd.set(null);
+    try {
+      const imagem = await capturarTelaRecortada(this.contenedor);
+      if (imagem) {
+        await this.adicionarImagemNd(imagem);
+      }
+    } catch (e) {
+      this.erroImagemNd.set((e as Error).message);
+    }
+  }
+
+  protected async colarImagemNd(): Promise<void> {
+    this.erroImagemNd.set(null);
+    try {
+      const imagem = await imagemDaAreaDeTransferencia();
+      if (!imagem) {
+        this.erroImagemNd.set('Não há imagem na área de transferência. Copie um trecho de tela (ex.: Win+Shift+S) e tente de novo.');
+        return;
+      }
+
+      await this.adicionarImagemNd(imagem);
+    } catch {
+      this.erroImagemNd.set('Não foi possível ler a área de transferência. Clique na área do modal e use Ctrl+V.');
+    }
+  }
+
+  protected async aoColarNd(evento: ClipboardEvent): Promise<void> {
+    const imagem = imagemDoEventoColar(evento);
+    if (imagem) {
+      evento.preventDefault();
+      await this.adicionarImagemNd(imagem);
+    }
   }
 
   protected confirmarCriarNd(): void {
     const u = this.criandoNdPara();
     const mes = this.mes();
     if (!u || !mes) {
-      return;
-    }
-
-    if (this.faturaNdId === null) {
-      this.erroNd.set('Escolha a fatura da operadora.');
       return;
     }
 
@@ -324,9 +383,8 @@ export class PlanoSaudeCustosPage {
         usuarioId: u.usuarioId,
         ano: mes.ano,
         mes: mes.mes,
-        faturaOperadoraSaudeId: this.faturaNdId,
-        operadoraSaude: null,
-        numeroFatura: null,
+        operadoraSaude: this.operadoraNd.trim() || null,
+        numeroFatura: this.numeroFaturaNd.trim() || null,
         descricao: null,
         desconto: this.descontoNd || 0,
         retencaoTributaria: this.retencaoNd || 0,
@@ -340,17 +398,50 @@ export class PlanoSaudeCustosPage {
       })
       .subscribe({
         next: (nota) => {
-          this.salvandoNd.set(false);
           u.notaDebitoId = nota.id;
           u.notaDebitoStatus = nota.status as PlanoSaudeUsuarioMes['notaDebitoStatus'];
           u.notaDebitoValor = nota.valorBruto;
-          this.criandoNdPara.set(null);
-          this.avisoNd.set({ nome: u.nome, notaId: nota.id });
+          this.enviarImagensDaNota(nota.id, u.nome);
         },
         error: (err) => {
           this.salvandoNd.set(false);
           this.erroNd.set(err?.error?.message ?? 'Não foi possível criar a nota de débito.');
         },
       });
+  }
+
+  // A nota já existe aqui; se algum recorte falhar ao subir, ela continua criada e a pessoa é avisada.
+  private enviarImagensDaNota(notaId: number, nome: string): void {
+    const imagens = this.imagensNd();
+    const concluir = (falhas: number) => {
+      this.salvandoNd.set(false);
+      this.limparImagensNd();
+      this.criandoNdPara.set(null);
+      this.avisoNd.set({
+        nome,
+        notaId,
+        alerta: falhas > 0 ? `${falhas} recorte(s) não subiram; adicione-os em Anexos da nota antes de enviar.` : undefined,
+      });
+    };
+
+    if (imagens.length === 0) {
+      concluir(0);
+      return;
+    }
+
+    let pendentes = imagens.length;
+    let falhas = 0;
+    for (const imagem of imagens) {
+      this.anexoService.enviar('notas-debito-pj', notaId, imagem.arquivo).subscribe({
+        next: () => undefined,
+        error: () => {
+          falhas++;
+          if (--pendentes === 0) concluir(falhas);
+        },
+        complete: () => {
+          if (--pendentes === 0) concluir(falhas);
+        },
+      });
+    }
   }
 }
