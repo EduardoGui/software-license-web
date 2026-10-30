@@ -228,6 +228,24 @@ export class ObrigacoesList {
     return this.expandidoId() === o.id;
   }
 
+  // Seções recolhíveis da linha expandida (UAs e anexos), guardadas como "idDaObrigação:seção".
+  private readonly secoesAbertas = signal<ReadonlySet<string>>(new Set());
+
+  protected secaoAberta(obrigacaoId: number, secao: 'ua' | 'anexos'): boolean {
+    return this.secoesAbertas().has(`${obrigacaoId}:${secao}`);
+  }
+
+  protected alternarSecao(obrigacaoId: number, secao: 'ua' | 'anexos'): void {
+    const chave = `${obrigacaoId}:${secao}`;
+    this.secoesAbertas.update((atual) => {
+      const novo = new Set(atual);
+      if (!novo.delete(chave)) {
+        novo.add(chave);
+      }
+      return novo;
+    });
+  }
+
   protected alternarLinha(o: Obrigacao): void {
     if (this.linhaExpandida(o)) {
       this.expandidoId.set(null);

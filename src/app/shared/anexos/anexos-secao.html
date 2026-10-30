@@ -1,6 +1,8 @@
 <section class="anexos-secao" tabindex="0" (paste)="aoColar($event)">
   <div class="secao-cabecalho">
-    <h2><app-icon name="paperclip" [size]="16" /> Anexos</h2>
+    @if (!ocultarTitulo()) {
+      <h2><app-icon name="paperclip" [size]="16" /> Anexos</h2>
+    }
     <div class="acoes-cabecalho">
       <input
         #inputArquivo

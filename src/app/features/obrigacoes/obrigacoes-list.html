@@ -319,14 +319,23 @@
                       </div>
                     </form>
 
+                    <!-- Seções recolhidas: o conteúdo (e a chamada à API) só aparece ao clicar no título. -->
                     <div class="anexos-linha">
-                      <h3>Unidades orçamentárias (UA)</h3>
-                      <app-obrigacao-uas-secao [obrigacaoId]="o.id" [fornecedorId]="o.fornecedorId" />
+                      <button type="button" class="secao-titulo" [attr.aria-expanded]="secaoAberta(o.id, 'ua')" (click)="alternarSecao(o.id, 'ua')">
+                        <span class="secao-titulo__seta">{{ secaoAberta(o.id, 'ua') ? '▾' : '▸' }}</span> Unidades orçamentárias (UA)
+                      </button>
+                      @if (secaoAberta(o.id, 'ua')) {
+                        <app-obrigacao-uas-secao [obrigacaoId]="o.id" [fornecedorId]="o.fornecedorId" />
+                      }
                     </div>
 
                     <div class="anexos-linha">
-                      <h3>Anexos</h3>
-                      <app-anexos-secao recurso="obrigacoes" [entidadeId]="o.id" />
+                      <button type="button" class="secao-titulo" [attr.aria-expanded]="secaoAberta(o.id, 'anexos')" (click)="alternarSecao(o.id, 'anexos')">
+                        <span class="secao-titulo__seta">{{ secaoAberta(o.id, 'anexos') ? '▾' : '▸' }}</span> Anexos
+                      </button>
+                      @if (secaoAberta(o.id, 'anexos')) {
+                        <app-anexos-secao recurso="obrigacoes" [entidadeId]="o.id" [ocultarTitulo]="true" />
+                      }
                     </div>
 
                     @if (parcelaEmCriacaoId() === o.id) {

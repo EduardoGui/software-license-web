@@ -27,6 +27,8 @@ export class AnexosSecao {
 
   readonly recurso = input.required<AnexoRecurso>();
   readonly entidadeId = input.required<number>();
+  // Quando quem usa já tem um título próprio (ex.: seção recolhível), evita o "Anexos" duplicado.
+  readonly ocultarTitulo = input(false);
 
   protected readonly anexos = signal<Anexo[]>([]);
   protected readonly carregando = signal(true);

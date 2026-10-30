@@ -531,3 +531,29 @@ tfoot td {
   font-size: 0.9rem;
   color: var(--color-primary);
 }
+
+.secao-titulo {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  margin: 0 0 0.35rem;
+  padding: 0.35rem 0;
+  border: none;
+  border-bottom: 1px solid var(--color-border-light);
+  background: none;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+
+.secao-titulo:hover {
+  background: var(--color-bg-subtle);
+}
+
+.secao-titulo__seta {
+  width: 0.9rem;
+  color: var(--color-secondary);
+}
