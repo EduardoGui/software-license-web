@@ -1,0 +1,16 @@
+<span class="rotulo">{{ rotulo() }}</span>
+<button type="button" class="gatilho" [attr.aria-expanded]="aberto()" aria-haspopup="listbox" (click)="aberto.set(!aberto())">
+  <span class="gatilho__texto">{{ resumo() }}</span>
+  <span class="gatilho__seta" aria-hidden="true">▾</span>
+</button>
+@if (aberto()) {
+  <div class="painel" role="listbox" aria-multiselectable="true" [attr.aria-label]="rotulo()">
+    @for (opcao of opcoes(); track opcao) {
+      <label class="painel__opcao">
+        <input type="checkbox" [checked]="estaMarcada(opcao)" (change)="alternar(opcao, $any($event.target).checked)" />
+        {{ opcao }}
+      </label>
+    }
+    <button type="button" class="painel__limpar" [disabled]="selecionados().length === 0" (click)="limpar()">Limpar seleção ({{ textoVazio() }})</button>
+  </div>
+}

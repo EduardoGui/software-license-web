@@ -8,6 +8,7 @@ import { Fornecedor } from '../fornecedores/fornecedor';
 import { FornecedorService } from '../fornecedores/fornecedor.service';
 import { AnexosSecao } from '../../shared/anexos/anexos-secao';
 import { Icon } from '../../shared/icons/icon';
+import { MultiSelectFiltro } from '../../shared/multi-select-filtro/multi-select-filtro';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { cnpjEhValido } from '../../shared/validators/cnpj-validator';
 import { cpfEhValido } from '../../shared/validators/cpf-validator';
@@ -32,15 +33,14 @@ interface FiltroObrigacoes {
   tipoMovimento?: string;
   fornecedorId?: number;
   responsavelUsuarioId?: number;
-  etapa?: string;
-  pago?: boolean;
+  etapas: string[];
   incluirCanceladas: boolean;
   todosOsPeriodos: boolean;
 }
 
 @Component({
   selector: 'app-obrigacoes-list',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal, AnexosSecao, ObrigacaoUasSecao],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal, AnexosSecao, ObrigacaoUasSecao, MultiSelectFiltro],
   templateUrl: './obrigacoes-list.html',
   styleUrl: './obrigacoes-list.scss',
 })
@@ -58,13 +58,17 @@ export class ObrigacoesList {
 
   private readonly mesAtual = inicioDoMes(hojeIso()).slice(0, 7);
 
-  protected filtro: FiltroObrigacoes = {
-    competenciaDeMes: this.mesAtual,
-    competenciaAteMes: this.mesAtual,
-    incluirCanceladas: false,
-    pago: false,
-    todosOsPeriodos: true,
-  };
+  // Etapas que o filtro oferece (a "Cancelada" é tratada pela opção "Incluir canceladas").
+  protected readonly etapasDisponiveis = [
+    'Aguardar Aprovação BM',
+    'Aguardar NF',
+    'Criar Requisição',
+    'Criar Assist Pgto',
+    'Aguardando Pagamento',
+    'Pago',
+  ];
+
+  protected filtro: FiltroObrigacoes = this.filtroPadrao();
 
   // Linha expansível (acompanhamento)
   protected readonly expandidoId = signal<number | null>(null);
@@ -133,6 +137,7 @@ export class ObrigacoesList {
       // extrato completo dele, não só o mês atual.
       this.filtro.fornecedorId = fornecedorId;
       this.filtro.todosOsPeriodos = true;
+      this.filtro.etapas = [];
     }
 
     this.buscar();
@@ -149,8 +154,7 @@ export class ObrigacoesList {
       tipoMovimento: this.filtro.tipoMovimento,
       fornecedorId: this.filtro.fornecedorId,
       responsavelUsuarioId: this.filtro.responsavelUsuarioId,
-      etapa: this.filtro.etapa,
-      pago: this.filtro.pago,
+      etapa: this.filtro.etapas.length > 0 ? this.filtro.etapas.join(',') : undefined,
       cancelada: this.filtro.incluirCanceladas ? undefined : false,
     };
 
@@ -167,14 +171,18 @@ export class ObrigacoesList {
   }
 
   protected limparFiltro(): void {
-    this.filtro = {
+    this.filtro = this.filtroPadrao();
+    this.buscar();
+  }
+
+  private filtroPadrao(): FiltroObrigacoes {
+    return {
       competenciaDeMes: this.mesAtual,
       competenciaAteMes: this.mesAtual,
+      etapas: ['Pago'],
       incluirCanceladas: false,
-      pago: false,
       todosOsPeriodos: true,
     };
-    this.buscar();
   }
 
   protected mesAnterior(): void {

@@ -60,26 +60,7 @@
         </select>
       </label>
     }
-    <label>
-      Etapa
-      <select name="etapa" [(ngModel)]="filtro.etapa">
-        <option [ngValue]="undefined">Todas</option>
-        <option value="Aguardar Aprovação BM">Aguardar Aprovação BM</option>
-        <option value="Aguardar NF">Aguardar NF</option>
-        <option value="Criar Requisição">Criar Requisição</option>
-        <option value="Criar Assist Pgto">Criar Assist Pgto</option>
-        <option value="Aguardando Pagamento">Aguardando Pagamento</option>
-        <option value="Pago">Pago</option>
-      </select>
-    </label>
-    <label>
-      Pago
-      <select name="pago" [(ngModel)]="filtro.pago">
-        <option [ngValue]="undefined">Todos</option>
-        <option [ngValue]="true">Sim</option>
-        <option [ngValue]="false">Não</option>
-      </select>
-    </label>
+    <app-multi-select-filtro rotulo="Etapa" [opcoes]="etapasDisponiveis" [(selecionados)]="filtro.etapas" />
     <label class="filtros__check">
       <input type="checkbox" name="incluirCanceladas" [(ngModel)]="filtro.incluirCanceladas" />
       Incluir canceladas
