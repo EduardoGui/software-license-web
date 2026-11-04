@@ -69,6 +69,8 @@ export class ObrigacoesList {
     'Pago',
   ];
 
+  private readonly etapasForaDoPadrao = ['Aguardar Aprovação BM', 'Pago'];
+
   protected filtro: FiltroObrigacoes = this.filtroPadrao();
 
   // Linha expansível (acompanhamento)
@@ -182,7 +184,8 @@ export class ObrigacoesList {
     return {
       competenciaDeMes: this.mesAtual,
       competenciaAteMes: this.mesAtual,
-      etapas: ['Pago'],
+      // Padrão: o que ainda está em andamento (fora "Aguardar Aprovação BM" e "Pago").
+      etapas: this.etapasDisponiveis.filter((e) => !this.etapasForaDoPadrao.includes(e)),
       incluirCanceladas: false,
       todosOsPeriodos: true,
     };
