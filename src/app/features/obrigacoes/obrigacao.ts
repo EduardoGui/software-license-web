@@ -65,6 +65,41 @@ export interface ResponsavelObrigacao {
   nome: string;
 }
 
+/** Resumo somente leitura do BM ou da OC de origem da obrigação. */
+export interface ObrigacaoOrigem {
+  origem: 'MedicaoBm' | 'OrdemCompra';
+  titulo: string;
+  status: string;
+  fornecedorNome: string;
+  quantidadeItens: number;
+  observacao: string | null;
+  /** Líquido do BM (medido + acertos − impostos) ou total dos itens da OC. */
+  valorPrincipal: number;
+  // BM
+  contratoId: number | null;
+  contratoNumero: string | null;
+  contratoObjeto: string | null;
+  medicaoBmId: number | null;
+  periodoInicio: string | null;
+  periodoFim: string | null;
+  dataEmissao: string | null;
+  aprovadorNome: string | null;
+  dataDecisao: string | null;
+  observacaoAprovador: string | null;
+  valorMedido: number | null;
+  valorAcertos: number | null;
+  valorImpostos: number | null;
+  // OC
+  ordemCompraId: number | null;
+  data: string | null;
+  solicitante: string | null;
+  localNome: string | null;
+  condicaoPagamento: string | null;
+  valorFrete: number | null;
+  localEntrega: string | null;
+  prazoEntrega: string | null;
+}
+
 /** UAs (rateio) do documento de origem da obrigação (BM, OC ou despesa avulsa). */
 export interface ObrigacaoUas {
   origem: 'MedicaoBm' | 'OrdemCompra' | 'DespesaAvulsa';

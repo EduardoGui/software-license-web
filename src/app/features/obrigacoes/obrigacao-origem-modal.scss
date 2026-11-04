@@ -1,0 +1,155 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem 1rem;
+  overflow-y: auto;
+}
+
+.modal {
+  background: var(--color-bg-card);
+  border-radius: 10px;
+  max-width: 600px;
+  width: 100%;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.9rem 1.1rem;
+  background: var(--color-primary);
+  border-radius: 10px 10px 0 0;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.05rem;
+  color: var(--color-on-dark);
+}
+
+.botao-fechar {
+  background: transparent;
+  border: none;
+  color: var(--color-on-dark);
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0.25rem;
+}
+
+.modal__corpo {
+  padding: 1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.nota,
+.obs {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--color-text);
+}
+
+.aviso-erro {
+  margin: 0;
+  color: #b91c1c;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.dados {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.7rem 1rem;
+  margin: 0;
+}
+
+.dados__largo {
+  grid-column: 1 / -1;
+}
+
+dt {
+  font-size: 0.78rem;
+  color: var(--color-secondary);
+}
+
+dd {
+  margin: 0.1rem 0 0;
+  font-size: 0.92rem;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.selo {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--color-primary-tint);
+  border: 1px solid var(--color-primary-tint-border);
+  font-size: 0.82rem;
+}
+
+.valores {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.valores th {
+  text-align: left;
+  font-weight: 400;
+  color: var(--color-text);
+}
+
+.valores td {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.valores th,
+.valores td {
+  padding: 0.3rem 0;
+  border-bottom: 1px solid var(--color-border-light);
+}
+
+.valores__total th,
+.valores__total td {
+  font-weight: 700;
+  color: var(--color-primary);
+  border-bottom: none;
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding: 0.75rem 1.1rem 1rem;
+}
+
+.botao {
+  border: 1px solid var(--color-primary);
+  background: #fff;
+  color: var(--color-primary);
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+.botao--texto {
+  border-color: transparent;
+}
+
+@media (max-width: 520px) {
+  .dados {
+    grid-template-columns: 1fr;
+  }
+}

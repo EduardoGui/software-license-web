@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { AtualizarAndamentoPayload, Obrigacao, ObrigacaoFiltro, ObrigacaoUas, ResponsavelObrigacao, UpdateObrigacaoPayload } from './obrigacao';
+import { AtualizarAndamentoPayload, Obrigacao, ObrigacaoFiltro, ObrigacaoOrigem, ObrigacaoUas, ResponsavelObrigacao, UpdateObrigacaoPayload } from './obrigacao';
 
 @Injectable({ providedIn: 'root' })
 export class ObrigacaoService {
@@ -52,6 +52,11 @@ export class ObrigacaoService {
   /** Atribui a obrigação a um usuário Administrativo; null remove o responsável (só Administrador). */
   atribuirResponsavel(id: number, usuarioId: number | null): Observable<Obrigacao> {
     return this.http.patch<Obrigacao>(`${this.baseUrl}/${id}/responsavel`, { usuarioId });
+  }
+
+  /** Resumo somente leitura do BM ou da OC de origem (para o modal da obrigação). */
+  obterOrigem(id: number): Observable<ObrigacaoOrigem> {
+    return this.http.get<ObrigacaoOrigem>(`${this.baseUrl}/${id}/origem`);
   }
 
   /** UAs do documento de origem (BM, OC ou despesa avulsa) e se ainda podem ser alteradas. */

@@ -1,0 +1,75 @@
+<div class="overlay" (click)="fechar.emit()">
+  <div class="modal" role="dialog" aria-modal="true" (click)="$event.stopPropagation()">
+    <header>
+      <h2>{{ origem()?.titulo ?? 'Documento de origem' }}</h2>
+      <button type="button" class="botao-fechar" (click)="fechar.emit()" aria-label="Fechar">×</button>
+    </header>
+
+    <div class="modal__corpo">
+      @if (carregando()) {
+        <p class="nota">Carregando...</p>
+      } @else if (erro()) {
+        <p class="aviso-erro">{{ erro() }}</p>
+      } @else if (origem(); as o) {
+        <dl class="dados">
+          <div><dt>Status</dt><dd><span class="selo">{{ rotuloStatus(o) }}</span></dd></div>
+          <div><dt>Fornecedor</dt><dd>{{ o.fornecedorNome }}</dd></div>
+
+          @if (o.origem === 'MedicaoBm') {
+            <div class="dados__largo"><dt>Contrato</dt><dd>{{ o.contratoNumero }}@if (o.contratoObjeto) { — {{ o.contratoObjeto }} }</dd></div>
+            <div><dt>Período</dt><dd>{{ o.periodoInicio | dataBr }} a {{ o.periodoFim | dataBr }}</dd></div>
+            <div><dt>Emissão do BM</dt><dd>{{ o.dataEmissao | dataBr }}</dd></div>
+            <div><dt>Aprovador</dt><dd>{{ o.aprovadorNome || '-' }}</dd></div>
+            <div><dt>Data da decisão</dt><dd>{{ o.dataDecisao | dataBr }}</dd></div>
+            @if (o.observacaoAprovador) {
+              <div class="dados__largo"><dt>Obs. do aprovador</dt><dd>{{ o.observacaoAprovador }}</dd></div>
+            }
+          } @else {
+            <div><dt>Data</dt><dd>{{ o.data | dataBr }}</dd></div>
+            <div><dt>Solicitante</dt><dd>{{ o.solicitante || '-' }}</dd></div>
+            <div><dt>Local / obra</dt><dd>{{ o.localNome || '-' }}</dd></div>
+            <div><dt>Condição de pagamento</dt><dd>{{ o.condicaoPagamento || '-' }}</dd></div>
+            @if (o.localEntrega) {
+              <div><dt>Local de entrega</dt><dd>{{ o.localEntrega }}</dd></div>
+            }
+            @if (o.prazoEntrega) {
+              <div><dt>Prazo de entrega</dt><dd>{{ o.prazoEntrega }}</dd></div>
+            }
+          }
+
+          <div><dt>Itens</dt><dd>{{ o.quantidadeItens }}</dd></div>
+        </dl>
+
+        <table class="valores">
+          @if (o.origem === 'MedicaoBm') {
+            <tr><th>Valor medido</th><td>R$ {{ o.valorMedido | number: '1.2-2' }}</td></tr>
+            <tr><th>Acertos</th><td>R$ {{ o.valorAcertos | number: '1.2-2' }}</td></tr>
+            <tr><th>Impostos</th><td>− R$ {{ o.valorImpostos | number: '1.2-2' }}</td></tr>
+            <tr class="valores__total"><th>Valor líquido</th><td>R$ {{ o.valorPrincipal | number: '1.2-2' }}</td></tr>
+          } @else {
+            <tr><th>Itens</th><td>R$ {{ o.valorPrincipal | number: '1.2-2' }}</td></tr>
+            @if (o.valorFrete) {
+              <tr><th>Frete</th><td>R$ {{ o.valorFrete | number: '1.2-2' }}</td></tr>
+            }
+            <tr class="valores__total"><th>Total da OC</th><td>R$ {{ o.valorPrincipal + (o.valorFrete ?? 0) | number: '1.2-2' }}</td></tr>
+          }
+        </table>
+
+        @if (o.observacao) {
+          <p class="obs"><strong>Observação:</strong> {{ o.observacao }}</p>
+        }
+      }
+    </div>
+
+    <footer>
+      @if (origem(); as o) {
+        @if (o.origem === 'OrdemCompra') {
+          <a class="botao" [routerLink]="['/ordens-compra', o.ordemCompraId]" (click)="fechar.emit()">Abrir a OC</a>
+        } @else if (authService.ehAdministrador()) {
+          <a class="botao" [routerLink]="['/contratos', o.contratoId]" (click)="fechar.emit()">Abrir o contrato</a>
+        }
+      }
+      <button type="button" class="botao botao--texto" (click)="fechar.emit()">Fechar</button>
+    </footer>
+  </div>
+</div>

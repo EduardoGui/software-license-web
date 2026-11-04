@@ -14,6 +14,7 @@ import { cnpjEhValido } from '../../shared/validators/cnpj-validator';
 import { cpfEhValido } from '../../shared/validators/cpf-validator';
 import { diasEntre, hojeIso, inicioDoMes } from '../timeline/timeline-datas';
 import { DestinatariosFinanceiroModal } from './destinatarios-financeiro-modal';
+import { ObrigacaoOrigemModal } from './obrigacao-origem-modal';
 import { ObrigacaoUasSecao } from './obrigacao-uas-secao';
 import { CampoAndamento, Obrigacao, ObrigacaoFiltro, ResponsavelObrigacao } from './obrigacao';
 import { ObrigacaoService } from './obrigacao.service';
@@ -40,7 +41,7 @@ interface FiltroObrigacoes {
 
 @Component({
   selector: 'app-obrigacoes-list',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal, AnexosSecao, ObrigacaoUasSecao, MultiSelectFiltro],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, SolicitacaoPagamentoModal, DestinatariosFinanceiroModal, AnexosSecao, ObrigacaoUasSecao, ObrigacaoOrigemModal, MultiSelectFiltro],
   templateUrl: './obrigacoes-list.html',
   styleUrl: './obrigacoes-list.scss',
 })
@@ -108,6 +109,8 @@ export class ObrigacoesList {
   // Modal de cadastro rápido de fornecedor
   // E-mail de solicitação de pagamento ao financeiro (rascunho) e lista de destinatários.
   protected readonly solicitacaoObrigacaoId = signal<number | null>(null);
+  // Resumo somente leitura do BM/OC de origem (modal).
+  protected readonly origemObrigacaoId = signal<number | null>(null);
   protected readonly destinatariosAberto = signal(false);
 
   protected readonly modalFornecedorAberto = signal(false);

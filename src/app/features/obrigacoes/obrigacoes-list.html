@@ -267,6 +267,11 @@
 
                       <div class="acoes-linha">
                         <div class="acoes-linha__pagamento">
+                          @if (o.tipoMovimento !== 'Despesa Avulsa') {
+                            <button type="button" class="botao" (click)="origemObrigacaoId.set(o.id)">
+                              {{ o.tipoMovimento === 'OC' ? 'Ver OC' : 'Ver BM' }}
+                            </button>
+                          }
                           @if (!o.cancelada) {
                             <button type="button" class="botao" (click)="abrirSolicitacaoPagamento(o)">E-mail ao financeiro</button>
                           }
@@ -390,6 +395,10 @@
         </form>
       </div>
     </div>
+  }
+
+  @if (origemObrigacaoId(); as origemId) {
+    <app-obrigacao-origem-modal [obrigacaoId]="origemId" (fechar)="origemObrigacaoId.set(null)" />
   }
 
   @if (solicitacaoObrigacaoId(); as solicitacaoId) {
