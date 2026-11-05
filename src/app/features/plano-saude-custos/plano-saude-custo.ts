@@ -94,6 +94,9 @@ export interface ImportacaoSobrescrita {
   coparticipacaoNova: number;
 }
 
+/** 'fatura' = demonstrativo da operadora (valor mensal); 'coparticipacao' = arquivo de coparticipações. Vira parte da rota da API. */
+export type TipoImportacaoPlanoSaude = 'fatura' | 'coparticipacao';
+
 export interface ImportacaoPlanoSaudePrevia {
   ano: number;
   mes: number;
@@ -104,6 +107,7 @@ export interface ImportacaoPlanoSaudePrevia {
   titularesAmbiguos: ImportacaoPessoa[];
   titularesForaDoPeriodo: ImportacaoPessoa[];
   dependentesSemTitular: ImportacaoPessoa[];
+  dependentesNaoImportados: ImportacaoPessoa[];
   ajustesSemBeneficiario: ImportacaoAjuste[];
   dependentesACriar: ImportacaoDependenteNovo[];
   dependentesAReativar: ImportacaoDependenteNovo[];

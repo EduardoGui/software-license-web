@@ -14,7 +14,9 @@ import {
   prepararImagem,
 } from '../../shared/anexos/captura-tela';
 import { NotaDebitoPjService } from '../notas-debito-pj/nota-debito-pj.service';
-import { ImportacaoPlanoSaudeResultado, PlanoSaudeMes, PlanoSaudeMesFiltro, PlanoSaudeUsuarioMes, SalvarPlanoSaudeMesItem } from './plano-saude-custo';
+import {
+  ImportacaoPlanoSaudeResultado, PlanoSaudeMes, PlanoSaudeMesFiltro, PlanoSaudeUsuarioMes, SalvarPlanoSaudeMesItem, TipoImportacaoPlanoSaude,
+} from './plano-saude-custo';
 import { ImportarFaturaModal } from './importar-fatura-modal';
 import { PlanoSaudeCustoService } from './plano-saude-custo.service';
 
@@ -67,6 +69,7 @@ export class PlanoSaudeCustosPage {
 
   // --- Importação da fatura da operadora ---
   protected readonly importarAberto = signal(false);
+  protected readonly tipoImportacao = signal<TipoImportacaoPlanoSaude>('fatura');
   protected readonly resultadoImportacao = signal<ImportacaoPlanoSaudeResultado | null>(null);
 
   // Valores gravados (mensal|coparticipação) por linha, para saber se há alteração ainda não salva.
@@ -215,12 +218,13 @@ export class PlanoSaudeCustosPage {
     });
   }
 
-  protected abrirImportacao(): void {
+  protected abrirImportacao(tipo: TipoImportacaoPlanoSaude): void {
     if (this.temAlteracoes() && !confirm('Há alterações não salvas neste mês. Depois da importação a tela é recarregada e elas se perdem. Continuar?')) {
       return;
     }
 
     this.resultadoImportacao.set(null);
+    this.tipoImportacao.set(tipo);
     this.importarAberto.set(true);
   }
 

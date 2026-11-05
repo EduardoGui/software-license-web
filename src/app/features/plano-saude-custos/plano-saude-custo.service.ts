@@ -3,7 +3,9 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { environment } from '../../../environments/environment';
-import { ImportacaoPlanoSaudePrevia, ImportacaoPlanoSaudeResultado, PlanoSaudeMes, PlanoSaudeMesFiltro, SalvarPlanoSaudeMes } from './plano-saude-custo';
+import {
+  ImportacaoPlanoSaudePrevia, ImportacaoPlanoSaudeResultado, PlanoSaudeMes, PlanoSaudeMesFiltro, SalvarPlanoSaudeMes, TipoImportacaoPlanoSaude,
+} from './plano-saude-custo';
 
 @Injectable({ providedIn: 'root' })
 export class PlanoSaudeCustoService {
@@ -21,16 +23,21 @@ export class PlanoSaudeCustoService {
     return this.http.post<PlanoSaudeMes>(`${this.baseUrl}/mes`, payload);
   }
 
-  /** Lê o xlsx do demonstrativo da operadora e devolve a prévia de conferência. Não grava nada. */
-  previaImportacao(arquivo: File, ano: number, mes: number): Observable<ImportacaoPlanoSaudePrevia> {
-    return this.http.post<ImportacaoPlanoSaudePrevia>(`${this.baseUrl}/importar-fatura/previa`, this.formulario(arquivo, ano, mes));
+  /**
+   * Lê o xlsx (fatura da operadora = valor mensal; arquivo de coparticipações = coparticipação) e devolve a prévia
+   * de conferência. Não grava nada.
+   */
+  previaImportacao(arquivo: File, ano: number, mes: number, tipo: TipoImportacaoPlanoSaude = 'fatura'): Observable<ImportacaoPlanoSaudePrevia> {
+    return this.http.post<ImportacaoPlanoSaudePrevia>(`${this.baseUrl}/importar-${tipo}/previa`, this.formulario(arquivo, ano, mes));
   }
 
   /** Reenvia o arquivo com a assinatura da prévia; só grava se o resultado ainda for o mesmo. */
-  confirmarImportacao(arquivo: File, ano: number, mes: number, assinatura: string): Observable<ImportacaoPlanoSaudeResultado> {
+  confirmarImportacao(
+    arquivo: File, ano: number, mes: number, assinatura: string, tipo: TipoImportacaoPlanoSaude = 'fatura',
+  ): Observable<ImportacaoPlanoSaudeResultado> {
     const form = this.formulario(arquivo, ano, mes);
     form.append('assinatura', assinatura);
-    return this.http.post<ImportacaoPlanoSaudeResultado>(`${this.baseUrl}/importar-fatura/confirmar`, form);
+    return this.http.post<ImportacaoPlanoSaudeResultado>(`${this.baseUrl}/importar-${tipo}/confirmar`, form);
   }
 
   private formulario(arquivo: File, ano: number, mes: number): FormData {

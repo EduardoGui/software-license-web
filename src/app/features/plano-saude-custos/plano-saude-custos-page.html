@@ -1,7 +1,10 @@
 <section class="custos">
   <header class="topo">
     <h1>Plano de Saúde — Lançamento Mensal</h1>
-    <button type="button" class="botao" (click)="abrirImportacao()">Importar fatura Amil</button>
+    <div class="topo__acoes">
+      <button type="button" class="botao" (click)="abrirImportacao('fatura')">Importar fatura Amil</button>
+      <button type="button" class="botao" (click)="abrirImportacao('coparticipacao')">Importar coparticipação</button>
+    </div>
   </header>
 
   @if (resultadoImportacao(); as r) {
@@ -204,7 +207,7 @@
   }
 
   @if (importarAberto()) {
-    <app-importar-fatura-modal [ano]="filtro.ano" [mes]="filtro.mes" (fechar)="importarAberto.set(false)" (importado)="aposImportar($event)" />
+    <app-importar-fatura-modal [ano]="filtro.ano" [mes]="filtro.mes" [tipo]="tipoImportacao()" (fechar)="importarAberto.set(false)" (importado)="aposImportar($event)" />
   }
 
   @if (criandoNdPara(); as alvo) {

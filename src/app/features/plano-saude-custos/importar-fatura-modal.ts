@@ -1,7 +1,7 @@
 import { DecimalPipe } from '@angular/common';
 import { Component, inject, input, output, signal } from '@angular/core';
 
-import { ImportacaoPlanoSaudePrevia, ImportacaoPlanoSaudeResultado } from './plano-saude-custo';
+import { ImportacaoPlanoSaudePrevia, ImportacaoPlanoSaudeResultado, TipoImportacaoPlanoSaude } from './plano-saude-custo';
 import { PlanoSaudeCustoService } from './plano-saude-custo.service';
 
 // Importa o demonstrativo analítico da operadora (xlsx): gera uma prévia de conferência (sem gravar nada) e,
@@ -17,6 +17,8 @@ export class ImportarFaturaModal {
 
   readonly ano = input.required<number>();
   readonly mes = input.required<number>();
+  /** 'fatura' (valor mensal) ou 'coparticipacao' (arquivo de coparticipações). */
+  readonly tipo = input<TipoImportacaoPlanoSaude>('fatura');
   readonly fechar = output<void>();
   readonly importado = output<ImportacaoPlanoSaudeResultado>();
 
@@ -38,7 +40,7 @@ export class ImportarFaturaModal {
     }
 
     this.gerandoPrevia.set(true);
-    this.custoService.previaImportacao(arquivo, this.ano(), this.mes()).subscribe({
+    this.custoService.previaImportacao(arquivo, this.ano(), this.mes(), this.tipo()).subscribe({
       next: (previa) => {
         this.previa.set(previa);
         this.gerandoPrevia.set(false);
@@ -59,7 +61,7 @@ export class ImportarFaturaModal {
 
     this.importando.set(true);
     this.erro.set(null);
-    this.custoService.confirmarImportacao(arquivo, this.ano(), this.mes(), previa.assinatura).subscribe({
+    this.custoService.confirmarImportacao(arquivo, this.ano(), this.mes(), previa.assinatura, this.tipo()).subscribe({
       next: (resultado) => {
         this.importando.set(false);
         this.importado.emit(resultado);
