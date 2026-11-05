@@ -75,6 +75,7 @@
 
     <h2>Adicionar item</h2>
     <p class="ajuda">
+      Preencha os dados e clique em <strong>Adicionar item (Salvar)</strong> para gravar; o item só entra na nota depois desse clique.
       Ao salvar, o sistema gera automaticamente
       {{ formItem.value.destino === 'Patrimonio' ? 'um item de patrimônio' : 'uma unidade de equipamento' }}
       para cada unidade da quantidade informada.
@@ -165,7 +166,7 @@
       </div>
 
       <button type="submit" class="botao botao--primario" [disabled]="salvandoItem()">
-        <app-icon name="plus" [size]="16" /> {{ salvandoItem() ? 'Adicionando...' : 'Adicionar item' }}
+        <app-icon name="plus" [size]="16" /> {{ salvandoItem() ? 'Salvando...' : 'Adicionar item (Salvar)' }}
       </button>
     </form>
 
