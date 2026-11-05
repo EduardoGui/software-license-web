@@ -58,6 +58,17 @@ h2 {
   margin-bottom: 1rem;
 }
 
+.aguardando {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--color-secondary);
+}
+
+.aguardando--alerta {
+  color: #a16207;
+}
+
 .cabecalho-info .campo-largo {
   flex: 1 1 240px;
 }

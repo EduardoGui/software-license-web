@@ -38,6 +38,13 @@
               <td>{{ reembolso.valorTotal | number: '1.2-2' }}</td>
               <td>
                 <span class="badge" [class]="'badge--' + reembolso.status.toLowerCase()">{{ rotuloStatus(reembolso.status) }}</span>
+                @if (reembolso.status === 'EnviadoParaAprovacao') {
+                  @if (reembolso.aprovadoresPendentes.length > 0) {
+                    <small class="aguardando">Aguardando aprovação de: {{ reembolso.aprovadoresPendentes.join(', ') }}</small>
+                  } @else {
+                    <small class="aguardando aguardando--alerta">Setor sem aprovador cadastrado – procure o administrativo</small>
+                  }
+                }
               </td>
               <td class="acoes">
                 <button type="button" title="Baixar PDF" aria-label="Baixar PDF" (click)="baixarPdf(reembolso)">

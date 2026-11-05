@@ -26,6 +26,8 @@ export interface ReembolsoDespesa {
   status: 'Rascunho' | 'EnviadoParaAprovacao' | 'DevolvidoParaRevisao' | 'Aprovado' | 'Reprovado';
   aprovadorId: number | null;
   aprovadorNome: string | null;
+  // Aprovadores do setor; só vem preenchido enquanto o status é EnviadoParaAprovacao.
+  aprovadoresPendentes: string[];
   observacaoAprovador: string | null;
   dataDecisao: string | null;
   observacao: string | null;

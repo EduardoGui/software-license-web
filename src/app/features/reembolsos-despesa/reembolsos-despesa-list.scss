@@ -131,6 +131,17 @@ th {
   background: var(--color-primary-tint);
 }
 
+.aguardando {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.78rem;
+  color: var(--color-secondary);
+}
+
+.aguardando--alerta {
+  color: #a16207;
+}
+
 .linha-observacao td {
   background: var(--color-bg-subtle);
   color: var(--color-secondary);

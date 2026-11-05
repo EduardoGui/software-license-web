@@ -26,6 +26,13 @@
         <div>
           <span class="rotulo">Status</span>
           <span class="badge" [class]="'badge--' + r.status.toLowerCase()">{{ rotuloStatus(r.status) }}</span>
+          @if (r.status === 'EnviadoParaAprovacao') {
+            @if (r.aprovadoresPendentes.length > 0) {
+              <small class="aguardando">Aguardando aprovação de: {{ r.aprovadoresPendentes.join(', ') }}</small>
+            } @else {
+              <small class="aguardando aguardando--alerta">Setor sem aprovador cadastrado – procure o administrativo</small>
+            }
+          }
         </div>
       </div>
 
