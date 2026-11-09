@@ -9,6 +9,7 @@ import {
   CampanhaEntregaResumo,
   ColaboradorDisponivel,
   ColaboradorDisponivelFiltro,
+  CreateCampanhaEntregaEntradaPayload,
   CreateCampanhaEntregaPayload,
   CreateEntregaLotePayload,
   CreateEntregaPayload,
@@ -63,6 +64,11 @@ export class CampanhaEntregaService {
 
   atualizarItensCampanha(id: number, payload: UpdateCampanhaEntregaItensPayload): Observable<CampanhaEntrega> {
     return this.http.put<CampanhaEntrega>(`${this.baseUrl}/${id}/itens`, payload);
+  }
+
+  /** "Nova entrada de itens comprados": soma uma remessa ao estoque (anterior + entradas). */
+  registrarEntrada(id: number, payload: CreateCampanhaEntregaEntradaPayload): Observable<CampanhaEntrega> {
+    return this.http.post<CampanhaEntrega>(`${this.baseUrl}/${id}/entradas`, payload);
   }
 
   listarColaboradoresDisponiveis(id: number, filtro: ColaboradorDisponivelFiltro = {}): Observable<ColaboradorDisponivel[]> {

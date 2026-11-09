@@ -1,0 +1,79 @@
+<div class="overlay" (click)="fechar.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header>
+      <h2>Nova entrada de itens comprados</h2>
+      <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fechar.emit()">×</button>
+    </header>
+
+    <div class="modal__corpo">
+      <p class="dica">
+        Use quando comprar mais itens para <strong>esta mesma campanha</strong>. O estoque anterior continua valendo e a entrada é somada a ele:
+        <strong>saldo = estoque anterior + entradas − já atribuído</strong>.
+      </p>
+
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <div class="cabecalho-entrada">
+        <label>
+          Data da compra/recebimento *
+          <input type="date" [(ngModel)]="data" name="data" />
+        </label>
+        <label class="cabecalho-entrada__obs">
+          Nota fiscal / pedido (opcional)
+          <input type="text" [(ngModel)]="observacao" name="observacao" maxlength="500" placeholder="Ex.: NF 12345 — Fornecedor X" />
+        </label>
+      </div>
+
+      <div class="linhas">
+        @for (linha of linhas; track linha; let i = $index) {
+          <div class="linha">
+            <select [(ngModel)]="linha.itemId" [name]="'item' + i" aria-label="Item">
+              <option [ngValue]="-1" disabled>Escolha o item...</option>
+              @for (item of itensComEstoque(); track item.id) {
+                <option [ngValue]="item.id">{{ rotulo(item) }}</option>
+              }
+              <option [ngValue]="0">➕ Item novo (ex.: tamanho que não está na lista)</option>
+            </select>
+            <input type="number" min="1" [(ngModel)]="linha.quantidade" [name]="'qtd' + i" placeholder="Qtde. comprada" aria-label="Quantidade comprada" />
+            <button type="button" class="botao-remover" (click)="removerLinha(i)" aria-label="Remover linha">×</button>
+
+            @if (linha.itemId === 0) {
+              <div class="linha__novo">
+                <input type="text" [(ngModel)]="linha.descricao" [name]="'desc' + i" placeholder="Descrição do item novo" maxlength="200" />
+                <input type="text" [(ngModel)]="linha.tamanho" [name]="'tam' + i" placeholder="Tamanho" maxlength="30" />
+              </div>
+              <p class="linha__info">Item novo na campanha: entra com estoque anterior 0 e fora do kit padrão.</p>
+            } @else if (item(linha); as it) {
+              <p class="linha__info">
+                Estoque anterior <strong>{{ it.quantidadeDisponivel }}</strong>
+                + entradas <strong>{{ it.quantidadeEntradas }}</strong>
+                = total <strong>{{ it.estoqueTotal }}</strong>; atribuído {{ it.quantidadeEntregue }}; saldo hoje <strong>{{ it.saldoDisponivel }}</strong>
+                @if (linha.quantidade && linha.quantidade > 0) {
+                  → saldo depois da entrada <strong>{{ (it.saldoDisponivel ?? 0) + linha.quantidade }}</strong>
+                }
+              </p>
+            }
+          </div>
+        }
+      </div>
+
+      <button type="button" class="botao botao--texto" (click)="adicionarLinha()">+ Adicionar outro item</button>
+
+      @if (itensSemEstoque().length > 0) {
+        <p class="dica dica--aviso">
+          Sem controle de estoque (não aparecem na lista): {{ itensSemEstoque().length }} item(ns). Para dar entrada neles, informe antes o
+          estoque anterior (pode ser 0) em "Itens da campanha".
+        </p>
+      }
+    </div>
+
+    <footer>
+      <button type="button" class="botao botao--texto" [disabled]="salvando()" (click)="fechar.emit()">Cancelar</button>
+      <button type="button" class="botao botao--primario" [disabled]="salvando()" (click)="salvar()">
+        {{ salvando() ? 'Registrando...' : 'Registrar entrada' }}
+      </button>
+    </footer>
+  </div>
+</div>

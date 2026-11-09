@@ -21,10 +21,11 @@ import {
   ROTULOS_TIPO_DIVERGENCIA,
 } from './campanha-entrega';
 import { CampanhaEntregaService } from './campanha-entrega.service';
+import { NovaEntradaItensModal } from './nova-entrada-itens-modal';
 
 @Component({
   selector: 'app-campanha-entrega-detail',
-  imports: [FormsModule, ReactiveFormsModule, DataBrPipe],
+  imports: [FormsModule, ReactiveFormsModule, DataBrPipe, NovaEntradaItensModal],
   templateUrl: './campanha-entrega-detail.html',
   styleUrl: './campanha-entrega-detail.scss',
 })
@@ -76,6 +77,7 @@ export class CampanhaEntregaDetail {
 
   // Lista de itens da campanha (catálogo + estoque): começa recolhida para não ocupar a tela.
   protected readonly itensCampanhaAberto = signal(false);
+  protected readonly entradaAberta = signal(false);
 
   protected readonly salvandoItensCampanha = signal(false);
   protected readonly erroItensCampanha = signal<string | null>(null);
@@ -199,6 +201,13 @@ export class CampanhaEntregaDetail {
         this.erroAcao.set(err?.error?.message ?? 'Não foi possível encerrar a campanha.');
       },
     });
+  }
+
+  // "Nova entrada de itens comprados" registrada: atualiza a campanha (estoque, histórico) e a lista de itens editável.
+  protected aposEntrada(campanha: CampanhaEntrega): void {
+    this.entradaAberta.set(false);
+    this.campanha.set(campanha);
+    this.preencherFormItensCampanha(campanha.itens);
   }
 
   // --- Itens da campanha (aplicados automaticamente a quem for adicionado) ---

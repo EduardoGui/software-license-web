@@ -21,11 +21,18 @@
     }
 
     <div class="acoes-campanha">
+      @if (c.status !== 'Cancelada') {
+        <button type="button" class="botao botao--primario" (click)="entradaAberta.set(true)">Nova entrada de itens comprados</button>
+      }
       @if (c.status !== 'Cancelada' && c.status !== 'Encerrada') {
         <button type="button" class="botao" [disabled]="processando()" (click)="encerrarCampanha()">Encerrar campanha</button>
         <button type="button" class="botao botao--perigo" [disabled]="processando()" (click)="cancelarCampanha()">Cancelar campanha</button>
       }
     </div>
+
+    @if (entradaAberta()) {
+      <app-nova-entrada-itens-modal [campanha]="c" (fechar)="entradaAberta.set(false)" (registrada)="aposEntrada($event)" />
+    }
 
     <section class="painel-itens-campanha">
       <h2 class="painel-itens-campanha__titulo">
@@ -61,7 +68,7 @@
               <input type="text" formControlName="tamanho" placeholder="Tamanho" />
               <input type="number" min="0" formControlName="quantidade" placeholder="Qtde." title="Quantidade padrão por pessoa (0 = preencher por colaborador)" />
               <input type="date" formControlName="validade" title="Validade (opcional)" />
-              <input type="number" min="0" formControlName="quantidadeDisponivel" placeholder="Estoque (opcional)" title="Estoque disponível (opcional)" />
+              <input type="number" min="0" formControlName="quantidadeDisponivel" placeholder="Estoque anterior" title="Estoque anterior, da criação da campanha (opcional). Compras novas entram por &quot;Nova entrada de itens comprados&quot; e somam a ele." />
               <button type="button" class="botao-remover" (click)="removerLinhaItemCampanha(i)" aria-label="Remover item">×</button>
             </div>
           }
@@ -89,7 +96,9 @@
               <tr>
                 <th>Item</th>
                 <th>Tamanho</th>
-                <th>Estoque</th>
+                <th title="Estoque da criação da campanha">Estoque anterior</th>
+                <th title="Soma das novas entradas de itens comprados">Entradas</th>
+                <th title="Estoque anterior + entradas">Estoque total</th>
                 <th title="Reservado em entregas não canceladas (inclusive pendentes)">Atribuído</th>
                 <th>Saldo</th>
               </tr>
@@ -100,6 +109,8 @@
                   <td>{{ item.descricao }}</td>
                   <td>{{ item.tamanho || '-' }}</td>
                   <td>{{ item.quantidadeDisponivel ?? '-' }}</td>
+                  <td>{{ item.estoqueTotal !== null ? '+' + item.quantidadeEntradas : '-' }}</td>
+                  <td>{{ item.estoqueTotal ?? '-' }}</td>
                   <td>{{ item.quantidadeEntregue }}</td>
                   <td>
                     @if (item.saldoDisponivel !== null) {
@@ -116,6 +127,31 @@
             </tbody>
           </table>
         </div>
+      }
+
+      @if (c.entradas.length > 0) {
+        <details class="historico-entradas">
+          <summary>Histórico de entradas de itens comprados ({{ c.entradas.length }})</summary>
+          <div class="tabela-scroll">
+            <table class="tabela-estoque">
+              <thead>
+                <tr><th>Data</th><th>Item</th><th>Tamanho</th><th>Qtde.</th><th>Nota/pedido</th><th>Registrado por</th></tr>
+              </thead>
+              <tbody>
+                @for (e of c.entradas; track e.id) {
+                  <tr>
+                    <td>{{ e.data | dataBr }}</td>
+                    <td>{{ e.descricao }}</td>
+                    <td>{{ e.tamanho || '-' }}</td>
+                    <td>+{{ e.quantidade }}</td>
+                    <td>{{ e.observacao || '-' }}</td>
+                    <td>{{ e.registradoPorNome || '-' }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </details>
       }
       }
     </section>

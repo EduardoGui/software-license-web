@@ -13,6 +13,8 @@ export interface CampanhaEntrega {
   status: CampanhaEntregaStatus;
   tipo: CampanhaEntregaTipo;
   itens: CampanhaEntregaItem[];
+  /** Histórico das "novas entradas de itens comprados" (mais recentes primeiro). */
+  entradas: CampanhaEntregaEntrada[];
   dataCriacao: string;
   dataAtualizacao: string;
 }
@@ -23,9 +25,40 @@ export interface CampanhaEntregaItem {
   tamanho: string | null;
   quantidade: number;
   validade: string | null;
+  /** Estoque ANTERIOR (informado na criação da campanha). */
   quantidadeDisponivel: number | null;
+  /** Soma das novas entradas de itens comprados. */
+  quantidadeEntradas: number;
+  /** Estoque total = anterior + entradas (null = item não controla estoque). */
+  estoqueTotal: number | null;
   quantidadeEntregue: number;
   saldoDisponivel: number | null;
+}
+
+export interface CampanhaEntregaEntrada {
+  id: number;
+  campanhaEntregaItemId: number;
+  descricao: string;
+  tamanho: string | null;
+  data: string;
+  quantidade: number;
+  observacao: string | null;
+  registradoPorNome: string | null;
+  dataCriacao: string;
+}
+
+export interface CampanhaEntregaEntradaItemPayload {
+  /** Item existente do catálogo; null = item novo (informe descricao/tamanho). */
+  campanhaEntregaItemId: number | null;
+  descricao: string | null;
+  tamanho: string | null;
+  quantidade: number;
+}
+
+export interface CreateCampanhaEntregaEntradaPayload {
+  data: string;
+  observacao: string | null;
+  itens: CampanhaEntregaEntradaItemPayload[];
 }
 
 export interface CampanhaEntregaItemPayload {
