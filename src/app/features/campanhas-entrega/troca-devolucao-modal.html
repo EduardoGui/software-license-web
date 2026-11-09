@@ -1,0 +1,88 @@
+<div class="overlay" (click)="fechar.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header>
+      <h2>Troca / devolução — {{ entrega().usuarioNome }}</h2>
+      <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fechar.emit()">×</button>
+    </header>
+
+    <div class="modal__corpo">
+      <p class="dica">
+        Registra o que a pessoa <strong>devolveu</strong> e, se for troca, o que <strong>levou no lugar</strong>. A entrega continua
+        Confirmada; o histórico fica guardado. A peça devolvida que <strong>volta ao estoque</strong> aumenta o saldo e a nova consome.
+      </p>
+
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+
+      <div class="cabecalho">
+        <label>
+          Data *
+          <input type="date" [(ngModel)]="data" name="data" />
+        </label>
+        <label>
+          Motivo *
+          <select [(ngModel)]="motivo" name="motivo">
+            @for (m of motivos; track m[0]) {
+              <option [ngValue]="m[0]">{{ m[1] }}</option>
+            }
+          </select>
+        </label>
+        <label class="cabecalho__obs">
+          Observação (opcional)
+          <input type="text" [(ngModel)]="observacao" name="observacao" maxlength="500" placeholder="Ex.: ficou grande" />
+        </label>
+      </div>
+
+      <h3>O que a pessoa devolveu</h3>
+      @if (devolvidos.length === 0) {
+        <p class="dica">Esta entrega não tem mais itens com a pessoa.</p>
+      }
+      @for (d of devolvidos; track d.item.id; let i = $index) {
+        <div class="linha-devolvida">
+          <span class="linha-devolvida__nome">
+            {{ rotulo(d.item.descricao, d.item.tamanho) }} <small>(tem {{ d.atual }})</small>
+          </span>
+          <input type="number" min="0" [max]="d.atual" [(ngModel)]="d.quantidade" [name]="'dev' + i" placeholder="Qtde. devolvida" aria-label="Quantidade devolvida" />
+          <label class="check">
+            <input type="checkbox" [(ngModel)]="d.voltaAoEstoque" [name]="'volta' + i" />
+            volta ao estoque
+          </label>
+        </div>
+      }
+
+      <h3>O que levou no lugar <small>(só se for troca)</small></h3>
+      @for (r of retirados; track r; let i = $index) {
+        <div class="linha-retirada">
+          <select [(ngModel)]="r.itemId" [name]="'item' + i" aria-label="Item retirado">
+            <option [ngValue]="-1" disabled>Escolha o item...</option>
+            @for (item of campanha().itens; track item.id) {
+              <option [ngValue]="item.id">
+                {{ rotulo(item.descricao, item.tamanho) }}{{ item.saldoDisponivel !== null ? ' — saldo ' + (item.saldoDisponivel + credito(item.id)) : '' }}
+              </option>
+            }
+            @if (ehKit()) {
+              <option [ngValue]="0">Outro item (texto livre)</option>
+            }
+          </select>
+          <input type="number" min="1" [(ngModel)]="r.quantidade" [name]="'qtd' + i" placeholder="Qtde." aria-label="Quantidade retirada" />
+          <button type="button" class="botao-remover" (click)="removerRetirada(i)" aria-label="Remover linha">×</button>
+          @if (r.itemId === 0) {
+            <div class="linha-retirada__novo">
+              <input type="text" [(ngModel)]="r.descricao" [name]="'desc' + i" placeholder="Descrição" maxlength="200" />
+              <input type="text" [(ngModel)]="r.tamanho" [name]="'tam' + i" placeholder="Tamanho" maxlength="30" />
+            </div>
+          }
+        </div>
+      }
+      <button type="button" class="botao botao--texto" (click)="adicionarRetirada()">+ Adicionar outro item levado</button>
+    </div>
+
+    <footer>
+      <button type="button" class="botao botao--texto" [disabled]="salvando()" (click)="fechar.emit()">Cancelar</button>
+      <button type="button" class="botao botao--primario" [disabled]="salvando()" (click)="salvar()">
+        {{ salvando() ? 'Registrando...' : 'Registrar troca/devolução' }}
+      </button>
+    </footer>
+  </div>
+</div>

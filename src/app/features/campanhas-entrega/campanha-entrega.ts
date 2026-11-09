@@ -104,8 +104,44 @@ export interface EntregaItem {
   campanhaEntregaItemId: number | null;
   descricao: string;
   tamanho: string | null;
+  /** Quantidade entregue originalmente. */
   quantidade: number;
   validade: string | null;
+  /** Quanto já foi devolvido/trocado (o que a pessoa tem hoje = quantidade - quantidadeDevolvida). */
+  quantidadeDevolvida: number;
+  /** Preenchido nos itens que saíram numa troca (id do registro de troca). */
+  entregaDevolucaoId: number | null;
+}
+
+export type MotivoDevolucaoEntrega = 'Troca' | 'Devolucao' | 'Defeito' | 'Outro';
+
+export interface EntregaDevolucaoLinha {
+  entregaItemId: number;
+  descricao: string;
+  tamanho: string | null;
+  quantidade: number;
+  voltaAoEstoque: boolean;
+}
+
+/** Troca/devolução registrada numa entrega Confirmada. */
+export interface EntregaDevolucao {
+  id: number;
+  data: string;
+  motivo: MotivoDevolucaoEntrega;
+  observacao: string | null;
+  registradoPorNome: string | null;
+  dataCriacao: string;
+  devolvidos: EntregaDevolucaoLinha[];
+  retirados: EntregaDevolucaoLinha[];
+}
+
+export interface CreateEntregaDevolucaoPayload {
+  data: string;
+  motivo: MotivoDevolucaoEntrega;
+  observacao: string | null;
+  devolvidos: { entregaItemId: number; quantidade: number; voltaAoEstoque: boolean }[];
+  /** Itens que a pessoa leva no lugar (troca). Vazio = devolução simples. */
+  retirados: ItemEntregaPayload[];
 }
 
 // Item a item: sempre campanhaEntregaItemId. Kit: texto livre (descricao/tamanho/validade).
@@ -147,6 +183,8 @@ export interface Entrega {
   avisoEmail: string | null;
 
   itens: EntregaItem[];
+  /** Histórico de trocas/devoluções (mais recentes primeiro). */
+  devolucoes: EntregaDevolucao[];
 
   dataCriacao: string;
   dataAtualizacao: string;
@@ -196,6 +234,13 @@ export interface ColaboradorDisponivelFiltro {
 export const ROTULOS_TIPO_CAMPANHA: Record<CampanhaEntregaTipo, string> = {
   Kit: 'Kit',
   ItemAItem: 'Item a item',
+};
+
+export const ROTULOS_MOTIVO_DEVOLUCAO: Record<MotivoDevolucaoEntrega, string> = {
+  Troca: 'Troca',
+  Devolucao: 'Devolução',
+  Defeito: 'Defeito',
+  Outro: 'Outro',
 };
 
 export const ROTULOS_STATUS_ENTREGA: Record<EntregaStatus, string> = {

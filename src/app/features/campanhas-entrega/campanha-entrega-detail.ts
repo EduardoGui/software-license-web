@@ -15,17 +15,20 @@ import {
   CampanhaEntregaResumo,
   ColaboradorDisponivel,
   Entrega,
+  EntregaDevolucao,
   EntregaFiltro,
   EntregaItem,
+  ROTULOS_MOTIVO_DEVOLUCAO,
   ROTULOS_STATUS_ENTREGA,
   ROTULOS_TIPO_DIVERGENCIA,
 } from './campanha-entrega';
 import { CampanhaEntregaService } from './campanha-entrega.service';
 import { NovaEntradaItensModal } from './nova-entrada-itens-modal';
+import { TrocaDevolucaoModal } from './troca-devolucao-modal';
 
 @Component({
   selector: 'app-campanha-entrega-detail',
-  imports: [FormsModule, ReactiveFormsModule, DataBrPipe, NovaEntradaItensModal],
+  imports: [FormsModule, ReactiveFormsModule, DataBrPipe, NovaEntradaItensModal, TrocaDevolucaoModal],
   templateUrl: './campanha-entrega-detail.html',
   styleUrl: './campanha-entrega-detail.scss',
 })
@@ -78,6 +81,7 @@ export class CampanhaEntregaDetail {
   // Lista de itens da campanha (catálogo + estoque): começa recolhida para não ocupar a tela.
   protected readonly itensCampanhaAberto = signal(false);
   protected readonly entradaAberta = signal(false);
+  protected readonly trocaEntrega = signal<Entrega | null>(null);
 
   protected readonly salvandoItensCampanha = signal(false);
   protected readonly erroItensCampanha = signal<string | null>(null);
@@ -162,7 +166,38 @@ export class CampanhaEntregaDetail {
     if (entrega.itens.length === 0) {
       return '— sem itens escolhidos';
     }
-    return entrega.itens.map((i) => `${i.quantidade}× ${i.descricao}${i.tamanho ? ' (' + i.tamanho + ')' : ''}`).join(', ');
+    // O que a pessoa tem hoje: já descontado o que foi devolvido/trocado.
+    const atuais = entrega.itens.filter((i) => i.quantidade - i.quantidadeDevolvida > 0);
+    if (atuais.length === 0) {
+      return '— todos os itens foram devolvidos';
+    }
+    return atuais
+      .map((i) => `${i.quantidade - i.quantidadeDevolvida}× ${i.descricao}${i.tamanho ? ' (' + i.tamanho + ')' : ''}`)
+      .join(', ');
+  }
+
+  protected descricaoDevolucao(d: EntregaDevolucao): string {
+    const rotulo = (descricao: string, tamanho: string | null) => (tamanho ? `${descricao} (${tamanho})` : descricao);
+    const devolvidos = d.devolvidos
+      .map((l) => `${l.quantidade}× ${rotulo(l.descricao, l.tamanho)}${l.voltaAoEstoque ? '' : ' (descartado)'}`)
+      .join(', ');
+    const retirados = d.retirados.map((l) => `${l.quantidade}× ${rotulo(l.descricao, l.tamanho)}`).join(', ');
+    const data = d.data.split('-').reverse().join('/');
+    return (
+      `${data} — ${ROTULOS_MOTIVO_DEVOLUCAO[d.motivo] ?? d.motivo}: devolveu ${devolvidos}` +
+      (retirados ? `; levou ${retirados}` : '') +
+      (d.observacao ? ` — ${d.observacao}` : '') +
+      (d.registradoPorNome ? ` (registrado por ${d.registradoPorNome})` : '')
+    );
+  }
+
+  // Troca/devolução registrada: atualiza a linha (reabrindo-a com os itens atuais) e recarrega estoque/saldo da campanha.
+  protected aposDevolucao(entrega: Entrega): void {
+    this.trocaEntrega.set(null);
+    this.entregas.update((lista) => lista.map((e) => (e.id === entrega.id ? entrega : e)));
+    this.expandidoId.set(null);
+    this.alternarLinha(entrega);
+    this.campanhaEntregaService.obter(this.campanhaId).subscribe((campanha) => this.campanha.set(campanha));
   }
 
   protected classeStatus(status: string): string {
@@ -446,8 +481,9 @@ export class CampanhaEntregaDetail {
     if (!this.ehItemAItem() && this.podeEditarItens(entrega)) {
       this.preencherItensKitComCatalogo(entrega);
     } else {
-      for (const item of entrega.itens) {
-        this.itensLinha.push(this.criarLinhaItem(item));
+      // Mostra o que a pessoa tem hoje (descontado o que foi devolvido); itens totalmente devolvidos não aparecem.
+      for (const item of entrega.itens.filter((i) => i.quantidade - i.quantidadeDevolvida > 0)) {
+        this.itensLinha.push(this.criarLinhaItem({ ...item, quantidade: item.quantidade - item.quantidadeDevolvida }));
       }
     }
     if (this.podeEditarItens(entrega)) {

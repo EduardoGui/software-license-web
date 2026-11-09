@@ -11,6 +11,7 @@ import {
   ColaboradorDisponivelFiltro,
   CreateCampanhaEntregaEntradaPayload,
   CreateCampanhaEntregaPayload,
+  CreateEntregaDevolucaoPayload,
   CreateEntregaLotePayload,
   CreateEntregaPayload,
   Entrega,
@@ -103,6 +104,11 @@ export class CampanhaEntregaService {
 
   registrarEntregaFisica(id: number, entregaId: number, payload: RegistrarEntregaFisicaPayload): Observable<Entrega> {
     return this.http.patch<Entrega>(`${this.baseUrl}/${id}/entregas/${entregaId}/registrar-entrega-fisica`, payload);
+  }
+
+  /** Troca/devolução de itens de uma entrega Confirmada (a entrega continua Confirmada). */
+  registrarDevolucao(id: number, entregaId: number, payload: CreateEntregaDevolucaoPayload): Observable<Entrega> {
+    return this.http.post<Entrega>(`${this.baseUrl}/${id}/entregas/${entregaId}/devolucoes`, payload);
   }
 
   cancelarEntrega(id: number, entregaId: number): Observable<Entrega> {

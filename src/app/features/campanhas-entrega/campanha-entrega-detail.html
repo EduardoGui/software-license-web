@@ -30,6 +30,10 @@
       }
     </div>
 
+    @if (trocaEntrega(); as te) {
+      <app-troca-devolucao-modal [campanha]="c" [entrega]="te" (fechar)="trocaEntrega.set(null)" (registrada)="aposDevolucao($event)" />
+    }
+
     @if (entradaAberta()) {
       <app-nova-entrada-itens-modal [campanha]="c" (fechar)="entradaAberta.set(false)" (registrada)="aposEntrada($event)" />
     }
@@ -416,6 +420,23 @@
                             Cancelar entrega
                           </button>
                         </div>
+                      }
+
+                      @if (e.status === 'Confirmado' && c.status !== 'Cancelada') {
+                        <h4>Troca / devolução</h4>
+                        <p class="dica">
+                          Quando a pessoa devolve ou troca uma peça (ex.: devolveu a G e levou a P), registre aqui: a entrega continua Confirmada
+                          e o saldo se ajusta.
+                        </p>
+                        <button type="button" class="botao" (click)="trocaEntrega.set(e)">Registrar troca/devolução</button>
+                      }
+                      @if (e.devolucoes.length > 0) {
+                        <h4>Histórico de trocas/devoluções</h4>
+                        <ul class="dica">
+                          @for (d of e.devolucoes; track d.id) {
+                            <li>{{ descricaoDevolucao(d) }}</li>
+                          }
+                        </ul>
                       }
 
                       <h4>Nova entrega para {{ e.usuarioNome }}</h4>
