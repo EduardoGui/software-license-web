@@ -17,6 +17,7 @@ import {
   DefinirRateioUaPayload,
   MedicaoBm,
   MedicaoBmItem,
+  RelatorioValidacaoContratos,
   ReprovarMedicaoBmPayload,
   UpdateContratoPayload,
   UpdateMedicaoBmPayload,
@@ -35,6 +36,22 @@ export class ContratoService {
     if (filtro.vigenciaFimAte) params = params.set('vigenciaFimAte', filtro.vigenciaFimAte);
 
     return this.http.get<Contrato[]>(this.baseUrl, { params });
+  }
+
+  // Relatório para validação com o gerente do contrato. Sem ids = contratos com medição pendente na Agenda hoje.
+  relatorioValidacao(contratoIds: number[] = []): Observable<RelatorioValidacaoContratos> {
+    return this.http.get<RelatorioValidacaoContratos>(`${this.baseUrl}/relatorio-validacao`, { params: this.paramsRelatorio(contratoIds) });
+  }
+
+  exportarRelatorioValidacao(contratoIds: number[] = []): Observable<Blob> {
+    return this.http.get(`${this.baseUrl}/relatorio-validacao`, {
+      params: this.paramsRelatorio(contratoIds).set('formato', 'xlsx'),
+      responseType: 'blob',
+    });
+  }
+
+  private paramsRelatorio(contratoIds: number[]): HttpParams {
+    return contratoIds.reduce((params, id) => params.append('contratoIds', id), new HttpParams());
   }
 
   obter(id: number): Observable<ContratoDetalhe> {

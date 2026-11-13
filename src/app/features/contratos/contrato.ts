@@ -298,3 +298,49 @@ export interface ContratoSaldoItem {
   valorContratadoAtual: number;
   saldoValor: number;
 }
+
+export interface RelatorioValidacaoAditivo {
+  numero: number;
+  descricao: string;
+  dataAssinatura: string;
+  dataEfeito: string;
+  deltaValor: number | null;
+  novaDataFimVigencia: string | null;
+  status: string;
+}
+
+export interface RelatorioValidacaoMedicao {
+  numero: number;
+  numeroReferencia: string | null;
+  periodoInicio: string;
+  periodoFim: string;
+  status: string;
+  valorTotalMedido: number;
+}
+
+export interface RelatorioValidacaoContrato {
+  contratoId: number;
+  numero: string;
+  fornecedorNome: string;
+  objeto: string;
+  status: string;
+  dataAssinatura: string;
+  dataInicioVigencia: string;
+  dataFimVigenciaOriginal: string;
+  dataFimVigenciaAtual: string;
+  valorOriginal: number;
+  valorAtual: number;
+  pendenciaTitulo: string | null;
+  pendenciaDataPrevista: string | null;
+  pendenciaDiasParaVencer: number | null;
+  itens: ContratoItem[];
+  saldo: ContratoSaldoItem[];
+  aditivos: RelatorioValidacaoAditivo[];
+  medicoes: RelatorioValidacaoMedicao[];
+}
+
+export interface RelatorioValidacaoContratos {
+  geradoEm: string;
+  somentePendentes: boolean;
+  contratos: RelatorioValidacaoContrato[];
+}

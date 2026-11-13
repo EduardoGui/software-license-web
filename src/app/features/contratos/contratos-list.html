@@ -72,11 +72,18 @@
                 <a [routerLink]="['/contratos', contrato.id]" title="Visualizar" aria-label="Visualizar">
                   <app-icon name="eye" [size]="18" />
                 </a>
+                <button type="button" class="acoes__botao" title="Relatório para validação" aria-label="Relatório para validação" (click)="relatorioIds.set([contrato.id])">
+                  <app-icon name="download" [size]="18" />
+                </button>
               </td>
             </tr>
           }
         </tbody>
       </table>
     </div>
+  }
+
+  @if (relatorioIds(); as ids) {
+    <app-relatorio-validacao-modal [contratoIds]="ids" (fechar)="relatorioIds.set(null)" />
   }
 </section>

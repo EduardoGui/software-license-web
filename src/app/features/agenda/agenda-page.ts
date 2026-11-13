@@ -4,12 +4,13 @@ import { RouterLink } from '@angular/router';
 
 import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
+import { RelatorioValidacaoModal } from '../contratos/relatorio-validacao-modal';
 import { TarefaOcorrencia } from './agenda';
 import { AgendaService } from './agenda.service';
 
 @Component({
   selector: 'app-agenda-page',
-  imports: [ReactiveFormsModule, RouterLink, DataBrPipe, Icon],
+  imports: [ReactiveFormsModule, RouterLink, DataBrPipe, Icon, RelatorioValidacaoModal],
   templateUrl: './agenda-page.html',
   styleUrl: './agenda-page.scss',
 })
@@ -25,6 +26,7 @@ export class AgendaPage {
   protected readonly editandoId = signal<number | null>(null);
   protected readonly criandoUnica = signal(false);
   protected readonly salvandoUnica = signal(false);
+  protected readonly relatorioAberto = signal(false);
 
   protected readonly formEditar = this.fb.nonNullable.group({
     titulo: ['', Validators.required],

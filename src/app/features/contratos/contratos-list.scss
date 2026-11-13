@@ -139,7 +139,8 @@ th {
   align-items: center;
 }
 
-.acoes a {
+.acoes a,
+.acoes__botao {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -150,6 +151,14 @@ th {
   text-decoration: none;
 }
 
-.acoes a:hover {
+.acoes__botao {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.acoes a:hover,
+.acoes__botao:hover {
   background: var(--color-primary-tint);
 }

@@ -545,3 +545,8 @@ input:disabled {
   color: var(--color-text-muted);
   padding-left: 0.5rem;
 }
+
+.topo__acoes {
+  display: flex;
+  gap: 0.5rem;
+}

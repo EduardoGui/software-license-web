@@ -2,6 +2,7 @@
   <header class="topo">
     <h1>Agenda</h1>
     <div class="topo__acoes">
+      <button type="button" class="botao botao--texto" (click)="relatorioAberto.set(true)"><app-icon name="download" [size]="16" /> Relatório para validação</button>
       <button type="button" class="botao botao--texto" (click)="iniciarNovaUnica()"><app-icon name="plus" [size]="16" /> Nova tarefa única</button>
       <a routerLink="/agenda/tarefas" class="botao botao--texto"><app-icon name="pencil" [size]="16" /> Gerenciar tarefas recorrentes</a>
     </div>
@@ -99,5 +100,9 @@
         </li>
       }
     </ul>
+  }
+
+  @if (relatorioAberto()) {
+    <app-relatorio-validacao-modal (fechar)="relatorioAberto.set(false)" />
   }
 </section>

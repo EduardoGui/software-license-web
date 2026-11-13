@@ -9,10 +9,11 @@ import { Icon } from '../../shared/icons/icon';
 import { DataBrPipe } from '../../shared/pipes/data-br.pipe';
 import { Contrato, ContratoFiltro } from './contrato';
 import { ContratoService } from './contrato.service';
+import { RelatorioValidacaoModal } from './relatorio-validacao-modal';
 
 @Component({
   selector: 'app-contratos-list',
-  imports: [FormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe],
+  imports: [FormsModule, RouterLink, Icon, DataBrPipe, DecimalPipe, RelatorioValidacaoModal],
   templateUrl: './contratos-list.html',
   styleUrl: './contratos-list.scss',
 })
@@ -24,6 +25,7 @@ export class ContratosList {
   protected readonly fornecedores = signal<Fornecedor[]>([]);
   protected readonly carregando = signal(true);
   protected readonly erro = signal(false);
+  protected readonly relatorioIds = signal<number[] | null>(null);
 
   protected filtro: ContratoFiltro = { status: 'Ativo' };
 

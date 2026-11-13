@@ -1,0 +1,169 @@
+<div class="overlay" (click)="fechar.emit()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <header>
+      <h2>Relatório para validação</h2>
+      <button type="button" class="botao-fechar" aria-label="Fechar" (click)="fechar.emit()">×</button>
+    </header>
+
+    <div class="modal__corpo">
+      @if (carregando()) {
+        <p class="dica">Gerando relatório...</p>
+      } @else if (relatorio(); as r) {
+        <p class="dica">
+          @if (r.somentePendentes) {
+            Contratos com medição pendente na Agenda hoje ({{ r.contratos.length }}).
+          } @else {
+            {{ r.contratos.length === 1 ? 'Contrato selecionado.' : r.contratos.length + ' contratos selecionados.' }}
+          }
+          O Excel traz uma aba "Resumo" e uma aba por contrato.
+        </p>
+
+        @if (r.contratos.length === 0) {
+          <p class="status">Nenhum contrato com medição pendente.</p>
+        }
+
+        @for (c of r.contratos; track c.contratoId) {
+          <details class="contrato" [open]="r.contratos.length === 1">
+            <summary>
+              <strong>{{ c.fornecedorNome }}</strong> — {{ c.numero }}
+              @if (c.pendenciaTitulo) {
+                <span class="badge" [class.badge--vencida]="(c.pendenciaDiasParaVencer ?? 0) < 0">{{ situacao(c.pendenciaDiasParaVencer) }}</span>
+              }
+            </summary>
+
+            @if (c.pendenciaTitulo) {
+              <p class="pendencia">{{ c.pendenciaTitulo }} — prevista para {{ c.pendenciaDataPrevista | dataBr }}</p>
+            }
+
+            <h3>Dados fixos</h3>
+            <div class="grid-info">
+              <div><span>Número</span><strong>{{ c.numero }}</strong></div>
+              <div><span>Fornecedor</span><strong>{{ c.fornecedorNome }}</strong></div>
+              <div><span>Data de assinatura</span><strong>{{ c.dataAssinatura | dataBr }}</strong></div>
+              <div><span>Início da vigência</span><strong>{{ c.dataInicioVigencia | dataBr }}</strong></div>
+              <div><span>Fim da vigência (original)</span><strong>{{ c.dataFimVigenciaOriginal | dataBr }}</strong></div>
+              <div><span>Fim da vigência (atual)</span><strong>{{ c.dataFimVigenciaAtual | dataBr }}</strong></div>
+              <div><span>Valor original</span><strong>R$ {{ c.valorOriginal | number: '1.2-2' }}</strong></div>
+              <div><span>Valor atual</span><strong>R$ {{ c.valorAtual | number: '1.2-2' }}</strong></div>
+            </div>
+
+            <h3>Itens do contrato</h3>
+            <div class="tabela-scroll">
+              <table>
+                <thead>
+                  <tr><th>Código</th><th>Descrição</th><th>Un.</th><th class="num">Quantidade</th><th class="num">Valor unitário</th><th class="num">Valor total</th></tr>
+                </thead>
+                <tbody>
+                  @for (i of c.itens; track i.id) {
+                    <tr>
+                      <td>{{ i.codigo ?? '-' }}</td>
+                      <td>{{ i.descricao }}</td>
+                      <td>{{ i.unidade }}</td>
+                      <td class="num">{{ i.quantidadeContratada | number: '1.0-4' }}</td>
+                      <td class="num">R$ {{ i.valorUnitario | number: '1.2-2' }}</td>
+                      <td class="num">R$ {{ i.valorTotal | number: '1.2-2' }}</td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="6">Nenhum item cadastrado.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Saldo do contrato</h3>
+            <div class="tabela-scroll">
+              <table>
+                <thead>
+                  <tr><th>Item</th><th class="num">Contratado (atual)</th><th class="num">Já medido (aprovado)</th><th class="num">Saldo (qtd.)</th><th class="num">Saldo (valor)</th></tr>
+                </thead>
+                <tbody>
+                  @for (s of c.saldo; track $index) {
+                    <tr>
+                      <td>{{ s.descricao }} ({{ s.unidade }})</td>
+                      <td class="num">{{ s.quantidadeContratadaAtual | number: '1.0-4' }}</td>
+                      <td class="num">{{ s.quantidadeJaMedida | number: '1.0-4' }}</td>
+                      <td class="num">{{ s.saldoQuantidade | number: '1.0-4' }}</td>
+                      <td class="num">R$ {{ s.saldoValor | number: '1.2-2' }}</td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="5">Sem saldo a exibir.</td></tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <h3>Aditivos</h3>
+            @if (c.aditivos.length === 0) {
+              <p class="vazio">Nenhum aditivo.</p>
+            } @else {
+              <div class="tabela-scroll">
+                <table>
+                  <thead>
+                    <tr><th>Nº</th><th>Descrição</th><th>Assinatura</th><th>Efeito</th><th class="num">Variação de valor</th><th>Nova vigência até</th><th>Situação</th></tr>
+                  </thead>
+                  <tbody>
+                    @for (a of c.aditivos; track a.numero) {
+                      <tr>
+                        <td>{{ a.numero }}</td>
+                        <td>{{ a.descricao }}</td>
+                        <td>{{ a.dataAssinatura | dataBr }}</td>
+                        <td>{{ a.dataEfeito | dataBr }}</td>
+                        <td class="num">{{ a.deltaValor === null ? '-' : 'R$ ' + (a.deltaValor | number: '1.2-2') }}</td>
+                        <td>{{ a.novaDataFimVigencia | dataBr }}</td>
+                        <td>{{ a.status }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            }
+
+            <h3>Boletins de medição (BM)</h3>
+            @if (c.medicoes.length === 0) {
+              <p class="vazio">Nenhuma medição lançada.</p>
+            } @else {
+              <div class="tabela-scroll">
+                <table>
+                  <thead>
+                    <tr><th>Nº</th><th>Referência</th><th>Período</th><th>Situação</th><th class="num">Valor total medido</th></tr>
+                  </thead>
+                  <tbody>
+                    @for (m of c.medicoes; track m.numero) {
+                      <tr>
+                        <td>{{ m.numero }}</td>
+                        <td>{{ m.numeroReferencia ?? '-' }}</td>
+                        <td>{{ m.periodoInicio | dataBr }} – {{ m.periodoFim | dataBr }}</td>
+                        <td>{{ m.status }}</td>
+                        <td class="num">R$ {{ m.valorTotalMedido | number: '1.2-2' }}</td>
+                      </tr>
+                    }
+                    <tr class="total">
+                      <td colspan="4">Total aprovado</td>
+                      <td class="num">R$ {{ totalAprovado(c) | number: '1.2-2' }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            }
+          </details>
+        }
+      }
+
+      @if (erro()) {
+        <p class="status status--erro">{{ erro() }}</p>
+      }
+    </div>
+
+    <footer>
+      <button type="button" class="botao botao--texto" (click)="fechar.emit()">Fechar</button>
+      <button
+        type="button"
+        class="botao botao--primario"
+        [disabled]="carregando() || baixando() || !relatorio() || relatorio()!.contratos.length === 0"
+        (click)="baixar()"
+      >
+        <app-icon name="download" [size]="16" /> {{ baixando() ? 'Baixando...' : 'Baixar Excel' }}
+      </button>
+    </footer>
+  </div>
+</div>

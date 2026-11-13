@@ -1,8 +1,17 @@
 <section class="contrato-view">
   <header class="topo">
     <h1>Contrato</h1>
-    <button type="button" class="botao botao--texto" (click)="voltar()">Voltar</button>
+    <div class="topo__acoes">
+      @if (contrato()) {
+        <button type="button" class="botao botao--texto" (click)="relatorioAberto.set(true)"><app-icon name="download" [size]="16" /> Relatório para validação</button>
+      }
+      <button type="button" class="botao botao--texto" (click)="voltar()">Voltar</button>
+    </div>
   </header>
+
+  @if (relatorioAberto() && contrato(); as c) {
+    <app-relatorio-validacao-modal [contratoIds]="[c.id]" (fechar)="relatorioAberto.set(false)" />
+  }
 
   @if (carregando()) {
     <p class="status">Carregando...</p>

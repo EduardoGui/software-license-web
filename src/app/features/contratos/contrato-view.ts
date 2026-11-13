@@ -24,6 +24,7 @@ import {
   TipoMedicao,
 } from './contrato';
 import { ContratoService } from './contrato.service';
+import { RelatorioValidacaoModal } from './relatorio-validacao-modal';
 
 interface MarcaMes {
   label: string;
@@ -34,7 +35,7 @@ const PX_POR_DIA = 6;
 
 @Component({
   selector: 'app-contrato-view',
-  imports: [ReactiveFormsModule, DataBrPipe, DecimalPipe, AnexosSecao, Icon, RouterLink, ObrigacoesExtrato, RateioUaModal],
+  imports: [ReactiveFormsModule, DataBrPipe, DecimalPipe, AnexosSecao, Icon, RouterLink, ObrigacoesExtrato, RateioUaModal, RelatorioValidacaoModal],
   templateUrl: './contrato-view.html',
   styleUrl: './contrato-view.scss',
 })
@@ -50,6 +51,7 @@ export class ContratoView {
 
   protected readonly contrato = signal<ContratoDetalhe | null>(null);
   protected readonly carregando = signal(true);
+  protected readonly relatorioAberto = signal(false);
   protected readonly erro = signal(false);
 
   protected readonly salvandoDados = signal(false);
