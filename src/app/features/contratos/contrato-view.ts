@@ -1,5 +1,5 @@
 import { DecimalPipe, Location, formatDate } from '@angular/common';
-import { Component, inject, signal, viewChild } from '@angular/core';
+import { Component, computed, inject, signal, viewChild } from '@angular/core';
 import { FormArray, FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 
@@ -284,14 +284,24 @@ export class ContratoView {
     });
   }
 
+  // Itens novos criados por aditivos anteriores (candidatos a receber +quantidade em outro aditivo).
+  protected readonly itensNovosDeAditivo = computed(() =>
+    this.aditivos().flatMap((aditivo) =>
+      aditivo.itens
+        .filter((item) => item.contratoItemId === null && item.aditivoItemOrigemId === null)
+        .map((item) => ({ id: item.id, descricao: item.descricaoNovoItem ?? '', numeroAditivo: aditivo.numero })),
+    ),
+  );
+
   private carregarAditivos(): void {
     this.contratoService.listarAditivos(this.contratoId).subscribe((aditivos) => this.aditivos.set(aditivos));
   }
 
   private criarLinhaItemAditivo() {
     return this.fb.nonNullable.group({
-      tipo: ['existente' as 'existente' | 'novo', Validators.required],
+      tipo: ['existente' as 'existente' | 'itemDeAditivo' | 'novo', Validators.required],
       contratoItemId: this.fb.control<number | null>(null),
+      aditivoItemOrigemId: this.fb.control<number | null>(null),
       descricaoNovoItem: [''],
       codigoNovoItem: [''],
       unidadeNovoItem: [''],
@@ -325,6 +335,7 @@ export class ContratoView {
       observacao: valor.observacao || null,
       itens: valor.itens.map((item) => ({
         contratoItemId: item.tipo === 'existente' ? item.contratoItemId : null,
+        aditivoItemOrigemId: item.tipo === 'itemDeAditivo' ? item.aditivoItemOrigemId : null,
         descricaoNovoItem: item.tipo === 'novo' ? item.descricaoNovoItem || null : null,
         codigoNovoItem: item.tipo === 'novo' ? item.codigoNovoItem || null : null,
         unidadeNovoItem: item.tipo === 'novo' ? item.unidadeNovoItem || null : null,

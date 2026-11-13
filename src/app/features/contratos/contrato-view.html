@@ -245,6 +245,7 @@
                   <td>
                     <select formControlName="tipo">
                       <option value="existente">Item existente</option>
+                      <option value="itemDeAditivo">Item criado por aditivo anterior</option>
                       <option value="novo">Novo item</option>
                     </select>
                   </td>
@@ -254,6 +255,13 @@
                         <option [ngValue]="null">Selecione</option>
                         @for (contratoItem of c.itens; track contratoItem.id) {
                           <option [ngValue]="contratoItem.id">{{ contratoItem.descricao }}</option>
+                        }
+                      </select>
+                    } @else if (item.value.tipo === 'itemDeAditivo') {
+                      <select formControlName="aditivoItemOrigemId">
+                        <option [ngValue]="null">Selecione</option>
+                        @for (itemAditivo of itensNovosDeAditivo(); track itemAditivo.id) {
+                          <option [ngValue]="itemAditivo.id">{{ itemAditivo.descricao }} (aditivo {{ itemAditivo.numeroAditivo }})</option>
                         }
                       </select>
                     } @else {

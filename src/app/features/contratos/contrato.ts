@@ -108,6 +108,8 @@ export interface AditivoItem {
   id: number;
   contratoItemId: number | null;
   descricaoContratoItem: string | null;
+  aditivoItemOrigemId: number | null;
+  descricaoItemOrigem: string | null;
   descricaoNovoItem: string | null;
   codigoNovoItem: string | null;
   unidadeNovoItem: string | null;
@@ -134,6 +136,7 @@ export interface Aditivo {
 
 export interface CreateAditivoItemPayload {
   contratoItemId: number | null;
+  aditivoItemOrigemId: number | null;
   descricaoNovoItem: string | null;
   codigoNovoItem: string | null;
   unidadeNovoItem: string | null;
